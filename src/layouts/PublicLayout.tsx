@@ -1,8 +1,10 @@
 import { Outlet, Link } from "react-router-dom";
-import { Zap } from "lucide-react";
 import Footer from "@/components/Footer";
+import { getAuthUrls } from "@/lib/utils";
 
 const PublicLayout = () => {
+  const { loginUrl, signupUrl } = getAuthUrls();
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <header className="border-b border-border/50 backdrop-blur-sm bg-background/80 sticky top-0 z-50">
@@ -18,15 +20,15 @@ const PublicLayout = () => {
             <Link to="/docs" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Docs
             </Link>
-            <Link to="/login" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <a href={loginUrl} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Login
-            </Link>
-            <Link
-              to="/signup"
+            </a>
+            <a
+              href={signupUrl}
               className="text-sm bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:opacity-90 transition-opacity"
             >
               Get Started
-            </Link>
+            </a>
           </nav>
         </div>
       </header>

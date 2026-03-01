@@ -1,42 +1,31 @@
-import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useEffect } from "react";
+import { getRuntimeConfig } from "@/lib/config";
 
+/**
+ * Password reset confirmation is handled by auth.afrisinc.com.
+ * Email reset links point directly to auth-ui, so this page is
+ * only reached if someone navigates here directly.
+ */
 const ResetPassword = () => {
-  const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
+  useEffect(() => {
+    try {
+      const { authUiUrl } = getRuntimeConfig();
+      if (authUiUrl) {
+        // Forward any ?token= param so auth-ui can process it
+        const token = new URLSearchParams(window.location.search).get("token");
+        const target = token
+          ? `${authUiUrl}/reset-password?token=${token}`
+          : `${authUiUrl}/forgot-password`;
+        window.location.replace(target);
+      }
+    } catch {
+      // config not loaded yet
+    }
+  }, []);
 
   return (
-    <div>
-      <h2 className="text-xl font-bold mb-1">Set new password</h2>
-      <p className="text-sm text-muted-foreground mb-6">Enter your new password below.</p>
-      <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-        <div>
-          <label className="block text-sm font-medium mb-1.5">New password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full h-10 rounded-lg border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-            placeholder="••••••••"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1.5">Confirm password</label>
-          <input
-            type="password"
-            value={confirm}
-            onChange={(e) => setConfirm(e.target.value)}
-            className="w-full h-10 rounded-lg border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-            placeholder="••••••••"
-          />
-        </div>
-        <Link
-          to="/login"
-          className="w-full h-10 bg-primary text-primary-foreground rounded-lg font-medium text-sm flex items-center justify-center hover:opacity-90 transition-opacity"
-        >
-          Update password
-        </Link>
-      </form>
+    <div className="flex items-center justify-center p-8">
+      <div className="h-6 w-6 animate-spin rounded-full border-4 border-primary border-t-transparent" />
     </div>
   );
 };
