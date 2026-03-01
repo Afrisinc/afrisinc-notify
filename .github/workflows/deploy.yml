@@ -1,4 +1,4 @@
-name: Deploy AfrisInc Web
+name: Deploy AfrisInc Notify
 
 on:
   push:
