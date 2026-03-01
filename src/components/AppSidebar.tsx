@@ -4,12 +4,10 @@ import {
   Bell,
   Key,
   Settings,
-  Zap,
   Send,
   LogOut,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
-import { Link, useLocation } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
@@ -22,6 +20,7 @@ import {
   SidebarFooter,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { useAuth } from "@/contexts/AuthContext";
 
 const items = [
   { title: "Dashboard", url: "/app", icon: LayoutDashboard },
@@ -35,7 +34,7 @@ const items = [
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
-  const location = useLocation();
+  const { signOut } = useAuth();
 
   return (
     <Sidebar collapsible="icon">
@@ -45,6 +44,7 @@ export function AppSidebar() {
           {!collapsed && <span className="font-semibold text-sm">Notify</span>}
         </div>
       </SidebarHeader>
+
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
@@ -68,17 +68,18 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
       <SidebarFooter className="p-2">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <Link
-                to="/login"
-                className="flex items-center gap-2 text-muted-foreground hover:text-foreground hover:bg-sidebar-accent/50 rounded-md px-2 py-1.5 text-sm transition-colors"
+              <button
+                onClick={signOut}
+                className="flex w-full items-center gap-2 text-muted-foreground hover:text-foreground hover:bg-sidebar-accent/50 rounded-md px-2 py-1.5 text-sm transition-colors"
               >
-                <LogOut className="h-4 w-4" />
+                <LogOut className="h-4 w-4 shrink-0" />
                 {!collapsed && <span>Log out</span>}
-              </Link>
+              </button>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

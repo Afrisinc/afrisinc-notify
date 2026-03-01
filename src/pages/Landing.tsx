@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Zap, Mail, MessageSquare, Bell, ArrowRight, Shield, BarChart3, Code2 } from "lucide-react";
 import { motion } from "framer-motion";
+import { getAuthUrls } from "@/lib/utils";
 
 const features = [
   { icon: Mail, title: "Email", description: "Transactional and marketing emails with rich templates." },
@@ -25,6 +26,8 @@ const stagger = {
 };
 
 const Landing = () => {
+  const { signupUrl } = getAuthUrls();
+
   return (
     <div>
       {/* Hero */}
@@ -62,12 +65,12 @@ const Landing = () => {
             transition={{ duration: 0.5, delay: 0.45 }}
             className="flex items-center justify-center gap-4"
           >
-            <Link
-              to="/signup"
+            <a
+              href={signupUrl}
               className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-medium px-6 py-3 rounded-lg hover:opacity-90 transition-opacity"
             >
               Start for free <ArrowRight className="h-4 w-4" />
-            </Link>
+            </a>
             <Link
               to="/pricing"
               className="inline-flex items-center gap-2 border border-border text-foreground font-medium px-6 py-3 rounded-lg hover:bg-secondary transition-colors"
@@ -130,12 +133,12 @@ const Landing = () => {
           <p className="text-muted-foreground mb-8">
             Create your account and start sending notifications in under 5 minutes.
           </p>
-          <Link
-            to="/signup"
+          <a
+            href={signupUrl}
             className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-medium px-6 py-3 rounded-lg hover:opacity-90 transition-opacity"
           >
             Create free account <ArrowRight className="h-4 w-4" />
-          </Link>
+          </a>
         </motion.div>
       </section>
     </div>
