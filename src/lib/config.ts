@@ -29,10 +29,10 @@ export async function loadRuntimeConfig(): Promise<RuntimeConfig> {
       authUiUrl: import.meta.env.VITE_AUTH_UI_URL || runtimeConfig.authUiUrl || '',
     };
 
-    console.log('[Config] Loaded:', {
-      serverUrl: config.serverUrl || '(not set)',
-      authUiUrl: config.authUiUrl || '(not set)',
-    });
+    // console.log('[Config] Loaded:', {
+    //   serverUrl: config.serverUrl || '(not set)',
+    //   authUiUrl: config.authUiUrl || '(not set)',
+    // });
 
     configLoaded = true;
     return config;

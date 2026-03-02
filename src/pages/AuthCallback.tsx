@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginService } from "@/services/auth";
-import { useAuth } from "@/contexts/AuthContext";
 
 /**
  * AuthCallback page handles OAuth callback with authorization code.
@@ -9,7 +8,6 @@ import { useAuth } from "@/contexts/AuthContext";
  */
 export default function AuthCallback() {
   const navigate = useNavigate();
-  const { token, loading } = useAuth();
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -17,7 +15,6 @@ export default function AuthCallback() {
       // Extract the code from query params
       const params = new URLSearchParams(window.location.search);
       const code = params.get("code");
-      console.log("Authorization code received:", code);
 
       if (!code) {
         setError("No authorization code found in URL");
@@ -34,8 +31,6 @@ export default function AuthCallback() {
           throw new Error(response.error || response.resp_msg || "Token exchange failed");
         }
 
-        console.log("Token exchange successful, token received:", token);
-
         // Extract user info from response
         const userData = response.data || {};
         const user = {
@@ -48,14 +43,13 @@ export default function AuthCallback() {
         // Store token and user in localStorage
         localStorage.setItem("notify_token", token);
         localStorage.setItem("notify_user", JSON.stringify(user));
-
-        // Redirect to app dashboard
-        navigate("/app", { replace: true });
+        
+        window.location.href = "/app";
       } catch (err) {
         const message =
           err instanceof Error ? err.message : "An unknown error occurred";
         console.error("Auth callback error:", message);
-        console.log("Full error object:", err);
+        // console.log("Full error object:", err);
         setError(message);
         setTimeout(() => navigate("/login"), 2000);
       }
@@ -64,13 +58,6 @@ export default function AuthCallback() {
     handleCallback();
   }, [navigate]);
 
-  // Wait for AuthContext to pick up the token from localStorage
-  useEffect(() => {
-    if (!loading && token) {
-      // Token is now loaded in AuthContext, navigate to app
-      navigate("/app", { replace: true });
-    }
-  }, [token, loading, navigate]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
