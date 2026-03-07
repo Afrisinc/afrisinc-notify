@@ -1,6 +1,7 @@
 import { Outlet, Link } from "react-router-dom";
 import Footer from "@/components/Footer";
 import { getAuthUrls } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 const PublicLayout = () => {
   const { loginUrl, signupUrl } = getAuthUrls();
@@ -23,12 +24,9 @@ const PublicLayout = () => {
             <a href={loginUrl} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Login
             </a>
-            <a
-              href={signupUrl}
-              className="text-sm bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:opacity-90 transition-opacity"
-            >
-              Get Started
-            </a>
+            <Button asChild variant="primary-solid" size="sm">
+              <a href={signupUrl}>Get Started</a>
+            </Button>
           </nav>
         </div>
       </header>
