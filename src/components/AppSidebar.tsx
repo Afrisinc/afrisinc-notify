@@ -40,7 +40,7 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarHeader className="p-4">
         <div className="flex items-center gap-2">
-          <img src="/notify-logo.svg" alt="Notify Logo" className="h-8 w-8 rounded-lg bg-white p-1 shrink-0" />
+          <img src="/notify-logo.svg" alt="Notify Logo" className="h-8 w-8 rounded-lg bg-card p-1 shrink-0" />
           {!collapsed && <span className="font-semibold text-sm">Notify</span>}
         </div>
       </SidebarHeader>

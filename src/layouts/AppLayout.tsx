@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { useAuth } from "@/contexts/AuthContext";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const AppLayout = () => {
   const { user } = useAuth();
@@ -14,6 +15,7 @@ const AppLayout = () => {
           <header className="h-14 flex items-center border-b border-border px-4 gap-4 bg-background/80 backdrop-blur-sm sticky top-0 z-40">
             <SidebarTrigger />
             <div className="flex-1" />
+            <ThemeToggle />
             {user && (
               <div className="flex items-center gap-2">
                 <div className="h-7 w-7 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-semibold shrink-0">
