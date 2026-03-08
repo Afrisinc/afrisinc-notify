@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Zap, Mail, MessageSquare, Bell, ArrowRight, Shield, BarChart3, Code2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { getAuthUrls } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 const features = [
   { icon: Mail, title: "Email", description: "Transactional and marketing emails with rich templates." },
@@ -45,7 +46,7 @@ const Landing = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.15 }}
-            className="text-4xl md:text-6xl font-bold tracking-tight mb-6 leading-tight"
+            className="heading-hero mb-6 animate-fade-up"
           >
             Send notifications,{" "}
             <span className="text-primary">not headaches</span>
@@ -54,7 +55,7 @@ const Landing = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-lg text-muted-foreground mb-10 max-w-xl mx-auto"
+            className="text-subtitle mb-10 max-w-xl mx-auto"
           >
             One API for Email, SMS, and Push. Create templates, manage delivery, and
             track everything from a single dashboard.
@@ -65,18 +66,16 @@ const Landing = () => {
             transition={{ duration: 0.5, delay: 0.45 }}
             className="flex items-center justify-center gap-4"
           >
-            <a
-              href={signupUrl}
-              className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-medium px-6 py-3 rounded-lg hover:opacity-90 transition-opacity"
-            >
-              Start for free <ArrowRight className="h-4 w-4" />
-            </a>
-            <Link
-              to="/pricing"
-              className="inline-flex items-center gap-2 border border-border text-foreground font-medium px-6 py-3 rounded-lg hover:bg-secondary transition-colors"
-            >
-              View pricing
-            </Link>
+            <Button asChild variant="default" size="md">
+              <a href={signupUrl}>
+                Start for free <ArrowRight className="h-4 w-4" />
+              </a>
+            </Button>
+            <Button asChild variant="secondary-outline" size="md">
+              <Link to="/pricing">
+                View pricing
+              </Link>
+            </Button>
           </motion.div>
         </div>
       </section>
@@ -89,7 +88,7 @@ const Landing = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.5 }}
-            className="text-2xl font-bold text-center mb-12"
+            className="heading-section text-center mb-12"
           >
             Everything you need to deliver notifications
           </motion.h2>
@@ -110,8 +109,8 @@ const Landing = () => {
                 <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
                   <f.icon className="h-5 w-5 text-primary" />
                 </div>
-                <h3 className="font-semibold mb-2">{f.title}</h3>
-                <p className="text-sm text-muted-foreground">{f.description}</p>
+                <h3 className="heading-subsection">{f.title}</h3>
+                <p className="text-secondary text-sm">{f.description}</p>
               </motion.div>
             ))}
           </motion.div>
@@ -127,18 +126,17 @@ const Landing = () => {
           transition={{ duration: 0.6 }}
           className="container text-center max-w-xl"
         >
-          <h2 className="text-2xl font-bold mb-4">
+          <h2 className="heading-section mb-6">
             Ready to get started?
           </h2>
-          <p className="text-muted-foreground mb-8">
+          <p className="text-secondary mb-8">
             Create your account and start sending notifications in under 5 minutes.
           </p>
-          <a
-            href={signupUrl}
-            className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-medium px-6 py-3 rounded-lg hover:opacity-90 transition-opacity"
-          >
-            Create free account <ArrowRight className="h-4 w-4" />
-          </a>
+          <Button asChild variant="primary-solid" size="md">
+            <a href={signupUrl}>
+              Create free account <ArrowRight className="h-4 w-4" />
+            </a>
+          </Button>
         </motion.div>
       </section>
     </div>

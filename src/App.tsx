@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -5,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import { getThemeFromCookie } from "@/lib/theme";
 
 import PublicLayout from "./layouts/PublicLayout";
 import AuthLayout from "./layouts/AuthLayout";
@@ -35,72 +37,82 @@ const queryClient = new QueryClient({
   },
 });
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AuthProvider>
-          <Routes>
-            {/* ── Public ── */}
-            <Route element={<PublicLayout />}>
-              <Route path="/" element={<Landing />} />
-              <Route path="/pricing" element={<Pricing />} />
-              <Route path="/docs" element={<Docs />} />
-            </Route>
+const App = () => {
+  useEffect(() => {
+    // On app load, check if theme cookie exists and apply it
+    const cookieTheme = getThemeFromCookie();
+    if (cookieTheme) {
+      document.documentElement.classList.toggle("dark", cookieTheme === "dark");
+    }
+  }, []);
 
-            {/* ── Auth ── */}
-            <Route element={<AuthLayout />}>
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/auth/callback" element={<AuthCallback />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-            </Route>
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AuthProvider>
+            <Routes>
+              {/* ── Public ── */}
+              <Route element={<PublicLayout />}>
+                <Route path="/" element={<Landing />} />
+                <Route path="/pricing" element={<Pricing />} />
+                <Route path="/docs" element={<Docs />} />
+              </Route>
 
-            {/* ── Onboarding (protected — after signup) ── */}
-            <Route
-              path="/onboarding/welcome"
-              element={
-                <ProtectedRoute>
-                  <OnboardingWelcome />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/onboarding/getting-started"
-              element={
-                <ProtectedRoute>
-                  <OnboardingGettingStarted />
-                </ProtectedRoute>
-              }
-            />
+              {/* ── Auth ── */}
+              <Route element={<AuthLayout />}>
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/auth/callback" element={<AuthCallback />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+              </Route>
 
-            {/* ── Authenticated App ── */}
-            <Route
-              path="/app"
-              element={
-                <ProtectedRoute>
-                  <AppLayout />
-                </ProtectedRoute>
-              }
-            >
-              <Route index element={<Dashboard />} />
-              <Route path="templates" element={<TemplatesList />} />
-              <Route path="templates/:id" element={<TemplateEditor />} />
-              <Route path="send" element={<SendNotification />} />
-              <Route path="notifications" element={<NotificationsList />} />
-              <Route path="api-keys" element={<ApiKeys />} />
-              <Route path="settings" element={<SettingsPage />} />
-            </Route>
+              {/* ── Onboarding (protected — after signup) ── */}
+              <Route
+                path="/onboarding/welcome"
+                element={
+                  <ProtectedRoute>
+                    <OnboardingWelcome />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/onboarding/getting-started"
+                element={
+                  <ProtectedRoute>
+                    <OnboardingGettingStarted />
+                  </ProtectedRoute>
+                }
+              />
 
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+              {/* ── Authenticated App ── */}
+              <Route
+                path="/app"
+                element={
+                  <ProtectedRoute>
+                    <AppLayout />
+                  </ProtectedRoute>
+                }
+              >
+                <Route index element={<Dashboard />} />
+                <Route path="templates" element={<TemplatesList />} />
+                <Route path="templates/:id" element={<TemplateEditor />} />
+                <Route path="send" element={<SendNotification />} />
+                <Route path="notifications" element={<NotificationsList />} />
+                <Route path="api-keys" element={<ApiKeys />} />
+                <Route path="settings" element={<SettingsPage />} />
+              </Route>
+
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </AuthProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;

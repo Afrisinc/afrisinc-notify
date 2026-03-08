@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { getRuntimeConfig } from "@/lib/config";
+import { clearThemeCookie } from "@/lib/theme";
 
 interface NotifyUser {
   id: string;
@@ -94,6 +95,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setToken(null);
     localStorage.removeItem("notify_user");
     localStorage.removeItem("notify_token");
+
+    // Clear theme cookie on logout
+    clearThemeCookie();
 
     // Redirect to auth-ui login
     try {

@@ -2,13 +2,14 @@ import { useState } from "react";
 import { ArrowLeft, Save, Eye } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const defaultHtml = `<div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px;">
-  <h1 style="color: #0ea5e9;">Welcome, {{name}}!</h1>
-  <p>Thanks for signing up for <strong>{{company}}</strong>.</p>
-  <p>Click the button below to get started:</p>
-  <a href="{{cta_url}}" style="display: inline-block; background: #0ea5e9; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; margin-top: 12px;">
+const defaultHtml = `<div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; color: #1a1a1a;">
+  <h1 style="font-size: 28px; margin: 0 0 16px 0; font-weight: bold;">Welcome, {{name}}!</h1>
+  <p style="margin: 0 0 12px 0; line-height: 1.6;">Thanks for signing up for <strong>{{company}}</strong>.</p>
+  <p style="margin: 0 0 16px 0; line-height: 1.6;">Click the button below to get started:</p>
+  <a href="{{cta_url}}" style="display: inline-block; background-color: #0ea5e9; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; margin-top: 12px; font-weight: 500;">
     Get Started
   </a>
+  <p style="margin: 24px 0 0 0; padding-top: 24px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #6b7280;">If you have any questions, please don't hesitate to reach out!</p>
 </div>`;
 
 const TemplateEditor = () => {

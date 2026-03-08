@@ -16,6 +16,8 @@ export default {
       fontFamily: {
         sans: ['"Inter"', 'system-ui', '-apple-system', 'sans-serif'],
         mono: ['"JetBrains Mono"', '"Fira Code"', 'monospace'],
+        heading: ['"Playfair Display"', 'serif'],
+        body: ['"Manrope"', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -26,6 +28,10 @@ export default {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          "primary-400": "var(--primary-400)",
+          "primary-300": "var(--primary-300)",
+          "primary-200": "var(--primary-200)",
+          "primary-100": "var(--primary-100)",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -69,6 +75,8 @@ export default {
           DEFAULT: "hsl(var(--warning))",
           foreground: "hsl(var(--warning-foreground))",
         },
+        "primary-500": "var(--primary-500)",
+        "text-color": "var(--text-color)",
       },
       borderRadius: {
         lg: "var(--radius)",
