@@ -5,12 +5,13 @@ import { getRuntimeConfig } from '@/lib/config';
 const createApiClient = () => {
     const config = getRuntimeConfig();
 
-    const token = localStorage.getItem("token");
     const instance = axios.create({
         baseURL: config.serverUrl ||  import.meta.env.VITE_API_URL
     });
 
     instance.interceptors.request.use(async (request) => {
+        // Read token dynamically on each request - stored as notify_token
+        const token = localStorage.getItem("notify_token");
         if (token) {
             request.headers.Authorization = `Bearer ${token}`;
         }
@@ -19,6 +20,18 @@ const createApiClient = () => {
     });
 
     instance.interceptors.response.use((response) => response, (error) => {
+        // Log 401 errors with debugging info
+        if (error?.response?.status === 401) {
+            const token = localStorage.getItem("notify_token");
+            console.warn("401 Unauthorized:", {
+                url: error?.config?.url,
+                hasToken: !!token,
+                tokenLength: token?.length || 0,
+                authHeader: error?.config?.headers?.Authorization ? "set" : "missing",
+                response: error?.response?.data
+            });
+        }
+
         // Handle explicit token errors
         const isTokenError =
             error?.response?.data?.error?.name === "TokenExpiredError" ||
@@ -33,7 +46,7 @@ const createApiClient = () => {
 
         // Only logout on explicit authentication failures
         if (isTokenError || is401WithTokenMessage) {
-            logoutHandler();
+            logoutHandler("/");
         }
 
         return Promise.reject(error);

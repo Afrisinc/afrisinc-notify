@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ProjectProvider } from "@/contexts/ProjectContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { getThemeFromCookie } from "@/lib/theme";
 
@@ -15,11 +16,13 @@ import AppLayout from "./layouts/AppLayout";
 import Landing from "./pages/Landing";
 import Pricing from "./pages/Pricing";
 import Docs from "./pages/Docs";
-import Signup from "./pages/Signup";
-import Login from "./pages/Login";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
-import AuthCallback from "./pages/AuthCallback";
+import TemplateGallery from "./pages/TemplateGallery";
+import TemplatePreview from "./pages/TemplatePreview";
+import Signup from "./pages/auth/Register";
+import Login from "./pages/auth/Login";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import ResetPassword from "./pages/auth/ResetPassword";
+import VerifyEmail from "./pages/auth/VerifyEmail";
 import OnboardingWelcome from "./pages/OnboardingWelcome";
 import OnboardingGettingStarted from "./pages/OnboardingGettingStarted";
 import Dashboard from "./pages/Dashboard";
@@ -53,21 +56,24 @@ const App = () => {
         <Sonner />
         <BrowserRouter>
           <AuthProvider>
-            <Routes>
+            <ProjectProvider>
+              <Routes>
               {/* ── Public ── */}
               <Route element={<PublicLayout />}>
                 <Route path="/" element={<Landing />} />
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/docs" element={<Docs />} />
+                <Route path="/templates" element={<TemplateGallery />} />
+                <Route path="/templates/:channel/:slug" element={<TemplatePreview />} />
               </Route>
 
               {/* ── Auth ── */}
-              <Route element={<AuthLayout />}>
+              <Route>
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/login" element={<Login />} />
-                <Route path="/auth/callback" element={<AuthCallback />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/verify-email" element={<VerifyEmail />} />
               </Route>
 
               {/* ── Onboarding (protected — after signup) ── */}
@@ -108,6 +114,7 @@ const App = () => {
 
               <Route path="*" element={<NotFound />} />
             </Routes>
+            </ProjectProvider>
           </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>

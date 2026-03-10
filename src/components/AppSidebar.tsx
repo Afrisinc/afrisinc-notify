@@ -21,6 +21,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/contexts/AuthContext";
+import { ProjectSelector } from "@/components/ProjectSelector";
 
 const items = [
   { title: "Dashboard", url: "/app", icon: LayoutDashboard },
@@ -41,9 +42,16 @@ export function AppSidebar() {
       <SidebarHeader className="p-4">
         <div className="flex items-center gap-2">
           <img src="/notify-logo.svg" alt="Notify Logo" className="h-8 w-8 rounded-lg bg-card p-1 shrink-0" />
-          {!collapsed && <span className="font-semibold text-sm">Notify</span>}
+          {!collapsed && <span className="font-semibold text-sm text-foreground">Notify</span>}
         </div>
       </SidebarHeader>
+
+      {/* Project Selector */}
+      {!collapsed && (
+        <div className="px-3 py-3 border-b border-sidebar-border">
+          <ProjectSelector collapsed={collapsed} />
+        </div>
+      )}
 
       <SidebarContent>
         <SidebarGroup>

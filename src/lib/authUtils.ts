@@ -8,8 +8,9 @@ import { AxiosErrorResponse } from '@/types/response';
 import { TokenPayload } from '@/types/shared';
 
 export const logoutHandler = (route?: string): void => {
-    localStorage.removeItem("token");
-    window.location.href = route || "/signin";
+    localStorage.removeItem("notify_token");
+    localStorage.removeItem("notify_user");
+    window.location.href = route || "/login";
 };
 
 export const onError = (error: AxiosErrorResponse) => {
@@ -20,7 +21,7 @@ export const onError = (error: AxiosErrorResponse) => {
 export const decodeUserToken = (): TokenPayload => {
     let user = {};
 
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("notify_token");
     if (token) {
         try {
             const decoded: TokenPayload = jwtDecode(token);

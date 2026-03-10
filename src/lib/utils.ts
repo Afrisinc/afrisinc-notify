@@ -18,8 +18,8 @@ export function getAuthUrls() {
     if (authUiUrl) {
       const callbackUrl = encodeURIComponent(`${window.location.origin}/app`);
       return {
-        loginUrl: `${authUiUrl}/login?product=notify`,
-        signupUrl: `${authUiUrl}/register?redirect_uri=${callbackUrl}&product=notify`,
+        loginUrl: `${authUiUrl}/login`,
+        signupUrl: `${authUiUrl}/register`,
       };
     }
   } catch {

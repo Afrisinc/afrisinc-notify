@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//e/projects/_og/services/auth-ui/**)",
+      "Bash(for file:*)",
+      "Bash(do)",
+      "Bash(echo \"=== $file.tsx ===\")",
+      "Read(//e/projects/_og/services/afrisinc-notify/src/pages/**)",
+      "Bash(done)",
+      "Bash(grep \"useDirectLogin\\\\|useForgotPassword\\\\|useResetPassword\\\\|useVerifyEmail\\\\|useSignup\" \"e:/projects/_og/services/afrisinc-notify/src/pages\"/*.tsx)"
+    ]
+  }
+}
