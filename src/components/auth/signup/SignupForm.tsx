@@ -1,6 +1,5 @@
 import { useState, useCallback } from "react";
-import { Link, useSearchParams, useNavigate } from "react-router-dom";
-import { Badge } from "@/components/ui/badge";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useSignup } from "@/hooks/useAuth";
 import SignupStepper from "./SignupStepper";
@@ -13,10 +12,7 @@ import Logo from "@/components/Logo";
 const TOTAL_STEPS = 3;
 
 const SignupForm = () => {
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const productCode = searchParams.get("product") || undefined;
-  const redirectUri = searchParams.get("redirect_uri") || undefined;
 
   const [step, setStep] = useState(0);
   const [identityData, setIdentityData] = useState<Partial<IdentityValues>>({});
@@ -25,16 +21,14 @@ const SignupForm = () => {
   const { mutate, isPending } = useSignup();
 
   const handleSignupSuccess = useCallback((res: any) => {
-    if (res.success && res.resp_code === 1000) {
-      toast.success("Account created! You can now sign in.");
-      const destination = redirectUri
-        ? `/login?redirect_uri=${encodeURIComponent(redirectUri)}${productCode ? `&product=${productCode}` : ""}`
-        : "/login";
+    if (res.success && res.resp_code === 1001) {
+      toast.success("Account created! Please check your email to verify.");
+      const destination = `/registration-success?email=${encodeURIComponent(identityData.email || "")}&type=${accountType}`;
       navigate(destination);
     } else {
       toast.error(res.resp_msg || "Registration failed. Please try again.");
     }
-  }, [redirectUri, productCode, navigate]);
+  }, [identityData.email, accountType, navigate]);
 
   const handleSignupError = useCallback((error: any) => {
     // Extract error message from Axios error response or generic error
@@ -69,7 +63,6 @@ const SignupForm = () => {
       account_name: accountType === "company"
         ? values.organizationName || ""
         : values.displayName || `${identityData.firstName || ""} ${identityData.lastName || ""}`.trim(),
-      product_code: productCode,
       displayName: values.displayName,
       organizationName: values.organizationName,
       jobTitle: values.jobTitle,
@@ -83,7 +76,7 @@ const SignupForm = () => {
       onSuccess: handleSignupSuccess,
       onError: handleSignupError,
     });
-  }, [accountType, identityData, productCode, mutate, handleSignupSuccess, handleSignupError]);
+  }, [accountType, identityData, mutate, handleSignupSuccess, handleSignupError]);
 
   return (
     <div className="w-full max-w-md mx-auto space-y-6">
@@ -93,15 +86,6 @@ const SignupForm = () => {
         <h1 className="heading-subsection">Create your account</h1>
         <p className="heading-description">Join Nofiyr today</p>
       </div>
-
-      {/* Product badge */}
-      {productCode && (
-        <div className="flex justify-center">
-          <Badge variant="secondary">
-            You're signing up for {productCode.charAt(0).toUpperCase() + productCode.slice(1).toLowerCase()}
-          </Badge>
-        </div>
-      )}
 
       {/* Stepper */}
       <SignupStepper currentStep={step} totalSteps={TOTAL_STEPS} />

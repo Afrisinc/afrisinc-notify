@@ -20,6 +20,7 @@ import TemplateGallery from "./pages/TemplateGallery";
 import TemplatePreview from "./pages/TemplatePreview";
 import Signup from "./pages/auth/Register";
 import Login from "./pages/auth/Login";
+import RegistrationSuccess from "./pages/auth/RegistrationSuccess";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 import VerifyEmail from "./pages/auth/VerifyEmail";
@@ -71,6 +72,7 @@ const App = () => {
               <Route>
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/registration-success" element={<RegistrationSuccess />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/verify-email" element={<VerifyEmail />} />

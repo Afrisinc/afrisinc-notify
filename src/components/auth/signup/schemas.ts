@@ -18,9 +18,12 @@ export const accountDetailsSchema = z.object({
   organizationName: z.string().trim().min(1, "Organization name is required").max(100).optional(),
   jobTitle: z.string().trim().max(100).optional(),
   industry: z.string().trim().max(100).optional(),
-  companyEmail: z.string().trim().email("Please enter a valid email address").max(255).or(z.literal("")),
+  companyEmail: z.string().trim().min(1, "Company email is required").email("Please enter a valid email address").max(255).optional(),
   companySize: z.string().trim().max(50).optional(),
-  website: z.string().trim().url("Please enter a valid URL").max(255).optional().or(z.literal("")),
+  website: z.string().trim().max(255).optional().refine(
+    (val) => !val || /^https?:\/\/.+/.test(val),
+    "Please enter a valid URL (starting with http:// or https://)"
+  ),
 });
 
 export type IdentityValues = z.infer<typeof identitySchema>;

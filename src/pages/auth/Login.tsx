@@ -60,14 +60,12 @@ const Login = () => {
             }
           }
 
-          localStorage.setItem("token", token);
+          localStorage.setItem("notify_token", token);
           localStorage.setItem(
-            "user",
+            "notify_user",
             JSON.stringify({
               id: res.data.user_id,
               email: res.data.email,
-              accountIds: res.data.account_ids || [],
-              roles,
             })
           );
 

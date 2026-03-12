@@ -19,24 +19,69 @@ import type { SignupPayload } from '@/components/auth/signup/schemas';
 export function useDirectLogin() {
   return useMutation({
     mutationFn: (params: LoginSchemaType) => directLoginService(params),
+    onSuccess: (data: any) => {
+      if (data?.data?.token) {
+        localStorage.setItem("notify_token", data.data.token);
+        localStorage.setItem(
+          "notify_user",
+          JSON.stringify({
+            id: data.data.user_id,
+            email: data.data.email,
+          })
+        );
+      }
+    },
   });
 }
 
 /**
  * User registration mutation (simple email/password registration)
+ * Stores notify_token and notify_user in localStorage on success
  */
 export function useRegister() {
   return useMutation({
     mutationFn: (params: RegisterSchemaType) => registrationService(params),
+    onSuccess: (data: any) => {
+      if (data?.data?.token) {
+        localStorage.setItem("notify_token", data.data.token);
+        localStorage.setItem(
+          "notify_user",
+          JSON.stringify({
+            id: data.data.user_id,
+            email: data.data.email,
+          })
+        );
+      }
+    },
   });
 }
 
 /**
  * Multi-step signup mutation (with account type and company details)
+ * Stores notify_token and notify_user in localStorage on success
  */
 export function useSignup() {
   return useMutation({
     mutationFn: (payload: SignupPayload) => signupService(payload),
+    onSuccess: (data: any) => {
+      if (data?.data?.token) {
+        localStorage.setItem("notify_token", data.data.token);
+        localStorage.setItem(
+          "notify_user",
+          JSON.stringify({
+            id: data.data.user_id,
+            email: data.data.email,
+          })
+        );
+      }
+    },
+    onError: (error: any) => {
+      console.error("Signup error:", {
+        message: error?.message,
+        status: error?.response?.status,
+        data: error?.response?.data,
+      });
+    },
   });
 }
 

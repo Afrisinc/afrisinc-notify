@@ -23,7 +23,7 @@ export const loginService = async (params: { code: string }) => {
  * Direct email/password login
  */
 export const directLoginService = async (params: LoginSchemaType) => {
-  const { data } = await getApiClient().post('/auth/login', {
+  const { data } = await getApiClient().post('/api/auth/login', {
     email: params.email,
     password: params.password,
   });
@@ -34,7 +34,7 @@ export const directLoginService = async (params: LoginSchemaType) => {
  * User registration with email/password
  */
 export const registrationService = async (params: RegisterSchemaType) => {
-  const { data } = await getApiClient().post('/auth/register', {
+  const { data } = await getApiClient().post('/api/auth/register', {
     email: params.email,
     password: params.password,
     firstName: params.firstName,
@@ -49,7 +49,7 @@ export const registrationService = async (params: RegisterSchemaType) => {
  * Multi-step signup with account type and company details
  */
 export const signupService = async (payload: SignupPayload) => {
-  const { data } = await getApiClient().post('/auth/register', payload);
+  const { data } = await getApiClient().post('/api/auth/register', payload);
   return data;
 };
 
@@ -57,7 +57,7 @@ export const signupService = async (payload: SignupPayload) => {
  * Request password reset email
  */
 export const forgotPasswordService = async (email: string) => {
-  const { data } = await getApiClient().post('/auth/reset-password', { email });
+  const { data } = await getApiClient().post('/api/auth/reset-password', { email });
   return data;
 };
 
@@ -65,7 +65,7 @@ export const forgotPasswordService = async (email: string) => {
  * Confirm password reset with new password
  */
 export const resetPasswordService = async (token: string, password: string) => {
-  const { data } = await getApiClient().post('/auth/reset-password/confirm', {
+  const { data } = await getApiClient().post('/api/auth/reset-password/confirm', {
     token,
     password
   });
@@ -76,6 +76,6 @@ export const resetPasswordService = async (token: string, password: string) => {
  * Verify email with token
  */
 export const verifyEmailService = async (token: string) => {
-  const { data } = await getApiClient().get(`/auth/verify-email?token=${encodeURIComponent(token)}`);
+  const { data } = await getApiClient().get(`/api/auth/verify-email?token=${encodeURIComponent(token)}`);
   return data;
 };

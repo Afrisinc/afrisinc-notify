@@ -34,6 +34,7 @@ const StepAccountDetails = ({
   isSubmitting,
 }: StepAccountDetailsProps) => {
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [validationError, setValidationError] = useState<string>("");
 
   const {
     register,
@@ -47,13 +48,31 @@ const StepAccountDetails = ({
     mode: "onChange",
   });
 
+  const handleFormSubmit = (values: AccountDetailsValues) => {
+    setValidationError("");
+
+    // Validate company account required fields
+    if (accountType === "company") {
+      if (!values.organizationName?.trim()) {
+        setValidationError("Organization name is required");
+        return;
+      }
+      if (!values.companyEmail?.trim()) {
+        setValidationError("Company email is required");
+        return;
+      }
+    }
+
+    onSubmit(values);
+  };
+
   const orgName = watch("organizationName");
   const slug = orgName
     ? orgName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
     : "";
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-5">
       {accountType === "personal" ? (
         <FormInput
           id="displayName"
@@ -130,6 +149,12 @@ const StepAccountDetails = ({
             {...register("website")}
           />
         </>
+      )}
+
+      {validationError && (
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
+          <p className="text-red-700 dark:text-red-400 text-sm font-medium">{validationError}</p>
+        </div>
       )}
 
       <FormCheckbox
