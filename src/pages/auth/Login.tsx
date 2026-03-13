@@ -6,7 +6,7 @@ import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { LoginSchema, type LoginSchemaType } from "@/lib/schemas/auth";
 import { jwtDecode } from "jwt-decode";
-import { useRegister } from "@/hooks/useAuth";
+import { useDirectLogin } from "@/hooks/useAuth";
 import Logo from "@/components/Logo";
 import BackgroundDecorator from "@/components/auth/BackgroundDecorator";
 import AuthCard from "@/components/auth/AuthCard";
@@ -29,7 +29,7 @@ const Login = () => {
   const productParam = searchParams.get("product");
   const from = redirectUri || location.state?.from?.pathname || "/dashboard";
 
-  const { mutate, isPending } = useRegister();
+  const { mutate, isPending } = useDirectLogin();
 
   const onSubmit = (data: LoginSchemaType) => {
     const payload = {
@@ -40,25 +40,6 @@ const Login = () => {
       onSuccess: (res: any) => {
         if (res.success && res.resp_code === 1000) {
           const token: string = res.data.token || "";
-
-          // Extract roles from response or JWT
-          let roles: string[] = [];
-          if (Array.isArray(res.data.roles)) {
-            roles = res.data.roles;
-          } else if (res.data.role) {
-            roles = [res.data.role];
-          } else {
-            try {
-              const decoded = jwtDecode<{ roles?: string[]; role?: string }>(token);
-              roles = Array.isArray(decoded.roles)
-                ? decoded.roles
-                : decoded.role
-                ? [decoded.role]
-                : [];
-            } catch {
-              roles = [];
-            }
-          }
 
           localStorage.setItem("notify_token", token);
           localStorage.setItem(
@@ -71,29 +52,7 @@ const Login = () => {
 
           toast({ title: "Welcome back!", description: "You've successfully signed in." });
 
-          // Priority: backend redirectUrl (with code) → token passthrough → default destination
-          let destination: string;
-
-          // If backend returned a redirect URL (for OAuth/code flow), use it
-          if (res.data.redirect && res.data.callback) {
-            destination = res.data.callback;
-          } else {
-            // Build destination; append product param if present
-            destination = productParam ? `${from}?product=${productParam}` : from;
-
-            // For cross-domain SSO (e.g. notify.afrisinc.com), pass the token
-            // in the URL so the receiving app can bootstrap its session.
-            try {
-              const destUrl = new URL(destination, window.location.href);
-              if (destUrl.origin !== window.location.origin) {
-                destUrl.searchParams.set("_at", token);
-                destination = destUrl.toString();
-              }
-            } catch {
-              // destination is a relative path — same-origin, no token needed in URL
-            }
-          }
-          // console.log("Redirecting to:",res.data, destination);
+          let destination: string = "/app"
 
           window.location.href = destination;
         } else {
