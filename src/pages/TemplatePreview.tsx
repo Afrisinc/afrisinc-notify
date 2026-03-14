@@ -93,7 +93,7 @@ export default function TemplatePreview() {
       window.location.href = `/signup?template=${template.slug}`;
     } else {
       // Navigate to template editor with install modal
-      navigate(`/app/templates/${template.slug}`);
+      navigate(`/dashboard/templates/${template.slug}`);
     }
   };
 

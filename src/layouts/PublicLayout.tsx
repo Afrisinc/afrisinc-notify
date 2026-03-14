@@ -34,7 +34,7 @@ const PublicLayout = () => {
             <ThemeToggle />
             {user ? (
               <Button asChild variant="primary-solid" size="sm">
-                <Link to="/app">Go to App</Link>
+                <Link to="/dashboard">Go to App</Link>
               </Button>
             ) : (
               <Button asChild variant="primary-solid" size="sm">

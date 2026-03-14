@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { NavLink } from "@/components/NavLink";
-import { OrgSwitcher } from "@/components/OrgSwitcher";
+import { OrgSwitcher } from "./OrgSwitcher";
 import {
   Sidebar,
   SidebarContent,

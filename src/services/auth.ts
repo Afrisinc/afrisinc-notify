@@ -79,3 +79,27 @@ export const verifyEmailService = async (token: string) => {
   const { data } = await getApiClient().get(`/api/auth/verify-email?token=${encodeURIComponent(token)}`);
   return data;
 };
+
+/**
+ * Get user organizations and apps
+ */
+export const getUserOrganizationsService = async () => {
+  const { data } = await getApiClient().get('/api/auth/organizations');
+  return data;
+};
+
+/**
+ * Get user apps
+ */
+export const getUserAppsService = async () => {
+  const { data } = await getApiClient().get('/api/auth/apps');
+  return data;
+};
+
+/**
+ * Get user profile
+ */
+export const getUserProfileService = async () => {
+  const { data } = await getApiClient().get('/api/auth/profile');
+  return data;
+};

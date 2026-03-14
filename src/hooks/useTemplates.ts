@@ -16,6 +16,11 @@ import {
   deleteProject,
   getProject,
   fetchUserProfile,
+  createTemplateService,
+  updateTemplateService,
+  deleteTemplateService,
+  duplicateTemplateService,
+  CreateTemplatePayload,
 } from '@/services/templatesService';
 
 /**
@@ -218,5 +223,41 @@ export function useProject(
     enabled: enabled && !!id,
     staleTime: 1000 * 60 * 10, // 10 minutes
     gcTime: 1000 * 60 * 30, // 30 minutes
+  });
+}
+
+/**
+ * Hook to create a new template
+ */
+export function useCreateTemplate(): UseMutationResult<any, Error, CreateTemplatePayload> {
+  return useMutation({
+    mutationFn: (payload) => createTemplateService(payload),
+  });
+}
+
+/**
+ * Hook to update a template
+ */
+export function useUpdateTemplate(): UseMutationResult<any, Error, { id: string; payload: Partial<CreateTemplatePayload> }> {
+  return useMutation({
+    mutationFn: ({ id, payload }) => updateTemplateService(id, payload),
+  });
+}
+
+/**
+ * Hook to delete a template
+ */
+export function useDeleteTemplate(): UseMutationResult<any, Error, string> {
+  return useMutation({
+    mutationFn: (templateId) => deleteTemplateService(templateId),
+  });
+}
+
+/**
+ * Hook to duplicate a template
+ */
+export function useDuplicateTemplate(): UseMutationResult<any, Error, { templateId: string; newName?: string }> {
+  return useMutation({
+    mutationFn: ({ templateId, newName }) => duplicateTemplateService(templateId, newName),
   });
 }

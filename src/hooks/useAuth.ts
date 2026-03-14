@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   directLoginService,
   registrationService,
@@ -6,9 +6,14 @@ import {
   verifyEmailService,
   forgotPasswordService,
   resetPasswordService,
+  getUserOrganizationsService,
+  getUserAppsService,
+  getUserProfileService,
 } from '@/services/auth';
 import type { LoginSchemaType, RegisterSchemaType } from '@/lib/schemas/auth';
 import type { SignupPayload } from '@/components/auth/signup/schemas';
+import { useOrg } from '@/contexts/OrgContext';
+import { useUser } from '@/contexts/UserContext';
 
 
 
@@ -111,4 +116,64 @@ export function useResetPassword() {
     mutationFn: ({ token, password }: { token: string; password: string }) =>
       resetPasswordService(token, password),
   });
+}
+
+/**
+ * Get user organizations and apps
+ */
+export function useUserOrganizations(options?: { enabled?: boolean }) {
+  return useQuery({
+    queryKey: ['userOrganizations'],
+    queryFn: () => getUserOrganizationsService(),
+    enabled: options?.enabled ?? true,
+  });
+}
+
+/**
+ * Get user apps
+ */
+export function useUserApps(options?: { enabled?: boolean }) {
+  return useQuery({
+    queryKey: ['userApps'],
+    queryFn: () => getUserAppsService(),
+    enabled: options?.enabled ?? true,
+  });
+}
+
+/**
+ * Get user profile
+ */
+export function useUserProfile(options?: { enabled?: boolean }) {
+  return useQuery({
+    queryKey: ['userProfile'],
+    queryFn: () => getUserProfileService(),
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    enabled: options?.enabled ?? true,
+  });
+}
+
+/**
+ * Get account ID for the current organization
+ * Combines OrgContext (currentOrg) with UserContext (getAccountIdForOrg)
+ * Returns null if organization is not selected or account not found
+ */
+export function useCurrentAccountId(): string | null {
+  try {
+    const { currentOrg } = useOrg();
+    const { getAccountIdForOrg } = useUser();
+
+    if (!currentOrg?.id) {
+      console.warn('No current organization selected');
+      return null;
+    }
+
+    const accountId = getAccountIdForOrg(currentOrg.id);
+    if (!accountId) {
+      console.warn(`No account found for organization: ${currentOrg.id}`);
+    }
+    return accountId;
+  } catch (error) {
+    console.warn('Could not get current account ID:', error);
+    return null;
+  }
 }

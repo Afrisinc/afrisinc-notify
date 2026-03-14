@@ -70,7 +70,7 @@ const Landing = () => {
           >
             <Button asChild variant="default" size="md">
               {user ? (
-                <Link to="/app">
+                <Link to="/dashboard">
                   Go to App <ArrowRight className="h-4 w-4" />
                 </Link>
               ) : (
@@ -142,7 +142,7 @@ const Landing = () => {
           </p>
           <Button asChild variant="primary-solid" size="md">
             {user ? (
-              <Link to="/app">
+              <Link to="/dashboard">
                 Go to App <ArrowRight className="h-4 w-4" />
               </Link>
             ) : (

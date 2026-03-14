@@ -52,7 +52,7 @@ const Login = () => {
 
           toast({ title: "Welcome back!", description: "You've successfully signed in." });
 
-          let destination: string = "/app"
+          let destination: string = "/dashboard";
 
           window.location.href = destination;
         } else {

@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useOrg } from "@/contexts/OrgContext";
-import { apps as allApps, type App } from "@/data/mockData";
+import { useCreateApp } from "@/hooks/useApps";
+import { useOrganizationApps } from "@/hooks/useOrganization";
+import { type App } from "@/data/mockData";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,20 +23,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Boxes, ArrowRight, Search } from "lucide-react";
+import { Plus, Boxes, ArrowRight, Search, Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function AppsList() {
-  const { currentOrg } = useOrg();
+  const { currentOrg, loading: orgLoading } = useOrg();
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const { mutate: createApp, isPending } = useCreateApp();
+  const { data: appsData, isLoading: appsLoading } = useOrganizationApps(currentOrg?.id || "", {
+    enabled: !!currentOrg?.id && !orgLoading,
+  });
+
   const [search, setSearch] = useState("");
   const [showCreate, setShowCreate] = useState(false);
   const [newName, setNewName] = useState("");
   const [newEnv, setNewEnv] = useState<App["environment"]>("development");
   const [newDesc, setNewDesc] = useState("");
 
+  const allApps = appsData?.data?.apps || [];
   const orgApps = allApps
-    .filter((a) => a.orgId === currentOrg.id)
-    .filter((a) => a.name.toLowerCase().includes(search.toLowerCase()));
+    .filter((a: any) => a.name.toLowerCase().includes(search.toLowerCase()));
 
   const envColor = (env: string) => {
     switch (env) {
@@ -42,6 +52,71 @@ export default function AppsList() {
       default: return "bg-muted text-muted-foreground";
     }
   };
+
+  const handleCreateApp = () => {
+    if (!newName.trim() || !currentOrg) return;
+
+    createApp(
+      {
+        name: newName.trim(),
+        orgId: currentOrg.id,
+        environment: (newEnv.toLowerCase() as "development" | "staging" | "production"),
+        description: newDesc.trim() || undefined,
+      },
+      {
+        onSuccess: () => {
+          toast({
+            title: "App created",
+            description: `${newName} has been created successfully.`,
+          });
+          setShowCreate(false);
+          setNewName("");
+          setNewEnv("development");
+          setNewDesc("");
+        },
+        onError: (error: any) => {
+          toast({
+            title: "Error",
+            description: error?.message || "Failed to create app",
+            variant: "destructive",
+          });
+        },
+      }
+    );
+  };
+
+  // Show loading state while fetching apps
+  if (orgLoading || appsLoading) {
+    return (
+      <div className="space-y-6 animate-fade-in">
+        <div>
+          <Skeleton className="h-8 w-32 mb-2" />
+          <Skeleton className="h-4 w-48" />
+        </div>
+        <Skeleton className="h-10 w-full max-w-sm" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[...Array(3)].map((_, i) => (
+            <Skeleton key={i} className="h-40" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Show error if no organization selected
+  if (!currentOrg) {
+    return (
+      <div className="space-y-6 animate-fade-in">
+        <Card className="border-dashed border-2 border-border">
+          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+            <Boxes className="h-12 w-12 text-muted-foreground/40 mb-4" />
+            <h3 className="text-lg font-medium text-foreground mb-1">No organization selected</h3>
+            <p className="text-sm text-muted-foreground">Please select an organization from the sidebar.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -78,7 +153,7 @@ export default function AppsList() {
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {orgApps.map((app) => (
+          {orgApps.map((app: any) => (
             <Card
               key={app.id}
               className="border-border/60 hover:border-primary/40 transition-colors cursor-pointer group"
@@ -98,8 +173,8 @@ export default function AppsList() {
               <CardContent>
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
                   <div className="flex gap-4">
-                    <span>{app.templateCount} templates</span>
-                    <span>{app.notificationsSent.toLocaleString()} sent</span>
+                    <span>{app.templateCount || 0} templates</span>
+                    <span>{(app.notificationsSent || 0).toLocaleString()} sent</span>
                   </div>
                   <ArrowRight className="h-3.5 w-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-primary" />
                 </div>
@@ -136,8 +211,19 @@ export default function AppsList() {
               <Input placeholder="What is this app for?" value={newDesc} onChange={(e) => setNewDesc(e.target.value)} />
             </div>
             <div className="flex gap-2 pt-2">
-              <Button variant="outline" onClick={() => setShowCreate(false)} className="flex-1">Cancel</Button>
-              <Button disabled={!newName.trim()} className="flex-1" onClick={() => setShowCreate(false)}>Create App</Button>
+              <Button variant="outline" onClick={() => setShowCreate(false)} className="flex-1" disabled={isPending}>
+                Cancel
+              </Button>
+              <Button disabled={!newName.trim() || isPending} className="flex-1" onClick={handleCreateApp}>
+                {isPending ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  "Create App"
+                )}
+              </Button>
             </div>
           </div>
         </DialogContent>

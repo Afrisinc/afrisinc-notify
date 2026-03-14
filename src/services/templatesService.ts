@@ -446,7 +446,7 @@ export async function getTemplateAnalytics(slug: string) {
   }
 }
 /**
- * Get template by ID 
+ * Get template by ID
  * GET /api/templates/{id}
  */
 export async function getTemplateById(id: string) {
@@ -456,6 +456,219 @@ export async function getTemplateById(id: string) {
     return response.data.data;
   } catch (error) {
     console.error('Failed to get template by ID:', error);
+    throw error;
+  }
+}
+
+/**
+ * Create a new template
+ * POST /api/templates
+ */
+export interface CreateTemplatePayload {
+  code: string;
+  channel: "email" | "sms" | "push" | "in-app" | "EMAIL" | "SMS" | "PUSH" | "IN_APP" | "WHATSAPP";
+  category?: string;
+  subject?: string;
+  content: string;
+  language?: string;
+  description?: string;
+  requiredVariables?: Record<string, string>;
+  visibility?: "private" | "public";
+  is_public?: boolean;
+  accountId?: string;
+}
+
+export async function createTemplateService(payload: CreateTemplatePayload) {
+  try {
+    const client = getApiClient();
+    const headers: Record<string, string> = {};
+
+    if (payload.accountId) {
+      headers["x-account-id"] = payload.accountId;
+    } else {
+      console.warn("⚠ No accountId provided - x-account-id header will NOT be sent");
+    }
+
+    const requestBody = {
+      code: payload.code,
+      channel: payload.channel,
+      category: payload.category,
+      subject: payload.subject,
+      content: payload.content,
+      language: payload.language || "en",
+      description: payload.description,
+      requiredVariables: payload.requiredVariables,
+      visibility: payload.visibility || "private",
+      is_public: payload.is_public ?? false,
+    };
+
+    const response = await client.post<any>(
+      "/api/templates",
+      requestBody,
+      { headers }
+    );
+
+    return response.data.data || response.data;
+  } catch (error) {
+    console.error('Failed to create template:', error);
+    throw error;
+  }
+}
+
+/**
+ * Update template
+ * PUT /api/templates/{id}
+ */
+export async function updateTemplateService(
+  templateId: string,
+  payload: Partial<CreateTemplatePayload>
+) {
+  try {
+    const client = getApiClient();
+    const headers: Record<string, string> = {};
+
+    if (payload.accountId) {
+      headers["x-account-id"] = payload.accountId;
+    } else {
+      console.warn("⚠ No accountId provided - x-account-id header will NOT be sent");
+    }
+
+    const requestBody = {
+      slug: payload.code || templateId,
+      code: payload.code,
+      channel: payload.channel,
+      category: payload.category,
+      subject: payload.subject,
+      content: payload.content,
+      language: payload.language || "en",
+      description: payload.description,
+      requiredVariables: payload.requiredVariables,
+      visibility: payload.visibility || "private",
+      is_public: payload.is_public ?? false,
+    };
+
+    const response = await client.put<any>(
+      `/api/templates/${templateId}`,
+      requestBody,
+      { headers }
+    );
+
+    return response.data.data || response.data;
+  } catch (error) {
+    console.error('Failed to update template:', error);
+    throw error;
+  }
+}
+
+/**
+ * Delete template
+ * DELETE /api/templates/{id}
+ */
+export async function deleteTemplateService(templateId: string) {
+  try {
+    const client = getApiClient();
+    const response = await client.delete<any>(`/api/templates/${templateId}`);
+
+    return response.data.data || response.data;
+  } catch (error) {
+    console.error('Failed to delete template:', error);
+    throw error;
+  }
+}
+
+/**
+ * Duplicate template
+ * POST /api/templates/{id}/duplicate
+ */
+export async function duplicateTemplateService(
+  templateId: string,
+  newName?: string
+) {
+  try {
+    const client = getApiClient();
+    const response = await client.post<any>(
+      `/api/templates/${templateId}/duplicate`,
+      { name: newName }
+    );
+
+    return response.data.data || response.data;
+  } catch (error) {
+    console.error('Failed to duplicate template:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get app templates
+ * GET /api/apps/{appId}/templates
+ */
+export async function getAppTemplatesService(appId: string) {
+  try {
+    const client = getApiClient();
+    const response = await client.get<any>(`/api/apps/${appId}/templates`);
+
+    return response.data.data || response.data;
+  } catch (error) {
+    console.error('Failed to get app templates:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get app template by ID
+ * GET /api/apps/{appId}/templates/{id}
+ */
+export async function getAppTemplateService(appId: string, templateId: string) {
+  try {
+    const client = getApiClient();
+    const response = await client.get<any>(
+      `/api/apps/${appId}/templates/${templateId}`
+    );
+
+    return response.data.data || response.data;
+  } catch (error) {
+    console.error('Failed to get app template:', error);
+    throw error;
+  }
+}
+
+/**
+ * Update app template
+ * PUT /api/apps/{appId}/templates/{id}
+ */
+export async function updateAppTemplateService(
+  appId: string,
+  templateId: string,
+  payload: Partial<CreateTemplatePayload>
+) {
+  try {
+    const client = getApiClient();
+    const response = await client.put<any>(
+      `/api/apps/${appId}/templates/${templateId}`,
+      payload
+    );
+
+    return response.data.data || response.data;
+  } catch (error) {
+    console.error('Failed to update app template:', error);
+    throw error;
+  }
+}
+
+/**
+ * Delete app template
+ * DELETE /api/apps/{appId}/templates/{id}
+ */
+export async function deleteAppTemplateService(appId: string, templateId: string) {
+  try {
+    const client = getApiClient();
+    const response = await client.delete<any>(
+      `/api/apps/${appId}/templates/${templateId}`
+    );
+
+    return response.data.data || response.data;
+  } catch (error) {
+    console.error('Failed to delete app template:', error);
     throw error;
   }
 }

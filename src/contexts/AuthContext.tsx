@@ -78,22 +78,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const storedUser = localStorage.getItem("notify_user");
     const storedToken = localStorage.getItem("notify_token");
 
-    console.log("AuthContext rehydration:", {
-      hasStoredUser: !!storedUser,
-      hasStoredToken: !!storedToken,
-      storedUserLength: storedUser?.length,
-      storedTokenLength: storedToken?.length,
-    });
-
     if (storedUser && storedToken) {
       try {
         const parsedUser = JSON.parse(storedUser);
         setUser(parsedUser);
         setToken(storedToken);
-        console.log("AuthContext: Successfully restored user and token", {
-          userId: parsedUser.id,
-          email: parsedUser.email,
-        });
       } catch (error) {
         console.error("AuthContext: Failed to parse stored user", error);
         localStorage.removeItem("notify_user");

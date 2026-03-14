@@ -16,7 +16,7 @@ export function getAuthUrls() {
   try {
     const { authUiUrl } = getRuntimeConfig();
     if (authUiUrl) {
-      const callbackUrl = encodeURIComponent(`${window.location.origin}/app`);
+      const callbackUrl = encodeURIComponent(`${window.location.origin}/dashboard`);
       return {
         loginUrl: `${authUiUrl}/login`,
         signupUrl: `${authUiUrl}/register`,

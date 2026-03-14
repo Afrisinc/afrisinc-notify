@@ -31,12 +31,6 @@ export async function loadRuntimeConfig(): Promise<RuntimeConfig> {
       apiGatewayUrl: import.meta.env.VITE_API_GATEWAY_URL || runtimeConfig.apiGatewayUrl || '',
     };
 
-    // console.log('[Config] Loaded:', {
-    //   serverUrl: config.serverUrl || '(not set)',
-    //   authUiUrl: config.authUiUrl || '(not set)',
-    //   apiGatewayUrl: config.apiGatewayUrl || '(not set)',
-    // });
-
     configLoaded = true;
     return config;
   } catch (error) {

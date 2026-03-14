@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { ArrowLeft, Save, Eye, Check, ChevronRight } from "lucide-react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
@@ -17,9 +17,12 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { useTemplate, useUserProfile } from "@/hooks/useTemplates";
+import { Badge } from "@/components/ui/badge";
+import { useTemplateById, useUserProfile, useCreateTemplate, useUpdateTemplate } from "@/hooks/useTemplates";
+import { useCurrentAccountId } from "@/hooks/useAuth";
 import { installTemplate } from "@/services/templatesService";
 import { useAuth } from "@/contexts/AuthContext";
+import { extractVariableNames } from "@/lib/templateUtils";
 
 const defaultHtml = `<div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; color: #1a1a1a;">
   <h1 style="font-size: 28px; margin: 0 0 16px 0; font-weight: bold;">Welcome, {{name}}!</h1>
@@ -32,8 +35,18 @@ const defaultHtml = `<div style="font-family: sans-serif; max-width: 600px; marg
 </div>`;
 
 const TemplateEditor = () => {
-  const { slug } = useParams();
+  const { id: templateId, appId } = useParams();
   const { user, loading: authLoading } = useAuth();
+
+  // Determine back URL based on context
+  const getBackUrl = () => {
+    if (appId) {
+      return `/dashboard/apps/${appId}/templates`;
+    }
+    return "/templates";
+  };
+
+  const backUrl = getBackUrl();
   const [name, setName] = useState("Welcome Email");
   const [subject, setSubject] = useState("Welcome to {{company}}!");
   const [html, setHtml] = useState(defaultHtml);
@@ -44,12 +57,19 @@ const TemplateEditor = () => {
   const [selectedProject, setSelectedProject] = useState("");
   const [installError, setInstallError] = useState<string | null>(null);
 
-  // Fetch template data if slug is provided
-  const { data: template } = useTemplate(slug);
+  // Fetch template data if templateId is provided
+  const { data: template } = useTemplateById(templateId);
 
   // Fetch user projects only when authenticated
   const { data: userProfile } = useUserProfile({ enabled: !authLoading && !!user });
+  const accountId = useCurrentAccountId();
   const projects = [];
+
+  // Template mutations
+  const createMutation = useCreateTemplate();
+  const updateMutation = useUpdateTemplate();
+
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   // Load template data when available
   useEffect(() => {
@@ -63,7 +83,7 @@ const TemplateEditor = () => {
   }, [template]);
 
   const handleInstall = async () => {
-    if (!selectedProject || !slug || !template) return;
+    if (!selectedProject || !templateId || !template) return;
 
     try {
       setInstallError(null);
@@ -94,7 +114,7 @@ const TemplateEditor = () => {
 
       // Call the install template API
       await installTemplate({
-        slug,
+        slug: templateId,
         projectId: selectedProject,
         name,
         channel: template.channel,
@@ -122,8 +142,59 @@ const TemplateEditor = () => {
     setInstallError(null);
   };
 
-  const handleSave = () => {
-    console.log("Saving template:", { name, subject, html });
+  const handleSave = async () => {
+    try {
+      setSaveError(null);
+
+      // Determine channel from template or default to EMAIL
+      let channel = (template as any)?.channel || "email";
+      // Convert to uppercase for backend
+      channel = channel.toUpperCase().replace(/-/g, "_");
+
+      // Generate valid code (uppercase with underscores only)
+      let code = templateId;
+      if (!code || code === "new") {
+        // Generate code from name: "Welcome Email" -> "WELCOME_EMAIL"
+        code = name
+          .toUpperCase()
+          .replace(/\s+/g, "_")
+          .replace(/[^A-Z_]/g, "");
+
+        // Ensure code is not empty and matches pattern
+        if (!code || !code.match(/^[A-Z_]+$/)) {
+          code = "TEMPLATE_NEW";
+        }
+      }
+      // Prepare payload based on channel
+      const basePayload = {
+        code,
+        channel,
+        content: html,
+        subject: channel === "EMAIL" ? subject : undefined,
+        language: (template as any)?.language || "en",
+        description: (template as any)?.description || name,
+        accountId,
+      };
+
+      // If editing existing template (templateId is not "new"), update; otherwise create
+      if (templateId && templateId !== "new") {
+        const result = await updateMutation.mutateAsync({
+          id: templateId,
+          payload: basePayload,
+        });
+      } else if (appId) {
+        const result = await createMutation.mutateAsync(basePayload);
+      } else {
+        console.error("Cannot save: no appId");
+        setSaveError("Cannot save template: missing app ID");
+        return;
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to save template";
+      console.error("❌ Save error:", errorMessage);
+      console.error("Full error:", error);
+      setSaveError(errorMessage);
+    }
   };
 
   return (
@@ -233,25 +304,42 @@ const TemplateEditor = () => {
         <div className="flex items-center justify-between mb-4 px-6 pt-6">
           <div className="flex items-center gap-3">
             <Link
-              to="/templates"
+              to={backUrl}
               className="h-8 w-8 rounded-lg border border-border flex items-center justify-center hover:bg-muted transition-colors"
             >
               <ArrowLeft className="h-4 w-4" />
             </Link>
-            <div>
+            <div className="flex flex-col gap-0.5">
+              <label className="text-xs font-medium text-muted-foreground">Template Name</label>
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="text-lg font-bold bg-transparent border-none focus:outline-none"
+                placeholder="e.g., Welcome Email, Password Reset"
+                className="text-lg font-bold bg-transparent border-none focus:outline-none placeholder:text-muted-foreground/50"
               />
             </div>
           </div>
           <div className="flex gap-2">
+            {saveError && (
+              <div className="text-xs text-destructive bg-destructive/10 px-3 py-1 rounded-lg">
+                {saveError}
+              </div>
+            )}
             <button
               onClick={handleSave}
-              className="inline-flex items-center gap-2 bg-muted text-foreground text-sm font-medium px-4 py-2 rounded-lg hover:bg-muted/80 transition-colors"
+              disabled={createMutation.isPending || updateMutation.isPending}
+              className="inline-flex items-center gap-2 bg-muted text-foreground text-sm font-medium px-4 py-2 rounded-lg hover:bg-muted/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Save className="h-4 w-4" /> Save
+              {createMutation.isPending || updateMutation.isPending ? (
+                <>
+                  <div className="h-4 w-4 border-2 border-foreground/30 border-t-foreground rounded-full animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save className="h-4 w-4" /> Save
+                </>
+              )}
             </button>
             <button
               onClick={() => setShowInstall(true)}
@@ -271,6 +359,23 @@ const TemplateEditor = () => {
             className="w-full h-9 rounded-lg border border-border bg-card px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
           />
         </div>
+
+        {/* Available Variables */}
+        {template && (() => {
+          const variables = extractVariableNames(template);
+          return variables.length > 0 ? (
+            <div className="px-6 mb-4">
+              <label className="block text-xs font-medium text-secondary mb-2">Available Variables</label>
+              <div className="flex flex-wrap gap-2">
+                {variables.map((v, idx) => (
+                  <Badge key={idx} variant="outline" className="font-mono text-xs">
+                    {`{{${v}}}`}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          ) : null;
+        })()}
 
         {/* Split editor + preview */}
         <div className="flex-1 grid grid-cols-2 gap-4 min-h-0 px-6 pb-6">

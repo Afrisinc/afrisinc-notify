@@ -11,9 +11,18 @@ import { useOrg } from "@/contexts/OrgContext";
 import { useSidebar } from "@/components/ui/sidebar";
 
 export function OrgSwitcher() {
-  const { currentOrg, setCurrentOrg, allOrgs } = useOrg();
+  const { currentOrg, setCurrentOrg, allOrgs, loading } = useOrg();
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
+
+  if (loading || !currentOrg || allOrgs.length === 0) {
+    return (
+      <div className="flex w-full items-center gap-2 rounded-lg bg-sidebar-accent px-3 py-2.5 text-sm font-medium text-sidebar-accent-foreground">
+        <Building2 className="h-4 w-4 shrink-0 text-primary" />
+        {!collapsed && <span className="truncate flex-1 text-left">Loading...</span>}
+      </div>
+    );
+  }
 
   return (
     <DropdownMenu>
@@ -22,7 +31,7 @@ export function OrgSwitcher() {
           <Building2 className="h-4 w-4 shrink-0 text-primary" />
           {!collapsed && (
             <>
-              <span className="truncate flex-1 text-left">{currentOrg.name}</span>
+              <span className="truncate flex-1 text-left">{currentOrg?.name}</span>
               <ChevronDown className="h-3 w-3 shrink-0 text-muted-foreground" />
             </>
           )}
