@@ -39,10 +39,6 @@ jobs:
         run: |
           docker push ghcr.io/${{ secrets.GHCR_OWNER }}/afrisinc-notify:latest
 
-      - name: Test SSH
-        run: |
-          nc -zv ${{ secrets.SERVER_HOST }} 22    
-
       # Step 5: SSH deploy to VPS
       - name: Deploy to VPS
         uses: appleboy/ssh-action@master
