@@ -3,8 +3,10 @@ import Footer from "@/components/Footer";
 import { getAuthUrls } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useAuth } from "@/contexts/AuthContext";
 
 const PublicLayout = () => {
+  const { user } = useAuth();
   const { loginUrl, signupUrl } = getAuthUrls();
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -24,13 +26,21 @@ const PublicLayout = () => {
             <Link to="/docs" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Docs
             </Link>
-            <a href={loginUrl} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Login
-            </a>
+            {!user && (
+              <a href={loginUrl} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                Login
+              </a>
+            )}
             <ThemeToggle />
-            <Button asChild variant="primary-solid" size="sm">
-              <a href={signupUrl}>Get Started</a>
-            </Button>
+            {user ? (
+              <Button asChild variant="primary-solid" size="sm">
+                <Link to="/app">Go to App</Link>
+              </Button>
+            ) : (
+              <Button asChild variant="primary-solid" size="sm">
+                <a href={signupUrl}>Get Started</a>
+              </Button>
+            )}
           </nav>
         </div>
       </header>

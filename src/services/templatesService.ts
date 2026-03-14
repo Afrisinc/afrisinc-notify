@@ -245,13 +245,14 @@ export async function fetchTemplatesByChannel(options: {
  * Fetch user projects (protected)
  * GET /api/projects
  */
-export async function fetchUserProjects() {
+export async function fetchUserProfile() {
   try {
     const client = getApiClient();
-    const response = await client.get<any>('/api/projects');
-    return response.data.data;
+    const response = await client.get<any>('/api/auth/profile');
+    // return response.data.data;
+    return []
   } catch (error) {
-    console.error('Failed to fetch user projects:', error);
+    console.error('Failed to fetch user profile:', error);
     throw error;
   }
 }

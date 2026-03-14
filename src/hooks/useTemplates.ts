@@ -10,12 +10,12 @@ import {
   fetchTemplate,
   searchTemplates,
   fetchTemplatesByChannel,
-  fetchUserProjects,
   getTemplateById,
   createProject,
   updateProject,
   deleteProject,
   getProject,
+  fetchUserProfile,
 } from '@/services/templatesService';
 
 /**
@@ -29,7 +29,7 @@ const templatesQueryKeys = {
   detail: (slug: string) => [...templatesQueryKeys.details(), slug],
   search: (query: string, channel?: string) => [...templatesQueryKeys.all(), 'search', { query, channel }],
   channel: (channel: string) => [...templatesQueryKeys.all(), 'channel', channel],
-  projects: () => [...templatesQueryKeys.all(), 'projects'],
+  profile: () => [...templatesQueryKeys.all(), 'profile'],
 };
 
 /**
@@ -154,16 +154,16 @@ export function useTemplatesByChannel(
 }
 
 /**
- * Hook to fetch user projects
+ * Hook to fetch user profile
  */
-export function useUserProjects(
+export function useUserProfile(
   options: { enabled?: boolean } = {}
 ): UseQueryResult<any[]> {
   const { enabled = true } = options;
 
   return useQuery({
-    queryKey: templatesQueryKeys.projects(),
-    queryFn: () => fetchUserProjects(),
+    queryKey: templatesQueryKeys.profile(),
+    queryFn: () => fetchUserProfile(),
     enabled,
     staleTime: 1000 * 60 * 5, // 5 minutes
     gcTime: 1000 * 60 * 10, // 10 minutes

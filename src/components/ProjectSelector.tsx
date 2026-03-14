@@ -17,7 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useUserProjects, useCreateProject } from "@/hooks/useTemplates";
+import { useUserProfile, useCreateProject } from "@/hooks/useTemplates";
 import { useProject as useProjectContext } from "@/contexts/ProjectContext";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -28,7 +28,7 @@ interface ProjectSelectorProps {
 export function ProjectSelector({ collapsed = false }: ProjectSelectorProps) {
   const { user, loading: authLoading } = useAuth();
   const { selectedProject, setSelectedProject } = useProjectContext();
-  const { data: projects, isLoading, refetch } = useUserProjects({
+  const { data: userProfile, isLoading, refetch } = useUserProfile({
     enabled: !authLoading && !!user,
   });
   const createMutation = useCreateProject();
@@ -76,14 +76,14 @@ export function ProjectSelector({ collapsed = false }: ProjectSelectorProps) {
             )}
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="w-48">
+        {/* <DropdownMenuContent align="start" className="w-48">
           {isLoading ? (
             <div className="px-2 py-2 text-xs text-muted-foreground text-center">
               Loading projects...
             </div>
-          ) : projects && projects.length > 0 ? (
+          ) : userProfile && userProfile.projects && userProfile.projects.length > 0 ? (
             <>
-              {projects.map((project: any) => (
+              {userProfile.projects.map((project: any) => (
                 <DropdownMenuItem
                   key={project.id}
                   onClick={() => setSelectedProject(project)}
@@ -103,7 +103,7 @@ export function ProjectSelector({ collapsed = false }: ProjectSelectorProps) {
             <Plus className="h-3 w-3 mr-2" />
             Create New Project
           </DropdownMenuItem>
-        </DropdownMenuContent>
+        </DropdownMenuContent> */}
       </DropdownMenu>
 
       {/* Create Project Dialog */}

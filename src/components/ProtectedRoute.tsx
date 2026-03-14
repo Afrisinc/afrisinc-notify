@@ -1,28 +1,12 @@
 import { useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { getRuntimeConfig } from "@/lib/config";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, token, loading } = useAuth();
 
   useEffect(() => {
     if (!loading && (!user || !token)) {
-      try {
-        const { authUiUrl } = getRuntimeConfig();
-        const callbackUrl = encodeURIComponent(window.location.href);
-        const target = authUiUrl || "";
-
-        if (target) {
-          window.location.replace(
-            `${target}/login?redirect_uri=${callbackUrl}&product=notify`
-          );
-        } else {
-          // authUiUrl not configured — fall back to local /login
-          window.location.replace("/login");
-        }
-      } catch {
-        window.location.replace("/login");
-      }
+       window.location.replace("/login");
     }
   }, [loading, user, token]);
 

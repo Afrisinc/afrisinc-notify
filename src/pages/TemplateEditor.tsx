@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { useTemplate, useUserProjects } from "@/hooks/useTemplates";
+import { useTemplate, useUserProfile } from "@/hooks/useTemplates";
 import { installTemplate } from "@/services/templatesService";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -48,8 +48,8 @@ const TemplateEditor = () => {
   const { data: template } = useTemplate(slug);
 
   // Fetch user projects only when authenticated
-  const { data: projectsData } = useUserProjects({ enabled: !authLoading && !!user });
-  const projects = projectsData || [];
+  const { data: userProfile } = useUserProfile({ enabled: !authLoading && !!user });
+  const projects = [];
 
   // Load template data when available
   useEffect(() => {

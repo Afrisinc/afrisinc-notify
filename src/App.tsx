@@ -12,6 +12,7 @@ import { getThemeFromCookie } from "@/lib/theme";
 import PublicLayout from "./layouts/PublicLayout";
 import AuthLayout from "./layouts/AuthLayout";
 import AppLayout from "./layouts/AppLayout";
+import DashboardLayout from "./layouts/DashboardLayout";
 
 import Landing from "./pages/Landing";
 import Pricing from "./pages/Pricing";
@@ -34,6 +35,12 @@ import SendNotification from "./pages/SendNotification";
 import ApiKeys from "./pages/ApiKeys";
 import SettingsPage from "./pages/SettingsPage";
 import NotFound from "./pages/NotFound";
+import DashboardHome from "./pages/dashboard/DashboardHome";
+import AppsList from "./pages/dashboard/AppsList";
+import AppDashboard from "./pages/dashboard/AppDashboard";
+import Marketplace from "./pages/dashboard/Marketplace";
+import OrgMembers from "./pages/dashboard/OrgMembers";
+import OrgSettings from "./pages/dashboard/OrgSettings"
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -96,7 +103,24 @@ const App = () => {
                 }
               />
 
-              {/* ── Authenticated App ── */}
+                            {/* ── Dashboard (new org→app→template structure) ── */}
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout />
+                  </ProtectedRoute>
+                }
+              >
+                <Route index element={<DashboardHome />} />
+                <Route path="apps" element={<AppsList />} />
+                <Route path="apps/:appId" element={<AppDashboard />} />
+                <Route path="marketplace" element={<Marketplace />} />
+                <Route path="organization/members" element={<OrgMembers />} />
+                <Route path="organization/settings" element={<OrgSettings />} />
+              </Route>
+
+              {/* ── Legacy Authenticated App ── */}
               <Route
                 path="/app"
                 element={
