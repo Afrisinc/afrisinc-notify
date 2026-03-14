@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { Zap } from "lucide-react";
 
 const Footer = () => (
   <footer className="border-t border-border/50 bg-card/50">
@@ -10,36 +9,37 @@ const Footer = () => (
             <img src="/notify-logo.svg" alt="Notify Logo" className="h-7 w-7 rounded-lg bg-card p-0.5" />
             Notify
           </Link>
-          <p className="text-xs text-secondary leading-relaxed">
+          <p className="heading-description leading-relaxed">
             Notification infrastructure for modern teams. Email, SMS, and Push — one API.
           </p>
         </div>
         <div>
           <h4 className="heading-label">Product</h4>
-          <ul className="space-y-2 text-sm text-secondary">
-            <li><Link to="/pricing" className="hover:text-foreground transition-colors">Pricing</Link></li>
-            <li><Link to="/docs" className="hover:text-foreground transition-colors">Documentation</Link></li>
-            <li><Link to="/signup" className="hover:text-foreground transition-colors">Get Started</Link></li>
+          <ul className="space-y-2">
+            <li><Link to="/templates" className="heading-description hover:text-foreground">Templates</Link></li>
+            <li><Link to="/pricing" className="heading-description hover:text-foreground">Pricing</Link></li>
+            <li><Link to="/docs" className="heading-description hover:text-foreground">Documentation</Link></li>
+            <li><Link to="/signup" className="heading-description hover:text-foreground">Get Started</Link></li>
           </ul>
         </div>
         <div>
           <h4 className="heading-label">Resources</h4>
-          <ul className="space-y-2 text-sm text-secondary">
-            <li><a href="#" className="hover:text-foreground transition-colors">Blog</a></li>
-            <li><a href="#" className="hover:text-foreground transition-colors">Changelog</a></li>
-            <li><a href="#" className="hover:text-foreground transition-colors">Status</a></li>
+          <ul className="space-y-2">
+            <li><a href="#" className="heading-description hover:text-foreground">Blog</a></li>
+            <li><a href="#" className="heading-description hover:text-foreground">Changelog</a></li>
+            <li><a href="#" className="heading-description hover:text-foreground">Status</a></li>
           </ul>
         </div>
         <div>
           <h4 className="heading-label">Legal</h4>
-          <ul className="space-y-2 text-sm text-secondary">
-            <li><a href="#" className="hover:text-foreground transition-colors">Privacy Policy</a></li>
-            <li><a href="#" className="hover:text-foreground transition-colors">Terms of Service</a></li>
-            <li><a href="#" className="hover:text-foreground transition-colors">DPA</a></li>
+          <ul className="space-y-2">
+            <li><a href="#" className="heading-description hover:text-foreground">Privacy Policy</a></li>
+            <li><a href="#" className="heading-description hover:text-foreground">Terms of Service</a></li>
+            <li><a href="#" className="heading-description hover:text-foreground">DPA</a></li>
           </ul>
         </div>
       </div>
-      <div className="border-t border-border/50 mt-10 pt-6 text-center text-xs text-secondary">
+      <div className="border-t border-border/50 mt-10 pt-6 text-center text-sm text-muted-foreground">
         © 2026 Notifyr. All rights reserved.
       </div>
     </div>

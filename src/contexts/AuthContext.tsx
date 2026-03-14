@@ -14,6 +14,7 @@ interface AuthContextType {
   token: string | null;
   loading: boolean;
   signOut: () => void;
+  resetPassword: (email: string) => Promise<{ error: Error | null }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -79,12 +80,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     if (storedUser && storedToken) {
       try {
-        setUser(JSON.parse(storedUser));
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
         setToken(storedToken);
-      } catch {
+      } catch (error) {
+        console.error("AuthContext: Failed to parse stored user", error);
         localStorage.removeItem("notify_user");
         localStorage.removeItem("notify_token");
       }
+    } else if (storedUser || storedToken) {
+      console.warn("AuthContext: Incomplete auth data in localStorage", {
+        hasUser: !!storedUser,
+        hasToken: !!storedToken,
+      });
     }
 
     setLoading(false);
@@ -99,18 +107,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Clear theme cookie on logout
     clearThemeCookie();
 
-    // Redirect to auth-ui login
+    // Redirect to local login page
+    window.location.replace("/login");
+  };
+
+  const resetPassword = async (email: string) => {
     try {
-      const { authUiUrl } = getRuntimeConfig();
-      const target = authUiUrl || window.location.origin;
-      window.location.replace(`${target}/login`);
-    } catch {
-      window.location.replace("/login");
+      const { serverUrl } = getRuntimeConfig();
+      const response = await fetch(`${serverUrl}/auth/reset-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        return { error: new Error(errorData.resp_msg || "Password reset failed") };
+      }
+
+      return { error: null };
+    } catch (error) {
+      return { error: error instanceof Error ? error : new Error("Password reset failed") };
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, signOut }}>
+    <AuthContext.Provider value={{ user, token, loading, signOut, resetPassword }}>
       {children}
     </AuthContext.Provider>
   );

@@ -41,7 +41,7 @@ const OnboardingGettingStarted = () => {
         ))}
       </div>
       <Link
-        to="/app"
+        to="/dashboard"
         className="w-full h-10 bg-primary text-primary-foreground rounded-lg font-medium text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
       >
         Go to Dashboard <ArrowRight className="h-4 w-4" />

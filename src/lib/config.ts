@@ -1,6 +1,7 @@
 export interface RuntimeConfig {
   serverUrl: string;
-  authUiUrl: string; // URL of the Afrisinc Identity Platform (auth.afrisinc.com)
+  authUiUrl: string; // URL of the Afrisinc Identity Platform
+  apiGatewayUrl: string; // URL of the API Gateway)
 }
 
 let config: RuntimeConfig | null = null;
@@ -27,12 +28,8 @@ export async function loadRuntimeConfig(): Promise<RuntimeConfig> {
     config = {
       serverUrl: import.meta.env.VITE_API_URL || runtimeConfig.serverUrl || '',
       authUiUrl: import.meta.env.VITE_AUTH_UI_URL || runtimeConfig.authUiUrl || '',
+      apiGatewayUrl: import.meta.env.VITE_API_GATEWAY_URL || runtimeConfig.apiGatewayUrl || '',
     };
-
-    // console.log('[Config] Loaded:', {
-    //   serverUrl: config.serverUrl || '(not set)',
-    //   authUiUrl: config.authUiUrl || '(not set)',
-    // });
 
     configLoaded = true;
     return config;
@@ -41,6 +38,7 @@ export async function loadRuntimeConfig(): Promise<RuntimeConfig> {
     config = {
       serverUrl: import.meta.env.VITE_API_URL || '',
       authUiUrl: import.meta.env.VITE_AUTH_UI_URL || '',
+      apiGatewayUrl: import.meta.env.VITE_API_GATEWAY_URL || '',
     };
     configLoaded = true;
     return config;
