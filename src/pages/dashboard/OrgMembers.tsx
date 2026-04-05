@@ -108,9 +108,11 @@ export default function OrgMembers() {
       setInviteRole("MEMBER");
       setShowInvite(false);
     } catch (error) {
+      const axiosError = error as { response?: { data?: {resp_msg?:string; message?: string } }; message?: string };
+      const errorMessage = axiosError?.response?.data?.resp_msg || axiosError?.response?.data?.message || axiosError?.message || "Failed to send invite";
       toast({
         title: "Error",
-        description: "Failed to send invite",
+        description: errorMessage,
         variant: "destructive",
       });
     }
@@ -230,7 +232,7 @@ export default function OrgMembers() {
               </div>
               <div>
                 <label className="text-sm font-medium">Role</label>
-                <Select value={inviteRole} onValueChange={(value: any) => setInviteRole(value)}>
+                <Select value={inviteRole} onValueChange={(value: "MEMBER" | "ADMIN") => setInviteRole(value)}>
                   <SelectTrigger className="mt-2">
                     <SelectValue />
                   </SelectTrigger>
