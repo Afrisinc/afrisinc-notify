@@ -68,7 +68,7 @@ jobs:
 
             echo "$DEPLOY_GHCR_TOKEN" | docker login ghcr.io -u "$DEPLOY_GHCR_USERNAME" --password-stdin
 
-            docker compose pull
-            docker compose up -d --remove-orphans
+            docker compose -p notify-qa --env-file .env.qa -f docker-compose.yml pull
+            docker compose -p notify-qa --env-file .env.qa -f docker-compose.yml up -d
             docker image prune -af
-            docker compose ps
+            docker compose -p notify-qa --env-file .env.qa -f docker-compose.yml ps
