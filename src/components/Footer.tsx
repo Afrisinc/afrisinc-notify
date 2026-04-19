@@ -6,7 +6,7 @@ const Footer = () => (
       <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
         <div className="col-span-2 md:col-span-1">
           <Link to="/" className="flex items-center gap-2 heading-label">
-            <img src="/notify-logo.svg" alt="Notify Logo" className="h-7 w-7 rounded-lg bg-card p-0.5" />
+            <img src="/notify-logo.png" alt="Notify Logo" className="h-7 w-7 rounded-lg bg-card p-0.5" />
             Notify
           </Link>
           <p className="heading-description leading-relaxed">
@@ -40,7 +40,7 @@ const Footer = () => (
         </div>
       </div>
       <div className="border-t border-border/50 mt-10 pt-6 text-center">
-        <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} Notifyr. All rights reserved.</p>
+        <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} Notify. All rights reserved.</p>
         <p className="text-xs text-muted-foreground/70 mt-1">An Afrisinc Product</p>
       </div>
     </div>

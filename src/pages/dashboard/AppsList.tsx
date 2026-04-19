@@ -22,8 +22,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Boxes, ArrowRight, Search, Loader2 } from "lucide-react";
+import { Plus, Boxes, ArrowRight, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { SearchInput } from "@/components/ui/search-input";
 
 export default function AppsList() {
   const { currentOrg, loading: orgLoading } = useOrg();
@@ -132,15 +133,13 @@ export default function AppsList() {
         </Button>
       </div>
 
-      <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 icon-muted" />
-        <Input
-          placeholder="Search apps..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="pl-9"
-        />
-      </div>
+      <SearchInput
+        value={search}
+        onChange={setSearch}
+        placeholder="Search apps..."
+        size="sm"
+        className="max-w-sm"
+      />
 
       {orgApps.length === 0 ? (
         <Card className="border-dashed border-2 border-border">

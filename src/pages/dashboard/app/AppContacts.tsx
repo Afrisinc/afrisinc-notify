@@ -11,9 +11,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Search, Upload, Users, UserPlus, ClipboardPaste, FileUp, Check, AlertCircle } from "lucide-react";
+import { Plus, Upload, Users, UserPlus, ClipboardPaste, FileUp, Check, AlertCircle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { SearchInput } from "@/components/ui/search-input";
 
 export default function AppContacts() {
   const { appId } = useParams<{ appId: string }>();
@@ -129,10 +130,13 @@ export default function AppContacts() {
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-3 flex-1 min-w-[200px]">
-          <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 icon-muted" />
-            <Input placeholder="Search contacts..." className="pl-9" value={search} onChange={(e) => setSearch(e.target.value)} />
-          </div>
+          <SearchInput
+            value={search}
+            onChange={setSearch}
+            placeholder="Search contacts..."
+            size="sm"
+            className="flex-1 max-w-sm"
+          />
           <Select value={tagFilter} onValueChange={setTagFilter}>
             <SelectTrigger className="w-[130px]"><SelectValue placeholder="Tag" /></SelectTrigger>
             <SelectContent>

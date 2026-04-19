@@ -18,6 +18,8 @@ export interface Template {
   variables: TemplateVariable[];
   subject?: string | null;
   preview?: string;
+  previewImage?: string;
+  thumbnail?: string;
   tags?: string[];
   language?: string;
   version?: number;

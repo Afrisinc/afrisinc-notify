@@ -37,13 +37,14 @@ import {
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus, Search, Pencil, Copy, Trash2, Send, Store, FileText, Eye, Variable, Loader2 } from "lucide-react";
+import { Plus, Pencil, Copy, Trash2, Send, Store, FileText, Eye, Variable, Loader2 } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { SearchInput } from "@/components/ui/search-input";
 
 const channelColor: Record<string, string> = {
   email: "bg-primary/15 text-primary",
@@ -162,10 +163,13 @@ export default function AppTemplates() {
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-3 flex-1 min-w-[200px]">
-          <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 icon-muted" />
-            <Input placeholder="Search templates..." className="pl-9" value={search} onChange={(e) => setSearch(e.target.value)} />
-          </div>
+          <SearchInput
+            value={search}
+            onChange={setSearch}
+            placeholder="Search templates..."
+            size="sm"
+            className="flex-1 max-w-sm"
+          />
           <Select value={channelFilter} onValueChange={setChannelFilter}>
             <SelectTrigger className="w-[130px]"><SelectValue placeholder="Channel" /></SelectTrigger>
             <SelectContent>

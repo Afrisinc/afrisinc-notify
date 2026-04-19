@@ -24,6 +24,8 @@ interface ApiTemplate {
   variables: ApiVariable[];
   description: string;
   subject: string | null;
+  previewImage?: string | null;
+  thumbnail?: string | null;
   content: {
     email?: {
       subject?: string;
@@ -107,6 +109,8 @@ function transformApiTemplate(apiTemplate: ApiTemplate): Template {
     active: apiTemplate.active,
     createdAt: apiTemplate.createdAt,
     updatedAt: apiTemplate.updatedAt,
+    previewImage: apiTemplate.previewImage || undefined,
+    thumbnail: apiTemplate.thumbnail || undefined,
     variables: apiTemplate.variables.map((v) => ({
       name: v.name,
       required: v.required,

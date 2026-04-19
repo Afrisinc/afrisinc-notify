@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useCampaigns, useCreateCampaign, useUpdateCampaign, useDeleteCampaign, useSendCampaign, useScheduleCampaign, useDuplicateCampaign } from "@/hooks/useCampaigns";
 import { useAppTemplates } from "@/hooks/useApps";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,9 +10,10 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Search, Megaphone, Send, Clock, CheckCircle2, XCircle, AlertCircle, ChevronRight, ChevronLeft, Trash2 } from "lucide-react";
+import { Plus, Megaphone, Send, Clock, CheckCircle2, XCircle, AlertCircle, ChevronRight, ChevronLeft, Trash2, BarChart3 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { SearchInput } from "@/components/ui/search-input";
 
 const statusConfig: Record<string, { icon: typeof CheckCircle2; color: string }> = {
   draft: { icon: AlertCircle, color: "text-muted-foreground" },
@@ -24,6 +25,7 @@ const statusConfig: Record<string, { icon: typeof CheckCircle2; color: string }>
 
 export default function AppCampaigns() {
   const { appId } = useParams<{ appId: string }>();
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [showCreate, setShowCreate] = useState(false);
   const [step, setStep] = useState(1);
@@ -155,10 +157,13 @@ export default function AppCampaigns() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 icon-muted" />
-          <Input placeholder="Search campaigns..." className="pl-9" value={search} onChange={(e) => setSearch(e.target.value)} />
-        </div>
+        <SearchInput
+          value={search}
+          onChange={setSearch}
+          placeholder="Search campaigns..."
+          size="sm"
+          className="flex-1 max-w-sm"
+        />
         <Button size="sm" onClick={() => { setStep(1); setShowCreate(true); }}>
           <Plus className="h-3.5 w-3.5 mr-1.5" /> Create Campaign
         </Button>
@@ -203,6 +208,18 @@ export default function AppCampaigns() {
                       <span className="text-xs text-content-secondary">
                         {new Date(camp.scheduledAt).toLocaleDateString()}
                       </span>
+                    )}
+                    {camp.status === "completed" && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/dashboard/apps/${appId}/campaigns/${camp.id}/analytics`);
+                        }}
+                      >
+                        <BarChart3 className="h-3.5 w-3.5 text-primary" />
+                      </Button>
                     )}
                     {camp.status === "draft" && (
                       <Button

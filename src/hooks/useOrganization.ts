@@ -6,9 +6,12 @@ import {
   deleteOrganizationService,
   createOrganizationInviteService,
   getOrganizationMembersService,
+  getOrganizationInvitesService,
+  getUserInvitesService,
   removeOrganizationMemberService,
   getInviteDetailsService,
   acceptInviteService,
+  declineInviteService,
   type CreateOrganizationPayload,
   type UpdateOrganizationPayload,
   type CreateInvitePayload,
@@ -94,8 +97,8 @@ export function useCreateOrganizationInvite() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ orgId, payload }: { orgId: string; payload: CreateInvitePayload }) =>
-      createOrganizationInviteService(orgId, payload),
+    mutationFn: ({ orgId, accountId, payload }: { orgId: string; accountId: string; payload: CreateInvitePayload }) =>
+      createOrganizationInviteService(orgId, accountId, payload),
     onSuccess: (_data, { orgId }) => {
       // Invalidate organization invites
       queryClient.invalidateQueries({
@@ -113,7 +116,29 @@ export function useOrganizationMembers(orgId: string, page: number = 1, limit: n
   return useQuery({
     queryKey: ["organizationMembers", orgId, page, limit],
     queryFn: () => getOrganizationMembersService(orgId, page, limit),
-    enabled: !!orgId,
+    enabled: !!orgId && orgId !== "personal",
+  });
+}
+
+/**
+ * Get organization invites with pagination
+ * Any member can view the pending invites
+ */
+export function useOrganizationInvites(orgId: string, page: number = 1, limit: number = 10) {
+  return useQuery({
+    queryKey: ["organizationInvites", orgId, page, limit],
+    queryFn: () => getOrganizationInvitesService(orgId, page, limit),
+    enabled: !!orgId && orgId !== "personal",
+  });
+}
+
+/**
+ * Get all pending invites for the logged in user
+ */
+export function useUserInvites() {
+  return useQuery({
+    queryKey: ["userInvites"],
+    queryFn: () => getUserInvitesService(),
   });
 }
 
@@ -171,6 +196,37 @@ export function useAcceptInvite() {
       // Invalidate organization queries to refresh member list
       queryClient.invalidateQueries({
         queryKey: ["organizations"],
+      });
+      // Invalidate user invites so the list clears the accepted one
+      queryClient.invalidateQueries({
+        queryKey: ["userInvites"],
+      });
+// Invalidate user organizations so the new org shows up for the user immediately
+      queryClient.invalidateQueries({
+        queryKey: ["userOrganizations"],
+      });
+    },
+  });
+}
+
+/**
+ * Decline organization invite
+ * Authentication required - user email must match invite email
+ */
+export function useDeclineInvite() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ inviteId, token }: { inviteId: string; token: string }) =>
+      declineInviteService(inviteId, token),
+    onSuccess: (_data, { inviteId, token }) => {
+      // Invalidate user invites so the list clears the declined one
+      queryClient.invalidateQueries({
+        queryKey: ["userInvites"],
+      });
+      // General cache refresh for the specific invite
+      queryClient.invalidateQueries({
+        queryKey: ["inviteDetails", inviteId, token],
       });
     },
   });

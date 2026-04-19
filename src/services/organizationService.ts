@@ -28,7 +28,7 @@ export interface InviteDetails {
   email: string;
   role: "OWNER" | "ADMIN" | "MEMBER";
   organizationId: string;
-  organizationName: string;
+  orgName: string;
   invitedBy: string;
   createdAt: string;
   expiresAt: string;
@@ -51,6 +51,29 @@ export interface OrganizationMembersResponse {
   page: number;
   limit: number;
   pages: number;
+}
+
+export interface OrganizationInvite {
+  id: string;
+  email: string;
+  role: "OWNER" | "ADMIN" | "MEMBER";
+  status: "pending" | "accepted" | "expired";
+  createdAt: string;
+  expiresAt: string;
+  invitationLink: string;
+}
+
+export interface OrganizationInvitesResponse {
+  orgId: string;
+  invites: OrganizationInvite[];
+  total: number;
+  page: number;
+  limit: number;
+  pages: number;
+}
+
+export interface UserInvitesResponse {
+  invites: (OrganizationInvite & { orgName: string; orgId: string; token: string })[];
 }
 
 // ──────────────────────────────────────────
@@ -97,8 +120,12 @@ export const deleteOrganizationService = async (orgId: string) => {
  * Send an invite to a user to join the organization
  * Only admins and owners can create invites
  */
-export const createOrganizationInviteService = async (orgId: string, payload: CreateInvitePayload) => {
-  const { data } = await getApiClient().post(`/api/organizations/${orgId}/invites`, payload);
+export const createOrganizationInviteService = async (orgId: string, accountId: string, payload: CreateInvitePayload) => {
+  const { data } = await getApiClient().post(`/api/organizations/${orgId}/invites`, payload, {
+    headers: {
+      'x-account-id': accountId,
+    },
+  });
   return data.data;
 };
 
@@ -111,6 +138,26 @@ export const getOrganizationMembersService = async (orgId: string, page: number 
     params: { page, limit },
   });
   return data.data as OrganizationMembersResponse;
+};
+
+/**
+ * Get organization invites
+ * Members can view the pending invites with pagination
+ */
+export const getOrganizationInvitesService = async (orgId: string, page: number = 1, limit: number = 10) => {
+  const { data } = await getApiClient().get(`/api/organizations/${orgId}/invites`, {
+    params: { page, limit },
+  });
+  return data.data as OrganizationInvitesResponse;
+};
+
+/**
+ * Get pending user invites
+ * Authenticated user can view the invites sent to them across all orgs
+ */
+export const getUserInvitesService = async () => {
+  const { data } = await getApiClient().get(`/api/user/invites`);
+  return data.data as UserInvitesResponse;
 };
 
 /**
@@ -142,5 +189,14 @@ export const getInviteDetailsService = async (inviteId: string, token: string) =
  */
 export const acceptInviteService = async (inviteId: string, token: string) => {
   const { data } = await getApiClient().post(`/api/invites/${inviteId}/${token}/accept`);
+  return data.data;
+};
+
+/**
+ * Decline organization invite
+ * Authentication required - user email must match invite email
+ */
+export const declineInviteService = async (inviteId: string, token: string) => {
+  const { data } = await getApiClient().post(`/api/invites/${inviteId}/${token}/decline`);
   return data.data;
 };

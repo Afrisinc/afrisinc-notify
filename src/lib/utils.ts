@@ -79,3 +79,35 @@ export function clearFormValues(keys: string[]): void {
     // silently ignore localStorage errors
   }
 }
+
+/**
+ * Extract error message from backend API response or native Error
+ * Handles axios errors, Error objects, and unknown types
+ * @param error - error object from API call or thrown exception
+ * @param defaultMessage - fallback message if extraction fails
+ */
+export function getErrorMessage(error: unknown, defaultMessage = "An error occurred"): string {
+  // Axios error with response data
+  if (error && typeof error === "object" && "response" in error) {
+    const axiosError = error as any;
+    return (
+      axiosError.response?.data?.resp_msg ||
+      axiosError.response?.data?.message ||
+      axiosError.response?.statusText ||
+      defaultMessage
+    );
+  }
+
+  // Native Error object
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  // String error
+  if (typeof error === "string") {
+    return error;
+  }
+
+  // Unknown type
+  return defaultMessage;
+}

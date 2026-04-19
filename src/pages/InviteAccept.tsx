@@ -28,7 +28,7 @@ export default function InviteAccept() {
 
       toast({
         title: "Success",
-        description: `You've been added to ${invite?.organizationName} as a ${invite?.role}!`,
+        description: `You've been added to ${invite?.orgName} as a ${invite?.role}!`,
       });
 
       // Redirect to dashboard
@@ -115,7 +115,7 @@ export default function InviteAccept() {
               <Building2 className="h-5 w-5 text-primary" />
               <div>
                 <p className="text-xs text-foreground/70 dark:text-foreground/80">Organization</p>
-                <p className="font-semibold">{invite.organizationName}</p>
+                <p className="font-semibold">{invite.orgName}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -127,7 +127,7 @@ export default function InviteAccept() {
             </div>
             <div className="text-xs text-foreground/70 dark:text-foreground/80">
               <p className="capitalize">Role: <span className="font-medium text-foreground">{invite.role}</span></p>
-              <p>Invited by: <span className="font-medium text-foreground">{invite.invitedBy}</span></p>
+              <p>Invited by: <span className="font-medium text-foreground">{invite.invitedBy || invite.orgName}</span></p>
             </div>
           </div>
 
@@ -147,7 +147,7 @@ export default function InviteAccept() {
           {user && !emailMismatch ? (
             <>
               <p className="text-sm text-foreground/70 dark:text-foreground/80 text-center">
-                Click below to accept this invite and join {invite.organizationName}
+                Click below to accept this invite and join {invite.orgName}
               </p>
               <Button
                 onClick={handleAcceptInvite}

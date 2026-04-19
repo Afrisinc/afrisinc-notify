@@ -6,10 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, ScrollText, Download, AlertCircle } from "lucide-react";
+import { ScrollText, Download, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { SearchInput } from "@/components/ui/search-input";
 
 const statusColor: Record<string, string> = {
   delivered: "bg-success/15 text-success",
@@ -149,18 +150,16 @@ export default function AppLogs() {
 
       {/* Filters and Actions */}
       <div className="flex items-center gap-3 flex-wrap">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 icon-muted" />
-          <Input
-            placeholder="Search by email or template..."
-            className="pl-9"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-          />
-        </div>
+        <SearchInput
+          value={search}
+          onChange={(v) => {
+            setSearch(v);
+            setPage(1);
+          }}
+          placeholder="Search by email or template..."
+          size="sm"
+          className="flex-1 max-w-sm"
+        />
         <Select value={channelFilter} onValueChange={(v) => { setChannelFilter(v); setPage(1); }}>
           <SelectTrigger className="w-[130px]">
             <SelectValue placeholder="Channel" />

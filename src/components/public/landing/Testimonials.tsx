@@ -16,7 +16,7 @@ interface Testimonial {
 const DEFAULT_TESTIMONIALS: Testimonial[] = [
   {
     id: "1",
-    quote: "Notifyr replaced three different services for us. One API for email, SMS, and push — it just works.",
+    quote: "Notify replaced three different services for us. One API for email, SMS, and push — it just works.",
     author: "Amara Osei",
     company: "Paystack",
     title: "Lead Engineer",
@@ -95,7 +95,7 @@ export function Testimonials({
           className="text-center mb-12"
         >
           <h2 className="heading-section">Loved by developers & teams</h2>
-          <p className="text-foreground/75 dark:text-foreground/80 mt-3">See what our customers say about Notifyr</p>
+          <p className="text-foreground/75 dark:text-foreground/80 mt-3">See what our customers say about Notify</p>
         </motion.div>
 
         <div

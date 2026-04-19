@@ -1,21 +1,21 @@
 /**
  * EmailEditor Component
  *
- * Integrates the EmailBuilder.js visual editor with the Notifyr backend API.
+ * Integrates the EmailBuilder.js visual editor with the Notify backend API.
  * Provides a professional email template editing interface with:
  * - Visual email template builder (EmailBuilder.js)
- * - Notifyr backend integration for template storage
+ * - Notify backend integration for template storage
  * - Real-time HTML + JSON rendering
  * - Template creation, editing, and export functionality
  * - Automatic cache invalidation via React Query
  *
  * Editor Flow:
- * 1. Load template from Notifyr API (/api/apps/:appId/templates/:templateId)
+ * 1. Load template from Notify API (/api/apps/:appId/templates/:templateId)
  * 2. Extract design_json from response
  * 3. Render design in EmailBuilder.js visual editor
  * 4. User edits template visually
  * 5. On save, render to HTML and embed JSON
- * 6. Save to Notifyr backend API
+ * 6. Save to Notify backend API
  * 7. React Query handles cache invalidation and refetch
  */
 
@@ -171,7 +171,7 @@ export const EmailEditor: React.FC<EmailEditorProps> = ({ appId, templateId, onC
       >
         <div className="mb-3">
           <p className="heading-label">
-            Notifyr Email Template Editor
+            Notify Email Template Editor
           </p>
         </div>
         <div className="flex items-center justify-between gap-4">

@@ -1,1 +1,1 @@
-# Welcome to Notifyr project
+# Welcome to Notify project

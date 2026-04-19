@@ -39,8 +39,9 @@ export interface MarketplaceTemplate {
   active?: boolean;
   visibility?: "marketplace" | "private";
   isPublic?: boolean;
-  thumbnail?: string;
+  thumbnail?: string | null;
   previewUrl?: string;
+  previewImage?: string | null;
   screenshots?: string[];
   variables?: MarketplaceVariable[] | string[];
   tags?: string[];
@@ -131,6 +132,20 @@ export interface RatingResponse {
 // LIST MARKETPLACE TEMPLATES
 // ──────────────────────────────────────────
 
+// Normalize channel and category to lowercase for component compatibility
+const normalizeTemplate = (template: any): MarketplaceTemplate => ({
+  ...template,
+  channel: (template.channel || "").toLowerCase() as any,
+  category: (template.category || "").toLowerCase() as any,
+  price: template.price ?? 0,
+  rating: template.rating ?? 0,
+  ratingCount: template.ratingCount ?? 0,
+  installs: template.installs ?? 0,
+  tags: Array.isArray(template.tags) ? template.tags : [],
+  // Explicitly handle previewImage: use it if available and not null, otherwise undefined
+  previewImage: template.previewImage && typeof template.previewImage === 'string' ? template.previewImage : undefined,
+});
+
 export const listMarketplaceTemplatesService = async (params?: ListTemplatesParams) => {
   const queryParams = new URLSearchParams();
 
@@ -148,7 +163,13 @@ export const listMarketplaceTemplatesService = async (params?: ListTemplatesPara
   const { data } = await getApiClient().get<any>(
     `/api/marketplace/templates${query}`
   );
-  return data.data as ListTemplatesResponse;
+
+  return {
+    templates: (data.data?.templates || data.data || []).map(normalizeTemplate),
+    total: data.data?.total || data.meta?.total || 0,
+    pagination: data.data?.pagination,
+    filters: data.data?.filters,
+  } as any;
 };
 
 // ──────────────────────────────────────────

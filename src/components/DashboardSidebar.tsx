@@ -7,6 +7,7 @@ import {
   Users,
   LogOut,
   CreditCard,
+  Mail,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { NavLink } from "@/components/NavLink";
@@ -26,6 +27,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/contexts/AuthContext";
+import { useOrg } from "@/contexts/OrgContext";
 import Logo from "./Logo";
 
 const mainNav = [
@@ -35,18 +37,23 @@ const mainNav = [
   { title: "Marketplace", url: "/dashboard/marketplace", icon: Store },
 ];
 
-const orgNav = [
-  { title: "Billing", url: "/dashboard/billing", icon: CreditCard },
-  { title: "Members", url: "/dashboard/organization/members", icon: Users },
-  { title: "Settings", url: "/dashboard/organization/settings", icon: Settings },
-];
-
 export function DashboardSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
   const navigate = useNavigate();
   const { signOut } = useAuth();
+  const { currentOrg } = useOrg();
+
+  const orgNav = [
+    { title: "Billing", url: "/dashboard/billing", icon: CreditCard },
+    { 
+      title: currentOrg?.name === "Personal" ? "My Invites" : "Members", 
+      url: "/dashboard/organization/members", 
+      icon: currentOrg?.name === "Personal" ? Mail : Users 
+    },
+    { title: "Settings", url: "/dashboard/organization/settings", icon: Settings },
+  ];
 
   const isActive = (path: string) => {
     if (path === "/dashboard") return location.pathname === "/dashboard";

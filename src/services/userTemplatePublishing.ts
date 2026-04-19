@@ -51,9 +51,20 @@ export interface ListUserTemplatesResponse {
 }
 
 export interface PublishTemplatePayload {
+  // Core metadata
+  title?: string;
   description?: string;
-  thumbnail?: string;
+  category?: string; // Frontend category names: "Transactional", "Marketing", "Authentication", etc.
+
+  // Marketplace presentation
   tags?: string[];
+  previewImageUrl?: string; // Can be data URL string or will be converted to File
+  previewImage?: File; // For multipart uploads
+  thumbnail?: string;
+
+  // Pricing
+  pricing?: "free" | "paid";
+  price?: number;
 }
 
 export interface PublishTemplateResponse {
@@ -62,6 +73,11 @@ export interface PublishTemplateResponse {
   channel: string;
   visibility: "marketplace";
   isPublic: true;
+  title?: string;
+  category?: string;
+  tags?: string[];
+  pricing?: "free" | "paid";
+  price?: number;
   publishedAt: string;
 }
 
@@ -137,15 +153,74 @@ export const getUserTemplateForEditingService = async (
 // PUBLISH TEMPLATE TO MARKETPLACE
 // ──────────────────────────────────────────
 
+// Category mapping: Frontend -> Backend
+const categoryMap: Record<string, string> = {
+  "Transactional": "TRANSACTIONAL",
+  "Marketing": "MARKETING",
+  "Authentication": "AUTH",
+  "Security": "AUTH",
+  "E-Commerce": "TRANSACTIONAL",
+  "Alerts": "NOTIFICATION",
+};
+
 export const publishTemplateService = async (
   templateId: string,
   accountId: string,
-  payload?: PublishTemplatePayload
+  payload?: PublishTemplatePayload | FormData
 ) => {
-  const config = { headers: { "x-account-id": accountId } };
+  const config = {
+    headers: {
+      "x-account-id": accountId,
+    }
+  };
+
+  console.log("🚀 Publishing template with payload:", {
+    templateId,
+    accountId,
+    payload
+  });
+
+  let requestPayload: any;
+
+  // Check if payload is FormData (multipart file upload)
+  if (payload instanceof FormData) {
+    // Send FormData as-is, axios will set proper Content-Type: multipart/form-data
+    requestPayload = payload;
+    console.log("📤 Publishing template (multipart with file upload):", {
+      templateId,
+      hasFile: payload.has("previewImage"),
+    });
+  } else {
+    // Build JSON payload for data URLs
+    requestPayload = {};
+
+    if (payload?.title) requestPayload.title = payload.title;
+    if (payload?.description) requestPayload.description = payload.description;
+    if (payload?.category) requestPayload.category = categoryMap[payload.category] || payload.category;
+    if (payload?.tags) requestPayload.tags = payload.tags;
+
+    // Use previewImageUrl string for data URLs
+    if (payload?.previewImageUrl) {
+      requestPayload.previewImage = payload.previewImageUrl;
+    }
+
+    if (payload?.pricing) requestPayload.pricing = payload.pricing;
+    if (payload?.price !== undefined) requestPayload.price = payload.price;
+
+    // Set JSON content type for non-multipart
+    config.headers["Content-Type"] = "application/json";
+
+    console.log("📤 Publishing template (JSON):", {
+      templateId,
+      payloadKeys: Object.keys(requestPayload),
+      pricing: requestPayload.pricing,
+      price: requestPayload.price,
+    });
+  }
+
   const { data } = await getApiClient().post<any>(
     `/api/templates/${templateId}/publish`,
-    payload || {},
+    requestPayload,
     config
   );
   return data.data as PublishTemplateResponse;

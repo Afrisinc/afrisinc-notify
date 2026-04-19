@@ -10,7 +10,7 @@ const OnboardingWelcome = () => {
   return (
     <OnboardingLayout>
       <div className="text-center mb-8">
-        <h1 className="text-2xl font-bold mb-2">Welcome to Notifyr 🎉</h1>
+        <h1 className="text-2xl font-bold mb-2">Welcome to Notify 🎉</h1>
         <p className="text-muted-foreground">Let's set up your account. This only takes a minute.</p>
       </div>
       <div className="bg-card border border-border rounded-xl p-8 space-y-6">

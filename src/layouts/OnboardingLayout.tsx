@@ -11,7 +11,7 @@ const OnboardingLayout = ({ children }: { children: React.ReactNode }) => {
           <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
             <Zap className="h-4 w-4 text-primary-foreground" />
           </div>
-          <span>Notifyr</span>
+          <span>Notify</span>
         </Link>
       </header>
       <main className="flex-1 flex items-center justify-center p-6 relative z-10">

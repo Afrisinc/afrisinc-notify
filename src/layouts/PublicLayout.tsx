@@ -23,9 +23,9 @@ const PublicLayout = () => {
     <div className="min-h-screen flex flex-col bg-background">
       <header className="border-b border-border/50 backdrop-blur-sm bg-background/80 sticky top-0 z-50">
         <div className="container flex h-16 items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 font-semibold text-lg text-foreground">
-            <img src="/notify-logo.svg" alt="Notifyr Logo" className="h-8 w-8 rounded-lg bg-card p-1" />
-            <span>Notifyr</span>
+          <Link to="/" className="flex items-center gap-1 font-semibold text-lg text-foreground">
+            <img src="/notify-logo.png" alt="Notify Logo" className="h-9 w-9 rounded-lg p-1" />
+            <span>Notify</span>
           </Link>
 
           {/* Desktop Navigation */}

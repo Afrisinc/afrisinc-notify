@@ -24,8 +24,8 @@ const RegistrationSuccess = () => {
           <h1 className="heading-subsection">Account Created Successfully!</h1>
           <p className="heading-description">
             {accountType === "company"
-              ? "Welcome to Notifyr. Your organization account has been created."
-              : "Welcome to Notifyr. Your account has been created."}
+              ? "Welcome to Notify. Your organization account has been created."
+              : "Welcome to Notify. Your account has been created."}
           </p>
         </div>
 

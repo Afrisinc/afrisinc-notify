@@ -55,6 +55,7 @@ import AppSendNotification from "./pages/dashboard/app/AppSendNotification";
 import AppTemplates from "./pages/dashboard/app/AppTemplates";
 import AppContacts from "./pages/dashboard/app/AppContacts";
 import AppCampaigns from "./pages/dashboard/app/AppCampaigns";
+import AppCampaignAnalytics from "./pages/dashboard/app/AppCampaignAnalytics";
 import AppApiKeys from "./pages/dashboard/app/AppApiKeys";
 import AppLogs from "./pages/dashboard/app/AppLogs";
 import AppSettings from "./pages/dashboard/app/AppSettings";
@@ -75,6 +76,25 @@ const App = () => {
     const cookieTheme = getThemeFromCookie();
     if (cookieTheme) {
       document.documentElement.classList.toggle("dark", cookieTheme === "dark");
+    }
+  }, []);
+
+  // Global OAuth callback handler - processes any OAuth provider redirect
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    const state = params.get('state');
+    const referrer = sessionStorage.getItem('oauth_referrer');
+
+    console.log('OAuth redirect check:', { code: !!code, state: !!state, referrer, pathname: window.location.pathname });
+
+    // If we have OAuth params and a saved referrer, redirect to referrer with params
+    if (code && state && referrer && !window.location.pathname.includes('settings')) {
+      console.log('Redirecting to referrer with OAuth params:', referrer);
+      // Redirect to the referrer page (AppSettings) with OAuth params intact
+      // so the GmailSection component can process them
+      const redirectUrl = `${referrer}?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`;
+      window.location.href = redirectUrl;
     }
   }, []);
 
@@ -170,6 +190,7 @@ const App = () => {
                       <Route path="templates" element={<AppTemplates />} />
                       <Route path="contacts" element={<AppContacts />} />
                       <Route path="campaigns" element={<AppCampaigns />} />
+                      <Route path="campaigns/:campaignId/analytics" element={<AppCampaignAnalytics />} />
                       <Route path="api-keys" element={<AppApiKeys />} />
                       <Route path="logs" element={<AppLogs />} />
                       <Route path="settings" element={<AppSettings />} />
