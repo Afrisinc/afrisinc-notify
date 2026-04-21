@@ -20,6 +20,14 @@ export const loginService = async (params: { code: string }) => {
 };
 
 /**
+ * Resend verification email
+ */
+export const resendVerificationEmailService = async (email: string) => {
+  const { data } = await getApiClient().post('/api/auth/resend-verification', { email });
+  return data;
+};
+
+/**
  * Direct email/password login
  */
 export const directLoginService = async (params: LoginSchemaType) => {
