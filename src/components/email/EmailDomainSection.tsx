@@ -34,6 +34,8 @@ export function EmailDomainSection({ appId }: EmailDomainSectionProps) {
   // Local state
   const [step, setStep] = useState<Step>("list");
   const [domain, setDomain] = useState("");
+  const [fromEmail, setFromEmail] = useState("");
+  const [fromName, setFromName] = useState("");
 
   // Determine initial step based on data
   const hasDomainRecords = getDomainRecordsQuery.data?.domain;
@@ -50,10 +52,23 @@ export function EmailDomainSection({ appId }: EmailDomainSectionProps) {
       return;
     }
 
+    if (!fromEmail.trim()) {
+      toast({
+        title: "Error",
+        description: "From email is required",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       await createDomainMutation.mutateAsync({
         appId,
-        payload: { domain: domain.trim() },
+        payload: {
+          domain: domain.trim(),
+          fromEmail: fromEmail.trim(),
+          fromName: fromName.trim() || undefined,
+        },
       });
 
       setStep("dns");
@@ -171,6 +186,30 @@ export function EmailDomainSection({ appId }: EmailDomainSectionProps) {
                 placeholder="mail.example.com"
                 value={domain}
                 onChange={(e) => setDomain(e.target.value)}
+                disabled={createDomainMutation.isPending}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="fromEmail">From Email</Label>
+              <Input
+                id="fromEmail"
+                type="email"
+                placeholder="noreply@mail.example.com"
+                value={fromEmail}
+                onChange={(e) => setFromEmail(e.target.value)}
+                disabled={createDomainMutation.isPending}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="fromName">From Name</Label>
+              <Input
+                id="fromName"
+                type="text"
+                placeholder="e.g. Afrisinc Notify"
+                value={fromName}
+                onChange={(e) => setFromName(e.target.value)}
                 disabled={createDomainMutation.isPending}
               />
             </div>
@@ -310,12 +349,20 @@ export function EmailDomainSection({ appId }: EmailDomainSectionProps) {
           <CardDescription>Your domain is ready to use</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="bg-surface rounded-lg border border-border/60 p-4 space-y-2">
+          <div className="bg-surface rounded-lg border border-border/60 p-4 space-y-3">
             <p className="text-xs font-semibold text-content-secondary uppercase tracking-wide">Active Domain</p>
             <p className="text-2xl font-bold text-content break-all">
               {getDomainRecordsQuery.data.domain}
             </p>
-            <p className="text-sm text-content-secondary">
+            <div className="space-y-1">
+              <p className="text-sm text-content-secondary">
+                <span className="font-semibold text-content">Sender:</span> {getDomainRecordsQuery.data.fromName || "No name set"}
+              </p>
+              <p className="text-sm text-content-secondary font-mono">
+                {getDomainRecordsQuery.data.fromEmail || "No email set"}
+              </p>
+            </div>
+            <p className="text-xs text-content-secondary pt-2">
               All DNS records verified. Emails will be sent from this domain.
             </p>
           </div>
