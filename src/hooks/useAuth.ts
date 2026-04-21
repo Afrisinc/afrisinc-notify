@@ -4,6 +4,7 @@ import {
   registrationService,
   signupService,
   verifyEmailService,
+  resendVerificationEmailService,
   forgotPasswordService,
   resetPasswordService,
   getUserOrganizationsService,
@@ -96,6 +97,15 @@ export function useSignup() {
 export function useVerifyEmail() {
   return useMutation({
     mutationFn: (token: string) => verifyEmailService(token),
+  });
+}
+
+/**
+ * Resend Email Verification mutation
+ */
+export function useResendVerificationEmail() {
+  return useMutation({
+    mutationFn: (email: string) => resendVerificationEmailService(email),
   });
 }
 

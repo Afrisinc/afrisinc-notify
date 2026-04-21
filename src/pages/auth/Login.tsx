@@ -56,17 +56,32 @@ const Login = () => {
 
           window.location.href = destination;
         } else {
+          // If backend returns a non-1000 code but 200 OK (soft error)
+          const msg = res.resp_msg || "Invalid credentials";
+          if (msg.toLowerCase().includes("not verified")) {
+             window.location.href = `/verify-email?email=${encodeURIComponent(payload.email)}`;
+             return;
+          }
           toast({
             title: "Login Failed",
-            description: res.resp_msg || "Invalid credentials",
+            description: msg,
             variant: "destructive",
           });
         }
       },
       onError: (error: any) => {
+        const msg = error.response?.data?.resp_msg || error.message || "Login failed";
+        
+        // Check if the error indicates unverified email
+        if (msg.toLowerCase().includes("not verified")) {
+          // Redirect to verify-email without storing tokens
+          window.location.href = `/verify-email?email=${encodeURIComponent(payload.email)}`;
+          return;
+        }
+
         toast({
           title: "Login Failed",
-          description: error.response?.data?.resp_msg || error.message || "Login failed",
+          description: msg,
           variant: "destructive",
         });
       },

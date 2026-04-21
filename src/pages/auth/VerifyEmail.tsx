@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, XCircle, Loader2, Mail } from "lucide-react";
-import { useVerifyEmail } from "@/hooks/useAuth";
+import { useVerifyEmail, useResendVerificationEmail } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 import Logo from "@/components/Logo";
 import BackgroundDecorator from "@/components/auth/BackgroundDecorator";
 import AuthCard from "@/components/auth/AuthCard";
@@ -15,8 +16,11 @@ const VerifyEmail = () => {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
   const { mutate } = useVerifyEmail();
+  const { mutate: resendMutate, isPending: isResending } = useResendVerificationEmail();
+  const { toast } = useToast();
 
   const token = searchParams.get("token");
+  const emailParam = searchParams.get("email");
 
   useEffect(() => {
     if (!token) {
@@ -63,12 +67,29 @@ const VerifyEmail = () => {
                 We sent you a verification link. Click it to activate your account.
               </p>
               <p className="text-secondary text-sm">
-                Didn't receive it? Check your spam folder or{" "}
-                <Link to="/login" className="text-primary hover:underline">
-                  sign in again
-                </Link>{" "}
-                to resend.
+                Didn't receive it? Check your spam folder or request a new one.      
               </p>
+              <Button 
+                variant="default" 
+                className="w-full" 
+                type="button" 
+                disabled={isResending || !emailParam}
+                onClick={() => {
+                  if (!emailParam) return;
+                  resendMutate(emailParam, {
+                    onSuccess: () => {
+                      toast({ title: "Email sent", description: "A new verification email has been sent." });
+                    },
+                    onError: (error: any) => {
+                      const msg = error.response?.data?.resp_msg || "Failed to resend verification email.";
+                      toast({ title: "Error", description: msg, variant: "destructive" });
+                    }
+                  });
+                }}
+              >
+                {isResending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+                {isResending ? "Sending..." : "Resend Verification Email"}
+              </Button>
             </>
           )}
 
