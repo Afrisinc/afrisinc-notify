@@ -349,6 +349,8 @@ export const verifyDNSService = async (appId: string, email: string, accountId?:
 export interface CreateDomainPayload {
   domain: string;
   selector?: string;
+  fromEmail?: string;
+  fromName?: string;
 }
 
 export interface CustomDomain {
@@ -359,6 +361,8 @@ export interface CustomDomain {
   spfVerified: boolean;
   dkimVerified: boolean;
   dmarcVerified: boolean;
+  fromEmail?: string;
+  fromName?: string;
   dns_records?: Array<{
     type: string;
     name: string;
@@ -368,6 +372,8 @@ export interface CustomDomain {
 
 export interface DomainDNSRecords {
   domain: string;
+  fromEmail?: string;
+  fromName?: string;
   spf?: { name: string; value: string; verified: boolean };
   dkim?: { selector: string; name: string; value: string; verified: boolean };
   dmarc?: { name: string; value: string; verified: boolean };
