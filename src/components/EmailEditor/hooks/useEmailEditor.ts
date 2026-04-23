@@ -161,7 +161,7 @@ export function useEmailEditor({ appId, templateId }: UseEmailEditorOptions): Us
         }
 
         // Extract template data
-        setTemplateName(String(template.name || template.code || template.description || ''));
+        setTemplateName(String(template.name || template.description || template.code || ''));
         
         const content = template.content as Record<string, unknown> | undefined;
         const emailContent = content?.email as Record<string, unknown> | undefined;

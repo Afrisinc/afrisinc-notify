@@ -5,18 +5,23 @@
  * Works standalone without requiring app context
  */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import EmailEditor from '@/components/EmailEditor/EmailEditor';
 import { useAppContext } from '@/contexts/AppContext';
 import { useOrg } from '@/contexts/OrgContext';
 import { getAppService } from '@/services/apps';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { DashboardSidebar } from '@/components/DashboardSidebar';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { useAuth } from '@/contexts/AuthContext';
 
 const EditorPage = () => {
   const { appId, templateId } = useParams<{ appId: string; templateId: string }>();
   const navigate = useNavigate();
   const { selectedApp, setSelectedApp } = useAppContext();
   const { currentOrg, allOrgs, setCurrentOrg } = useOrg();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -132,11 +137,35 @@ const EditorPage = () => {
   }
 
   return (
-    <EmailEditor
-      appId={selectedApp.id}
-      templateId={templateId}
-      onCancel={() => navigate(`/dashboard/apps/${selectedApp.id}/templates`)}
-    />
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        <DashboardSidebar />
+        <div className="flex-1 flex flex-col">
+          <header className="h-14 flex items-center border-b border-border px-4 gap-4 bg-dashboard backdrop-blur-sm sticky top-0 z-40">
+            <SidebarTrigger />
+            <div className="flex-1" />
+            <ThemeToggle />
+            {user && (
+              <div className="flex items-center gap-2">
+                <div className="h-7 w-7 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-semibold shrink-0">
+                  {(user.firstName?.[0] ?? user.email[0]).toUpperCase()}
+                </div>
+                <span className="text-sm text-content-secondary hidden sm:block">
+                  {user.firstName ? `${user.firstName} ${user.lastName ?? ""}`.trim() : user.email}
+                </span>
+              </div>
+            )}
+          </header>
+          <main className="flex-1 overflow-hidden bg-background">
+            <EmailEditor
+              appId={selectedApp.id}
+              templateId={templateId}
+              onCancel={() => navigate(`/dashboard/apps/${selectedApp.id}/templates`)}
+            />
+          </main>
+        </div>
+      </div>
+    </SidebarProvider>
   );
 };
 
