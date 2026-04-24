@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-import { InputLabel, Stack } from '@mui/material';
+import { InputLabel, Stack } from "@mui/material";
 
-import RawSliderInput from './raw/RawSliderInput';
+import RawSliderInput from "./raw/RawSliderInput";
 
 type SliderInputProps = {
   label: string;
@@ -18,7 +18,12 @@ type SliderInputProps = {
   onChange: (v: number) => void;
 };
 
-export default function SliderInput({ label, defaultValue, onChange, ...props }: SliderInputProps) {
+export default function SliderInput({
+  label,
+  defaultValue,
+  onChange,
+  ...props
+}: SliderInputProps) {
   const [value, setValue] = useState(defaultValue);
   return (
     <Stack spacing={1} alignItems="flex-start">

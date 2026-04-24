@@ -1,7 +1,11 @@
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
 import { Braces, Plus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -18,7 +22,12 @@ interface VariableInserterProps {
   className?: string;
 }
 
-export function VariableInserter({ variables, onInsert, onVariablesChange, className }: VariableInserterProps) {
+export function VariableInserter({
+  variables,
+  onInsert,
+  onVariablesChange,
+  className,
+}: VariableInserterProps) {
   const [open, setOpen] = useState(false);
   const [newVarName, setNewVarName] = useState("");
   const [newVarExample, setNewVarExample] = useState("");
@@ -33,7 +42,10 @@ export function VariableInserter({ variables, onInsert, onVariablesChange, class
     if (!name) return;
     if (variables.some((v) => v.name === name)) return;
 
-    onVariablesChange([...variables, { name, example: newVarExample.trim() || undefined }]);
+    onVariablesChange([
+      ...variables,
+      { name, example: newVarExample.trim() || undefined },
+    ]);
     setNewVarName("");
     setNewVarExample("");
   };
@@ -56,15 +68,26 @@ export function VariableInserter({ variables, onInsert, onVariablesChange, class
           Insert Variable
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="start" className="w-72 p-0 rounded-xl" sideOffset={4}>
+      <PopoverContent
+        align="start"
+        className="w-72 p-0 rounded-xl"
+        sideOffset={4}
+      >
         <div className="p-3 border-b border-border">
           <p className="text-xs font-semibold text-foreground">Variables</p>
-          <p className="text-[11px] text-muted-foreground mt-0.5">Click to insert <code className="font-mono bg-muted px-1 rounded">{"{{variable}}"}</code></p>
+          <p className="text-[11px] text-muted-foreground mt-0.5">
+            Click to insert{" "}
+            <code className="font-mono bg-muted px-1 rounded">
+              {"{{variable}}"}
+            </code>
+          </p>
         </div>
 
         <div className="p-2 max-h-48 overflow-y-auto">
           {variables.length === 0 ? (
-            <p className="text-xs text-muted-foreground text-center py-3">No variables yet. Add one below.</p>
+            <p className="text-xs text-muted-foreground text-center py-3">
+              No variables yet. Add one below.
+            </p>
           ) : (
             <div className="space-y-1">
               {variables.map((v) => (
@@ -77,7 +100,9 @@ export function VariableInserter({ variables, onInsert, onVariablesChange, class
                   <div className="min-w-0">
                     <code className="text-xs font-mono text-primary font-semibold">{`{{${v.name}}}`}</code>
                     {v.example && (
-                      <p className="text-[10px] text-muted-foreground truncate mt-0.5">e.g. {v.example}</p>
+                      <p className="text-[10px] text-muted-foreground truncate mt-0.5">
+                        e.g. {v.example}
+                      </p>
                     )}
                   </div>
                   <button
@@ -94,7 +119,9 @@ export function VariableInserter({ variables, onInsert, onVariablesChange, class
         </div>
 
         <div className="p-3 border-t border-border space-y-2">
-          <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Add new variable</p>
+          <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+            Add new variable
+          </p>
           <div className="flex gap-1.5">
             <Input
               value={newVarName}
@@ -135,7 +162,7 @@ export function insertVariableAtCursor(
   ref: React.RefObject<HTMLTextAreaElement | HTMLInputElement>,
   variableName: string,
   currentValue: string,
-  onChange: (value: string) => void
+  onChange: (value: string) => void,
 ) {
   const el = ref.current;
   if (!el) {

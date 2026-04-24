@@ -1,24 +1,24 @@
-import { TEditorConfiguration } from '../../documents/editor/core';
+import { TEditorConfiguration } from "../../documents/editor/core";
 
 const ONE_TIME_PASSCODE: TEditorConfiguration = {
   root: {
-    type: 'EmailLayout',
+    type: "EmailLayout",
     data: {
-      backdropColor: '#000000',
-      canvasColor: '#000000',
-      textColor: '#FFFFFF',
-      fontFamily: 'BOOK_SERIF',
+      backdropColor: "#000000",
+      canvasColor: "#000000",
+      textColor: "#FFFFFF",
+      fontFamily: "BOOK_SERIF",
       childrenIds: [
-        'block_ChPX66qUhF46uynDE8AY11',
-        'block_CkNrtQgkqPt2YWLv1hr5eJ',
-        'block_BFLBa3q5y8kax9KngyXP65',
-        'block_4T7sDFb4rqbSyWjLGJKmov',
-        'block_Rvc8ZfTjfhXjpphHquJKvP',
+        "block_ChPX66qUhF46uynDE8AY11",
+        "block_CkNrtQgkqPt2YWLv1hr5eJ",
+        "block_BFLBa3q5y8kax9KngyXP65",
+        "block_4T7sDFb4rqbSyWjLGJKmov",
+        "block_Rvc8ZfTjfhXjpphHquJKvP",
       ],
     },
   },
   block_ChPX66qUhF46uynDE8AY11: {
-    type: 'Image',
+    type: "Image",
     data: {
       style: {
         backgroundColor: null,
@@ -28,25 +28,25 @@ const ONE_TIME_PASSCODE: TEditorConfiguration = {
           left: 24,
           right: 24,
         },
-        textAlign: 'center',
+        textAlign: "center",
       },
       props: {
         height: 24,
-        url: 'https://d1iiu589g39o6c.cloudfront.net/live/platforms/platform_A9wwKSL6EV6orh6f/images/wptemplateimage_jc7ZfPvdHJ6rtH1W/&.png',
-        contentAlignment: 'middle',
+        url: "https://d1iiu589g39o6c.cloudfront.net/live/platforms/platform_A9wwKSL6EV6orh6f/images/wptemplateimage_jc7ZfPvdHJ6rtH1W/&.png",
+        contentAlignment: "middle",
       },
     },
   },
   block_CkNrtQgkqPt2YWLv1hr5eJ: {
-    type: 'Text',
+    type: "Text",
     data: {
       style: {
-        color: '#ffffff',
+        color: "#ffffff",
         backgroundColor: null,
         fontSize: 16,
         fontFamily: null,
-        fontWeight: 'normal',
-        textAlign: 'center',
+        fontWeight: "normal",
+        textAlign: "center",
         padding: {
           top: 16,
           bottom: 16,
@@ -55,19 +55,19 @@ const ONE_TIME_PASSCODE: TEditorConfiguration = {
         },
       },
       props: {
-        text: 'Here is your one-time passcode:',
+        text: "Here is your one-time passcode:",
       },
     },
   },
   block_BFLBa3q5y8kax9KngyXP65: {
-    type: 'Heading',
+    type: "Heading",
     data: {
       style: {
         color: null,
         backgroundColor: null,
-        fontFamily: 'MONOSPACE',
-        fontWeight: 'bold',
-        textAlign: 'center',
+        fontFamily: "MONOSPACE",
+        fontWeight: "bold",
+        textAlign: "center",
         padding: {
           top: 16,
           bottom: 16,
@@ -76,21 +76,21 @@ const ONE_TIME_PASSCODE: TEditorConfiguration = {
         },
       },
       props: {
-        level: 'h1',
-        text: '0123456',
+        level: "h1",
+        text: "0123456",
       },
     },
   },
   block_4T7sDFb4rqbSyWjLGJKmov: {
-    type: 'Text',
+    type: "Text",
     data: {
       style: {
-        color: '#868686',
+        color: "#868686",
         backgroundColor: null,
         fontSize: 16,
         fontFamily: null,
-        fontWeight: 'normal',
-        textAlign: 'center',
+        fontWeight: "normal",
+        textAlign: "center",
         padding: {
           top: 16,
           bottom: 16,
@@ -99,20 +99,20 @@ const ONE_TIME_PASSCODE: TEditorConfiguration = {
         },
       },
       props: {
-        text: 'This code will expire in 30 minutes.',
+        text: "This code will expire in 30 minutes.",
       },
     },
   },
   block_Rvc8ZfTjfhXjpphHquJKvP: {
-    type: 'Text',
+    type: "Text",
     data: {
       style: {
-        color: '#868686',
+        color: "#868686",
         backgroundColor: null,
         fontSize: 14,
         fontFamily: null,
-        fontWeight: 'normal',
-        textAlign: 'center',
+        fontWeight: "normal",
+        textAlign: "center",
         padding: {
           top: 16,
           bottom: 16,
@@ -121,7 +121,7 @@ const ONE_TIME_PASSCODE: TEditorConfiguration = {
         },
       },
       props: {
-        text: 'Problems? Just reply to this email.',
+        text: "Problems? Just reply to this email.",
       },
     },
   },

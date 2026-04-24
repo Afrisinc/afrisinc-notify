@@ -1,31 +1,35 @@
-import React from 'react';
+import React from "react";
 
-import { useCurrentBlockId } from '../../editor/EditorBlock';
-import { setDocument, setSelectedBlockId, useDocument } from '../../editor/EditorContext';
-import EditorChildrenIds from '../helpers/EditorChildrenIds';
+import { useCurrentBlockId } from "../../editor/EditorBlock";
+import {
+  setDocument,
+  setSelectedBlockId,
+  useDocument,
+} from "../../editor/EditorContext";
+import EditorChildrenIds from "../helpers/EditorChildrenIds";
 
-import { EmailLayoutProps } from './EmailLayoutPropsSchema';
+import { EmailLayoutProps } from "./EmailLayoutPropsSchema";
 
-function getFontFamily(fontFamily: EmailLayoutProps['fontFamily']) {
-  const f = fontFamily ?? 'MODERN_SANS';
+function getFontFamily(fontFamily: EmailLayoutProps["fontFamily"]) {
+  const f = fontFamily ?? "MODERN_SANS";
   switch (f) {
-    case 'MODERN_SANS':
+    case "MODERN_SANS":
       return '"Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial, sans-serif';
-    case 'BOOK_SANS':
+    case "BOOK_SANS":
       return 'Optima, Candara, "Noto Sans", source-sans-pro, sans-serif';
-    case 'ORGANIC_SANS':
+    case "ORGANIC_SANS":
       return 'Seravek, "Gill Sans Nova", Ubuntu, Calibri, "DejaVu Sans", source-sans-pro, sans-serif';
-    case 'GEOMETRIC_SANS':
+    case "GEOMETRIC_SANS":
       return 'Avenir, "Avenir Next LT Pro", Montserrat, Corbel, "URW Gothic", source-sans-pro, sans-serif';
-    case 'HEAVY_SANS':
+    case "HEAVY_SANS":
       return 'Bahnschrift, "DIN Alternate", "Franklin Gothic Medium", "Nimbus Sans Narrow", sans-serif-condensed, sans-serif';
-    case 'ROUNDED_SANS':
+    case "ROUNDED_SANS":
       return 'ui-rounded, "Hiragino Maru Gothic ProN", Quicksand, Comfortaa, Manjari, "Arial Rounded MT Bold", Calibri, source-sans-pro, sans-serif';
-    case 'MODERN_SERIF':
+    case "MODERN_SERIF":
       return 'Charter, "Bitstream Charter", "Sitka Text", Cambria, serif';
-    case 'BOOK_SERIF':
+    case "BOOK_SERIF":
       return '"Iowan Old Style", "Palatino Linotype", "URW Palladio L", P052, serif';
-    case 'MONOSPACE':
+    case "MONOSPACE":
       return '"Nimbus Mono PS", "Courier New", "Cutive Mono", monospace';
   }
 }
@@ -41,26 +45,26 @@ export default function EmailLayoutEditor(props: EmailLayoutProps) {
         setSelectedBlockId(null);
       }}
       style={{
-        backgroundColor: props.backdropColor ?? '#F5F5F5',
-        color: props.textColor ?? '#262626',
+        backgroundColor: props.backdropColor ?? "#F5F5F5",
+        color: props.textColor ?? "#262626",
         fontFamily: getFontFamily(props.fontFamily),
-        fontSize: '16px',
-        fontWeight: '400',
-        letterSpacing: '0.15008px',
-        lineHeight: '1.5',
-        margin: '0',
-        padding: '32px 0',
-        width: '100%',
-        minHeight: '100%',
+        fontSize: "16px",
+        fontWeight: "400",
+        letterSpacing: "0.15008px",
+        lineHeight: "1.5",
+        margin: "0",
+        padding: "32px 0",
+        width: "100%",
+        minHeight: "100%",
       }}
     >
       <table
         align="center"
         width="100%"
         style={{
-          margin: '0 auto',
-          maxWidth: '600px',
-          backgroundColor: props.canvasColor ?? '#FFFFFF',
+          margin: "0 auto",
+          maxWidth: "600px",
+          backgroundColor: props.canvasColor ?? "#FFFFFF",
           borderRadius: props.borderRadius ?? undefined,
           border: (() => {
             const v = props.borderColor;
@@ -76,7 +80,7 @@ export default function EmailLayoutEditor(props: EmailLayoutProps) {
         border={0}
       >
         <tbody>
-          <tr style={{ width: '100%' }}>
+          <tr style={{ width: "100%" }}>
             <td>
               <EditorChildrenIds
                 childrenIds={childrenIds}
@@ -84,7 +88,7 @@ export default function EmailLayoutEditor(props: EmailLayoutProps) {
                   setDocument({
                     [blockId]: block,
                     [currentBlockId]: {
-                      type: 'EmailLayout',
+                      type: "EmailLayout",
                       data: {
                         ...document[currentBlockId].data,
                         childrenIds: childrenIds,

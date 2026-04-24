@@ -1,7 +1,24 @@
-import { Mail, MessageSquare, Bell, Monitor, MessageCircle } from "lucide-react";
+import {
+  Mail,
+  MessageSquare,
+  Bell,
+  Monitor,
+  MessageCircle,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export type Channel = "EMAIL" | "SMS" | "PUSH" | "IN_APP" | "WHATSAPP" | "email" | "sms" | "push" | "in-app" | "in_app" | "whatsapp";
+export type Channel =
+  | "EMAIL"
+  | "SMS"
+  | "PUSH"
+  | "IN_APP"
+  | "WHATSAPP"
+  | "email"
+  | "sms"
+  | "push"
+  | "in-app"
+  | "in_app"
+  | "whatsapp";
 
 interface ChannelConfig {
   label: string;
@@ -68,22 +85,47 @@ function normalize(channel: string): string {
 }
 
 /** Large icon box — used inside cards */
-export function ChannelIconBox({ channel, className }: { channel: Channel; className?: string }) {
+export function ChannelIconBox({
+  channel,
+  className,
+}: {
+  channel: Channel;
+  className?: string;
+}) {
   const cfg = CONFIG[normalize(channel as string)] ?? CONFIG.email;
   const { Icon, iconBg, iconColor } = cfg;
   return (
-    <div className={cn("flex items-center justify-center rounded-xl border border-current/10", iconBg, className)}>
+    <div
+      className={cn(
+        "flex items-center justify-center rounded-xl border border-current/10",
+        iconBg,
+        className,
+      )}
+    >
       <Icon className={cn("h-4 w-4", iconColor)} />
     </div>
   );
 }
 
 /** Compact pill badge — used in lists and cards */
-export function ChannelBadge({ channel, className }: { channel: Channel; className?: string }) {
+export function ChannelBadge({
+  channel,
+  className,
+}: {
+  channel: Channel;
+  className?: string;
+}) {
   const cfg = CONFIG[normalize(channel as string)] ?? CONFIG.email;
   const { Icon, pillBg, pillText, label } = cfg;
   return (
-    <span className={cn("inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold tracking-wide", pillBg, pillText, className)}>
+    <span
+      className={cn(
+        "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold tracking-wide",
+        pillBg,
+        pillText,
+        className,
+      )}
+    >
       <Icon className="h-3 w-3 shrink-0" />
       {label}
     </span>
@@ -91,10 +133,21 @@ export function ChannelBadge({ channel, className }: { channel: Channel; classNa
 }
 
 /** Dot + label — used in compact rows */
-export function ChannelDot({ channel, className }: { channel: Channel; className?: string }) {
+export function ChannelDot({
+  channel,
+  className,
+}: {
+  channel: Channel;
+  className?: string;
+}) {
   const cfg = CONFIG[normalize(channel as string)] ?? CONFIG.email;
   return (
-    <span className={cn("inline-flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground", className)}>
+    <span
+      className={cn(
+        "inline-flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground",
+        className,
+      )}
+    >
       <span className={cn("h-1.5 w-1.5 rounded-full shrink-0", cfg.dot)} />
       {cfg.label}
     </span>

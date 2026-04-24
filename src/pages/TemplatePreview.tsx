@@ -17,9 +17,11 @@ export default function TemplatePreview() {
   const [showCodeCopied, setShowCodeCopied] = useState(false);
 
   // Support both slug and ID-based routing
-  const { data: template, isLoading, error } = id
-    ? useTemplateById(id)
-    : useTemplate(slug);
+  const {
+    data: template,
+    isLoading,
+    error,
+  } = id ? useTemplateById(id) : useTemplate(slug);
 
   if (isLoading) {
     return (
@@ -39,7 +41,9 @@ export default function TemplatePreview() {
             {error ? "Failed to load template" : "Template not found"}
           </h1>
           <p className="text-content-secondary mb-6">
-            {error ? "Please try again or go back to the gallery." : "The template you're looking for doesn't exist."}
+            {error
+              ? "Please try again or go back to the gallery."
+              : "The template you're looking for doesn't exist."}
           </p>
           <Button asChild>
             <a href="/templates">Back to Gallery</a>
@@ -95,7 +99,7 @@ export default function TemplatePreview() {
       window.location.href = `/signup?template=${template.slug}`;
     } else if (!selectedApp) {
       // User is logged in but no app selected - redirect to select app first
-      navigate('/dashboard/apps');
+      navigate("/dashboard/apps");
     } else {
       // Navigate to dedicated email editor with appId and templateId
       navigate(`/editor/${selectedApp.id}/${template.id}`);
@@ -135,7 +139,9 @@ export default function TemplatePreview() {
             </div>
             <div className="bg-card border border-border rounded-lg p-4">
               <p className="text-xs text-content-secondary mb-1">Category</p>
-              <p className="heading-label">{categoryLabels[template.category]}</p>
+              <p className="heading-label">
+                {categoryLabels[template.category]}
+              </p>
             </div>
             <div className="bg-card border border-border rounded-lg p-4">
               <p className="text-xs text-content-secondary mb-1">Author</p>
@@ -143,7 +149,9 @@ export default function TemplatePreview() {
             </div>
             <div className="bg-card border border-border rounded-lg p-4">
               <p className="text-xs text-content-secondary mb-1">Price</p>
-              <p className="heading-label text-success">{template.isFree ? "Free" : "Paid"}</p>
+              <p className="heading-label text-success">
+                {template.isFree ? "Free" : "Paid"}
+              </p>
             </div>
           </motion.div>
 
@@ -159,7 +167,9 @@ export default function TemplatePreview() {
               <div className="bg-card border border-border rounded-lg overflow-hidden">
                 {template.subject && (
                   <div className="bg-muted/30 border-b border-border px-6 py-4">
-                    <p className="text-xs text-content-secondary mb-1">Subject:</p>
+                    <p className="text-xs text-content-secondary mb-1">
+                      Subject:
+                    </p>
                     <p className="font-mono text-sm">{template.subject}</p>
                   </div>
                 )}
@@ -167,10 +177,14 @@ export default function TemplatePreview() {
                   {template.content.email.html ? (
                     <div
                       className="max-w-xl mx-auto"
-                      dangerouslySetInnerHTML={{ __html: template.content.email.html }}
+                      dangerouslySetInnerHTML={{
+                        __html: template.content.email.html,
+                      }}
                     />
                   ) : (
-                    <p className="text-foreground/70 dark:text-foreground/80">{template.content.email.body || "No content"}</p>
+                    <p className="text-foreground/70 dark:text-foreground/80">
+                      {template.content.email.body || "No content"}
+                    </p>
                   )}
                 </div>
               </div>
@@ -206,25 +220,40 @@ export default function TemplatePreview() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-border">
-                      <th className="text-left font-medium px-6 py-4 text-content-secondary">Variable</th>
+                      <th className="text-left font-medium px-6 py-4 text-content-secondary">
+                        Variable
+                      </th>
                       {template.variables.some((v) => v.type) && (
-                        <th className="text-left font-medium px-6 py-4 text-content-secondary">Type</th>
+                        <th className="text-left font-medium px-6 py-4 text-content-secondary">
+                          Type
+                        </th>
                       )}
                       {template.variables.some((v) => v.example) && (
-                        <th className="text-left font-medium px-6 py-4 text-content-secondary">Example</th>
+                        <th className="text-left font-medium px-6 py-4 text-content-secondary">
+                          Example
+                        </th>
                       )}
-                      <th className="text-left font-medium px-6 py-4 text-content-secondary">Required</th>
+                      <th className="text-left font-medium px-6 py-4 text-content-secondary">
+                        Required
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {template.variables.map((variable) => (
-                      <tr key={variable.name} className="border-b border-border/50 last:border-0">
+                      <tr
+                        key={variable.name}
+                        className="border-b border-border/50 last:border-0"
+                      >
                         <td className="px-6 py-4 font-mono text-primary-500">{`{{${variable.name}}}`}</td>
                         {template.variables.some((v) => v.type) && (
-                          <td className="px-6 py-4 text-content-secondary">{variable.type || "string"}</td>
+                          <td className="px-6 py-4 text-content-secondary">
+                            {variable.type || "string"}
+                          </td>
                         )}
                         {template.variables.some((v) => v.example) && (
-                          <td className="px-6 py-4 font-mono text-xs">{variable.example || "-"}</td>
+                          <td className="px-6 py-4 font-mono text-xs">
+                            {variable.example || "-"}
+                          </td>
                         )}
                         <td className="px-6 py-4">
                           <span

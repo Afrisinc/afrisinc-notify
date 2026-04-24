@@ -1,4 +1,10 @@
-import { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserOrganizations } from "@/hooks/useAuth";
 
@@ -23,7 +29,11 @@ const OrgContext = createContext<OrgContextType | undefined>(undefined);
 
 export function OrgProvider({ children }: { children: ReactNode }) {
   const { user, loading: authLoading } = useAuth();
-  const { data: orgsData, isLoading: orgsLoading, error: orgsError } = useUserOrganizations({
+  const {
+    data: orgsData,
+    isLoading: orgsLoading,
+    error: orgsError,
+  } = useUserOrganizations({
     enabled: !!user && !authLoading,
   });
 
@@ -44,7 +54,8 @@ export function OrgProvider({ children }: { children: ReactNode }) {
   // Update allOrgs and currentOrg when data is fetched
   useEffect(() => {
     // Handle both response formats: direct organizations array or wrapped in data object
-    const organizations = orgsData?.data?.organizations || orgsData?.organizations;
+    const organizations =
+      orgsData?.data?.organizations || orgsData?.organizations;
 
     if (organizations && initialized) {
       setAllOrgs(organizations);

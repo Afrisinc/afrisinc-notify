@@ -25,8 +25,24 @@ export interface MarketplaceTemplate {
   code?: string;
   name?: string;
   description: string;
-  channel: "EMAIL" | "SMS" | "PUSH" | "IN_APP" | "email" | "sms" | "push" | "in-app";
-  category?: "MARKETING" | "TRANSACTIONAL" | "AUTHENTICATION" | "ALERTS" | "authentication" | "transactional" | "marketing" | "alerts";
+  channel:
+    | "EMAIL"
+    | "SMS"
+    | "PUSH"
+    | "IN_APP"
+    | "email"
+    | "sms"
+    | "push"
+    | "in-app";
+  category?:
+    | "MARKETING"
+    | "TRANSACTIONAL"
+    | "AUTHENTICATION"
+    | "ALERTS"
+    | "authentication"
+    | "transactional"
+    | "marketing"
+    | "alerts";
   creator?: MarketplaceCreator | string;
   price?: number;
   currency?: string;
@@ -143,10 +159,15 @@ const normalizeTemplate = (template: any): MarketplaceTemplate => ({
   installs: template.installs ?? 0,
   tags: Array.isArray(template.tags) ? template.tags : [],
   // Explicitly handle previewImage: use it if available and not null, otherwise undefined
-  previewImage: template.previewImage && typeof template.previewImage === 'string' ? template.previewImage : undefined,
+  previewImage:
+    template.previewImage && typeof template.previewImage === "string"
+      ? template.previewImage
+      : undefined,
 });
 
-export const listMarketplaceTemplatesService = async (params?: ListTemplatesParams) => {
+export const listMarketplaceTemplatesService = async (
+  params?: ListTemplatesParams,
+) => {
   const queryParams = new URLSearchParams();
 
   if (params?.search) queryParams.append("search", params.search);
@@ -161,7 +182,7 @@ export const listMarketplaceTemplatesService = async (params?: ListTemplatesPara
   const query = queryParams.toString() ? `?${queryParams.toString()}` : "";
 
   const { data } = await getApiClient().get<any>(
-    `/api/marketplace/templates${query}`
+    `/api/marketplace/templates${query}`,
   );
 
   return {
@@ -178,7 +199,7 @@ export const listMarketplaceTemplatesService = async (params?: ListTemplatesPara
 
 export const getMarketplaceTemplateService = async (templateId: string) => {
   const { data } = await getApiClient().get<any>(
-    `/api/marketplace/templates/${templateId}`
+    `/api/marketplace/templates/${templateId}`,
   );
   return data.data as TemplateDetailResponse;
 };
@@ -189,11 +210,11 @@ export const getMarketplaceTemplateService = async (templateId: string) => {
 
 export const installMarketplaceTemplateService = async (
   templateId: string,
-  payload: InstallTemplatePayload
+  payload: InstallTemplatePayload,
 ) => {
   const { data } = await getApiClient().post<any>(
     `/api/marketplace/templates/${templateId}/install`,
-    payload
+    payload,
   );
   return data.data;
 };
@@ -204,11 +225,11 @@ export const installMarketplaceTemplateService = async (
 
 export const rateMarketplaceTemplateService = async (
   templateId: string,
-  payload: RatingPayload
+  payload: RatingPayload,
 ) => {
   const { data } = await getApiClient().post<any>(
     `/api/marketplace/templates/${templateId}/rate`,
-    payload
+    payload,
   );
   return data.data as RatingResponse;
 };
@@ -219,7 +240,7 @@ export const rateMarketplaceTemplateService = async (
 
 export const getTemplateRatingService = async (templateId: string) => {
   const { data } = await getApiClient().get<any>(
-    `/api/marketplace/templates/${templateId}/my-rating`
+    `/api/marketplace/templates/${templateId}/my-rating`,
   );
   return data.data as RatingResponse;
 };
@@ -229,8 +250,6 @@ export const getTemplateRatingService = async (templateId: string) => {
 // ──────────────────────────────────────────
 
 export const getMarketplaceCategoriesService = async () => {
-  const { data } = await getApiClient().get<any>(
-    `/api/marketplace/categories`
-  );
+  const { data } = await getApiClient().get<any>(`/api/marketplace/categories`);
   return data.data as { categories: MarketplaceCategory[] };
 };

@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-import { MenuItem, TextField } from '@mui/material';
+import { MenuItem, TextField } from "@mui/material";
 
-import { FONT_FAMILIES } from '../../../../../../documents/blocks/helpers/fontFamily';
+import { FONT_FAMILIES } from "../../../../../../documents/blocks/helpers/fontFamily";
 
 const OPTIONS = FONT_FAMILIES.map((option) => (
-  <MenuItem key={option.key} value={option.key} sx={{ fontFamily: option.value }}>
+  <MenuItem
+    key={option.key}
+    value={option.key}
+    sx={{ fontFamily: option.value }}
+  >
     {option.label}
   </MenuItem>
 ));
@@ -15,8 +19,12 @@ type NullableProps = {
   onChange: (value: null | string) => void;
   defaultValue: null | string;
 };
-export function NullableFontFamily({ label, onChange, defaultValue }: NullableProps) {
-  const [value, setValue] = useState(defaultValue ?? 'inherit');
+export function NullableFontFamily({
+  label,
+  onChange,
+  defaultValue,
+}: NullableProps) {
+  const [value, setValue] = useState(defaultValue ?? "inherit");
   return (
     <TextField
       select

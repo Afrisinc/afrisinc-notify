@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -52,44 +52,59 @@
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
 
-  /* Brand Colors */
-  --primary-500: #0293E4;
-  --primary-400: #36A9EA;
-  --primary-300: #66BEEE;
-  --primary-200: #9BD3F6;
-  --primary-100: #CCE9FB;
+    /* Brand Colors */
+    --primary-500: #0293e4;
+    --primary-400: #36a9ea;
+    --primary-300: #66beee;
+    --primary-200: #9bd3f6;
+    --primary-100: #cce9fb;
 
-  /* Fonts */
-  --font-body: "Manrope", sans-serif;
-  --font-heading: "Playfair Display", serif;
+    /* Fonts */
+    --font-body: "Manrope", sans-serif;
+    --font-heading: "Playfair Display", serif;
 
-  /* Font Sizes */
-  --text-xs: 0.75rem;   /* 12px */
-  --text-sm: 0.875rem;  /* 14px */
-  --text-base: 1rem;    /* 16px */
-  --text-md: 1.125rem;  /* 18px */
-  --text-lg: 1.25rem;   /* 20px */
-  --text-xl: 1.563rem;  /* 25px */
-  --text-2xl: 1.953rem; /* 31px */
-  --text-3xl: 2.441rem; /* 39px */
-  --text-4xl: 3.052rem; /* 49px */
+    /* Font Sizes */
+    --text-xs: 0.75rem; /* 12px */
+    --text-sm: 0.875rem; /* 14px */
+    --text-base: 1rem; /* 16px */
+    --text-md: 1.125rem; /* 18px */
+    --text-lg: 1.25rem; /* 20px */
+    --text-xl: 1.563rem; /* 25px */
+    --text-2xl: 1.953rem; /* 31px */
+    --text-3xl: 2.441rem; /* 39px */
+    --text-4xl: 3.052rem; /* 49px */
 
-  /* Line Heights */
-  --leading-tight: 1.2;
-  --leading-normal: 1.5;
-  --leading-relaxed: 1.7;
+    /* Line Heights */
+    --leading-tight: 1.2;
+    --leading-normal: 1.5;
+    --leading-relaxed: 1.7;
 
-  /* Gradients */
-  --gradient-hero: linear-gradient(180deg, hsl(210 20% 98%) 0%, hsl(210 15% 95%) 100%);
-  --gradient-card: linear-gradient(135deg, hsl(210 20% 100%) 0%, hsl(210 15% 98%) 100%);
-  --gradient-primary: linear-gradient(135deg, hsl(187 85% 43%) 0%, hsl(187 70% 50%) 100%);
+    /* Gradients */
+    --gradient-hero: linear-gradient(
+      180deg,
+      hsl(210 20% 98%) 0%,
+      hsl(210 15% 95%) 100%
+    );
+    --gradient-card: linear-gradient(
+      135deg,
+      hsl(210 20% 100%) 0%,
+      hsl(210 15% 98%) 100%
+    );
+    --gradient-primary: linear-gradient(
+      135deg,
+      hsl(187 85% 43%) 0%,
+      hsl(187 70% 50%) 100%
+    );
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  --shadow-primary: 0 8px 16px 0 rgba(2, 147, 228, 0.15);
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md:
+      0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg:
+      0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl:
+      0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --shadow-primary: 0 8px 16px 0 rgba(2, 147, 228, 0.15);
   }
 
   .dark {
@@ -136,9 +151,16 @@
     --warning-foreground: 0 0% 0%;
 
     /* Dark mode gradients */
-    --gradient-hero: linear-gradient(180deg, hsl(224 20% 8%) 0%, hsl(224 20% 5%) 100%);
-    --gradient-card: linear-gradient(135deg, hsl(224 18% 12%) 0%, hsl(224 18% 8%) 100%);
-
+    --gradient-hero: linear-gradient(
+      180deg,
+      hsl(224 20% 8%) 0%,
+      hsl(224 20% 5%) 100%
+    );
+    --gradient-card: linear-gradient(
+      135deg,
+      hsl(224 18% 12%) 0%,
+      hsl(224 18% 8%) 100%
+    );
   }
 }
 
@@ -167,7 +189,6 @@ body {
   border: 1px solid var(--primary-300);
 }
 
-
 /* Buttons */
 .btn {
   font-family: var(--font-body);
@@ -189,7 +210,7 @@ body {
 
 /* Reusable Typography Components */
 @layer components {
- /* Reusable Heading Styles */
+  /* Reusable Heading Styles */
   .heading-hero {
     @apply text-4xl md:text-5xl lg:text-6xl antialiased font-bold text-foreground dark:text-white tracking-tight leading-[1.1];
   }

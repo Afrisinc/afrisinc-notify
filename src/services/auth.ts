@@ -23,7 +23,9 @@ export const loginService = async (params: { code: string }) => {
  * Resend verification email
  */
 export const resendVerificationEmailService = async (email: string) => {
-  const { data } = await getApiClient().post('/api/auth/resend-verification', { email });
+  const { data } = await getApiClient().post("/api/auth/resend-verification", {
+    email,
+  });
   return data;
 };
 
@@ -31,7 +33,7 @@ export const resendVerificationEmailService = async (email: string) => {
  * Direct email/password login
  */
 export const directLoginService = async (params: LoginSchemaType) => {
-  const { data } = await getApiClient().post('/api/auth/login', {
+  const { data } = await getApiClient().post("/api/auth/login", {
     email: params.email,
     password: params.password,
   });
@@ -42,13 +44,13 @@ export const directLoginService = async (params: LoginSchemaType) => {
  * User registration with email/password
  */
 export const registrationService = async (params: RegisterSchemaType) => {
-  const { data } = await getApiClient().post('/api/auth/register', {
+  const { data } = await getApiClient().post("/api/auth/register", {
     email: params.email,
     password: params.password,
     firstName: params.firstName,
     lastName: params.lastName,
     phone: params.phone,
-    location: params.location
+    location: params.location,
   });
   return data;
 };
@@ -57,7 +59,7 @@ export const registrationService = async (params: RegisterSchemaType) => {
  * Multi-step signup with account type and company details
  */
 export const signupService = async (payload: SignupPayload) => {
-  const { data } = await getApiClient().post('/api/auth/register', payload);
+  const { data } = await getApiClient().post("/api/auth/register", payload);
   return data;
 };
 
@@ -65,7 +67,9 @@ export const signupService = async (payload: SignupPayload) => {
  * Request password reset email
  */
 export const forgotPasswordService = async (email: string) => {
-  const { data } = await getApiClient().post('/api/auth/forgot-password', { email });
+  const { data } = await getApiClient().post("/api/auth/forgot-password", {
+    email,
+  });
   return data;
 };
 
@@ -73,9 +77,9 @@ export const forgotPasswordService = async (email: string) => {
  * Confirm password reset with new password
  */
 export const resetPasswordService = async (token: string, password: string) => {
-  const { data } = await getApiClient().post('/api/auth/reset-password', {
+  const { data } = await getApiClient().post("/api/auth/reset-password", {
     token,
-    newPassword: password
+    newPassword: password,
   });
   return data;
 };
@@ -84,7 +88,9 @@ export const resetPasswordService = async (token: string, password: string) => {
  * Verify email with token
  */
 export const verifyEmailService = async (token: string) => {
-  const { data } = await getApiClient().get(`/api/auth/verify-email?token=${encodeURIComponent(token)}`);
+  const { data } = await getApiClient().get(
+    `/api/auth/verify-email?token=${encodeURIComponent(token)}`,
+  );
   return data;
 };
 
@@ -92,7 +98,7 @@ export const verifyEmailService = async (token: string) => {
  * Get user organizations and apps
  */
 export const getUserOrganizationsService = async () => {
-  const { data } = await getApiClient().get('/api/auth/organizations');
+  const { data } = await getApiClient().get("/api/auth/organizations");
   return data;
 };
 
@@ -100,7 +106,7 @@ export const getUserOrganizationsService = async () => {
  * Get user apps
  */
 export const getUserAppsService = async () => {
-  const { data } = await getApiClient().get('/api/auth/apps');
+  const { data } = await getApiClient().get("/api/auth/apps");
   return data;
 };
 
@@ -108,6 +114,6 @@ export const getUserAppsService = async () => {
  * Get user profile
  */
 export const getUserProfileService = async () => {
-  const { data } = await getApiClient().get('/api/auth/profile');
+  const { data } = await getApiClient().get("/api/auth/profile");
   return data;
 };

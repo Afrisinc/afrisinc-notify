@@ -26,7 +26,9 @@ export function ThemeToggle() {
 
     // Apply theme to DOM
     if (newTheme === "system") {
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)",
+      ).matches;
       document.documentElement.classList.toggle("dark", prefersDark);
     } else {
       document.documentElement.classList.toggle("dark", newTheme === "dark");

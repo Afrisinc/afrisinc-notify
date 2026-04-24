@@ -31,7 +31,9 @@ const VerifyEmail = () => {
           setMessage("Your email has been verified successfully.");
         } else {
           setState("error");
-          setMessage(res.resp_msg || "Verification failed. The link may have expired.");
+          setMessage(
+            res.resp_msg || "Verification failed. The link may have expired.",
+          );
         }
       },
       onError: () => {
@@ -46,7 +48,7 @@ const VerifyEmail = () => {
       <BackgroundDecorator />
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8">
-          <Logo/>
+          <Logo />
           <h1 className="heading-subsection">Email Verification</h1>
         </div>
 
@@ -58,7 +60,8 @@ const VerifyEmail = () => {
               </div>
               <h2 className="heading-label">Check your inbox</h2>
               <p className="text-secondary text-sm">
-                We sent you a verification link. Click it to activate your account.
+                We sent you a verification link. Click it to activate your
+                account.
               </p>
               <p className="text-secondary text-sm">
                 Didn't receive it? Check your spam folder or{" "}
@@ -86,7 +89,11 @@ const VerifyEmail = () => {
               </div>
               <h2 className="heading-label">Email verified!</h2>
               <p className="text-secondary text-sm">{message}</p>
-              <Button variant="default" className="w-full mt-2" onClick={() => navigate("/login")}>
+              <Button
+                variant="default"
+                className="w-full mt-2"
+                onClick={() => navigate("/login")}
+              >
                 Sign In
               </Button>
             </>

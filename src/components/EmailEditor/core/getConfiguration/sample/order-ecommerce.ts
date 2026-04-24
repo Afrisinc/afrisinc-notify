@@ -1,39 +1,39 @@
-import { TEditorConfiguration } from '../../documents/editor/core';
+import { TEditorConfiguration } from "../../documents/editor/core";
 
 const ORDER_ECOMMERCE: TEditorConfiguration = {
   root: {
-    type: 'EmailLayout',
+    type: "EmailLayout",
     data: {
-      backdropColor: '#FFFFFF',
-      canvasColor: '#FFFFFF',
-      textColor: '#333333',
-      fontFamily: 'MODERN_SANS',
+      backdropColor: "#FFFFFF",
+      canvasColor: "#FFFFFF",
+      textColor: "#333333",
+      fontFamily: "MODERN_SANS",
       childrenIds: [
-        'block_Ei34o65X5XnD5dexNQgXh8',
-        'block_SLut2hpFsy7U6SmhtLtWNU',
-        'block_RrwLc5YMpHJGE5Xe9fAZVW',
-        'block_FHCeHrN3XNaH7bu6HhjVNT',
-        'block_3vynUg15EevMA6DiLsWJk2',
-        'block_5eQPGdKJ6JQYXCD1MEaHbv',
-        'block_WK3b19BzGE8VNKDwiSZ8s8',
-        'block_Pe2Dm5Cbqq5CcjL5wEdMg4',
-        'block_SizNWJDCcqw9tGH2ComdDX',
-        'block_4Qxv32WQo8pDzPu1d3vixz',
-        'block_LKiZYDTPeJGkRWHForFSDQ',
-        'block_P6XtJj721vPfrhXKzS8uR5',
-        'block_AKTwpjBmtevcfj82z52i8p',
+        "block_Ei34o65X5XnD5dexNQgXh8",
+        "block_SLut2hpFsy7U6SmhtLtWNU",
+        "block_RrwLc5YMpHJGE5Xe9fAZVW",
+        "block_FHCeHrN3XNaH7bu6HhjVNT",
+        "block_3vynUg15EevMA6DiLsWJk2",
+        "block_5eQPGdKJ6JQYXCD1MEaHbv",
+        "block_WK3b19BzGE8VNKDwiSZ8s8",
+        "block_Pe2Dm5Cbqq5CcjL5wEdMg4",
+        "block_SizNWJDCcqw9tGH2ComdDX",
+        "block_4Qxv32WQo8pDzPu1d3vixz",
+        "block_LKiZYDTPeJGkRWHForFSDQ",
+        "block_P6XtJj721vPfrhXKzS8uR5",
+        "block_AKTwpjBmtevcfj82z52i8p",
       ],
     },
   },
   block_PHe2XSbV4RvD76p21F3VdN: {
-    type: 'Heading',
+    type: "Heading",
     data: {
       style: {
         color: null,
         backgroundColor: null,
         fontFamily: null,
-        fontWeight: 'normal',
-        textAlign: 'left',
+        fontWeight: "normal",
+        textAlign: "left",
         padding: {
           top: 0,
           bottom: 0,
@@ -42,13 +42,13 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        level: 'h2',
-        text: 'Unbranded Supply',
+        level: "h2",
+        text: "Unbranded Supply",
       },
     },
   },
   block_DeTzPQDerYjBEMkt6TuD41: {
-    type: 'Container',
+    type: "Container",
     data: {
       style: {
         backgroundColor: null,
@@ -62,20 +62,20 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        childrenIds: ['block_PHe2XSbV4RvD76p21F3VdN'],
+        childrenIds: ["block_PHe2XSbV4RvD76p21F3VdN"],
       },
     },
   },
   block_TPxZn2Fjxc7MwgXAEybxkV: {
-    type: 'Text',
+    type: "Text",
     data: {
       style: {
-        color: '#808080',
+        color: "#808080",
         backgroundColor: null,
         fontSize: 14,
         fontFamily: null,
-        fontWeight: 'normal',
-        textAlign: 'right',
+        fontWeight: "normal",
+        textAlign: "right",
         padding: {
           top: 0,
           bottom: 0,
@@ -84,12 +84,12 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        text: '#103571871',
+        text: "#103571871",
       },
     },
   },
   block_5fuNN9F4uZRTGa4Hy5F4Nd: {
-    type: 'Container',
+    type: "Container",
     data: {
       style: {
         backgroundColor: null,
@@ -103,12 +103,12 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        childrenIds: ['block_TPxZn2Fjxc7MwgXAEybxkV'],
+        childrenIds: ["block_TPxZn2Fjxc7MwgXAEybxkV"],
       },
     },
   },
   block_Ei34o65X5XnD5dexNQgXh8: {
-    type: 'ColumnsContainer',
+    type: "ColumnsContainer",
     data: {
       style: {
         backgroundColor: null,
@@ -123,10 +123,10 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         columnsCount: 2,
         columns: [
           {
-            childrenIds: ['block_DeTzPQDerYjBEMkt6TuD41'],
+            childrenIds: ["block_DeTzPQDerYjBEMkt6TuD41"],
           },
           {
-            childrenIds: ['block_5fuNN9F4uZRTGa4Hy5F4Nd'],
+            childrenIds: ["block_5fuNN9F4uZRTGa4Hy5F4Nd"],
           },
           {
             childrenIds: [],
@@ -136,14 +136,14 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
     },
   },
   block_SLut2hpFsy7U6SmhtLtWNU: {
-    type: 'Heading',
+    type: "Heading",
     data: {
       style: {
         color: null,
         backgroundColor: null,
         fontFamily: null,
-        fontWeight: 'normal',
-        textAlign: 'left',
+        fontWeight: "normal",
+        textAlign: "left",
         padding: {
           top: 16,
           bottom: 0,
@@ -152,21 +152,21 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        level: 'h3',
-        text: 'Thank you for your purchase!',
+        level: "h3",
+        text: "Thank you for your purchase!",
       },
     },
   },
   block_RrwLc5YMpHJGE5Xe9fAZVW: {
-    type: 'Text',
+    type: "Text",
     data: {
       style: {
-        color: '#404040',
+        color: "#404040",
         backgroundColor: null,
         fontSize: 16,
         fontFamily: null,
-        fontWeight: 'normal',
-        textAlign: 'left',
+        fontWeight: "normal",
+        textAlign: "left",
         padding: {
           top: 16,
           bottom: 16,
@@ -175,19 +175,19 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        text: 'Hi Jordan,\n\nWe are preparing your package. Your tracking number will be generated once the package is ready to ship.',
+        text: "Hi Jordan,\n\nWe are preparing your package. Your tracking number will be generated once the package is ready to ship.",
       },
     },
   },
   block_FHCeHrN3XNaH7bu6HhjVNT: {
-    type: 'Button',
+    type: "Button",
     data: {
       style: {
         backgroundColor: null,
         fontSize: 16,
         fontFamily: null,
-        fontWeight: 'normal',
-        textAlign: 'left',
+        fontWeight: "normal",
+        textAlign: "left",
         padding: {
           top: 16,
           bottom: 40,
@@ -196,25 +196,25 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        buttonBackgroundColor: '#5696E5',
-        buttonStyle: 'rounded',
-        buttonTextColor: '#FFFFFF',
+        buttonBackgroundColor: "#5696E5",
+        buttonStyle: "rounded",
+        buttonTextColor: "#FFFFFF",
         fullWidth: false,
-        size: 'large',
-        text: 'View your order',
-        url: 'https://example.usewaypoint.com/orders/103571871',
+        size: "large",
+        text: "View your order",
+        url: "https://example.usewaypoint.com/orders/103571871",
       },
     },
   },
   block_3vynUg15EevMA6DiLsWJk2: {
-    type: 'Heading',
+    type: "Heading",
     data: {
       style: {
         color: null,
         backgroundColor: null,
         fontFamily: null,
-        fontWeight: 'normal',
-        textAlign: 'left',
+        fontWeight: "normal",
+        textAlign: "left",
         padding: {
           top: 16,
           bottom: 0,
@@ -223,13 +223,13 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        level: 'h3',
-        text: 'Order summary',
+        level: "h3",
+        text: "Order summary",
       },
     },
   },
   block_Dvs2GYcF6SzfCYYNwfv1oM: {
-    type: 'Image',
+    type: "Image",
     data: {
       style: {
         backgroundColor: null,
@@ -239,18 +239,18 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
           left: 0,
           right: 0,
         },
-        textAlign: 'left',
+        textAlign: "left",
       },
       props: {
-        url: 'https://d1iiu589g39o6c.cloudfront.net/live/platforms/platform_A9wwKSL6EV6orh6f/images/wptemplateimage_FBfTeYhbdXtqYpCA/kiran-ck-6rXpQzfCYlw-unsplash.jpg',
-        alt: '',
+        url: "https://d1iiu589g39o6c.cloudfront.net/live/platforms/platform_A9wwKSL6EV6orh6f/images/wptemplateimage_FBfTeYhbdXtqYpCA/kiran-ck-6rXpQzfCYlw-unsplash.jpg",
+        alt: "",
         linkHref: null,
-        contentAlignment: 'middle',
+        contentAlignment: "middle",
       },
     },
   },
   block_KnMb2mQSf7nz8HXx6jyDUV: {
-    type: 'Container',
+    type: "Container",
     data: {
       style: {
         backgroundColor: null,
@@ -264,12 +264,12 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        childrenIds: ['block_Dvs2GYcF6SzfCYYNwfv1oM'],
+        childrenIds: ["block_Dvs2GYcF6SzfCYYNwfv1oM"],
       },
     },
   },
   block_4sAeV4cLVKV8y4QFGV3Gf7: {
-    type: 'Container',
+    type: "Container",
     data: {
       style: {
         backgroundColor: null,
@@ -283,20 +283,20 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        childrenIds: ['block_KnMb2mQSf7nz8HXx6jyDUV'],
+        childrenIds: ["block_KnMb2mQSf7nz8HXx6jyDUV"],
       },
     },
   },
   block_TBZZDHvoKHcW3j2nwQgmhC: {
-    type: 'Text',
+    type: "Text",
     data: {
       style: {
         color: null,
         backgroundColor: null,
         fontSize: 16,
         fontFamily: null,
-        fontWeight: 'bold',
-        textAlign: 'left',
+        fontWeight: "bold",
+        textAlign: "left",
         padding: {
           top: 0,
           bottom: 4,
@@ -305,20 +305,20 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        text: 'Unbranded Pen x 5',
+        text: "Unbranded Pen x 5",
       },
     },
   },
   block_KqpmZUcZajsnFMbTMhizZs: {
-    type: 'Text',
+    type: "Text",
     data: {
       style: {
-        color: '#808080',
+        color: "#808080",
         backgroundColor: null,
         fontSize: 14,
         fontFamily: null,
-        fontWeight: 'normal',
-        textAlign: 'left',
+        fontWeight: "normal",
+        textAlign: "left",
         padding: {
           top: 0,
           bottom: 0,
@@ -327,12 +327,12 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        text: 'Black / Black ink',
+        text: "Black / Black ink",
       },
     },
   },
   block_92JgagxxVxzyfnbvj5iUUJ: {
-    type: 'Container',
+    type: "Container",
     data: {
       style: {
         backgroundColor: null,
@@ -351,15 +351,15 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
     },
   },
   block_9bNBgfiJJyh65pfsy1fu7e: {
-    type: 'Text',
+    type: "Text",
     data: {
       style: {
-        color: '#808080',
+        color: "#808080",
         backgroundColor: null,
         fontSize: 12,
         fontFamily: null,
-        fontWeight: 'normal',
-        textAlign: 'left',
+        fontWeight: "normal",
+        textAlign: "left",
         padding: {
           top: 0,
           bottom: 0,
@@ -368,12 +368,12 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        text: '($5.00)',
+        text: "($5.00)",
       },
     },
   },
   block_7JwR5SHM2Bfjihamh45tRL: {
-    type: 'Container',
+    type: "Container",
     data: {
       style: {
         backgroundColor: null,
@@ -392,7 +392,7 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
     },
   },
   block_GQ77o7MDMwj48B5nocEJNq: {
-    type: 'Container',
+    type: "Container",
     data: {
       style: {
         backgroundColor: null,
@@ -406,20 +406,23 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        childrenIds: ['block_TBZZDHvoKHcW3j2nwQgmhC', 'block_KqpmZUcZajsnFMbTMhizZs'],
+        childrenIds: [
+          "block_TBZZDHvoKHcW3j2nwQgmhC",
+          "block_KqpmZUcZajsnFMbTMhizZs",
+        ],
       },
     },
   },
   block_6VvTYskm3BULZZEfYCkjwN: {
-    type: 'Text',
+    type: "Text",
     data: {
       style: {
         color: null,
         backgroundColor: null,
         fontSize: 16,
         fontFamily: null,
-        fontWeight: 'bold',
-        textAlign: 'right',
+        fontWeight: "bold",
+        textAlign: "right",
         padding: {
           top: 0,
           bottom: 0,
@@ -428,12 +431,12 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        text: '$25.00',
+        text: "$25.00",
       },
     },
   },
   block_V34TMZ9yg6t4xKMYfyD2Rk: {
-    type: 'Container',
+    type: "Container",
     data: {
       style: {
         backgroundColor: null,
@@ -447,12 +450,12 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        childrenIds: ['block_6VvTYskm3BULZZEfYCkjwN'],
+        childrenIds: ["block_6VvTYskm3BULZZEfYCkjwN"],
       },
     },
   },
   block_YBtUndjQaRuLFpEkgvjagk: {
-    type: 'ColumnsContainer',
+    type: "ColumnsContainer",
     data: {
       style: {
         backgroundColor: null,
@@ -469,20 +472,20 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         columnsGap: 16,
         columns: [
           {
-            childrenIds: ['block_4sAeV4cLVKV8y4QFGV3Gf7'],
+            childrenIds: ["block_4sAeV4cLVKV8y4QFGV3Gf7"],
           },
           {
-            childrenIds: ['block_GQ77o7MDMwj48B5nocEJNq'],
+            childrenIds: ["block_GQ77o7MDMwj48B5nocEJNq"],
           },
           {
-            childrenIds: ['block_V34TMZ9yg6t4xKMYfyD2Rk'],
+            childrenIds: ["block_V34TMZ9yg6t4xKMYfyD2Rk"],
           },
         ],
       },
     },
   },
   block_XykBAUxf8awiR2CxBfNLZN: {
-    type: 'Container',
+    type: "Container",
     data: {
       style: {
         backgroundColor: null,
@@ -496,12 +499,12 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        childrenIds: ['block_YBtUndjQaRuLFpEkgvjagk'],
+        childrenIds: ["block_YBtUndjQaRuLFpEkgvjagk"],
       },
     },
   },
   block_9AvGGkcg4Rq93DmxXjXwEP: {
-    type: 'Divider',
+    type: "Divider",
     data: {
       style: {
         backgroundColor: null,
@@ -514,12 +517,12 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
       },
       props: {
         lineHeight: 1,
-        lineColor: '#EEEEEE',
+        lineColor: "#EEEEEE",
       },
     },
   },
   block_5eQPGdKJ6JQYXCD1MEaHbv: {
-    type: 'Container',
+    type: "Container",
     data: {
       style: {
         backgroundColor: null,
@@ -533,12 +536,15 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        childrenIds: ['block_XykBAUxf8awiR2CxBfNLZN', 'block_9AvGGkcg4Rq93DmxXjXwEP'],
+        childrenIds: [
+          "block_XykBAUxf8awiR2CxBfNLZN",
+          "block_9AvGGkcg4Rq93DmxXjXwEP",
+        ],
       },
     },
   },
   block_Wnt477QxYNynetWGwkLg89: {
-    type: 'Container',
+    type: "Container",
     data: {
       style: {
         backgroundColor: null,
@@ -557,15 +563,15 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
     },
   },
   block_FnzMxssTraByh9FbbnJvRw: {
-    type: 'Text',
+    type: "Text",
     data: {
       style: {
-        color: '#808080',
+        color: "#808080",
         backgroundColor: null,
         fontSize: 16,
         fontFamily: null,
-        fontWeight: 'normal',
-        textAlign: 'left',
+        fontWeight: "normal",
+        textAlign: "left",
         padding: {
           top: 0,
           bottom: 0,
@@ -574,12 +580,12 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        text: 'Discount (BLKFRI)',
+        text: "Discount (BLKFRI)",
       },
     },
   },
   block_NyMsczQB7L3BKUa1RpUauu: {
-    type: 'Container',
+    type: "Container",
     data: {
       style: {
         backgroundColor: null,
@@ -593,20 +599,20 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        childrenIds: ['block_FnzMxssTraByh9FbbnJvRw'],
+        childrenIds: ["block_FnzMxssTraByh9FbbnJvRw"],
       },
     },
   },
   block_AcbYK2jnr4sqG1GAbUHqNL: {
-    type: 'Text',
+    type: "Text",
     data: {
       style: {
         color: null,
         backgroundColor: null,
         fontSize: 16,
         fontFamily: null,
-        fontWeight: 'bold',
-        textAlign: 'right',
+        fontWeight: "bold",
+        textAlign: "right",
         padding: {
           top: 0,
           bottom: 0,
@@ -615,12 +621,12 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        text: '$5.00',
+        text: "$5.00",
       },
     },
   },
   block_BgHgpkAxq2qJUttN8pimnE: {
-    type: 'Container',
+    type: "Container",
     data: {
       style: {
         backgroundColor: null,
@@ -634,12 +640,12 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        childrenIds: ['block_AcbYK2jnr4sqG1GAbUHqNL'],
+        childrenIds: ["block_AcbYK2jnr4sqG1GAbUHqNL"],
       },
     },
   },
   block_2QEX1chf5uWU5ZZebf4gmu: {
-    type: 'ColumnsContainer',
+    type: "ColumnsContainer",
     data: {
       style: {
         backgroundColor: null,
@@ -654,10 +660,10 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         columnsCount: 2,
         columns: [
           {
-            childrenIds: ['block_NyMsczQB7L3BKUa1RpUauu'],
+            childrenIds: ["block_NyMsczQB7L3BKUa1RpUauu"],
           },
           {
-            childrenIds: ['block_BgHgpkAxq2qJUttN8pimnE'],
+            childrenIds: ["block_BgHgpkAxq2qJUttN8pimnE"],
           },
           {
             childrenIds: [],
@@ -667,15 +673,15 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
     },
   },
   block_Q87SYRrWCwfRa56q3qLBDG: {
-    type: 'Text',
+    type: "Text",
     data: {
       style: {
-        color: '#808080',
+        color: "#808080",
         backgroundColor: null,
         fontSize: 16,
         fontFamily: null,
-        fontWeight: 'normal',
-        textAlign: 'left',
+        fontWeight: "normal",
+        textAlign: "left",
         padding: {
           top: 0,
           bottom: 0,
@@ -684,12 +690,12 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        text: 'Subtotal',
+        text: "Subtotal",
       },
     },
   },
   block_QUNbV1p7f9qaSEvyLmnxmD: {
-    type: 'Container',
+    type: "Container",
     data: {
       style: {
         backgroundColor: null,
@@ -703,20 +709,20 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        childrenIds: ['block_Q87SYRrWCwfRa56q3qLBDG'],
+        childrenIds: ["block_Q87SYRrWCwfRa56q3qLBDG"],
       },
     },
   },
   block_cF6MdfmbKisXytmfPU4QY: {
-    type: 'Text',
+    type: "Text",
     data: {
       style: {
         color: null,
         backgroundColor: null,
         fontSize: 16,
         fontFamily: null,
-        fontWeight: 'bold',
-        textAlign: 'right',
+        fontWeight: "bold",
+        textAlign: "right",
         padding: {
           top: 0,
           bottom: 0,
@@ -725,12 +731,12 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        text: '$25.00',
+        text: "$25.00",
       },
     },
   },
   block_4WkcuRqzqvTFvHGSBLGAAG: {
-    type: 'Container',
+    type: "Container",
     data: {
       style: {
         backgroundColor: null,
@@ -744,12 +750,12 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        childrenIds: ['block_cF6MdfmbKisXytmfPU4QY'],
+        childrenIds: ["block_cF6MdfmbKisXytmfPU4QY"],
       },
     },
   },
   block_Lu666sTP6hqLkHiBThmm4G: {
-    type: 'ColumnsContainer',
+    type: "ColumnsContainer",
     data: {
       style: {
         backgroundColor: null,
@@ -764,10 +770,10 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         columnsCount: 2,
         columns: [
           {
-            childrenIds: ['block_QUNbV1p7f9qaSEvyLmnxmD'],
+            childrenIds: ["block_QUNbV1p7f9qaSEvyLmnxmD"],
           },
           {
-            childrenIds: ['block_4WkcuRqzqvTFvHGSBLGAAG'],
+            childrenIds: ["block_4WkcuRqzqvTFvHGSBLGAAG"],
           },
           {
             childrenIds: [],
@@ -777,15 +783,15 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
     },
   },
   block_GgUZQtnTQbiBFhMdJE5YYB: {
-    type: 'Text',
+    type: "Text",
     data: {
       style: {
-        color: '#808080',
+        color: "#808080",
         backgroundColor: null,
         fontSize: 16,
         fontFamily: null,
-        fontWeight: 'normal',
-        textAlign: 'left',
+        fontWeight: "normal",
+        textAlign: "left",
         padding: {
           top: 0,
           bottom: 0,
@@ -794,12 +800,12 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        text: 'Shipping',
+        text: "Shipping",
       },
     },
   },
   block_XzjZ3cnqJrKrwubFwD4VSr: {
-    type: 'Container',
+    type: "Container",
     data: {
       style: {
         backgroundColor: null,
@@ -813,20 +819,20 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        childrenIds: ['block_GgUZQtnTQbiBFhMdJE5YYB'],
+        childrenIds: ["block_GgUZQtnTQbiBFhMdJE5YYB"],
       },
     },
   },
   block_ViKMzYtjFGRksFuzRn5rny: {
-    type: 'Text',
+    type: "Text",
     data: {
       style: {
         color: null,
         backgroundColor: null,
         fontSize: 16,
         fontFamily: null,
-        fontWeight: 'bold',
-        textAlign: 'right',
+        fontWeight: "bold",
+        textAlign: "right",
         padding: {
           top: 0,
           bottom: 0,
@@ -835,12 +841,12 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        text: '$5.00',
+        text: "$5.00",
       },
     },
   },
   block_AcDrP2ZMVByFU269wvMgtw: {
-    type: 'Container',
+    type: "Container",
     data: {
       style: {
         backgroundColor: null,
@@ -854,12 +860,12 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        childrenIds: ['block_ViKMzYtjFGRksFuzRn5rny'],
+        childrenIds: ["block_ViKMzYtjFGRksFuzRn5rny"],
       },
     },
   },
   block_Gn2h8bajFuW8zDBsiVVitV: {
-    type: 'ColumnsContainer',
+    type: "ColumnsContainer",
     data: {
       style: {
         backgroundColor: null,
@@ -874,10 +880,10 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         columnsCount: 2,
         columns: [
           {
-            childrenIds: ['block_XzjZ3cnqJrKrwubFwD4VSr'],
+            childrenIds: ["block_XzjZ3cnqJrKrwubFwD4VSr"],
           },
           {
-            childrenIds: ['block_AcDrP2ZMVByFU269wvMgtw'],
+            childrenIds: ["block_AcDrP2ZMVByFU269wvMgtw"],
           },
           {
             childrenIds: [],
@@ -887,15 +893,15 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
     },
   },
   block_64aQbVaGVuFmvjPfr9hend: {
-    type: 'Text',
+    type: "Text",
     data: {
       style: {
-        color: '#808080',
+        color: "#808080",
         backgroundColor: null,
         fontSize: 16,
         fontFamily: null,
-        fontWeight: 'normal',
-        textAlign: 'left',
+        fontWeight: "normal",
+        textAlign: "left",
         padding: {
           top: 0,
           bottom: 0,
@@ -904,12 +910,12 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        text: 'Taxes',
+        text: "Taxes",
       },
     },
   },
   block_QTKa4AdGxtSbJmRY7ytjD8: {
-    type: 'Container',
+    type: "Container",
     data: {
       style: {
         backgroundColor: null,
@@ -923,20 +929,20 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        childrenIds: ['block_64aQbVaGVuFmvjPfr9hend'],
+        childrenIds: ["block_64aQbVaGVuFmvjPfr9hend"],
       },
     },
   },
   block_H1MgkbcNH4sz8pMC2h4dVh: {
-    type: 'Text',
+    type: "Text",
     data: {
       style: {
         color: null,
         backgroundColor: null,
         fontSize: 16,
         fontFamily: null,
-        fontWeight: 'bold',
-        textAlign: 'right',
+        fontWeight: "bold",
+        textAlign: "right",
         padding: {
           top: 0,
           bottom: 0,
@@ -945,12 +951,12 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        text: '$0.00',
+        text: "$0.00",
       },
     },
   },
   block_Mi7A4sXfSXaEcjFV17WgSg: {
-    type: 'Container',
+    type: "Container",
     data: {
       style: {
         backgroundColor: null,
@@ -964,12 +970,12 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        childrenIds: ['block_H1MgkbcNH4sz8pMC2h4dVh'],
+        childrenIds: ["block_H1MgkbcNH4sz8pMC2h4dVh"],
       },
     },
   },
   block_2xkeWLDtTXj5jFg57KhfYR: {
-    type: 'ColumnsContainer',
+    type: "ColumnsContainer",
     data: {
       style: {
         backgroundColor: null,
@@ -984,10 +990,10 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         columnsCount: 2,
         columns: [
           {
-            childrenIds: ['block_QTKa4AdGxtSbJmRY7ytjD8'],
+            childrenIds: ["block_QTKa4AdGxtSbJmRY7ytjD8"],
           },
           {
-            childrenIds: ['block_Mi7A4sXfSXaEcjFV17WgSg'],
+            childrenIds: ["block_Mi7A4sXfSXaEcjFV17WgSg"],
           },
           {
             childrenIds: [],
@@ -997,7 +1003,7 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
     },
   },
   block_QgSNshqbsUkk4FrRywjoRd: {
-    type: 'Divider',
+    type: "Divider",
     data: {
       style: {
         backgroundColor: null,
@@ -1010,20 +1016,20 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
       },
       props: {
         lineHeight: 1,
-        lineColor: '#EEEEEE',
+        lineColor: "#EEEEEE",
       },
     },
   },
   block_B5teSFiXFfpLmiB29c1WYF: {
-    type: 'Text',
+    type: "Text",
     data: {
       style: {
-        color: '#808080',
+        color: "#808080",
         backgroundColor: null,
         fontSize: 16,
         fontFamily: null,
-        fontWeight: 'normal',
-        textAlign: 'left',
+        fontWeight: "normal",
+        textAlign: "left",
         padding: {
           top: 0,
           bottom: 0,
@@ -1032,12 +1038,12 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        text: 'Total',
+        text: "Total",
       },
     },
   },
   block_DPodDUHaaLcYuAG3CQi1F7: {
-    type: 'Container',
+    type: "Container",
     data: {
       style: {
         backgroundColor: null,
@@ -1051,20 +1057,20 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        childrenIds: ['block_B5teSFiXFfpLmiB29c1WYF'],
+        childrenIds: ["block_B5teSFiXFfpLmiB29c1WYF"],
       },
     },
   },
   block_Wo7gkfj5QDqEiXywi6e2dq: {
-    type: 'Text',
+    type: "Text",
     data: {
       style: {
         color: null,
         backgroundColor: null,
         fontSize: 21,
         fontFamily: null,
-        fontWeight: 'bold',
-        textAlign: 'right',
+        fontWeight: "bold",
+        textAlign: "right",
         padding: {
           top: 0,
           bottom: 0,
@@ -1073,12 +1079,12 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        text: '$30.00',
+        text: "$30.00",
       },
     },
   },
   block_YABuGb9jY34Rywk4H2wmhu: {
-    type: 'Container',
+    type: "Container",
     data: {
       style: {
         backgroundColor: null,
@@ -1092,12 +1098,12 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        childrenIds: ['block_Wo7gkfj5QDqEiXywi6e2dq'],
+        childrenIds: ["block_Wo7gkfj5QDqEiXywi6e2dq"],
       },
     },
   },
   block_VvK99ZhLLgmycHQXKVFV7E: {
-    type: 'ColumnsContainer',
+    type: "ColumnsContainer",
     data: {
       style: {
         backgroundColor: null,
@@ -1112,10 +1118,10 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         columnsCount: 2,
         columns: [
           {
-            childrenIds: ['block_DPodDUHaaLcYuAG3CQi1F7'],
+            childrenIds: ["block_DPodDUHaaLcYuAG3CQi1F7"],
           },
           {
-            childrenIds: ['block_YABuGb9jY34Rywk4H2wmhu'],
+            childrenIds: ["block_YABuGb9jY34Rywk4H2wmhu"],
           },
           {
             childrenIds: [],
@@ -1125,7 +1131,7 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
     },
   },
   block_VhteQbJa7bCSmykN4AcHkp: {
-    type: 'Container',
+    type: "Container",
     data: {
       style: {
         backgroundColor: null,
@@ -1140,19 +1146,19 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
       },
       props: {
         childrenIds: [
-          'block_2QEX1chf5uWU5ZZebf4gmu',
-          'block_Lu666sTP6hqLkHiBThmm4G',
-          'block_Gn2h8bajFuW8zDBsiVVitV',
-          'block_2xkeWLDtTXj5jFg57KhfYR',
-          'block_QgSNshqbsUkk4FrRywjoRd',
-          'block_VvK99ZhLLgmycHQXKVFV7E',
+          "block_2QEX1chf5uWU5ZZebf4gmu",
+          "block_Lu666sTP6hqLkHiBThmm4G",
+          "block_Gn2h8bajFuW8zDBsiVVitV",
+          "block_2xkeWLDtTXj5jFg57KhfYR",
+          "block_QgSNshqbsUkk4FrRywjoRd",
+          "block_VvK99ZhLLgmycHQXKVFV7E",
         ],
       },
     },
   },
 
   block_WK3b19BzGE8VNKDwiSZ8s8: {
-    type: 'ColumnsContainer',
+    type: "ColumnsContainer",
     data: {
       style: {
         backgroundColor: null,
@@ -1168,10 +1174,10 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         columnsGap: 16,
         columns: [
           {
-            childrenIds: ['block_Wnt477QxYNynetWGwkLg89'],
+            childrenIds: ["block_Wnt477QxYNynetWGwkLg89"],
           },
           {
-            childrenIds: ['block_VhteQbJa7bCSmykN4AcHkp'],
+            childrenIds: ["block_VhteQbJa7bCSmykN4AcHkp"],
           },
           {
             childrenIds: [],
@@ -1181,14 +1187,14 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
     },
   },
   block_Pe2Dm5Cbqq5CcjL5wEdMg4: {
-    type: 'Heading',
+    type: "Heading",
     data: {
       style: {
         color: null,
         backgroundColor: null,
         fontFamily: null,
-        fontWeight: 'normal',
-        textAlign: 'left',
+        fontWeight: "normal",
+        textAlign: "left",
         padding: {
           top: 40,
           bottom: 24,
@@ -1197,21 +1203,21 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        level: 'h3',
-        text: 'Customer information',
+        level: "h3",
+        text: "Customer information",
       },
     },
   },
   block_2c68kHKvfEzD1DRVKqh4Pg: {
-    type: 'Text',
+    type: "Text",
     data: {
       style: {
         color: null,
         backgroundColor: null,
         fontSize: 16,
         fontFamily: null,
-        fontWeight: 'bold',
-        textAlign: 'left',
+        fontWeight: "bold",
+        textAlign: "left",
         padding: {
           top: 0,
           bottom: 8,
@@ -1220,20 +1226,20 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        text: 'Shipping address',
+        text: "Shipping address",
       },
     },
   },
   block_SY5nL8mzSPgeEyeDgkDUEa: {
-    type: 'Text',
+    type: "Text",
     data: {
       style: {
         color: null,
         backgroundColor: null,
         fontSize: 14,
         fontFamily: null,
-        fontWeight: 'normal',
-        textAlign: 'left',
+        fontWeight: "normal",
+        textAlign: "left",
         padding: {
           top: 0,
           bottom: 0,
@@ -1242,12 +1248,12 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        text: '123 Main St New York, NY 10002',
+        text: "123 Main St New York, NY 10002",
       },
     },
   },
   block_ThQEcRPtSMqKiThzU9EGwV: {
-    type: 'Container',
+    type: "Container",
     data: {
       style: {
         backgroundColor: null,
@@ -1261,20 +1267,23 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        childrenIds: ['block_2c68kHKvfEzD1DRVKqh4Pg', 'block_SY5nL8mzSPgeEyeDgkDUEa'],
+        childrenIds: [
+          "block_2c68kHKvfEzD1DRVKqh4Pg",
+          "block_SY5nL8mzSPgeEyeDgkDUEa",
+        ],
       },
     },
   },
   block_NkMSrWFvqewuenMYqLNcRa: {
-    type: 'Text',
+    type: "Text",
     data: {
       style: {
         color: null,
         backgroundColor: null,
         fontSize: 16,
         fontFamily: null,
-        fontWeight: 'bold',
-        textAlign: 'left',
+        fontWeight: "bold",
+        textAlign: "left",
         padding: {
           top: 0,
           bottom: 8,
@@ -1283,20 +1292,20 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        text: 'Billing address',
+        text: "Billing address",
       },
     },
   },
   block_7RTvDRNCQpM5xV6oXsCx6s: {
-    type: 'Text',
+    type: "Text",
     data: {
       style: {
         color: null,
         backgroundColor: null,
         fontSize: 14,
         fontFamily: null,
-        fontWeight: 'normal',
-        textAlign: 'left',
+        fontWeight: "normal",
+        textAlign: "left",
         padding: {
           top: 0,
           bottom: 0,
@@ -1305,12 +1314,12 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        text: '123 Main St New York, NY 10002',
+        text: "123 Main St New York, NY 10002",
       },
     },
   },
   block_KaHi1FBV64emMA3kb7x4vE: {
-    type: 'Container',
+    type: "Container",
     data: {
       style: {
         backgroundColor: null,
@@ -1324,12 +1333,15 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        childrenIds: ['block_NkMSrWFvqewuenMYqLNcRa', 'block_7RTvDRNCQpM5xV6oXsCx6s'],
+        childrenIds: [
+          "block_NkMSrWFvqewuenMYqLNcRa",
+          "block_7RTvDRNCQpM5xV6oXsCx6s",
+        ],
       },
     },
   },
   block_SizNWJDCcqw9tGH2ComdDX: {
-    type: 'ColumnsContainer',
+    type: "ColumnsContainer",
     data: {
       style: {
         backgroundColor: null,
@@ -1344,10 +1356,10 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         columnsCount: 2,
         columns: [
           {
-            childrenIds: ['block_ThQEcRPtSMqKiThzU9EGwV'],
+            childrenIds: ["block_ThQEcRPtSMqKiThzU9EGwV"],
           },
           {
-            childrenIds: ['block_KaHi1FBV64emMA3kb7x4vE'],
+            childrenIds: ["block_KaHi1FBV64emMA3kb7x4vE"],
           },
           {
             childrenIds: [],
@@ -1357,15 +1369,15 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
     },
   },
   block_4Qxv32WQo8pDzPu1d3vixz: {
-    type: 'Text',
+    type: "Text",
     data: {
       style: {
         color: null,
         backgroundColor: null,
         fontSize: 16,
         fontFamily: null,
-        fontWeight: 'bold',
-        textAlign: 'left',
+        fontWeight: "bold",
+        textAlign: "left",
         padding: {
           top: 24,
           bottom: 8,
@@ -1374,20 +1386,20 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        text: 'Shipping method',
+        text: "Shipping method",
       },
     },
   },
   block_LKiZYDTPeJGkRWHForFSDQ: {
-    type: 'Text',
+    type: "Text",
     data: {
       style: {
         color: null,
         backgroundColor: null,
         fontSize: 14,
         fontFamily: null,
-        fontWeight: 'normal',
-        textAlign: 'left',
+        fontWeight: "normal",
+        textAlign: "left",
         padding: {
           top: 0,
           bottom: 48,
@@ -1396,12 +1408,12 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        text: 'Ground – Standard',
+        text: "Ground – Standard",
       },
     },
   },
   block_P6XtJj721vPfrhXKzS8uR5: {
-    type: 'Divider',
+    type: "Divider",
     data: {
       style: {
         backgroundColor: null,
@@ -1414,20 +1426,20 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
       },
       props: {
         lineHeight: 1,
-        lineColor: '#EEEEEE',
+        lineColor: "#EEEEEE",
       },
     },
   },
   block_AKTwpjBmtevcfj82z52i8p: {
-    type: 'Text',
+    type: "Text",
     data: {
       style: {
         color: null,
         backgroundColor: null,
         fontSize: 14,
         fontFamily: null,
-        fontWeight: 'normal',
-        textAlign: 'left',
+        fontWeight: "normal",
+        textAlign: "left",
         padding: {
           top: 16,
           bottom: 16,
@@ -1436,7 +1448,7 @@ const ORDER_ECOMMERCE: TEditorConfiguration = {
         },
       },
       props: {
-        text: 'If you have any questions, just reply to this email.',
+        text: "If you have any questions, just reply to this email.",
       },
     },
   },

@@ -97,7 +97,7 @@ export function useAppOverview(
     endDate?: string;
     channels?: string[];
   },
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean },
 ) {
   const accountId = useCurrentAccountId();
 
@@ -107,7 +107,8 @@ export function useAppOverview(
       const queryParams = new URLSearchParams();
       if (params?.startDate) queryParams.append("startDate", params.startDate);
       if (params?.endDate) queryParams.append("endDate", params.endDate);
-      if (params?.channels?.length) queryParams.append("channels", params.channels.join(","));
+      if (params?.channels?.length)
+        queryParams.append("channels", params.channels.join(","));
 
       const query = queryParams.toString();
       const url = query ? `${appId}?${query}` : appId;
@@ -123,8 +124,13 @@ export function useAppOverview(
  */
 export function useUpdateApp() {
   return useMutation({
-    mutationFn: ({ appId, payload }: { appId: string; payload: Partial<CreateAppPayload> }) =>
-      updateAppService(appId, payload),
+    mutationFn: ({
+      appId,
+      payload,
+    }: {
+      appId: string;
+      payload: Partial<CreateAppPayload>;
+    }) => updateAppService(appId, payload),
   });
 }
 
@@ -145,7 +151,10 @@ export function useDeleteApp() {
  * Get all app templates
  * Automatically includes x-account-id header from current organization
  */
-export function useAppTemplates(appId: string, options?: { enabled?: boolean }) {
+export function useAppTemplates(
+  appId: string,
+  options?: { enabled?: boolean },
+) {
   const accountId = useCurrentAccountId();
 
   return useQuery({
@@ -159,13 +168,19 @@ export function useAppTemplates(appId: string, options?: { enabled?: boolean }) 
  * Get single app template by ID
  * Automatically includes x-account-id header from current organization
  */
-export function useAppTemplate(appId: string, templateId: string, options?: { enabled?: boolean }) {
+export function useAppTemplate(
+  appId: string,
+  templateId: string,
+  options?: { enabled?: boolean },
+) {
   const accountId = useCurrentAccountId();
 
   return useQuery({
     queryKey: ["appTemplate", appId, templateId, accountId],
-    queryFn: () => getAppTemplateService(appId, templateId, accountId ?? undefined),
-    enabled: (options?.enabled ?? true) && !!appId && !!templateId && !!accountId,
+    queryFn: () =>
+      getAppTemplateService(appId, templateId, accountId ?? undefined),
+    enabled:
+      (options?.enabled ?? true) && !!appId && !!templateId && !!accountId,
   });
 }
 
@@ -177,8 +192,13 @@ export function useCreateAppTemplate() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ appId, payload }: { appId: string; payload: CreateAppTemplatePayload }) =>
-      createAppTemplateService(appId, payload, accountId ?? undefined),
+    mutationFn: ({
+      appId,
+      payload,
+    }: {
+      appId: string;
+      payload: CreateAppTemplatePayload;
+    }) => createAppTemplateService(appId, payload, accountId ?? undefined),
     onSuccess: (_data, { appId }) => {
       // Invalidate app templates query to refetch
       queryClient.invalidateQueries({
@@ -204,7 +224,13 @@ export function useUpdateAppTemplate() {
       appId: string;
       templateId: string;
       payload: Partial<CreateAppTemplatePayload>;
-    }) => updateAppTemplateService(appId, templateId, payload, accountId ?? undefined),
+    }) =>
+      updateAppTemplateService(
+        appId,
+        templateId,
+        payload,
+        accountId ?? undefined,
+      ),
     onSuccess: (_data, { appId, templateId }) => {
       // Invalidate both specific template and templates list
       queryClient.invalidateQueries({
@@ -225,8 +251,13 @@ export function useDeleteAppTemplate() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ appId, templateId }: { appId: string; templateId: string }) =>
-      deleteAppTemplateService(appId, templateId, accountId ?? undefined),
+    mutationFn: ({
+      appId,
+      templateId,
+    }: {
+      appId: string;
+      templateId: string;
+    }) => deleteAppTemplateService(appId, templateId, accountId ?? undefined),
     onSuccess: (_data, { appId, templateId }) => {
       // Invalidate both specific template and templates list
       queryClient.invalidateQueries({
@@ -252,24 +283,22 @@ export function useAppNotifications(
   params?: {
     page?: number;
     limit?: number;
-    status?: "SENT" | "FAILED" | "PENDING" | "BOUNCED";
+    status?: "SENT" | "FAILED" | "PENDING" | "BOUNCED" | "QUEUED";
     channel?: "EMAIL" | "SMS" | "PUSH" | "IN_APP" | "WHATSAPP";
+    search?: string;
+    dateFrom?: string;
+    dateTo?: string;
+    templateId?: string;
+    provider?: string;
   },
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean },
 ) {
   const accountId = useCurrentAccountId();
 
   return useQuery({
-    queryKey: [
-      "appNotifications",
-      appId,
-      params?.page,
-      params?.limit,
-      params?.status,
-      params?.channel,
-      accountId,
-    ],
-    queryFn: () => getAppNotificationsService(appId, params, accountId ?? undefined),
+    queryKey: ["appNotifications", appId, accountId, params],
+    queryFn: () =>
+      getAppNotificationsService(appId, params, accountId ?? undefined),
     enabled: (options?.enabled ?? true) && !!appId && !!accountId,
   });
 }
@@ -286,8 +315,13 @@ export function useCreateApiKey() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ appId, payload }: { appId: string; payload: CreateApiKeyPayload }) =>
-      createApiKeyService(appId, payload, accountId ?? undefined),
+    mutationFn: ({
+      appId,
+      payload,
+    }: {
+      appId: string;
+      payload: CreateApiKeyPayload;
+    }) => createApiKeyService(appId, payload, accountId ?? undefined),
     onSuccess: (_data, { appId }) => {
       // Invalidate API keys query to refetch
       queryClient.invalidateQueries({
@@ -315,7 +349,11 @@ export function useApiKeys(appId: string, options?: { enabled?: boolean }) {
  * Get single API key
  * Automatically includes x-account-id header from current organization
  */
-export function useApiKey(appId: string, keyId: string, options?: { enabled?: boolean }) {
+export function useApiKey(
+  appId: string,
+  keyId: string,
+  options?: { enabled?: boolean },
+) {
   const accountId = useCurrentAccountId();
 
   return useQuery({

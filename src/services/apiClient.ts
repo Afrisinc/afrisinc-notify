@@ -1,67 +1,71 @@
-import axios, { AxiosInstance } from 'axios';
-import { logoutHandler } from '@/lib/authUtils';
-import { getRuntimeConfig } from '@/lib/config';
+import axios, { AxiosInstance } from "axios";
+import { logoutHandler } from "@/lib/authUtils";
+import { getRuntimeConfig } from "@/lib/config";
 
 const createApiClient = () => {
-    const config = getRuntimeConfig();
+  const config = getRuntimeConfig();
 
-    const instance = axios.create({
-        baseURL: config.serverUrl ||  import.meta.env.VITE_API_URL
-    });
+  const instance = axios.create({
+    baseURL: config.serverUrl || import.meta.env.VITE_API_URL,
+  });
 
-    instance.interceptors.request.use(async (request) => {
-        // Read token dynamically on each request - stored as notify_token
+  instance.interceptors.request.use(async (request) => {
+    // Read token dynamically on each request - stored as notify_token
+    const token = localStorage.getItem("notify_token");
+    if (token) {
+      request.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return request;
+  });
+
+  instance.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      // Log 401 errors with debugging info
+      if (error?.response?.status === 401) {
         const token = localStorage.getItem("notify_token");
-        if (token) {
-            request.headers.Authorization = `Bearer ${token}`;
-        }
+        console.warn("401 Unauthorized:", {
+          url: error?.config?.url,
+          hasToken: !!token,
+          tokenLength: token?.length || 0,
+          authHeader: error?.config?.headers?.Authorization ? "set" : "missing",
+          response: error?.response?.data,
+        });
+      }
 
-        return request;
-    });
+      // Handle explicit token errors
+      const isTokenError =
+        error?.response?.data?.error?.name === "TokenExpiredError" ||
+        error?.response?.data?.error === "Token was not provided" ||
+        error?.response?.data?.error?.message === "Token was not provided";
 
-    instance.interceptors.response.use((response) => response, (error) => {
-        // Log 401 errors with debugging info
-        if (error?.response?.status === 401) {
-            const token = localStorage.getItem("notify_token");
-            console.warn("401 Unauthorized:", {
-                url: error?.config?.url,
-                hasToken: !!token,
-                tokenLength: token?.length || 0,
-                authHeader: error?.config?.headers?.Authorization ? "set" : "missing",
-                response: error?.response?.data
-            });
-        }
+      const is401WithTokenMessage =
+        error?.response?.status === 401 &&
+        (error?.response?.data?.message?.toLowerCase()?.includes("token") ||
+          error?.response?.data?.resp_msg?.toLowerCase()?.includes("token") ||
+          (typeof error?.response?.data?.error === "string" &&
+            error?.response?.data?.error?.toLowerCase()?.includes("token")));
 
-        // Handle explicit token errors
-        const isTokenError =
-            error?.response?.data?.error?.name === "TokenExpiredError" ||
-            error?.response?.data?.error === "Token was not provided" ||
-            error?.response?.data?.error?.message === "Token was not provided";
+      // Only logout on explicit authentication failures
+      if (isTokenError || is401WithTokenMessage) {
+        logoutHandler("/");
+      }
 
-        const is401WithTokenMessage =
-            error?.response?.status === 401 &&
-            (error?.response?.data?.message?.toLowerCase()?.includes("token") ||
-                error?.response?.data?.resp_msg?.toLowerCase()?.includes("token") ||
-                (typeof error?.response?.data?.error === 'string' && error?.response?.data?.error?.toLowerCase()?.includes("token")));
+      return Promise.reject(error);
+    },
+  );
 
-        // Only logout on explicit authentication failures
-        if (isTokenError || is401WithTokenMessage) {
-            logoutHandler("/");
-        }
-
-        return Promise.reject(error);
-    });
-
-    return instance;
-}
+  return instance;
+};
 
 let apiClientInstance: AxiosInstance | null = null;
 
 const getApiClient = () => {
-    if (!apiClientInstance) {
-        apiClientInstance = createApiClient();
-    }
-    return apiClientInstance;
-}
+  if (!apiClientInstance) {
+    apiClientInstance = createApiClient();
+  }
+  return apiClientInstance;
+};
 
 export default getApiClient;

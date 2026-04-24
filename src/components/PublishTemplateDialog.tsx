@@ -13,7 +13,14 @@ import { FormTextarea } from "@/components/ui/form-textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Upload, X, CheckCircle2, AlertCircle, Image as ImageIcon, DollarSign } from "lucide-react";
+import {
+  Upload,
+  X,
+  CheckCircle2,
+  AlertCircle,
+  Image as ImageIcon,
+  DollarSign,
+} from "lucide-react";
 
 interface PublishTemplateDialogProps {
   open: boolean;
@@ -46,12 +53,12 @@ export interface PublishTemplateData {
 
 // Frontend categories - automatically mapped to backend on send
 const categories = [
-  "Transactional",      // → TRANSACTIONAL
-  "Marketing",          // → MARKETING
-  "Authentication",     // → AUTH
-  "Security",           // → AUTH
-  "E-Commerce",         // → TRANSACTIONAL
-  "Alerts",             // → NOTIFICATION
+  "Transactional", // → TRANSACTIONAL
+  "Marketing", // → MARKETING
+  "Authentication", // → AUTH
+  "Security", // → AUTH
+  "E-Commerce", // → TRANSACTIONAL
+  "Alerts", // → NOTIFICATION
 ];
 
 export function PublishTemplateDialog({
@@ -82,7 +89,12 @@ export function PublishTemplateDialog({
         title: template.subject || "",
         description: template.description || "",
         category: template.category || "",
-        tags: (template.tags && template.tags.length > 0 && template.tags[0] !== "none") ? template.tags : [],
+        tags:
+          template.tags &&
+          template.tags.length > 0 &&
+          template.tags[0] !== "none"
+            ? template.tags
+            : [],
         previewImageUrl: template.previewImage || undefined,
         pricing: template.pricing || "free",
         price: template.price || 0,
@@ -95,14 +107,27 @@ export function PublishTemplateDialog({
 
   const requiredFields = [
     { name: "Title", field: "title", done: !!formData.title?.trim() },
-    { name: "Description", field: "description", done: !!formData.description?.trim() },
+    {
+      name: "Description",
+      field: "description",
+      done: !!formData.description?.trim(),
+    },
     { name: "Category", field: "category", done: !!formData.category },
     { name: "Preview Image", field: "image", done: !!formData.previewImageUrl },
-    { name: "At least 1 tag", field: "tags", done: (formData.tags?.length || 0) > 0 },
     {
-      name: formData.pricing === "paid" ? `Price ($${formData.price || 0})` : "Pricing (Free)",
+      name: "At least 1 tag",
+      field: "tags",
+      done: (formData.tags?.length || 0) > 0,
+    },
+    {
+      name:
+        formData.pricing === "paid"
+          ? `Price ($${formData.price || 0})`
+          : "Pricing (Free)",
       field: "pricing",
-      done: formData.pricing === "free" || (formData.pricing === "paid" && (formData.price || 0) > 0)
+      done:
+        formData.pricing === "free" ||
+        (formData.pricing === "paid" && (formData.price || 0) > 0),
     },
   ];
 
@@ -186,7 +211,9 @@ export function PublishTemplateDialog({
                   Publish to Marketplace
                 </DialogTitle>
                 <DialogDescription className="text-sm text-content-secondary dark:text-foreground/70 leading-relaxed">
-                  Put your template in front of thousands of users. Once published, others can install, rate, and share it—and you gain recognition as a template creator.
+                  Put your template in front of thousands of users. Once
+                  published, others can install, rate, and share it—and you gain
+                  recognition as a template creator.
                 </DialogDescription>
               </div>
             </div>
@@ -229,7 +256,9 @@ export function PublishTemplateDialog({
                     >
                       {req.done ? "✓" : "○"}
                     </div>
-                    <span className={`text-sm leading-tight ${req.done ? "text-content dark:text-white font-medium" : "text-content-secondary dark:text-foreground/70"}`}>
+                    <span
+                      className={`text-sm leading-tight ${req.done ? "text-content dark:text-white font-medium" : "text-content-secondary dark:text-foreground/70"}`}
+                    >
                       {req.name}
                     </span>
                   </motion.div>
@@ -268,7 +297,9 @@ export function PublishTemplateDialog({
 
               {/* Template Title */}
               <div>
-                <p className="text-xs font-semibold text-content-secondary dark:text-foreground/70 mb-2">TITLE</p>
+                <p className="text-xs font-semibold text-content-secondary dark:text-foreground/70 mb-2">
+                  TITLE
+                </p>
                 <p className="text-sm font-bold text-content dark:text-white line-clamp-2">
                   {formData.title || "Template Name"}
                 </p>
@@ -277,8 +308,13 @@ export function PublishTemplateDialog({
               {/* Category Badge */}
               {formData.category && (
                 <div>
-                  <p className="text-xs font-semibold text-content-secondary dark:text-foreground/70 mb-2">CATEGORY</p>
-                  <Badge variant="secondary" className="bg-primary/15 text-primary dark:bg-primary/20 dark:text-primary/90 border-0">
+                  <p className="text-xs font-semibold text-content-secondary dark:text-foreground/70 mb-2">
+                    CATEGORY
+                  </p>
+                  <Badge
+                    variant="secondary"
+                    className="bg-primary/15 text-primary dark:bg-primary/20 dark:text-primary/90 border-0"
+                  >
                     {formData.category}
                   </Badge>
                 </div>
@@ -287,7 +323,9 @@ export function PublishTemplateDialog({
               {/* Tags Preview */}
               {formData.tags && formData.tags.length > 0 && (
                 <div>
-                  <p className="text-xs font-semibold text-content-secondary dark:text-foreground/70 mb-2">TAGS</p>
+                  <p className="text-xs font-semibold text-content-secondary dark:text-foreground/70 mb-2">
+                    TAGS
+                  </p>
                   <div className="flex flex-wrap gap-1.5">
                     {formData.tags.map((tag) => (
                       <Badge
@@ -305,12 +343,16 @@ export function PublishTemplateDialog({
               {/* Pricing Display */}
               {formData.pricing && (
                 <div className="pt-2 border-t border-border/40 dark:border-border/60">
-                  <p className="text-xs font-semibold text-content-secondary dark:text-foreground/70 mb-2">PRICING</p>
+                  <p className="text-xs font-semibold text-content-secondary dark:text-foreground/70 mb-2">
+                    PRICING
+                  </p>
                   <div className="flex items-center gap-2">
                     {formData.pricing === "free" ? (
                       <>
                         <div className="h-6 px-2.5 rounded-full bg-green-500/20 dark:bg-green-500/30 flex items-center">
-                          <span className="text-xs font-bold text-green-700 dark:text-green-300">Free</span>
+                          <span className="text-xs font-bold text-green-700 dark:text-green-300">
+                            Free
+                          </span>
                         </div>
                       </>
                     ) : (
@@ -335,7 +377,9 @@ export function PublishTemplateDialog({
               label="Template Name"
               description="What users will see when browsing the marketplace"
               value={formData.title || ""}
-              onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, title: e.target.value }))
+              }
               placeholder="e.g., Professional Welcome Email"
               required
             />
@@ -345,7 +389,12 @@ export function PublishTemplateDialog({
               label="Tell Your Story"
               description="Why is this template valuable? What problem does it solve?"
               value={formData.description || ""}
-              onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  description: e.target.value,
+                }))
+              }
               placeholder="e.g., Gets new users excited with personality and clear CTAs. Mobile-ready. Dark mode included."
               maxLength={200}
               showCharCount
@@ -361,7 +410,9 @@ export function PublishTemplateDialog({
                 {categories.map((cat) => (
                   <button
                     key={cat}
-                    onClick={() => setFormData((prev) => ({ ...prev, category: cat }))}
+                    onClick={() =>
+                      setFormData((prev) => ({ ...prev, category: cat }))
+                    }
                     className={`px-4 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
                       formData.category === cat
                         ? "bg-primary text-white shadow-primary/30 ring-1 ring-primary"
@@ -381,7 +432,13 @@ export function PublishTemplateDialog({
               </Label>
               <div className="grid grid-cols-2 gap-3">
                 <button
-                  onClick={() => setFormData((prev) => ({ ...prev, pricing: "free", price: 0 }))}
+                  onClick={() =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      pricing: "free",
+                      price: 0,
+                    }))
+                  }
                   className={`px-4 py-3 rounded-xl text-xs font-semibold transition-all duration-200 border-2 ${
                     formData.pricing === "free"
                       ? "bg-green-500/15 border-green-500/40 text-green-700 dark:text-green-300 dark:bg-green-500/20 dark:border-green-500/50"
@@ -393,7 +450,13 @@ export function PublishTemplateDialog({
                 </button>
 
                 <button
-                  onClick={() => setFormData((prev) => ({ ...prev, pricing: "paid", price: 5 }))}
+                  onClick={() =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      pricing: "paid",
+                      price: 5,
+                    }))
+                  }
                   className={`px-4 py-3 rounded-xl text-xs font-semibold transition-all duration-200 border-2 ${
                     formData.pricing === "paid"
                       ? "bg-primary/15 border-primary/40 text-primary dark:text-primary dark:bg-primary/20 dark:border-primary/50"
@@ -417,7 +480,12 @@ export function PublishTemplateDialog({
                   max="999"
                   step="1"
                   value={formData.price || ""}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, price: parseInt(e.target.value) || 0 }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      price: parseInt(e.target.value) || 0,
+                    }))
+                  }
                   placeholder="29"
                   icon={<DollarSign className="h-4 w-4" />}
                   iconPosition="left"
@@ -436,7 +504,9 @@ export function PublishTemplateDialog({
                 <FormInput
                   value={tagInput}
                   onChange={(e) => setTagInput(e.target.value)}
-                  onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), handleAddTag())}
+                  onKeyPress={(e) =>
+                    e.key === "Enter" && (e.preventDefault(), handleAddTag())
+                  }
                   placeholder="e.g., welcome, onboarding, conversion"
                   disabled={(formData.tags?.length || 0) >= 5}
                   helperText="Press Enter or click Add to add a tag"
@@ -517,9 +587,14 @@ export function PublishTemplateDialog({
                 />
               </div>
               {previewError && (
-                <Alert variant="destructive" className="rounded-xl border-destructive/30 bg-destructive/5 dark:bg-destructive/10">
+                <Alert
+                  variant="destructive"
+                  className="rounded-xl border-destructive/30 bg-destructive/5 dark:bg-destructive/10"
+                >
                   <AlertCircle className="h-4 w-4" />
-                  <AlertDescription className="text-xs">{previewError}</AlertDescription>
+                  <AlertDescription className="text-xs">
+                    {previewError}
+                  </AlertDescription>
                 </Alert>
               )}
             </div>
@@ -532,20 +607,40 @@ export function PublishTemplateDialog({
             </p>
             <ul className="text-xs text-content-secondary dark:text-foreground/70 space-y-2">
               <li className="flex gap-2">
-                <span className="text-primary dark:text-primary/90 font-bold flex-shrink-0">•</span>
-                <span><strong>Specific names</strong> (not generic). Users search for "welcome email" not "email template"</span>
+                <span className="text-primary dark:text-primary/90 font-bold flex-shrink-0">
+                  •
+                </span>
+                <span>
+                  <strong>Specific names</strong> (not generic). Users search
+                  for "welcome email" not "email template"
+                </span>
               </li>
               <li className="flex gap-2">
-                <span className="text-primary dark:text-primary/90 font-bold flex-shrink-0">•</span>
-                <span><strong>Professional images</strong>. Show your template in action, not just a blank mockup</span>
+                <span className="text-primary dark:text-primary/90 font-bold flex-shrink-0">
+                  •
+                </span>
+                <span>
+                  <strong>Professional images</strong>. Show your template in
+                  action, not just a blank mockup
+                </span>
               </li>
               <li className="flex gap-2">
-                <span className="text-primary dark:text-primary/90 font-bold flex-shrink-0">•</span>
-                <span><strong>Relevant tags</strong>. Think like the user: what would you search for?</span>
+                <span className="text-primary dark:text-primary/90 font-bold flex-shrink-0">
+                  •
+                </span>
+                <span>
+                  <strong>Relevant tags</strong>. Think like the user: what
+                  would you search for?
+                </span>
               </li>
               <li className="flex gap-2">
-                <span className="text-primary dark:text-primary/90 font-bold flex-shrink-0">•</span>
-                <span><strong>Clear value prop.</strong> For premium templates: explain why it's worth the cost</span>
+                <span className="text-primary dark:text-primary/90 font-bold flex-shrink-0">
+                  •
+                </span>
+                <span>
+                  <strong>Clear value prop.</strong> For premium templates:
+                  explain why it's worth the cost
+                </span>
               </li>
             </ul>
           </div>

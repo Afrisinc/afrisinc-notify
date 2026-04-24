@@ -15,7 +15,6 @@ interface StepIdentityProps {
 }
 
 const StepIdentity = ({ defaultValues, onNext }: StepIdentityProps) => {
-
   const {
     register,
     control,
@@ -86,7 +85,9 @@ const StepIdentity = ({ defaultValues, onNext }: StepIdentityProps) => {
         <FormPhoneInput
           id="phone"
           label="Phone (optional)"
-          placeholder={selectedCountry ? getCountryByName(selectedCountry)?.dialCode : "+1"}
+          placeholder={
+            selectedCountry ? getCountryByName(selectedCountry)?.dialCode : "+1"
+          }
           error={errors.phone?.message}
           {...register("phone")}
         />
@@ -108,7 +109,12 @@ const StepIdentity = ({ defaultValues, onNext }: StepIdentityProps) => {
         {...register("confirmPassword")}
       />
 
-      <Button variant="default" type="submit" className="w-full" disabled={!isValid}>
+      <Button
+        variant="default"
+        type="submit"
+        className="w-full"
+        disabled={!isValid}
+      >
         Continue →
       </Button>
     </form>

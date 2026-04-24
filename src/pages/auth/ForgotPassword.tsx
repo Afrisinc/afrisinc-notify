@@ -25,7 +25,10 @@ const ForgotPassword = () => {
       onError: (error: any) => {
         toast({
           title: "Error",
-          description: error.response?.data?.resp_msg || error.message || "Failed to send reset link",
+          description:
+            error.response?.data?.resp_msg ||
+            error.message ||
+            "Failed to send reset link",
           variant: "destructive",
         });
       },
@@ -37,7 +40,7 @@ const ForgotPassword = () => {
       <BackgroundDecorator />
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8">
-          <Logo/>
+          <Logo />
           <h1 className="heading-subsection">Reset your password</h1>
           <p className="heading-description">
             Enter your email and we'll send you reset instructions
@@ -51,7 +54,8 @@ const ForgotPassword = () => {
               </div>
               <h2 className="heading-label">Check your email</h2>
               <p className="text-secondary text-sm">
-                We've sent password reset instructions to <strong>{email}</strong>
+                We've sent password reset instructions to{" "}
+                <strong>{email}</strong>
               </p>
               <Link to="/login">
                 <Button variant="outline" className="w-full mt-4">
@@ -71,7 +75,12 @@ const ForgotPassword = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
-              <Button variant="default" className="w-full" type="submit" disabled={loading}>
+              <Button
+                variant="default"
+                className="w-full"
+                type="submit"
+                disabled={loading}
+              >
                 {loading ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />

@@ -14,7 +14,11 @@ const FormPasswordInput = forwardRef<HTMLInputElement, FormPasswordInputProps>(
 
     return (
       <div className="space-y-2">
-        {label && <Label htmlFor={id} className="heading-label">{label}</Label>}
+        {label && (
+          <Label htmlFor={id} className="heading-label">
+            {label}
+          </Label>
+        )}
         <div className="relative">
           <Input
             ref={ref}
@@ -35,7 +39,7 @@ const FormPasswordInput = forwardRef<HTMLInputElement, FormPasswordInputProps>(
         {error && <p className="text-sm text-destructive">{error}</p>}
       </div>
     );
-  }
+  },
 );
 
 FormPasswordInput.displayName = "FormPasswordInput";

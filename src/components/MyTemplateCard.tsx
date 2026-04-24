@@ -10,7 +10,17 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ChannelBadge, ChannelIconBox } from "@/components/ui/ChannelBadge";
 import { TemplateStatusBadge } from "@/components/ui/TemplateStatusBadge";
-import { Edit, Eye, Copy, Trash2, Upload, MoreHorizontal, Star, Download, CalendarDays } from "lucide-react";
+import {
+  Edit,
+  Eye,
+  Copy,
+  Trash2,
+  Upload,
+  MoreHorizontal,
+  Star,
+  Download,
+  CalendarDays,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Channel } from "@/components/ui/ChannelBadge";
 
@@ -40,7 +50,10 @@ interface MyTemplateCardProps {
 
 function formatDate(iso?: string) {
   if (!iso) return null;
-  return new Date(iso).toLocaleDateString("en-US", { month: "short", year: "numeric" });
+  return new Date(iso).toLocaleDateString("en-US", {
+    month: "short",
+    year: "numeric",
+  });
 }
 
 export function MyTemplateCard({
@@ -53,7 +66,8 @@ export function MyTemplateCard({
   onUnpublish,
   isPublishing,
 }: MyTemplateCardProps) {
-  const displayName = template.name || template.subject || template.code || "Untitled";
+  const displayName =
+    template.name || template.subject || template.code || "Untitled";
   const isPublished = template.isPublic;
   const isActive = template.active ?? true;
   const channel = template.channel as Channel;
@@ -72,7 +86,7 @@ export function MyTemplateCard({
           "shadow-sm hover:shadow-[0_8px_24px_rgba(2,147,228,0.08)]",
           isPublished
             ? "border-primary/20 dark:border-primary/25"
-            : "border-border/50 dark:border-border/30"
+            : "border-border/50 dark:border-border/30",
         )}
       >
         {/* Accent strip for published */}
@@ -83,7 +97,10 @@ export function MyTemplateCard({
         <CardContent className="p-5 flex flex-col gap-4 flex-1">
           {/* Header row: icon + name/code + menu */}
           <div className="flex items-start gap-3">
-            <ChannelIconBox channel={channel} className="h-9 w-9 flex-shrink-0 mt-0.5" />
+            <ChannelIconBox
+              channel={channel}
+              className="h-9 w-9 flex-shrink-0 mt-0.5"
+            />
             <div className="flex-1 min-w-0">
               <h3 className="text-sm font-bold text-foreground leading-snug line-clamp-1">
                 {displayName}
@@ -111,21 +128,33 @@ export function MyTemplateCard({
                 <DropdownMenuItem onClick={onView} className="gap-2 text-xs">
                   <Eye className="h-3.5 w-3.5" /> Preview
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={onDuplicate} className="gap-2 text-xs">
+                <DropdownMenuItem
+                  onClick={onDuplicate}
+                  className="gap-2 text-xs"
+                >
                   <Copy className="h-3.5 w-3.5" /> Duplicate
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 {isPublished ? (
-                  <DropdownMenuItem onClick={onUnpublish} className="gap-2 text-xs text-amber-600 dark:text-amber-400 focus:text-amber-600">
+                  <DropdownMenuItem
+                    onClick={onUnpublish}
+                    className="gap-2 text-xs text-amber-600 dark:text-amber-400 focus:text-amber-600"
+                  >
                     <Upload className="h-3.5 w-3.5 rotate-180" /> Unpublish
                   </DropdownMenuItem>
                 ) : (
-                  <DropdownMenuItem onClick={onPublish} className="gap-2 text-xs text-primary focus:text-primary">
+                  <DropdownMenuItem
+                    onClick={onPublish}
+                    className="gap-2 text-xs text-primary focus:text-primary"
+                  >
                     <Upload className="h-3.5 w-3.5" /> Publish
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={onDelete} className="gap-2 text-xs text-destructive focus:text-destructive">
+                <DropdownMenuItem
+                  onClick={onDelete}
+                  className="gap-2 text-xs text-destructive focus:text-destructive"
+                >
                   <Trash2 className="h-3.5 w-3.5" /> Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -148,7 +177,9 @@ export function MyTemplateCard({
           {/* Meta row */}
           <div className="flex items-center gap-3 text-[10px] text-muted-foreground/70 border-t border-border/20 pt-3 mt-auto flex-wrap">
             {template.version && (
-              <span className="font-mono font-semibold">v{template.version}</span>
+              <span className="font-mono font-semibold">
+                v{template.version}
+              </span>
             )}
             {template.createdAt && (
               <span className="flex items-center gap-1">
@@ -159,7 +190,9 @@ export function MyTemplateCard({
             {template.installs !== undefined && template.installs > 0 && (
               <span className="flex items-center gap-1">
                 <Download className="h-3 w-3" />
-                {template.installs >= 1000 ? `${(template.installs / 1000).toFixed(1)}k` : template.installs}
+                {template.installs >= 1000
+                  ? `${(template.installs / 1000).toFixed(1)}k`
+                  : template.installs}
               </span>
             )}
             {template.rating && (

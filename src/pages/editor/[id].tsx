@@ -5,19 +5,22 @@
  * Works standalone without requiring app context
  */
 
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import EmailEditor from '@/components/EmailEditor/EmailEditor';
-import { useAppContext } from '@/contexts/AppContext';
-import { useOrg } from '@/contexts/OrgContext';
-import { getAppService } from '@/services/apps';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import { DashboardSidebar } from '@/components/DashboardSidebar';
-import { ThemeToggle } from '@/components/ThemeToggle';
-import { useAuth } from '@/contexts/AuthContext';
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import EmailEditor from "@/components/EmailEditor/EmailEditor";
+import { useAppContext } from "@/contexts/AppContext";
+import { useOrg } from "@/contexts/OrgContext";
+import { getAppService } from "@/services/apps";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { DashboardSidebar } from "@/components/DashboardSidebar";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { useAuth } from "@/contexts/AuthContext";
 
 const EditorPage = () => {
-  const { appId, templateId } = useParams<{ appId: string; templateId: string }>();
+  const { appId, templateId } = useParams<{
+    appId: string;
+    templateId: string;
+  }>();
   const navigate = useNavigate();
   const { selectedApp, setSelectedApp } = useAppContext();
   const { currentOrg, allOrgs, setCurrentOrg } = useOrg();
@@ -28,13 +31,13 @@ const EditorPage = () => {
   // Fetch app if not in context
   useEffect(() => {
     if (!appId) {
-      setError('Missing appId');
+      setError("Missing appId");
       setLoading(false);
       return;
     }
 
     // If templateId is "new", skip fetching and just set up the app
-    if (templateId === 'new') {
+    if (templateId === "new") {
       const setupForNewTemplate = async () => {
         try {
           setLoading(true);
@@ -46,15 +49,18 @@ const EditorPage = () => {
 
           // Set organization if available
           if (app.organization_id && allOrgs.length > 0 && !currentOrg) {
-            const appOrg = allOrgs.find(org => org.id === app.organization_id);
+            const appOrg = allOrgs.find(
+              (org) => org.id === app.organization_id,
+            );
             if (appOrg) {
               setCurrentOrg(appOrg);
             }
           }
         } catch (err) {
-          const message = err instanceof Error ? err.message : 'Failed to load app';
+          const message =
+            err instanceof Error ? err.message : "Failed to load app";
           setError(message);
-          console.error('Error loading app:', err);
+          console.error("Error loading app:", err);
         } finally {
           setLoading(false);
         }
@@ -70,7 +76,7 @@ const EditorPage = () => {
 
     // For existing templates, fetch the template
     if (!templateId) {
-      setError('Missing templateId');
+      setError("Missing templateId");
       setLoading(false);
       return;
     }
@@ -86,15 +92,16 @@ const EditorPage = () => {
 
         // Set organization if available
         if (app.organization_id && allOrgs.length > 0 && !currentOrg) {
-          const appOrg = allOrgs.find(org => org.id === app.organization_id);
+          const appOrg = allOrgs.find((org) => org.id === app.organization_id);
           if (appOrg) {
             setCurrentOrg(appOrg);
           }
         }
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to load app';
+        const message =
+          err instanceof Error ? err.message : "Failed to load app";
         setError(message);
-        console.error('Error loading app:', err);
+        console.error("Error loading app:", err);
       } finally {
         setLoading(false);
       }
@@ -105,13 +112,23 @@ const EditorPage = () => {
     } else {
       setLoading(false);
     }
-  }, [appId, templateId, selectedApp, allOrgs, currentOrg, setSelectedApp, setCurrentOrg]);
+  }, [
+    appId,
+    templateId,
+    selectedApp,
+    allOrgs,
+    currentOrg,
+    setSelectedApp,
+    setCurrentOrg,
+  ]);
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen bg-background">
         <div className="text-center">
-          <p className="text-lg font-semibold text-foreground">Loading editor...</p>
+          <p className="text-lg font-semibold text-foreground">
+            Loading editor...
+          </p>
         </div>
       </div>
     );
@@ -121,12 +138,14 @@ const EditorPage = () => {
     return (
       <div className="flex items-center justify-center h-screen bg-background">
         <div className="text-center">
-          <p className="text-lg font-semibold text-foreground mb-2">Failed to Load</p>
+          <p className="text-lg font-semibold text-foreground mb-2">
+            Failed to Load
+          </p>
           <p className="text-sm text-muted-foreground mb-4">
-            {error || 'Could not load app'}
+            {error || "Could not load app"}
           </p>
           <button
-            onClick={() => navigate('/dashboard/apps')}
+            onClick={() => navigate("/dashboard/apps")}
             className="px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90"
           >
             Back to Apps
@@ -151,7 +170,9 @@ const EditorPage = () => {
                   {(user.firstName?.[0] ?? user.email[0]).toUpperCase()}
                 </div>
                 <span className="text-sm text-content-secondary hidden sm:block">
-                  {user.firstName ? `${user.firstName} ${user.lastName ?? ""}`.trim() : user.email}
+                  {user.firstName
+                    ? `${user.firstName} ${user.lastName ?? ""}`.trim()
+                    : user.email}
                 </span>
               </div>
             )}
@@ -160,7 +181,9 @@ const EditorPage = () => {
             <EmailEditor
               appId={selectedApp.id}
               templateId={templateId}
-              onCancel={() => navigate(`/dashboard/apps/${selectedApp.id}/templates`)}
+              onCancel={() =>
+                navigate(`/dashboard/apps/${selectedApp.id}/templates`)
+              }
             />
           </main>
         </div>

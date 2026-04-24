@@ -27,7 +27,7 @@ const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
       disabled,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <div className={cn("space-y-2.5", !fullWidth && "w-fit")}>
@@ -68,12 +68,14 @@ const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
               // Focus state
               "focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/50 transition-all",
               // Disabled state
-              disabled && "opacity-50 cursor-not-allowed bg-muted dark:bg-slate-800/50",
+              disabled &&
+                "opacity-50 cursor-not-allowed bg-muted dark:bg-slate-800/50",
               // Error state
-              error && "border-destructive/50 dark:border-destructive/50 focus:ring-destructive/40 focus:border-destructive/50",
+              error &&
+                "border-destructive/50 dark:border-destructive/50 focus:ring-destructive/40 focus:border-destructive/50",
               // Text styling
               "text-base",
-              className
+              className,
             )}
             {...props}
           />
@@ -99,7 +101,7 @@ const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
 FormInput.displayName = "FormInput";

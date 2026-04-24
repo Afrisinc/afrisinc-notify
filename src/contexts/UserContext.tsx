@@ -1,6 +1,6 @@
-import React, { createContext, useContext, ReactNode } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { useUserProfile } from '@/hooks/useAuth';
+import React, { createContext, useContext, ReactNode } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useUserProfile } from "@/hooks/useAuth";
 
 export interface Account {
   id: string;
@@ -33,7 +33,11 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
   const { user, loading: authLoading } = useAuth();
-  const { data: profileData, isLoading: profileLoading, error: profileError } = useUserProfile({
+  const {
+    data: profileData,
+    isLoading: profileLoading,
+    error: profileError,
+  } = useUserProfile({
     enabled: !!user && !authLoading,
   });
 
@@ -47,12 +51,16 @@ export function UserProvider({ children }: { children: ReactNode }) {
    */
   const getAccountIdForOrg = (orgId: string): string | null => {
     if (!profile?.accounts) return null;
-    const account = profile.accounts.find((acc: Account) => acc.organizationId === orgId);
+    const account = profile.accounts.find(
+      (acc: Account) => acc.organizationId === orgId,
+    );
     return account?.id || null;
   };
 
   return (
-    <UserContext.Provider value={{ profile, loading, error, getAccountIdForOrg }}>
+    <UserContext.Provider
+      value={{ profile, loading, error, getAccountIdForOrg }}
+    >
       {children}
     </UserContext.Provider>
   );
@@ -61,7 +69,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
 export function useUser() {
   const context = useContext(UserContext);
   if (!context) {
-    throw new Error('useUser must be used within UserProvider');
+    throw new Error("useUser must be used within UserProvider");
   }
   return context;
 }

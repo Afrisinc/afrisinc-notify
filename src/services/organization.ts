@@ -26,13 +26,19 @@ export const getOrganizationAppsService = async (orgId: string) => {
  * Get all templates for an organization
  * GET /api/organizations/:orgId/templates
  */
-export const getOrganizationTemplatesService = async (orgId: string, params?: {
-  limit?: number;
-  offset?: number;
-  channel?: string;
-  status?: string;
-}) => {
-  const { data } = await getApiClient().get(`/api/organizations/${orgId}/templates`, { params });
+export const getOrganizationTemplatesService = async (
+  orgId: string,
+  params?: {
+    limit?: number;
+    offset?: number;
+    channel?: string;
+    status?: string;
+  },
+) => {
+  const { data } = await getApiClient().get(
+    `/api/organizations/${orgId}/templates`,
+    { params },
+  );
   return data;
 };
 
@@ -49,9 +55,12 @@ export const getOrganizationService = async (orgId: string) => {
  */
 export const updateOrganizationService = async (
   orgId: string,
-  payload: { name?: string; slug?: string; [key: string]: any }
+  payload: { name?: string; slug?: string; [key: string]: any },
 ) => {
-  const { data } = await getApiClient().put(`/api/organizations/${orgId}`, payload);
+  const { data } = await getApiClient().put(
+    `/api/organizations/${orgId}`,
+    payload,
+  );
   return data;
 };
 

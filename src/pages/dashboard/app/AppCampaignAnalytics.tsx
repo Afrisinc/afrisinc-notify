@@ -1,11 +1,23 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import {
   BarChart,
   Bar,
@@ -56,19 +68,28 @@ const useCampaignEvents = (appId: string, campaignId: string, filters: any) => {
 };
 
 export default function AppCampaignAnalytics() {
-  const { appId, campaignId } = useParams<{ appId: string; campaignId: string }>();
-  const [selectedEventType, setSelectedEventType] = useState<string | null>(null);
+  const { appId, campaignId } = useParams<{
+    appId: string;
+    campaignId: string;
+  }>();
+  const [selectedEventType, setSelectedEventType] = useState<string | null>(
+    null,
+  );
   const [eventSearch, setEventSearch] = useState("");
   const [showEventDetails, setShowEventDetails] = useState(false);
 
   // Fetch analytics data
   const { data: analytics, isLoading: analyticsLoading } = useCampaignAnalytics(
     appId || "",
-    campaignId || ""
+    campaignId || "",
   );
-  const { data: eventsData, isLoading: eventsLoading } = useCampaignEvents(appId || "", campaignId || "", {
-    eventType: selectedEventType,
-  });
+  const { data: eventsData, isLoading: eventsLoading } = useCampaignEvents(
+    appId || "",
+    campaignId || "",
+    {
+      eventType: selectedEventType,
+    },
+  );
 
   if (!appId || !campaignId) {
     return (
@@ -188,7 +209,8 @@ export default function AppCampaignAnalytics() {
             </div>
             <p className="text-sm font-medium text-content">Delivery Rate</p>
             <p className="text-xs text-content-secondary mt-2">
-              {data.metrics.deliveredCount.toLocaleString()} of {data.metrics.sentCount.toLocaleString()}
+              {data.metrics.deliveredCount.toLocaleString()} of{" "}
+              {data.metrics.sentCount.toLocaleString()}
             </p>
           </CardContent>
         </Card>
@@ -333,7 +355,12 @@ export default function AppCampaignAnalytics() {
                 }}
               />
               <Legend />
-              <Line type="monotone" dataKey="value" stroke="#3b82f6" strokeWidth={2} />
+              <Line
+                type="monotone"
+                dataKey="value"
+                stroke="#3b82f6"
+                strokeWidth={2}
+              />
             </LineChart>
           </ResponsiveContainer>
         </CardContent>
@@ -354,21 +381,52 @@ export default function AppCampaignAnalytics() {
         <CardContent>
           <div className="space-y-2 max-h-96 overflow-y-auto">
             {[
-              { type: "OPENED", email: "john@example.com", time: "2 hours ago" },
-              { type: "CLICKED", email: "jane@example.com", time: "3 hours ago" },
-              { type: "DELIVERED", email: "bob@example.com", time: "4 hours ago" },
-              { type: "OPENED", email: "alice@example.com", time: "5 hours ago" },
-              { type: "CONVERTED", email: "charlie@example.com", time: "6 hours ago" },
-              { type: "UNSUBSCRIBED", email: "david@example.com", time: "7 hours ago" },
+              {
+                type: "OPENED",
+                email: "john@example.com",
+                time: "2 hours ago",
+              },
+              {
+                type: "CLICKED",
+                email: "jane@example.com",
+                time: "3 hours ago",
+              },
+              {
+                type: "DELIVERED",
+                email: "bob@example.com",
+                time: "4 hours ago",
+              },
+              {
+                type: "OPENED",
+                email: "alice@example.com",
+                time: "5 hours ago",
+              },
+              {
+                type: "CONVERTED",
+                email: "charlie@example.com",
+                time: "6 hours ago",
+              },
+              {
+                type: "UNSUBSCRIBED",
+                email: "david@example.com",
+                time: "7 hours ago",
+              },
             ].map((event, idx) => (
-              <div key={idx} className="flex items-center justify-between p-3 rounded-lg border border-border/40 hover:bg-muted/30 transition-colors">
+              <div
+                key={idx}
+                className="flex items-center justify-between p-3 rounded-lg border border-border/40 hover:bg-muted/30 transition-colors"
+              >
                 <div className="flex items-center gap-3 min-w-0">
                   <Badge variant="secondary" className="text-[10px]">
                     {event.type}
                   </Badge>
                   <div className="min-w-0">
-                    <p className="text-sm font-medium truncate">{event.email}</p>
-                    <p className="text-xs text-content-secondary">{event.time}</p>
+                    <p className="text-sm font-medium truncate">
+                      {event.email}
+                    </p>
+                    <p className="text-xs text-content-secondary">
+                      {event.time}
+                    </p>
                   </div>
                 </div>
                 <ArrowRight className="h-4 w-4 text-content-secondary shrink-0" />

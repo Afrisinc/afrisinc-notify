@@ -11,12 +11,24 @@ import {
   useDeleteApp,
 } from "@/hooks/useAppSettings";
 import { EmailProviderSection } from "@/components/email/EmailProviderSection";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,7 +41,14 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Separator } from "@/components/ui/separator";
-import { Settings, Trash2, Globe, Webhook, AlertCircle, Check } from "lucide-react";
+import {
+  Settings,
+  Trash2,
+  Globe,
+  Webhook,
+  AlertCircle,
+  Check,
+} from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -196,7 +215,9 @@ export default function AppSettings() {
     return (
       <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />
-        <AlertDescription>Failed to load app settings. Please try again.</AlertDescription>
+        <AlertDescription>
+          Failed to load app settings. Please try again.
+        </AlertDescription>
       </Alert>
     );
   }
@@ -209,7 +230,9 @@ export default function AppSettings() {
       {successMessage && (
         <Alert className="bg-success/10 border-success/30">
           <Check className="h-4 w-4 text-success" />
-          <AlertDescription className="text-success">{successMessage}</AlertDescription>
+          <AlertDescription className="text-success">
+            {successMessage}
+          </AlertDescription>
         </Alert>
       )}
       {errorMessage && (
@@ -232,14 +255,18 @@ export default function AppSettings() {
             <Label>App Name</Label>
             <Input
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
             />
           </div>
           <div>
             <Label>Description</Label>
             <Textarea
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
               rows={3}
             />
           </div>
@@ -247,7 +274,9 @@ export default function AppSettings() {
             <Label>Environment</Label>
             <Select
               value={formData.environment}
-              onValueChange={(v) => setFormData({ ...formData, environment: v as any })}
+              onValueChange={(v) =>
+                setFormData({ ...formData, environment: v as any })
+              }
             >
               <SelectTrigger>
                 <SelectValue />
@@ -259,7 +288,10 @@ export default function AppSettings() {
               </SelectContent>
             </Select>
           </div>
-          <Button onClick={handleUpdateSettings} disabled={updateSettingsMutation.isPending}>
+          <Button
+            onClick={handleUpdateSettings}
+            disabled={updateSettingsMutation.isPending}
+          >
             {updateSettingsMutation.isPending ? "Saving..." : "Save Changes"}
           </Button>
         </CardContent>
@@ -271,7 +303,9 @@ export default function AppSettings() {
           <CardTitle className="text-base flex items-center gap-2">
             <Globe className="h-4 w-4" /> Allowed Domains
           </CardTitle>
-          <CardDescription>Restrict API access to specific domains.</CardDescription>
+          <CardDescription>
+            Restrict API access to specific domains.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           <Textarea
@@ -297,7 +331,10 @@ export default function AppSettings() {
           <CardTitle className="text-base flex items-center gap-2">
             <Webhook className="h-4 w-4" /> Webhooks
           </CardTitle>
-          <CardDescription>Configure webhook endpoints for delivery events and contact form submissions (e.g., Slack/Teams alerts).</CardDescription>
+          <CardDescription>
+            Configure webhook endpoints for delivery events and contact form
+            submissions (e.g., Slack/Teams alerts).
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Existing Webhooks */}
@@ -305,12 +342,18 @@ export default function AppSettings() {
             <div className="space-y-3 mb-6">
               <p className="text-sm font-semibold">Configured Webhooks:</p>
               {webhooks.map((webhook) => (
-                <div key={webhook.id} className="p-3 border border-border/60 rounded-lg space-y-2">
+                <div
+                  key={webhook.id}
+                  className="p-3 border border-border/60 rounded-lg space-y-2"
+                >
                   <div className="flex items-center justify-between">
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">{webhook.url}</p>
+                      <p className="text-sm font-medium truncate">
+                        {webhook.url}
+                      </p>
                       <p className="text-xs text-content-secondary">
-                        {webhook.events.length} events • {webhook.isActive ? "Active" : "Inactive"}
+                        {webhook.events.length} events •{" "}
+                        {webhook.isActive ? "Active" : "Inactive"}
                       </p>
                     </div>
                     <Badge variant={webhook.isActive ? "default" : "secondary"}>
@@ -350,14 +393,19 @@ export default function AppSettings() {
               <Input
                 placeholder="https://your-app.com/webhooks/notify"
                 value={webhookForm.url}
-                onChange={(e) => setWebhookForm({ ...webhookForm, url: e.target.value })}
+                onChange={(e) =>
+                  setWebhookForm({ ...webhookForm, url: e.target.value })
+                }
               />
             </div>
             <div>
               <Label>Events</Label>
               <div className="grid grid-cols-2 gap-2 mt-2">
                 {[
-                  { name: "contact.created", label: "New Contact (Contact Form)" },
+                  {
+                    name: "contact.created",
+                    label: "New Contact (Contact Form)",
+                  },
                   { name: "notification.delivered", label: "Email Delivered" },
                   { name: "notification.failed", label: "Email Failed" },
                   { name: "notification.bounced", label: "Email Bounced" },
@@ -365,7 +413,10 @@ export default function AppSettings() {
                   { name: "notification.clicked", label: "Link Clicked" },
                   { name: "campaign.sent", label: "Campaign Sent" },
                 ].map((event) => (
-                  <label key={event.name} className="flex items-center gap-2 text-sm">
+                  <label
+                    key={event.name}
+                    className="flex items-center gap-2 text-sm"
+                  >
                     <input
                       type="checkbox"
                       checked={webhookForm.events.includes(event.name)}
@@ -378,7 +429,9 @@ export default function AppSettings() {
                         } else {
                           setWebhookForm({
                             ...webhookForm,
-                            events: webhookForm.events.filter((ev) => ev !== event.name),
+                            events: webhookForm.events.filter(
+                              (ev) => ev !== event.name,
+                            ),
                           });
                         }
                       }}
@@ -392,7 +445,11 @@ export default function AppSettings() {
             <Button
               size="sm"
               onClick={handleCreateWebhook}
-              disabled={createWebhookMutation.isPending || !webhookForm.url || webhookForm.events.length === 0}
+              disabled={
+                createWebhookMutation.isPending ||
+                !webhookForm.url ||
+                webhookForm.events.length === 0
+              }
             >
               {createWebhookMutation.isPending ? "Creating..." : "Add Webhook"}
             </Button>
@@ -409,19 +466,24 @@ export default function AppSettings() {
           <CardTitle className="text-base text-destructive flex items-center gap-2">
             <Trash2 className="h-4 w-4" /> Danger Zone
           </CardTitle>
-          <CardDescription>Permanently delete this app and all associated data.</CardDescription>
+          <CardDescription>
+            Permanently delete this app and all associated data.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="destructive" size="sm">Delete App</Button>
+              <Button variant="destructive" size="sm">
+                Delete App
+              </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Delete "{settings.name}"?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This will permanently delete the app and all its templates, contacts, campaigns, API keys, and logs.
-                  This action cannot be undone.
+                  This will permanently delete the app and all its templates,
+                  contacts, campaigns, API keys, and logs. This action cannot be
+                  undone.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>

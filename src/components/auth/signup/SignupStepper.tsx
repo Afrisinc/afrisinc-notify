@@ -20,16 +20,20 @@ const SignupStepper = ({ currentStep, totalSteps }: SignupStepperProps) => {
             >
               {i + 1}
             </div>
-            <span className={`mt-1 text-xs ${
-              i <= currentStep ? "text-foreground" : "text-muted-foreground"
-            }`}>
+            <span
+              className={`mt-1 text-xs ${
+                i <= currentStep ? "text-foreground" : "text-muted-foreground"
+              }`}
+            >
               {labels[i]}
             </span>
           </div>
           {i < totalSteps - 1 && (
-            <div className={`h-px w-8 mb-5 ${
-              i < currentStep ? "bg-primary" : "bg-border"
-            }`} />
+            <div
+              className={`h-px w-8 mb-5 ${
+                i < currentStep ? "bg-primary" : "bg-border"
+              }`}
+            />
           )}
         </div>
       ))}

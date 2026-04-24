@@ -43,16 +43,20 @@ export default function AppsList() {
   console.log("Apps API Response:", appsData);
   const allApps = Array.isArray(appsData)
     ? appsData
-    : (appsData?.apps || appsData?.data?.apps || []);
+    : appsData?.apps || appsData?.data?.apps || [];
 
-  const orgApps = (Array.isArray(allApps) ? allApps : [])
-    .filter((a: any) => a?.name?.toLowerCase?.().includes(search.toLowerCase()));
+  const orgApps = (Array.isArray(allApps) ? allApps : []).filter((a: any) =>
+    a?.name?.toLowerCase?.().includes(search.toLowerCase()),
+  );
 
   const envColor = (env: string) => {
     switch (env) {
-      case "production": return "bg-success/15 text-success";
-      case "staging": return "bg-warning/15 text-warning";
-      default: return "bg-muted text-muted-foreground";
+      case "production":
+        return "bg-success/15 text-success";
+      case "staging":
+        return "bg-warning/15 text-warning";
+      default:
+        return "bg-muted text-muted-foreground";
     }
   };
 
@@ -63,7 +67,10 @@ export default function AppsList() {
       {
         name: newName.trim(),
         orgId: currentOrg.id,
-        environment: (newEnv.toLowerCase() as "development" | "staging" | "production"),
+        environment: newEnv.toLowerCase() as
+          | "development"
+          | "staging"
+          | "production",
         description: newDesc.trim() || undefined,
       },
       {
@@ -84,7 +91,7 @@ export default function AppsList() {
             variant: "destructive",
           });
         },
-      }
+      },
     );
   };
 
@@ -113,8 +120,12 @@ export default function AppsList() {
         <Card className="border-dashed border-2 border-border">
           <CardContent className="flex flex-col items-center justify-center py-16 text-center">
             <Boxes className="h-12 w-12 text-muted-foreground/40 mb-4" />
-            <h3 className="text-lg font-medium text-foreground mb-1">No organization selected</h3>
-            <p className="text-sm text-muted-foreground">Please select an organization from the sidebar.</p>
+            <h3 className="text-lg font-medium text-foreground mb-1">
+              No organization selected
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              Please select an organization from the sidebar.
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -126,7 +137,10 @@ export default function AppsList() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-content">Apps</h1>
-          <p className="text-sm text-content-secondary mt-1">{currentOrg.name} · {orgApps.length} app{orgApps.length !== 1 ? "s" : ""}</p>
+          <p className="text-sm text-content-secondary mt-1">
+            {currentOrg.name} · {orgApps.length} app
+            {orgApps.length !== 1 ? "s" : ""}
+          </p>
         </div>
         <Button onClick={() => setShowCreate(true)}>
           <Plus className="h-4 w-4 mr-2" /> Create App
@@ -145,8 +159,12 @@ export default function AppsList() {
         <Card className="border-dashed border-2 border-border">
           <CardContent className="flex flex-col items-center justify-center py-16 text-center">
             <Boxes className="h-12 w-12 icon-muted mb-4" />
-            <h3 className="text-lg font-medium text-content mb-1">No apps yet</h3>
-            <p className="text-sm text-content-secondary mb-4">Create your first app to start sending notifications.</p>
+            <h3 className="text-lg font-medium text-content mb-1">
+              No apps yet
+            </h3>
+            <p className="text-sm text-content-secondary mb-4">
+              Create your first app to start sending notifications.
+            </p>
             <Button onClick={() => setShowCreate(true)}>
               <Plus className="h-4 w-4 mr-2" /> Create App
             </Button>
@@ -162,20 +180,28 @@ export default function AppsList() {
             >
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-base font-medium">{app.name}</CardTitle>
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${envColor(app.environment)}`}>
+                  <CardTitle className="text-base font-medium">
+                    {app.name}
+                  </CardTitle>
+                  <span
+                    className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${envColor(app.environment)}`}
+                  >
                     {app.environment}
                   </span>
                 </div>
                 {app.description && (
-                  <p className="text-xs text-content-secondary mt-1">{app.description}</p>
+                  <p className="text-xs text-content-secondary mt-1">
+                    {app.description}
+                  </p>
                 )}
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between text-xs text-content-secondary">
                   <div className="flex gap-4">
                     <span>{app.templateCount || 0} templates</span>
-                    <span>{(app.notificationsSent || 0).toLocaleString()} sent</span>
+                    <span>
+                      {(app.notificationsSent || 0).toLocaleString()} sent
+                    </span>
                   </div>
                   <ArrowRight className="h-3.5 w-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-primary" />
                 </div>
@@ -189,17 +215,30 @@ export default function AppsList() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create New App</DialogTitle>
-            <DialogDescription>Add a new app to {currentOrg.name}.</DialogDescription>
+            <DialogDescription>
+              Add a new app to {currentOrg.name}.
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
               <Label className="text-xs font-medium mb-1 block">App Name</Label>
-              <Input placeholder="e.g., Production App" value={newName} onChange={(e) => setNewName(e.target.value)} />
+              <Input
+                placeholder="e.g., Production App"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+              />
             </div>
             <div>
-              <Label className="text-xs font-medium mb-1 block">Environment</Label>
-              <Select value={newEnv} onValueChange={(v) => setNewEnv(v as App["environment"])}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+              <Label className="text-xs font-medium mb-1 block">
+                Environment
+              </Label>
+              <Select
+                value={newEnv}
+                onValueChange={(v) => setNewEnv(v as App["environment"])}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="development">Development</SelectItem>
                   <SelectItem value="staging">Staging</SelectItem>
@@ -208,14 +247,29 @@ export default function AppsList() {
               </Select>
             </div>
             <div>
-              <Label className="text-xs font-medium mb-1 block">Description (optional)</Label>
-              <Input placeholder="What is this app for?" value={newDesc} onChange={(e) => setNewDesc(e.target.value)} />
+              <Label className="text-xs font-medium mb-1 block">
+                Description (optional)
+              </Label>
+              <Input
+                placeholder="What is this app for?"
+                value={newDesc}
+                onChange={(e) => setNewDesc(e.target.value)}
+              />
             </div>
             <div className="flex gap-2 pt-2">
-              <Button variant="outline" onClick={() => setShowCreate(false)} className="flex-1" disabled={isPending}>
+              <Button
+                variant="outline"
+                onClick={() => setShowCreate(false)}
+                className="flex-1"
+                disabled={isPending}
+              >
                 Cancel
               </Button>
-              <Button disabled={!newName.trim() || isPending} className="flex-1" onClick={handleCreateApp}>
+              <Button
+                disabled={!newName.trim() || isPending}
+                className="flex-1"
+                onClick={handleCreateApp}
+              >
                 {isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />

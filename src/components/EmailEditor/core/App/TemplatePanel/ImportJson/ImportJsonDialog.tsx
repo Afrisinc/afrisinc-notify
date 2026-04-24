@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 import {
   Alert,
@@ -10,20 +10,22 @@ import {
   Link,
   TextField,
   Typography,
-} from '@mui/material';
+} from "@mui/material";
 
-import { resetDocument } from '../../../documents/editor/EditorContext';
+import { resetDocument } from "../../../documents/editor/EditorContext";
 
-import validateJsonStringValue from './validateJsonStringValue';
+import validateJsonStringValue from "./validateJsonStringValue";
 
 type ImportJsonDialogProps = {
   onClose: () => void;
 };
 export default function ImportJsonDialog({ onClose }: ImportJsonDialogProps) {
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  const handleChange: React.ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement> = (ev) => {
+  const handleChange: React.ChangeEventHandler<
+    HTMLTextAreaElement | HTMLInputElement
+  > = (ev) => {
     const v = ev.currentTarget.value;
     setValue(v);
     const { error } = validateJsonStringValue(v);

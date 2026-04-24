@@ -13,7 +13,9 @@ interface SelectFilterOption {
   label: string;
 }
 
-interface SelectFilterProps extends React.ComponentPropsWithoutRef<typeof SelectTrigger> {
+interface SelectFilterProps extends React.ComponentPropsWithoutRef<
+  typeof SelectTrigger
+> {
   value: string;
   onValueChange: (value: string) => void;
   placeholder?: string;

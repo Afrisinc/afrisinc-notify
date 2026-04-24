@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { ChevronDown, Building2, Check, Plus, Users, Settings2 } from "lucide-react";
+import {
+  ChevronDown,
+  Building2,
+  Check,
+  Plus,
+  Users,
+  Settings2,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -61,7 +68,10 @@ export function OrgSwitcher() {
     } catch (error) {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to create organization",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to create organization",
         variant: "destructive",
       });
     }
@@ -71,7 +81,9 @@ export function OrgSwitcher() {
     return (
       <div className="flex w-full items-center gap-2 rounded-lg bg-sidebar-accent px-3 py-2.5 text-sm font-medium text-sidebar-accent-foreground">
         <Building2 className="h-4 w-4 shrink-0 text-primary" />
-        {!collapsed && <span className="truncate flex-1 text-left">Loading...</span>}
+        {!collapsed && (
+          <span className="truncate flex-1 text-left">Loading...</span>
+        )}
       </div>
     );
   }
@@ -84,14 +96,18 @@ export function OrgSwitcher() {
             <Building2 className="h-4 w-4 shrink-0 text-primary" />
             {!collapsed && (
               <>
-                <span className="truncate flex-1 text-left">{currentOrg?.name}</span>
+                <span className="truncate flex-1 text-left">
+                  {currentOrg?.name}
+                </span>
                 <ChevronDown className="h-3 w-3 shrink-0 text-muted-foreground" />
               </>
             )}
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-56">
-          <DropdownMenuLabel className="text-xs text-muted-foreground">Organizations</DropdownMenuLabel>
+          <DropdownMenuLabel className="text-xs text-muted-foreground">
+            Organizations
+          </DropdownMenuLabel>
           <DropdownMenuSeparator />
           {allOrgs.map((org) => (
             <DropdownMenuItem
@@ -103,7 +119,9 @@ export function OrgSwitcher() {
                 <Building2 className="h-3.5 w-3.5" />
                 <span>{org.name}</span>
               </div>
-              {currentOrg.id === org.id && <Check className="h-3.5 w-3.5 text-primary" />}
+              {currentOrg.id === org.id && (
+                <Check className="h-3.5 w-3.5 text-primary" />
+              )}
             </DropdownMenuItem>
           ))}
           <DropdownMenuSeparator />
@@ -136,7 +154,9 @@ export function OrgSwitcher() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create Organization</DialogTitle>
-            <DialogDescription>Create a new organization to manage your apps and collaborators</DialogDescription>
+            <DialogDescription>
+              Create a new organization to manage your apps and collaborators
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>

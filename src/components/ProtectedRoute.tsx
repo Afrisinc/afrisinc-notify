@@ -6,7 +6,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (!loading && (!user || !token)) {
-       window.location.replace("/login");
+      window.location.replace("/login");
     }
   }, [loading, user, token]);
 

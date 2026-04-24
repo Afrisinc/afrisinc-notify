@@ -7,14 +7,33 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, Save, Loader2, AlertTriangle, MessageSquare } from "lucide-react";
-import { VariableInserter, insertVariableAtCursor, extractVariables, type TemplateVariable } from "./VariableInserter";
+import {
+  ArrowLeft,
+  Save,
+  Loader2,
+  AlertTriangle,
+  MessageSquare,
+} from "lucide-react";
+import {
+  VariableInserter,
+  insertVariableAtCursor,
+  extractVariables,
+  type TemplateVariable,
+} from "./VariableInserter";
 import { cn } from "@/lib/utils";
 
 // GSM-7 character set
-const GSM7_CHARS = "@£$¥èéùìòÇ\nØø\rÅåΔ_ΦΓΛΩΠΨΣΘΞ\x1BÆæßÉ !\"#¤%&'()*+,-./0123456789:;<=>?¡ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÑÜ`¿abcdefghijklmnopqrstuvwxyzäöñüà";
+const GSM7_CHARS =
+  "@£$¥èéùìòÇ\nØø\rÅåΔ_ΦΓΛΩΠΨΣΘΞ\x1BÆæßÉ !\"#¤%&'()*+,-./0123456789:;<=>?¡ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÑÜ`¿abcdefghijklmnopqrstuvwxyzäöñüà";
 const GSM7_EXTENDED = "^{}\\[~]|€";
 
 function isGSM7(text: string): boolean {
@@ -29,20 +48,31 @@ function getSmsStats(body: string) {
   const len = body.length;
   const singleLimit = unicode ? 70 : 160;
   const multiLimit = unicode ? 67 : 153;
-  const segments = len === 0 ? 0 : len <= singleLimit ? 1 : Math.ceil(len / multiLimit);
-  const charsLeft = segments <= 1 ? singleLimit - len : multiLimit * segments - len;
+  const segments =
+    len === 0 ? 0 : len <= singleLimit ? 1 : Math.ceil(len / multiLimit);
+  const charsLeft =
+    segments <= 1 ? singleLimit - len : multiLimit * segments - len;
   return { unicode, len, segments, charsLeft, singleLimit };
 }
 
 /** Preview the API code that will be derived from the name */
 function toTemplateCodePreview(name: string): string {
-  const code = name.trim().toUpperCase().replace(/[\s\-./]+/g, "_").replace(/[^A-Z_]/g, "").replace(/^_+|_+$/g, "").replace(/_+/g, "_");
+  const code = name
+    .trim()
+    .toUpperCase()
+    .replace(/[\s\-./]+/g, "_")
+    .replace(/[^A-Z_]/g, "")
+    .replace(/^_+|_+$/g, "")
+    .replace(/_+/g, "_");
   return code || "";
 }
 
 const schema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
-  body: z.string().min(1, "Message body is required").max(1600, "Too long (max 1600 chars)"),
+  body: z
+    .string()
+    .min(1, "Message body is required")
+    .max(1600, "Too long (max 1600 chars)"),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -61,7 +91,13 @@ interface SmsEditorProps {
   appName?: string;
 }
 
-export function SmsEditor({ initialValue, onSave, onCancel, isSaving, appName = "YourApp" }: SmsEditorProps) {
+export function SmsEditor({
+  initialValue,
+  onSave,
+  onCancel,
+  isSaving,
+  appName = "YourApp",
+}: SmsEditorProps) {
   const bodyRef = useRef<HTMLTextAreaElement>(null);
 
   const form = useForm<FormData>({
@@ -73,7 +109,7 @@ export function SmsEditor({ initialValue, onSave, onCancel, isSaving, appName = 
   });
 
   const [variables, setVariables] = React.useState<TemplateVariable[]>(
-    initialValue?.variables ?? []
+    initialValue?.variables ?? [],
   );
 
   const nameValue = form.watch("name");
@@ -82,12 +118,17 @@ export function SmsEditor({ initialValue, onSave, onCancel, isSaving, appName = 
   const stats = getSmsStats(bodyValue);
 
   const previewBody = variables.reduce((text, v) => {
-    return text.replace(new RegExp(`\\{\\{${v.name}\\}\\}`, "g"), v.example || `[${v.name}]`);
+    return text.replace(
+      new RegExp(`\\{\\{${v.name}\\}\\}`, "g"),
+      v.example || `[${v.name}]`,
+    );
   }, bodyValue);
 
   const handleInsertVariable = (name: string) => {
     const current = form.getValues("body");
-    insertVariableAtCursor(bodyRef as any, name, current, (val) => form.setValue("body", val, { shouldDirty: true }));
+    insertVariableAtCursor(bodyRef as any, name, current, (val) =>
+      form.setValue("body", val, { shouldDirty: true }),
+    );
     if (!variables.some((v) => v.name === name)) {
       setVariables((prev) => [...prev, { name }]);
     }
@@ -99,10 +140,19 @@ export function SmsEditor({ initialValue, onSave, onCancel, isSaving, appName = 
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="h-full flex flex-col">
+      <form
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="h-full flex flex-col"
+      >
         {/* Header */}
         <div className="flex items-center gap-3 px-6 py-3.5 border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-10">
-          <Button type="button" variant="ghost" size="icon" onClick={onCancel} className="h-8 w-8 rounded-lg">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={onCancel}
+            className="h-8 w-8 rounded-lg"
+          >
             <ArrowLeft className="h-4 w-4" />
           </Button>
 
@@ -121,20 +171,35 @@ export function SmsEditor({ initialValue, onSave, onCancel, isSaving, appName = 
                   </FormControl>
                   {codePreview && (
                     <p className="text-[10px] text-muted-foreground px-1 mt-0.5">
-                      Code: <code className="font-mono text-primary">{codePreview}</code>
+                      Code:{" "}
+                      <code className="font-mono text-primary">
+                        {codePreview}
+                      </code>
                     </p>
                   )}
                   <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
-            <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 text-[10px] px-2 py-0.5 shrink-0">
+            <Badge
+              variant="secondary"
+              className="bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 text-[10px] px-2 py-0.5 shrink-0"
+            >
               <MessageSquare className="h-3 w-3 mr-1" /> SMS
             </Badge>
           </div>
 
-          <Button type="submit" size="sm" disabled={isSaving} className="gap-2 h-8 px-4 rounded-lg">
-            {isSaving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
+          <Button
+            type="submit"
+            size="sm"
+            disabled={isSaving}
+            className="gap-2 h-8 px-4 rounded-lg"
+          >
+            {isSaving ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <Save className="h-3.5 w-3.5" />
+            )}
             {isSaving ? "Saving..." : "Save Template"}
           </Button>
         </div>
@@ -148,7 +213,9 @@ export function SmsEditor({ initialValue, onSave, onCancel, isSaving, appName = 
               <Card className="rounded-xl border-border/60">
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-sm font-semibold text-foreground">Message</CardTitle>
+                    <CardTitle className="text-sm font-semibold text-foreground">
+                      Message
+                    </CardTitle>
                     <VariableInserter
                       variables={variables}
                       onInsert={handleInsertVariable}
@@ -179,12 +246,14 @@ export function SmsEditor({ initialValue, onSave, onCancel, isSaving, appName = 
                   />
 
                   {/* Stats bar */}
-                  <div className={cn(
-                    "flex items-center justify-between text-[11px] px-3 py-2 rounded-lg border",
-                    stats.unicode
-                      ? "bg-amber-50 border-amber-200 dark:bg-amber-950/20 dark:border-amber-800"
-                      : "bg-muted/50 border-border"
-                  )}>
+                  <div
+                    className={cn(
+                      "flex items-center justify-between text-[11px] px-3 py-2 rounded-lg border",
+                      stats.unicode
+                        ? "bg-amber-50 border-amber-200 dark:bg-amber-950/20 dark:border-amber-800"
+                        : "bg-muted/50 border-border",
+                    )}
+                  >
                     <div className="flex items-center gap-3">
                       {stats.unicode && (
                         <span className="flex items-center gap-1 text-amber-600 dark:text-amber-400 font-medium">
@@ -192,19 +261,34 @@ export function SmsEditor({ initialValue, onSave, onCancel, isSaving, appName = 
                         </span>
                       )}
                       <span className="text-muted-foreground">
-                        Encoding: <span className="font-semibold text-foreground">{stats.unicode ? "Unicode" : "GSM-7"}</span>
+                        Encoding:{" "}
+                        <span className="font-semibold text-foreground">
+                          {stats.unicode ? "Unicode" : "GSM-7"}
+                        </span>
                       </span>
                     </div>
                     <div className="flex items-center gap-3 text-muted-foreground">
                       <span>
-                        <span className={cn("font-semibold", stats.charsLeft < 0 ? "text-destructive" : "text-foreground")}>
+                        <span
+                          className={cn(
+                            "font-semibold",
+                            stats.charsLeft < 0
+                              ? "text-destructive"
+                              : "text-foreground",
+                          )}
+                        >
                           {stats.len}
                         </span>
-                        <span>/{stats.singleLimit * (stats.segments || 1)} chars</span>
+                        <span>
+                          /{stats.singleLimit * (stats.segments || 1)} chars
+                        </span>
                       </span>
                       <Separator orientation="vertical" className="h-3" />
                       <span>
-                        <span className="font-semibold text-foreground">{stats.segments}</span> segment{stats.segments !== 1 && "s"}
+                        <span className="font-semibold text-foreground">
+                          {stats.segments}
+                        </span>{" "}
+                        segment{stats.segments !== 1 && "s"}
                       </span>
                     </div>
                   </div>
@@ -214,8 +298,12 @@ export function SmsEditor({ initialValue, onSave, onCancel, isSaving, appName = 
               {/* Variables card */}
               <Card className="rounded-xl border-border/60">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-semibold text-foreground">Variables</CardTitle>
-                  <p className="text-xs text-muted-foreground">Define dynamic values used in your message.</p>
+                  <CardTitle className="text-sm font-semibold text-foreground">
+                    Variables
+                  </CardTitle>
+                  <p className="text-xs text-muted-foreground">
+                    Define dynamic values used in your message.
+                  </p>
                 </CardHeader>
                 <CardContent>
                   {variables.length === 0 ? (
@@ -227,17 +315,29 @@ export function SmsEditor({ initialValue, onSave, onCancel, isSaving, appName = 
                       <table className="w-full text-xs">
                         <thead>
                           <tr className="bg-muted/50 border-b border-border">
-                            <th className="text-left px-3 py-2 font-medium text-muted-foreground">Variable</th>
-                            <th className="text-left px-3 py-2 font-medium text-muted-foreground">Example value</th>
+                            <th className="text-left px-3 py-2 font-medium text-muted-foreground">
+                              Variable
+                            </th>
+                            <th className="text-left px-3 py-2 font-medium text-muted-foreground">
+                              Example value
+                            </th>
                           </tr>
                         </thead>
                         <tbody>
                           {variables.map((v, i) => (
-                            <tr key={v.name} className={cn("border-b border-border last:border-0", i % 2 === 1 && "bg-muted/20")}>
+                            <tr
+                              key={v.name}
+                              className={cn(
+                                "border-b border-border last:border-0",
+                                i % 2 === 1 && "bg-muted/20",
+                              )}
+                            >
                               <td className="px-3 py-2">
                                 <code className="font-mono text-primary font-semibold">{`{{${v.name}}}`}</code>
                               </td>
-                              <td className="px-3 py-2 text-muted-foreground">{v.example || "—"}</td>
+                              <td className="px-3 py-2 text-muted-foreground">
+                                {v.example || "—"}
+                              </td>
                             </tr>
                           ))}
                         </tbody>
@@ -250,13 +350,17 @@ export function SmsEditor({ initialValue, onSave, onCancel, isSaving, appName = 
 
             {/* Right: Phone preview */}
             <div className="lg:col-span-2 flex flex-col items-center">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">Preview</p>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">
+                Preview
+              </p>
               <div className="relative">
                 {/* Phone frame */}
                 <div className="w-[280px] h-[520px] bg-slate-900 dark:bg-slate-950 rounded-[2.5rem] shadow-2xl border-4 border-slate-800 relative overflow-hidden flex flex-col">
                   {/* Status bar */}
                   <div className="h-8 bg-slate-900 flex items-center justify-between px-5 shrink-0">
-                    <span className="text-white text-[10px] font-semibold">9:41</span>
+                    <span className="text-white text-[10px] font-semibold">
+                      9:41
+                    </span>
                     <div className="w-16 h-4 bg-slate-900 rounded-full absolute left-1/2 -translate-x-1/2 top-0" />
                     <div className="flex items-center gap-1">
                       <div className="flex gap-0.5 items-end">
@@ -275,10 +379,14 @@ export function SmsEditor({ initialValue, onSave, onCancel, isSaving, appName = 
                   <div className="bg-slate-800 px-4 py-2 border-b border-slate-700 shrink-0">
                     <div className="flex items-center gap-2">
                       <div className="h-8 w-8 rounded-full bg-emerald-500 flex items-center justify-center shrink-0">
-                        <span className="text-white text-[10px] font-bold">{appName[0].toUpperCase()}</span>
+                        <span className="text-white text-[10px] font-bold">
+                          {appName[0].toUpperCase()}
+                        </span>
                       </div>
                       <div>
-                        <p className="text-white text-[11px] font-semibold">{appName}</p>
+                        <p className="text-white text-[11px] font-semibold">
+                          {appName}
+                        </p>
                         <p className="text-slate-400 text-[9px]">SMS</p>
                       </div>
                     </div>
@@ -289,21 +397,29 @@ export function SmsEditor({ initialValue, onSave, onCancel, isSaving, appName = 
                     {previewBody ? (
                       <div className="flex gap-2 items-end">
                         <div className="h-6 w-6 rounded-full bg-emerald-500 flex items-center justify-center shrink-0">
-                          <span className="text-white text-[8px] font-bold">{appName[0].toUpperCase()}</span>
+                          <span className="text-white text-[8px] font-bold">
+                            {appName[0].toUpperCase()}
+                          </span>
                         </div>
                         <div className="bg-white rounded-2xl rounded-bl-sm px-3 py-2 max-w-[200px] shadow-sm">
-                          <p className="text-slate-900 text-[11px] leading-relaxed whitespace-pre-wrap break-words">{previewBody}</p>
+                          <p className="text-slate-900 text-[11px] leading-relaxed whitespace-pre-wrap break-words">
+                            {previewBody}
+                          </p>
                         </div>
                       </div>
                     ) : (
-                      <p className="text-slate-400 text-[11px] text-center py-8">Your message will appear here</p>
+                      <p className="text-slate-400 text-[11px] text-center py-8">
+                        Your message will appear here
+                      </p>
                     )}
                   </div>
 
                   {/* Input bar */}
                   <div className="bg-white border-t border-slate-200 px-3 py-2 flex items-center gap-2 shrink-0">
                     <div className="flex-1 bg-slate-100 rounded-full px-3 py-1">
-                      <span className="text-slate-400 text-[10px]">Message</span>
+                      <span className="text-slate-400 text-[10px]">
+                        Message
+                      </span>
                     </div>
                     <div className="h-6 w-6 rounded-full bg-emerald-500 flex items-center justify-center">
                       <span className="text-white text-[8px]">▲</span>
@@ -318,4 +434,3 @@ export function SmsEditor({ initialValue, onSave, onCancel, isSaving, appName = 
     </Form>
   );
 }
-

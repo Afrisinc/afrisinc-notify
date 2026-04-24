@@ -19,19 +19,25 @@ export function DocsSearch({ sections, onNavigate }: DocsSearchProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const results = query.length > 1
-    ? sections.filter(
-        (s) =>
-          s.title.toLowerCase().includes(query.toLowerCase()) ||
-          s.content.toLowerCase().includes(query.toLowerCase())
-      ).slice(0, 8)
-    : [];
+  const results =
+    query.length > 1
+      ? sections
+          .filter(
+            (s) =>
+              s.title.toLowerCase().includes(query.toLowerCase()) ||
+              s.content.toLowerCase().includes(query.toLowerCase()),
+          )
+          .slice(0, 8)
+      : [];
 
-  const handleSelect = useCallback((id: string) => {
-    onNavigate(id);
-    setOpen(false);
-    setQuery("");
-  }, [onNavigate]);
+  const handleSelect = useCallback(
+    (id: string) => {
+      onNavigate(id);
+      setOpen(false);
+      setQuery("");
+    },
+    [onNavigate],
+  );
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -83,13 +89,19 @@ export function DocsSearch({ sections, onNavigate }: DocsSearchProps) {
             <input
               ref={inputRef}
               value={query}
-              onChange={(e) => { setQuery(e.target.value); setSelectedIndex(0); }}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setSelectedIndex(0);
+              }}
               onKeyDown={handleKeyDown}
               placeholder="Search documentation..."
               className="flex-1 bg-transparent border-0 py-3 px-3 text-sm text-foreground placeholder:text-foreground/70 dark:text-foreground/80 focus:outline-none"
             />
             {query && (
-              <button onClick={() => setQuery("")} className="text-foreground/70 dark:text-foreground/80 hover:text-foreground">
+              <button
+                onClick={() => setQuery("")}
+                className="text-foreground/70 dark:text-foreground/80 hover:text-foreground"
+              >
                 <X className="h-4 w-4" />
               </button>
             )}
@@ -98,14 +110,18 @@ export function DocsSearch({ sections, onNavigate }: DocsSearchProps) {
           {query.length > 1 && (
             <div className="max-h-72 overflow-y-auto p-2">
               {results.length === 0 ? (
-                <p className="text-sm text-foreground/70 dark:text-foreground/80 text-center py-6">No results found</p>
+                <p className="text-sm text-foreground/70 dark:text-foreground/80 text-center py-6">
+                  No results found
+                </p>
               ) : (
                 results.map((r, i) => (
                   <button
                     key={r.id}
                     onClick={() => handleSelect(r.id)}
                     className={`w-full text-left rounded-md px-3 py-2.5 text-sm transition-colors ${
-                      i === selectedIndex ? "bg-primary/10 text-foreground" : "hover:bg-muted/50 text-foreground"
+                      i === selectedIndex
+                        ? "bg-primary/10 text-foreground"
+                        : "hover:bg-muted/50 text-foreground"
                     }`}
                   >
                     <span className="font-medium">{r.title}</span>

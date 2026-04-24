@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-import { TEditorBlock } from '../../../../editor/core';
+import { TEditorBlock } from "../../../../editor/core";
 
-import BlocksMenu from './BlocksMenu';
-import DividerButton from './DividerButton';
-import PlaceholderButton from './PlaceholderButton';
+import BlocksMenu from "./BlocksMenu";
+import DividerButton from "./DividerButton";
+import PlaceholderButton from "./PlaceholderButton";
 
 type Props = {
   placeholder?: boolean;
@@ -22,16 +22,25 @@ export default function AddBlockButton({ onSelect, placeholder }: Props) {
     if (placeholder) {
       return <PlaceholderButton onClick={handleButtonClick} />;
     } else {
-      return <DividerButton buttonElement={buttonElement} onClick={handleButtonClick} />;
+      return (
+        <DividerButton
+          buttonElement={buttonElement}
+          onClick={handleButtonClick}
+        />
+      );
     }
   };
 
   return (
     <>
-      <div ref={setButtonElement} style={{ position: 'relative' }}>
+      <div ref={setButtonElement} style={{ position: "relative" }}>
         {renderButton()}
       </div>
-      <BlocksMenu anchorEl={menuAnchorEl} setAnchorEl={setMenuAnchorEl} onSelect={onSelect} />
+      <BlocksMenu
+        anchorEl={menuAnchorEl}
+        setAnchorEl={setMenuAnchorEl}
+        onSelect={onSelect}
+      />
     </>
   );
 }

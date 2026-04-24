@@ -1,9 +1,9 @@
-import { useUsageDashboard } from '@/hooks/useSubscription';
-import { useOrg } from '@/contexts/OrgContext';
-import { useUser } from '@/contexts/UserContext';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { AlertCircle, CheckCircle, TrendingUp, Zap } from 'lucide-react';
+import { useUsageDashboard } from "@/hooks/useSubscription";
+import { useOrg } from "@/contexts/OrgContext";
+import { useUser } from "@/contexts/UserContext";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { AlertCircle, CheckCircle, TrendingUp, Zap } from "lucide-react";
 
 export function UsageDashboard() {
   const { currentOrg } = useOrg();
@@ -48,16 +48,22 @@ export function UsageDashboard() {
   if (!data) return null;
 
   const criticalLimits = data.limits.filter((l) => l.percentage >= 95);
-  const warningLimits = data.limits.filter((l) => l.percentage >= 80 && l.percentage < 95);
+  const warningLimits = data.limits.filter(
+    (l) => l.percentage >= 80 && l.percentage < 95,
+  );
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-semibold text-content">Usage & Limits</h2>
+          <h2 className="text-2xl font-semibold text-content">
+            Usage & Limits
+          </h2>
           <p className="text-sm text-content-secondary mt-1">
-            {data.plan} Plan · {data.status === 'active' ? 'Active' : 'Inactive'} · {data.billingCycle}
+            {data.plan} Plan ·{" "}
+            {data.status === "active" ? "Active" : "Inactive"} ·{" "}
+            {data.billingCycle}
           </p>
         </div>
         <div className="text-right">
@@ -76,7 +82,8 @@ export function UsageDashboard() {
               <div>
                 <p className="font-semibold text-danger">Critical Limits</p>
                 <p className="text-sm text-danger/80">
-                  You've reached {criticalLimits.length} limit(s): {criticalLimits.map((l) => l.metric).join(', ')}
+                  You've reached {criticalLimits.length} limit(s):{" "}
+                  {criticalLimits.map((l) => l.metric).join(", ")}
                 </p>
               </div>
             </div>
@@ -93,7 +100,8 @@ export function UsageDashboard() {
               <div>
                 <p className="font-semibold text-warning">Approaching Limits</p>
                 <p className="text-sm text-warning/80">
-                  {warningLimits.map((l) => l.metric).join(', ')} are approaching their limits
+                  {warningLimits.map((l) => l.metric).join(", ")} are
+                  approaching their limits
                 </p>
               </div>
             </div>
@@ -110,25 +118,28 @@ export function UsageDashboard() {
           const isCritical = percentage >= 95;
           const isGood = percentage < 80;
 
-          let bgColor = 'bg-card border-border/60';
-          let textColor = 'text-content';
+          let bgColor = "bg-card border-border/60";
+          let textColor = "text-content";
 
           if (isCritical) {
-            bgColor = 'bg-danger/5 border-danger/30';
-            textColor = 'text-danger';
+            bgColor = "bg-danger/5 border-danger/30";
+            textColor = "text-danger";
           } else if (isWarning) {
-            bgColor = 'bg-warning/5 border-warning/30';
-            textColor = 'text-warning';
+            bgColor = "bg-warning/5 border-warning/30";
+            textColor = "text-warning";
           } else if (isGood && !isUnlimited) {
-            bgColor = 'bg-success/5 border-success/30';
+            bgColor = "bg-success/5 border-success/30";
           }
 
           return (
-            <Card key={limit.metric} className={`${bgColor} border transition-colors hover:border-border`}>
+            <Card
+              key={limit.metric}
+              className={`${bgColor} border transition-colors hover:border-border`}
+            >
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-sm font-medium text-content-secondary capitalize">
-                    {limit.metric.replace(/_/g, ' ')}
+                    {limit.metric.replace(/_/g, " ")}
                   </CardTitle>
                   {isUnlimited ? (
                     <Zap className="h-4 w-4 text-primary" />
@@ -150,38 +161,52 @@ export function UsageDashboard() {
                         <div
                           className={`h-full transition-all ${
                             isCritical
-                              ? 'bg-danger'
+                              ? "bg-danger"
                               : isWarning
-                                ? 'bg-warning'
-                                : 'bg-success'
+                                ? "bg-warning"
+                                : "bg-success"
                           }`}
-                          style={{ width: `${Math.min(limit.percentage, 100)}%` }}
+                          style={{
+                            width: `${Math.min(limit.percentage, 100)}%`,
+                          }}
                         />
                       </div>
                       <div className="text-xs text-content-secondary">
-                        {limit.percentage ? limit.percentage.toFixed(1) : '0'}% used
+                        {limit.percentage ? limit.percentage.toFixed(1) : "0"}%
+                        used
                       </div>
                     </div>
 
                     {/* Stats */}
                     <div className="space-y-1">
                       <p className={`text-sm font-semibold ${textColor}`}>
-                        {limit.used.toLocaleString()} / {isUnlimited ? 'Unlimited' : limit.limit.toLocaleString()}
+                        {limit.used.toLocaleString()} /{" "}
+                        {isUnlimited
+                          ? "Unlimited"
+                          : limit.limit.toLocaleString()}
                       </p>
                       <p className="text-xs text-content-secondary">
-                        {isUnlimited ? 'No limit' : `${limit.remaining.toLocaleString()} remaining`}
+                        {isUnlimited
+                          ? "No limit"
+                          : `${limit.remaining.toLocaleString()} remaining`}
                       </p>
                     </div>
 
                     {/* Period */}
                     <p className="text-xs text-content-secondary capitalize">
-                      {limit.period === 'unlimited' ? 'No reset' : `Resets ${limit.period}`}
+                      {limit.period === "unlimited"
+                        ? "No reset"
+                        : `Resets ${limit.period}`}
                     </p>
                   </>
                 ) : (
                   <div className="space-y-2">
-                    <p className="text-sm font-semibold text-primary">Unlimited</p>
-                    <p className="text-xs text-content-secondary">No limits on this metric</p>
+                    <p className="text-sm font-semibold text-primary">
+                      Unlimited
+                    </p>
+                    <p className="text-xs text-content-secondary">
+                      No limits on this metric
+                    </p>
                   </div>
                 )}
               </CardContent>
@@ -194,7 +219,8 @@ export function UsageDashboard() {
       <Card className="border-border/60 bg-gradient-to-br from-primary/5 to-accent/5">
         <CardContent className="pt-6">
           <p className="text-sm text-content-secondary">
-            📊 Usage data updates every 5 minutes. For real-time metrics, please refresh the page.
+            📊 Usage data updates every 5 minutes. For real-time metrics, please
+            refresh the page.
           </p>
         </CardContent>
       </Card>

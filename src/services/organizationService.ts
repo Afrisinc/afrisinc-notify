@@ -73,7 +73,11 @@ export interface OrganizationInvitesResponse {
 }
 
 export interface UserInvitesResponse {
-  invites: (OrganizationInvite & { orgName: string; orgId: string; token: string })[];
+  invites: (OrganizationInvite & {
+    orgName: string;
+    orgId: string;
+    token: string;
+  })[];
 }
 
 // ──────────────────────────────────────────
@@ -83,7 +87,9 @@ export interface UserInvitesResponse {
 /**
  * Create a new organization
  */
-export const createOrganizationService = async (payload: CreateOrganizationPayload) => {
+export const createOrganizationService = async (
+  payload: CreateOrganizationPayload,
+) => {
   const { data } = await getApiClient().post(`/api/organizations`, payload);
   return data.data;
 };
@@ -100,8 +106,14 @@ export const getOrganizationService = async (orgId: string) => {
  * Update organization details
  * Only the organization owner can update
  */
-export const updateOrganizationService = async (orgId: string, payload: UpdateOrganizationPayload) => {
-  const { data } = await getApiClient().put(`/api/organizations/${orgId}`, payload);
+export const updateOrganizationService = async (
+  orgId: string,
+  payload: UpdateOrganizationPayload,
+) => {
+  const { data } = await getApiClient().put(
+    `/api/organizations/${orgId}`,
+    payload,
+  );
   return data.data;
 };
 
@@ -120,12 +132,20 @@ export const deleteOrganizationService = async (orgId: string) => {
  * Send an invite to a user to join the organization
  * Only admins and owners can create invites
  */
-export const createOrganizationInviteService = async (orgId: string, accountId: string, payload: CreateInvitePayload) => {
-  const { data } = await getApiClient().post(`/api/organizations/${orgId}/invites`, payload, {
-    headers: {
-      'x-account-id': accountId,
+export const createOrganizationInviteService = async (
+  orgId: string,
+  accountId: string,
+  payload: CreateInvitePayload,
+) => {
+  const { data } = await getApiClient().post(
+    `/api/organizations/${orgId}/invites`,
+    payload,
+    {
+      headers: {
+        "x-account-id": accountId,
+      },
     },
-  });
+  );
   return data.data;
 };
 
@@ -133,10 +153,17 @@ export const createOrganizationInviteService = async (orgId: string, accountId: 
  * Get organization members
  * Any member can view the member list with pagination
  */
-export const getOrganizationMembersService = async (orgId: string, page: number = 1, limit: number = 10) => {
-  const { data } = await getApiClient().get(`/api/organizations/${orgId}/members`, {
-    params: { page, limit },
-  });
+export const getOrganizationMembersService = async (
+  orgId: string,
+  page: number = 1,
+  limit: number = 10,
+) => {
+  const { data } = await getApiClient().get(
+    `/api/organizations/${orgId}/members`,
+    {
+      params: { page, limit },
+    },
+  );
   return data.data as OrganizationMembersResponse;
 };
 
@@ -144,10 +171,17 @@ export const getOrganizationMembersService = async (orgId: string, page: number 
  * Get organization invites
  * Members can view the pending invites with pagination
  */
-export const getOrganizationInvitesService = async (orgId: string, page: number = 1, limit: number = 10) => {
-  const { data } = await getApiClient().get(`/api/organizations/${orgId}/invites`, {
-    params: { page, limit },
-  });
+export const getOrganizationInvitesService = async (
+  orgId: string,
+  page: number = 1,
+  limit: number = 10,
+) => {
+  const { data } = await getApiClient().get(
+    `/api/organizations/${orgId}/invites`,
+    {
+      params: { page, limit },
+    },
+  );
   return data.data as OrganizationInvitesResponse;
 };
 
@@ -165,8 +199,13 @@ export const getUserInvitesService = async () => {
  * Only admins and owners can remove members
  * Cannot remove yourself
  */
-export const removeOrganizationMemberService = async (orgId: string, memberId: string) => {
-  const { data } = await getApiClient().delete(`/api/organizations/${orgId}/members/${memberId}`);
+export const removeOrganizationMemberService = async (
+  orgId: string,
+  memberId: string,
+) => {
+  const { data } = await getApiClient().delete(
+    `/api/organizations/${orgId}/members/${memberId}`,
+  );
   return data.data;
 };
 
@@ -178,8 +217,13 @@ export const removeOrganizationMemberService = async (orgId: string, memberId: s
  * Get invite details by inviteId and token
  * No authentication required
  */
-export const getInviteDetailsService = async (inviteId: string, token: string) => {
-  const { data } = await getApiClient().get(`/api/invites/${inviteId}/${token}`);
+export const getInviteDetailsService = async (
+  inviteId: string,
+  token: string,
+) => {
+  const { data } = await getApiClient().get(
+    `/api/invites/${inviteId}/${token}`,
+  );
   return data.data as InviteDetails;
 };
 
@@ -188,7 +232,9 @@ export const getInviteDetailsService = async (inviteId: string, token: string) =
  * Authentication required - user email must match invite email
  */
 export const acceptInviteService = async (inviteId: string, token: string) => {
-  const { data } = await getApiClient().post(`/api/invites/${inviteId}/${token}/accept`);
+  const { data } = await getApiClient().post(
+    `/api/invites/${inviteId}/${token}/accept`,
+  );
   return data.data;
 };
 
@@ -197,6 +243,8 @@ export const acceptInviteService = async (inviteId: string, token: string) => {
  * Authentication required - user email must match invite email
  */
 export const declineInviteService = async (inviteId: string, token: string) => {
-  const { data } = await getApiClient().post(`/api/invites/${inviteId}/${token}/decline`);
+  const { data } = await getApiClient().post(
+    `/api/invites/${inviteId}/${token}/decline`,
+  );
   return data.data;
 };

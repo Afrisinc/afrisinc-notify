@@ -1,5 +1,14 @@
 import { Link } from "react-router-dom";
-import { Zap, Mail, MessageSquare, Bell, ArrowRight, Shield, BarChart3, Code2 } from "lucide-react";
+import {
+  Zap,
+  Mail,
+  MessageSquare,
+  Bell,
+  ArrowRight,
+  Shield,
+  BarChart3,
+  Code2,
+} from "lucide-react";
 import { motion } from "framer-motion";
 import { getAuthUrls } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -10,18 +19,43 @@ import { HowItWorks } from "@/components/public/landing/HowItWorks";
 import { FAQ } from "@/components/public/landing/FAQ";
 
 const features = [
-  { icon: Mail, title: "Email", description: "Transactional and marketing emails with rich templates." },
-  { icon: MessageSquare, title: "SMS", description: "Deliver time-sensitive messages directly to phones." },
-  { icon: Bell, title: "Push Notifications", description: "Engage users with real-time browser and mobile push." },
-  { icon: Code2, title: "Simple API", description: "One unified API for all notification channels." },
-  { icon: BarChart3, title: "Delivery Analytics", description: "Track delivery, opens, and engagement in real-time." },
-  { icon: Shield, title: "Enterprise Ready", description: "Multi-tenant, role-based access, and audit logs." },
+  {
+    icon: Mail,
+    title: "Email",
+    description: "Transactional and marketing emails with rich templates.",
+  },
+  {
+    icon: MessageSquare,
+    title: "SMS",
+    description: "Deliver time-sensitive messages directly to phones.",
+  },
+  {
+    icon: Bell,
+    title: "Push Notifications",
+    description: "Engage users with real-time browser and mobile push.",
+  },
+  {
+    icon: Code2,
+    title: "Simple API",
+    description: "One unified API for all notification channels.",
+  },
+  {
+    icon: BarChart3,
+    title: "Delivery Analytics",
+    description: "Track delivery, opens, and engagement in real-time.",
+  },
+  {
+    icon: Shield,
+    title: "Enterprise Ready",
+    description: "Multi-tenant, role-based access, and audit logs.",
+  },
 ];
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
   visible: (i: number) => ({
-    opacity: 1, y: 0,
+    opacity: 1,
+    y: 0,
     transition: { delay: i * 0.1, duration: 0.5, ease: "easeOut" },
   }),
 };
@@ -46,7 +80,8 @@ const Landing = () => {
             transition={{ duration: 0.5 }}
             className="inline-flex items-center gap-2 text-xs font-medium text-primary bg-primary/10 border border-primary/20 rounded-full px-3 py-1 mb-6"
           >
-            <Zap className="h-3 w-3" /> Notification infrastructure for developers
+            <Zap className="h-3 w-3" /> Notification infrastructure for
+            developers
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
@@ -63,8 +98,8 @@ const Landing = () => {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="text-subtitle mb-10 max-w-xl mx-auto"
           >
-            One API for Email, SMS, and Push. Create templates, manage delivery, and
-            track everything from a single dashboard.
+            One API for Email, SMS, and Push. Create templates, manage delivery,
+            and track everything from a single dashboard.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -78,9 +113,7 @@ const Landing = () => {
               </a>
             </Button>
             <Button asChild variant="secondary-outline" size="md">
-              <Link to="/pricing">
-                View pricing
-              </Link>
+              <Link to="/pricing">View pricing</Link>
             </Button>
           </motion.div>
         </div>
@@ -118,8 +151,12 @@ const Landing = () => {
                 <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
                   <f.icon className="h-5 w-5 text-primary" />
                 </div>
-                <h3 className="heading-subsection dark:text-white">{f.title}</h3>
-                <p className="text-foreground/70 dark:text-foreground/80">{f.description}</p>
+                <h3 className="heading-subsection dark:text-white">
+                  {f.title}
+                </h3>
+                <p className="text-foreground/70 dark:text-foreground/80">
+                  {f.description}
+                </p>
               </motion.div>
             ))}
           </motion.div>
@@ -148,7 +185,8 @@ const Landing = () => {
             Ready to get started?
           </h2>
           <p className="text-foreground/75 dark:text-foreground/80 mb-8">
-            Create your account and start sending notifications in under 5 minutes.
+            Create your account and start sending notifications in under 5
+            minutes.
           </p>
           <Button asChild variant="primary-solid" size="md">
             <a href={signupUrl}>

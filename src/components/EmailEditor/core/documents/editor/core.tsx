@@ -1,27 +1,27 @@
-import React from 'react';
-import { z } from 'zod';
+import React from "react";
+import { z } from "zod";
 
-import { Avatar, AvatarPropsSchema } from '@usewaypoint/block-avatar';
-import { Button, ButtonPropsSchema } from '@usewaypoint/block-button';
-import { Divider, DividerPropsSchema } from '@usewaypoint/block-divider';
-import { Heading, HeadingPropsSchema } from '@usewaypoint/block-heading';
-import { Html, HtmlPropsSchema } from '@usewaypoint/block-html';
-import { Image, ImagePropsSchema } from '@usewaypoint/block-image';
-import { Spacer, SpacerPropsSchema } from '@usewaypoint/block-spacer';
-import { Text, TextPropsSchema } from '@usewaypoint/block-text';
+import { Avatar, AvatarPropsSchema } from "@usewaypoint/block-avatar";
+import { Button, ButtonPropsSchema } from "@usewaypoint/block-button";
+import { Divider, DividerPropsSchema } from "@usewaypoint/block-divider";
+import { Heading, HeadingPropsSchema } from "@usewaypoint/block-heading";
+import { Html, HtmlPropsSchema } from "@usewaypoint/block-html";
+import { Image, ImagePropsSchema } from "@usewaypoint/block-image";
+import { Spacer, SpacerPropsSchema } from "@usewaypoint/block-spacer";
+import { Text, TextPropsSchema } from "@usewaypoint/block-text";
 import {
   buildBlockComponent,
   buildBlockConfigurationDictionary,
   buildBlockConfigurationSchema,
-} from '@usewaypoint/document-core';
+} from "@usewaypoint/document-core";
 
-import ColumnsContainerEditor from '../blocks/ColumnsContainer/ColumnsContainerEditor';
-import ColumnsContainerPropsSchema from '../blocks/ColumnsContainer/ColumnsContainerPropsSchema';
-import ContainerEditor from '../blocks/Container/ContainerEditor';
-import ContainerPropsSchema from '../blocks/Container/ContainerPropsSchema';
-import EmailLayoutEditor from '../blocks/EmailLayout/EmailLayoutEditor';
-import EmailLayoutPropsSchema from '../blocks/EmailLayout/EmailLayoutPropsSchema';
-import EditorBlockWrapper from '../blocks/helpers/block-wrappers/EditorBlockWrapper';
+import ColumnsContainerEditor from "../blocks/ColumnsContainer/ColumnsContainerEditor";
+import ColumnsContainerPropsSchema from "../blocks/ColumnsContainer/ColumnsContainerPropsSchema";
+import ContainerEditor from "../blocks/Container/ContainerEditor";
+import ContainerPropsSchema from "../blocks/Container/ContainerPropsSchema";
+import EmailLayoutEditor from "../blocks/EmailLayout/EmailLayoutEditor";
+import EmailLayoutPropsSchema from "../blocks/EmailLayout/EmailLayoutPropsSchema";
+import EditorBlockWrapper from "../blocks/helpers/block-wrappers/EditorBlockWrapper";
 
 const EDITOR_DICTIONARY = buildBlockConfigurationDictionary({
   Avatar: {
@@ -79,7 +79,9 @@ const EDITOR_DICTIONARY = buildBlockConfigurationDictionary({
         ...data,
         props: {
           ...data.props,
-          url: data.props?.url ?? 'https://placehold.co/600x400@2x/F8F8F8/CCC?text=Your%20image',
+          url:
+            data.props?.url ??
+            "https://placehold.co/600x400@2x/F8F8F8/CCC?text=Your%20image",
         },
       };
       return (
@@ -120,8 +122,12 @@ const EDITOR_DICTIONARY = buildBlockConfigurationDictionary({
 });
 
 export const EditorBlock = buildBlockComponent(EDITOR_DICTIONARY);
-export const EditorBlockSchema = buildBlockConfigurationSchema(EDITOR_DICTIONARY);
-export const EditorConfigurationSchema = z.record(z.string(), EditorBlockSchema);
+export const EditorBlockSchema =
+  buildBlockConfigurationSchema(EDITOR_DICTIONARY);
+export const EditorConfigurationSchema = z.record(
+  z.string(),
+  EditorBlockSchema,
+);
 
 export type TEditorBlock = z.infer<typeof EditorBlockSchema>;
 export type TEditorConfiguration = Record<string, TEditorBlock>;

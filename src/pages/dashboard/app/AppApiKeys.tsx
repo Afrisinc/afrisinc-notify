@@ -45,7 +45,10 @@ export default function AppApiKeys() {
   const [showCreate, setShowCreate] = useState(false);
   const [keyName, setKeyName] = useState("");
   const [keyType, setKeyType] = useState<"test" | "production">("test");
-  const [createdKey, setCreatedKey] = useState<{ plainKey: string; name: string } | null>(null);
+  const [createdKey, setCreatedKey] = useState<{
+    plainKey: string;
+    name: string;
+  } | null>(null);
 
   const { data: apiKeysData, isLoading } = useApiKeys(appId!);
   const createMutation = useCreateApiKey();
@@ -147,7 +150,9 @@ export default function AppApiKeys() {
         <Card className="border-success/50 bg-success/5">
           <CardContent className="pt-4">
             <div className="space-y-3">
-              <p className="text-sm font-medium text-success">✓ API Key Created</p>
+              <p className="text-sm font-medium text-success">
+                ✓ API Key Created
+              </p>
               <p className="text-xs text-content-secondary">
                 Save this key securely. You will not be able to see it again.
               </p>
@@ -160,7 +165,11 @@ export default function AppApiKeys() {
                   variant="outline"
                   onClick={() => handleCopy(createdKey.plainKey, "new-key")}
                 >
-                  {copied === "new-key" ? <Check className="h-3 w-3 text-success" /> : <Copy className="h-3 w-3" />}
+                  {copied === "new-key" ? (
+                    <Check className="h-3 w-3 text-success" />
+                  ) : (
+                    <Copy className="h-3 w-3" />
+                  )}
                 </Button>
               </div>
               <Button
@@ -192,7 +201,9 @@ export default function AppApiKeys() {
               <CardContent className="flex items-center justify-between py-3 px-4">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-content">{k.name}</span>
+                    <span className="text-sm font-medium text-content">
+                      {k.name}
+                    </span>
                     <Badge
                       variant="outline"
                       className={`text-[10px] ${
@@ -218,9 +229,15 @@ export default function AppApiKeys() {
                     variant="ghost"
                     size="icon"
                     className="h-7 w-7"
-                    onClick={() => setShowKey((s) => ({ ...s, [k.id]: !s[k.id] }))}
+                    onClick={() =>
+                      setShowKey((s) => ({ ...s, [k.id]: !s[k.id] }))
+                    }
                   >
-                    {showKey[k.id] ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
+                    {showKey[k.id] ? (
+                      <EyeOff className="h-3 w-3" />
+                    ) : (
+                      <Eye className="h-3 w-3" />
+                    )}
                   </Button>
                   <Button
                     variant="ghost"
@@ -228,11 +245,19 @@ export default function AppApiKeys() {
                     className="h-7 w-7"
                     onClick={() => handleCopy(k.id, k.id)}
                   >
-                    {copied === k.id ? <Check className="h-3 w-3 text-success" /> : <Copy className="h-3 w-3" />}
+                    {copied === k.id ? (
+                      <Check className="h-3 w-3 text-success" />
+                    ) : (
+                      <Copy className="h-3 w-3" />
+                    )}
                   </Button>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-7 w-7 hover:text-destructive">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 hover:text-destructive"
+                      >
                         <Trash2 className="h-3 w-3" />
                       </Button>
                     </AlertDialogTrigger>
@@ -240,8 +265,9 @@ export default function AppApiKeys() {
                       <AlertDialogHeader>
                         <AlertDialogTitle>Revoke API Key</AlertDialogTitle>
                         <AlertDialogDescription>
-                          This will permanently revoke "{k.name}". Any integrations using this key will stop
-                          working immediately.
+                          This will permanently revoke "{k.name}". Any
+                          integrations using this key will stop working
+                          immediately.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
@@ -251,7 +277,9 @@ export default function AppApiKeys() {
                           onClick={() => handleDeleteKey(k.id)}
                           disabled={deleteMutation.isPending}
                         >
-                          {deleteMutation.isPending ? "Revoking..." : "Revoke Key"}
+                          {deleteMutation.isPending
+                            ? "Revoking..."
+                            : "Revoke Key"}
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
@@ -267,7 +295,9 @@ export default function AppApiKeys() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Create API Key</DialogTitle>
-            <DialogDescription>Create a new API key for this app.</DialogDescription>
+            <DialogDescription>
+              Create a new API key for this app.
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
@@ -280,7 +310,10 @@ export default function AppApiKeys() {
             </div>
             <div>
               <Label>Type</Label>
-              <Select value={keyType} onValueChange={(value: any) => setKeyType(value)}>
+              <Select
+                value={keyType}
+                onValueChange={(value: any) => setKeyType(value)}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -295,7 +328,10 @@ export default function AppApiKeys() {
             <Button variant="outline" onClick={() => setShowCreate(false)}>
               Cancel
             </Button>
-            <Button onClick={handleCreateKey} disabled={createMutation.isPending}>
+            <Button
+              onClick={handleCreateKey}
+              disabled={createMutation.isPending}
+            >
               {createMutation.isPending ? "Creating..." : "Create Key"}
             </Button>
           </DialogFooter>

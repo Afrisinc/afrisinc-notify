@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 import {
   AccountCircleOutlined,
@@ -11,9 +11,9 @@ import {
   NotesOutlined,
   SmartButtonOutlined,
   ViewColumnOutlined,
-} from '@mui/icons-material';
+} from "@mui/icons-material";
 
-import { TEditorBlock } from '../../../../editor/core';
+import { TEditorBlock } from "../../../../editor/core";
 
 type TButtonProps = {
   label: string;
@@ -22,12 +22,12 @@ type TButtonProps = {
 };
 export const BUTTONS: TButtonProps[] = [
   {
-    label: 'Heading',
+    label: "Heading",
     icon: <HMobiledataOutlined />,
     block: () => ({
-      type: 'Heading',
+      type: "Heading",
       data: {
-        props: { text: 'Hello friend' },
+        props: { text: "Hello friend" },
         style: {
           padding: { top: 16, bottom: 16, left: 24, right: 24 },
         },
@@ -35,44 +35,44 @@ export const BUTTONS: TButtonProps[] = [
     }),
   },
   {
-    label: 'Text',
+    label: "Text",
     icon: <NotesOutlined />,
     block: () => ({
-      type: 'Text',
+      type: "Text",
       data: {
-        props: { text: 'My new text block' },
+        props: { text: "My new text block" },
         style: {
           padding: { top: 16, bottom: 16, left: 24, right: 24 },
-          fontWeight: 'normal',
+          fontWeight: "normal",
         },
       },
     }),
   },
 
   {
-    label: 'Button',
+    label: "Button",
     icon: <SmartButtonOutlined />,
     block: () => ({
-      type: 'Button',
+      type: "Button",
       data: {
         props: {
-          text: 'Button',
-          url: 'https://www.usewaypoint.com',
+          text: "Button",
+          url: "https://www.usewaypoint.com",
         },
         style: { padding: { top: 16, bottom: 16, left: 24, right: 24 } },
       },
     }),
   },
   {
-    label: 'Image',
+    label: "Image",
     icon: <ImageOutlined />,
     block: () => ({
-      type: 'Image',
+      type: "Image",
       data: {
         props: {
-          url: 'https://assets.usewaypoint.com/sample-image.jpg',
-          alt: 'Sample product',
-          contentAlignment: 'middle',
+          url: "https://assets.usewaypoint.com/sample-image.jpg",
+          alt: "Sample product",
+          contentAlignment: "middle",
           linkHref: null,
         },
         style: { padding: { top: 16, bottom: 16, left: 24, right: 24 } },
@@ -80,47 +80,47 @@ export const BUTTONS: TButtonProps[] = [
     }),
   },
   {
-    label: 'Avatar',
+    label: "Avatar",
     icon: <AccountCircleOutlined />,
     block: () => ({
-      type: 'Avatar',
+      type: "Avatar",
       data: {
         props: {
-          imageUrl: 'https://ui-avatars.com/api/?size=128',
-          shape: 'circle',
+          imageUrl: "https://ui-avatars.com/api/?size=128",
+          shape: "circle",
         },
         style: { padding: { top: 16, bottom: 16, left: 24, right: 24 } },
       },
     }),
   },
   {
-    label: 'Divider',
+    label: "Divider",
     icon: <HorizontalRuleOutlined />,
     block: () => ({
-      type: 'Divider',
+      type: "Divider",
       data: {
         style: { padding: { top: 16, right: 0, bottom: 16, left: 0 } },
         props: {
-          lineColor: '#CCCCCC',
+          lineColor: "#CCCCCC",
         },
       },
     }),
   },
   {
-    label: 'Spacer',
+    label: "Spacer",
     icon: <Crop32Outlined />,
     block: () => ({
-      type: 'Spacer',
+      type: "Spacer",
       data: {},
     }),
   },
   {
-    label: 'Html',
+    label: "Html",
     icon: <HtmlOutlined />,
     block: () => ({
-      type: 'Html',
+      type: "Html",
       data: {
-        props: { contents: '<strong>Hello world</strong>' },
+        props: { contents: "<strong>Hello world</strong>" },
         style: {
           fontSize: 16,
           textAlign: null,
@@ -130,25 +130,29 @@ export const BUTTONS: TButtonProps[] = [
     }),
   },
   {
-    label: 'Columns',
+    label: "Columns",
     icon: <ViewColumnOutlined />,
     block: () => ({
-      type: 'ColumnsContainer',
+      type: "ColumnsContainer",
       data: {
         props: {
           columnsGap: 16,
           columnsCount: 3,
-          columns: [{ childrenIds: [] }, { childrenIds: [] }, { childrenIds: [] }],
+          columns: [
+            { childrenIds: [] },
+            { childrenIds: [] },
+            { childrenIds: [] },
+          ],
         },
         style: { padding: { top: 16, bottom: 16, left: 24, right: 24 } },
       },
     }),
   },
   {
-    label: 'Container',
+    label: "Container",
     icon: <LibraryAddOutlined />,
     block: () => ({
-      type: 'Container',
+      type: "Container",
       data: {
         style: { padding: { top: 16, bottom: 16, left: 24, right: 24 } },
       },

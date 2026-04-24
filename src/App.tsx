@@ -37,7 +37,6 @@ import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
 import Terms from "./pages/legal/Terms";
 import DPA from "./pages/legal/DPA";
 
-
 // Dashboard pages
 import DashboardHome from "./pages/dashboard/DashboardHome";
 import AppsList from "./pages/dashboard/AppsList";
@@ -85,15 +84,25 @@ const App = () => {
   // Global OAuth callback handler - processes any OAuth provider redirect
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const code = params.get('code');
-    const state = params.get('state');
-    const referrer = sessionStorage.getItem('oauth_referrer');
+    const code = params.get("code");
+    const state = params.get("state");
+    const referrer = sessionStorage.getItem("oauth_referrer");
 
-    console.log('OAuth redirect check:', { code: !!code, state: !!state, referrer, pathname: window.location.pathname });
+    console.log("OAuth redirect check:", {
+      code: !!code,
+      state: !!state,
+      referrer,
+      pathname: window.location.pathname,
+    });
 
     // If we have OAuth params and a saved referrer, redirect to referrer with params
-    if (code && state && referrer && !window.location.pathname.includes('settings')) {
-      console.log('Redirecting to referrer with OAuth params:', referrer);
+    if (
+      code &&
+      state &&
+      referrer &&
+      !window.location.pathname.includes("settings")
+    ) {
+      console.log("Redirecting to referrer with OAuth params:", referrer);
       // Redirect to the referrer page (AppSettings) with OAuth params intact
       // so the GmailSection component can process them
       const redirectUrl = `${referrer}?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`;
@@ -113,110 +122,156 @@ const App = () => {
                 <ProjectProvider>
                   <AppProvider>
                     <Routes>
-                  {/* ── Public ── */}
-                  <Route element={<PublicLayout />}>
-                    <Route path="/" element={<Landing />} />
-                    <Route path="/pricing" element={<Pricing />} />
-                    <Route path="/docs" element={<Docs />} />
-                    <Route path="/templates" element={<TemplateGallery />} />
-                    <Route path="/templates/:channel/:slug" element={<TemplatePreview />} />
-                    <Route path="/privacy" element={<PrivacyPolicy />} />
-                    <Route path="/terms" element={<Terms />} />
-                    <Route path="/dpa" element={<DPA />} />
-                  </Route>
+                      {/* ── Public ── */}
+                      <Route element={<PublicLayout />}>
+                        <Route path="/" element={<Landing />} />
+                        <Route path="/pricing" element={<Pricing />} />
+                        <Route path="/docs" element={<Docs />} />
+                        <Route
+                          path="/templates"
+                          element={<TemplateGallery />}
+                        />
+                        <Route
+                          path="/templates/:channel/:slug"
+                          element={<TemplatePreview />}
+                        />
+                        <Route path="/privacy" element={<PrivacyPolicy />} />
+                        <Route path="/terms" element={<Terms />} />
+                        <Route path="/dpa" element={<DPA />} />
+                      </Route>
 
-                  {/* ── Auth ── */}
-                  <Route>
-                    <Route path="/signup" element={<Signup />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/registration-success" element={<RegistrationSuccess />} />
-                    <Route path="/forgot-password" element={<ForgotPassword />} />
-                    <Route path="/reset-password" element={<ResetPassword />} />
-                    <Route path="/verify-email" element={<VerifyEmail />} />
-                  </Route>
+                      {/* ── Auth ── */}
+                      <Route>
+                        <Route path="/signup" element={<Signup />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route
+                          path="/registration-success"
+                          element={<RegistrationSuccess />}
+                        />
+                        <Route
+                          path="/forgot-password"
+                          element={<ForgotPassword />}
+                        />
+                        <Route
+                          path="/reset-password"
+                          element={<ResetPassword />}
+                        />
+                        <Route path="/verify-email" element={<VerifyEmail />} />
+                      </Route>
 
-                  {/* ── Invite Acceptance (public — no auth required) ── */}
-                  <Route path="/invite/:inviteId/:token" element={<InviteAccept />} />
+                      {/* ── Invite Acceptance (public — no auth required) ── */}
+                      <Route
+                        path="/invite/:inviteId/:token"
+                        element={<InviteAccept />}
+                      />
 
-                  {/* ── Onboarding (protected — after signup) ── */}
-                  <Route
-                    path="/onboarding/welcome"
-                    element={
-                      <ProtectedRoute>
-                        <OnboardingWelcome />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/onboarding/getting-started"
-                    element={
-                      <ProtectedRoute>
-                        <OnboardingGettingStarted />
-                      </ProtectedRoute>
-                    }
-                  />
+                      {/* ── Onboarding (protected — after signup) ── */}
+                      <Route
+                        path="/onboarding/welcome"
+                        element={
+                          <ProtectedRoute>
+                            <OnboardingWelcome />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/onboarding/getting-started"
+                        element={
+                          <ProtectedRoute>
+                            <OnboardingGettingStarted />
+                          </ProtectedRoute>
+                        }
+                      />
 
-                  {/* ── Email Editor (dedicated route) ── */}
-                  <Route
-                    path="/editor/:appId/:templateId"
-                    element={
-                      <ProtectedRoute>
-                        <EditorPage />
-                      </ProtectedRoute>
-                    }
-                  />
-                  {/* Channel Editors: SMS, Push, In-App, WhatsApp */}
-                  <Route
-                    path="/editor/:appId/:channel/:templateId"
-                    element={
-                      <ProtectedRoute>
-                        <ChannelEditorPage />
-                      </ProtectedRoute>
-                    }
-                  />
-                  {/* Legacy route support - redirect old format to new */}
-                  <Route
-                    path="/editor/:templateId"
-                    element={
-                      <ProtectedRoute>
-                        <EditorPageLegacy />
-                      </ProtectedRoute>
-                    }
-                  />
+                      {/* ── Email Editor (dedicated route) ── */}
+                      <Route
+                        path="/editor/:appId/:templateId"
+                        element={
+                          <ProtectedRoute>
+                            <EditorPage />
+                          </ProtectedRoute>
+                        }
+                      />
+                      {/* Channel Editors: SMS, Push, In-App, WhatsApp */}
+                      <Route
+                        path="/editor/:appId/:channel/:templateId"
+                        element={
+                          <ProtectedRoute>
+                            <ChannelEditorPage />
+                          </ProtectedRoute>
+                        }
+                      />
+                      {/* Legacy route support - redirect old format to new */}
+                      <Route
+                        path="/editor/:templateId"
+                        element={
+                          <ProtectedRoute>
+                            <EditorPageLegacy />
+                          </ProtectedRoute>
+                        }
+                      />
 
-                  {/* ── Dashboard ── */}
-                  <Route
-                    path="/dashboard"
-                    element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}
-                  >
-                    <Route index element={<DashboardHome />} />
-                    <Route path="apps" element={<AppsList />} />
-                    <Route path="templates" element={<MyTemplates />} />
-                    <Route path="templates/:id" element={<UserTemplateEditor />} />
-                    {/* Non-email user template editors */}
-                    <Route path="templates/:channel/:id" element={<UserTemplateEditor />} />
+                      {/* ── Dashboard ── */}
+                      <Route
+                        path="/dashboard"
+                        element={
+                          <ProtectedRoute>
+                            <DashboardLayout />
+                          </ProtectedRoute>
+                        }
+                      >
+                        <Route index element={<DashboardHome />} />
+                        <Route path="apps" element={<AppsList />} />
+                        <Route path="templates" element={<MyTemplates />} />
+                        <Route
+                          path="templates/:id"
+                          element={<UserTemplateEditor />}
+                        />
+                        {/* Non-email user template editors */}
+                        <Route
+                          path="templates/:channel/:id"
+                          element={<UserTemplateEditor />}
+                        />
 
-                    {/* App Dashboard with sub-navigation */}
-                    <Route path="apps/:appId" element={<AppDashboardLayout />}>
-                      <Route index element={<AppOverview />} />
-                      <Route path="notifications" element={<AppNotifications />} />
-                      <Route path="notifications/send" element={<AppSendNotification />} />
-                      <Route path="templates" element={<AppTemplates />} />
-                      <Route path="contacts" element={<AppContacts />} />
-                      <Route path="campaigns" element={<AppCampaigns />} />
-                      <Route path="campaigns/:campaignId/analytics" element={<AppCampaignAnalytics />} />
-                      <Route path="api-keys" element={<AppApiKeys />} />
-                      <Route path="logs" element={<AppLogs />} />
-                      <Route path="settings" element={<AppSettings />} />
-                    </Route>
+                        {/* App Dashboard with sub-navigation */}
+                        <Route
+                          path="apps/:appId"
+                          element={<AppDashboardLayout />}
+                        >
+                          <Route index element={<AppOverview />} />
+                          <Route
+                            path="notifications"
+                            element={<AppNotifications />}
+                          />
+                          <Route
+                            path="notifications/send"
+                            element={<AppSendNotification />}
+                          />
+                          <Route path="templates" element={<AppTemplates />} />
+                          <Route path="contacts" element={<AppContacts />} />
+                          <Route path="campaigns" element={<AppCampaigns />} />
+                          <Route
+                            path="campaigns/:campaignId/analytics"
+                            element={<AppCampaignAnalytics />}
+                          />
+                          <Route path="api-keys" element={<AppApiKeys />} />
+                          <Route path="logs" element={<AppLogs />} />
+                          <Route path="settings" element={<AppSettings />} />
+                        </Route>
 
-                    <Route path="marketplace" element={<Marketplace />} />
-                    <Route path="billing" element={<Billing />} />
-                    <Route path="organization/members" element={<OrgMembers />} />
-                    <Route path="organization/settings" element={<OrgSettings />} />
-                  </Route>
+                        <Route path="marketplace" element={<Marketplace />} />
+                        <Route path="billing" element={<Billing />} />
+                        <Route
+                          path="organization/members"
+                          element={<OrgMembers />}
+                        />
+                        <Route
+                          path="organization/settings"
+                          element={<OrgSettings />}
+                        />
+                      </Route>
 
-                  <Route path="*" element={<NotFound />} />
+                      <Route path="*" element={<NotFound />} />
                     </Routes>
                   </AppProvider>
                 </ProjectProvider>

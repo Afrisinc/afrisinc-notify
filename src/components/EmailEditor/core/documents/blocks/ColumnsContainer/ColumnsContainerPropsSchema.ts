@@ -1,8 +1,10 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-import { ColumnsContainerPropsSchema as BaseColumnsContainerPropsSchema } from '@usewaypoint/block-columns-container';
+import { ColumnsContainerPropsSchema as BaseColumnsContainerPropsSchema } from "@usewaypoint/block-columns-container";
 
-const BasePropsShape = BaseColumnsContainerPropsSchema.shape.props.unwrap().unwrap().shape;
+const BasePropsShape = BaseColumnsContainerPropsSchema.shape.props
+  .unwrap()
+  .unwrap().shape;
 
 const ColumnsContainerPropsSchema = z.object({
   style: BaseColumnsContainerPropsSchema.shape.style,

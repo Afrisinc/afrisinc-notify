@@ -42,8 +42,9 @@ const RegistrationSuccess = () => {
                   <p className="text-sm text-blue-700 dark:text-blue-300">
                     {email ? (
                       <>
-                        We've sent a verification link to <strong>{email}</strong>.
-                        Check your inbox and click the link to verify your account.
+                        We've sent a verification link to{" "}
+                        <strong>{email}</strong>. Check your inbox and click the
+                        link to verify your account.
                       </>
                     ) : (
                       "We've sent a verification link to your email. Click it to verify your account."
@@ -60,15 +61,21 @@ const RegistrationSuccess = () => {
               </p>
               <ol className="space-y-2 text-sm text-gray-700 dark:text-gray-400">
                 <li className="flex gap-3">
-                  <span className="font-semibold text-gray-900 dark:text-gray-100 flex-shrink-0">1.</span>
+                  <span className="font-semibold text-gray-900 dark:text-gray-100 flex-shrink-0">
+                    1.
+                  </span>
                   <span>Check your email for the verification link</span>
                 </li>
                 <li className="flex gap-3">
-                  <span className="font-semibold text-gray-900 dark:text-gray-100 flex-shrink-0">2.</span>
+                  <span className="font-semibold text-gray-900 dark:text-gray-100 flex-shrink-0">
+                    2.
+                  </span>
                   <span>Click the link to confirm your email address</span>
                 </li>
                 <li className="flex gap-3">
-                  <span className="font-semibold text-gray-900 dark:text-gray-100 flex-shrink-0">3.</span>
+                  <span className="font-semibold text-gray-900 dark:text-gray-100 flex-shrink-0">
+                    3.
+                  </span>
                   <span>Return here and sign in to get started</span>
                 </li>
               </ol>
@@ -97,7 +104,10 @@ const RegistrationSuccess = () => {
         {/* Footer links */}
         <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-6">
           Need help?{" "}
-          <a href="mailto:support@afrisinc.com" className="form-link font-semibold">
+          <a
+            href="mailto:support@afrisinc.com"
+            className="form-link font-semibold"
+          >
             Contact support
           </a>
         </p>

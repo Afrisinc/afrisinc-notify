@@ -24,7 +24,9 @@ const DashboardLayout = () => {
                     {(user.firstName?.[0] ?? user.email[0]).toUpperCase()}
                   </div>
                   <span className="text-sm text-content-secondary hidden sm:block">
-                    {user.firstName ? `${user.firstName} ${user.lastName ?? ""}`.trim() : user.email}
+                    {user.firstName
+                      ? `${user.firstName} ${user.lastName ?? ""}`.trim()
+                      : user.email}
                   </span>
                 </div>
               )}

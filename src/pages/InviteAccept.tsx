@@ -13,10 +13,11 @@ export default function InviteAccept() {
   const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
 
-  const { data: invite, isLoading: inviteLoading, error: inviteError } = useInviteDetails(
-    inviteId || "",
-    token || ""
-  );
+  const {
+    data: invite,
+    isLoading: inviteLoading,
+    error: inviteError,
+  } = useInviteDetails(inviteId || "", token || "");
   const acceptMutation = useAcceptInvite();
 
   // Handle accept invite for logged-in users
@@ -49,7 +50,9 @@ export default function InviteAccept() {
         <BackgroundDecorator />
         <Card className="w-full max-w-md relative z-10">
           <CardContent className="py-12 text-center">
-            <p className="text-foreground/70 dark:text-foreground/80">Loading invite details...</p>
+            <p className="text-foreground/70 dark:text-foreground/80">
+              Loading invite details...
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -64,9 +67,12 @@ export default function InviteAccept() {
         <Card className="w-full max-w-md border-destructive/30 relative z-10">
           <CardContent className="py-8">
             <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
-            <h2 className="text-lg font-semibold text-center mb-2">Invalid or Expired Invite</h2>
+            <h2 className="text-lg font-semibold text-center mb-2">
+              Invalid or Expired Invite
+            </h2>
             <p className="text-sm text-foreground/70 dark:text-foreground/80 text-center mb-6">
-              This invite link is invalid or has expired. Please ask the organization admin to send you a new invite.
+              This invite link is invalid or has expired. Please ask the
+              organization admin to send you a new invite.
             </p>
             <Button onClick={() => navigate("/signin")} className="w-full">
               Sign In
@@ -85,7 +91,9 @@ export default function InviteAccept() {
         <Card className="w-full max-w-md border-success/30 relative z-10">
           <CardContent className="py-8">
             <CheckCircle className="h-12 w-12 text-success mx-auto mb-4" />
-            <h2 className="text-lg font-semibold text-center mb-2">Already Accepted</h2>
+            <h2 className="text-lg font-semibold text-center mb-2">
+              Already Accepted
+            </h2>
             <p className="text-sm text-foreground/70 dark:text-foreground/80 text-center mb-6">
               This invite has already been accepted.
             </p>
@@ -114,20 +122,34 @@ export default function InviteAccept() {
             <div className="flex items-center gap-3">
               <Building2 className="h-5 w-5 text-primary" />
               <div>
-                <p className="text-xs text-foreground/70 dark:text-foreground/80">Organization</p>
+                <p className="text-xs text-foreground/70 dark:text-foreground/80">
+                  Organization
+                </p>
                 <p className="font-semibold">{invite.orgName}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <Mail className="h-5 w-5 text-primary" />
               <div>
-                <p className="text-xs text-foreground/70 dark:text-foreground/80">Invite Email</p>
+                <p className="text-xs text-foreground/70 dark:text-foreground/80">
+                  Invite Email
+                </p>
                 <p className="font-semibold">{invite.email}</p>
               </div>
             </div>
             <div className="text-xs text-foreground/70 dark:text-foreground/80">
-              <p className="capitalize">Role: <span className="font-medium text-foreground">{invite.role}</span></p>
-              <p>Invited by: <span className="font-medium text-foreground">{invite.invitedBy || invite.orgName}</span></p>
+              <p className="capitalize">
+                Role:{" "}
+                <span className="font-medium text-foreground">
+                  {invite.role}
+                </span>
+              </p>
+              <p>
+                Invited by:{" "}
+                <span className="font-medium text-foreground">
+                  {invite.invitedBy || invite.orgName}
+                </span>
+              </p>
             </div>
           </div>
 
@@ -135,7 +157,8 @@ export default function InviteAccept() {
           {emailMismatch && (
             <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3">
               <p className="text-sm text-destructive">
-                You are signed in as <strong>{user?.email}</strong>, but this invite is for <strong>{invite.email}</strong>.
+                You are signed in as <strong>{user?.email}</strong>, but this
+                invite is for <strong>{invite.email}</strong>.
               </p>
               <p className="text-xs text-destructive/80 mt-2">
                 Please sign in with {invite.email} to accept this invite.
@@ -172,7 +195,10 @@ export default function InviteAccept() {
                   <p className="text-sm text-foreground/70 dark:text-foreground/80 text-center">
                     Sign in or create an account to accept this invite
                   </p>
-                  <Button onClick={() => navigate(`/signup?email=${invite.email}`)} className="w-full">
+                  <Button
+                    onClick={() => navigate(`/signup?email=${invite.email}`)}
+                    className="w-full"
+                  >
                     Create Account & Accept
                   </Button>
                   <div className="relative">
@@ -180,7 +206,9 @@ export default function InviteAccept() {
                       <span className="w-full border-t border-border" />
                     </div>
                     <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-background px-2 text-foreground/70 dark:text-foreground/80">Or</span>
+                      <span className="bg-background px-2 text-foreground/70 dark:text-foreground/80">
+                        Or
+                      </span>
                     </div>
                   </div>
                   <Button

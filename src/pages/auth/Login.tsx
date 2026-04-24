@@ -19,7 +19,11 @@ const Login = () => {
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
 
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginSchemaType>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginSchemaType>({
     resolver: zodResolver(LoginSchema),
     defaultValues: { email: "", password: "" },
   });
@@ -34,7 +38,7 @@ const Login = () => {
   const onSubmit = (data: LoginSchemaType) => {
     const payload = {
       ...data,
-      ...(productParam && { product_code: productParam })    
+      ...(productParam && { product_code: productParam }),
     };
     mutate(payload as LoginSchemaType, {
       onSuccess: (res: any) => {
@@ -47,10 +51,13 @@ const Login = () => {
             JSON.stringify({
               id: res.data.user_id,
               email: res.data.email,
-            })
+            }),
           );
 
-          toast({ title: "Welcome back!", description: "You've successfully signed in." });
+          toast({
+            title: "Welcome back!",
+            description: "You've successfully signed in.",
+          });
 
           let destination: string = "/dashboard";
 
@@ -59,8 +66,8 @@ const Login = () => {
           // If backend returns a non-1000 code but 200 OK (soft error)
           const msg = res.resp_msg || "Invalid credentials";
           if (msg.toLowerCase().includes("not verified")) {
-             window.location.href = `/verify-email?email=${encodeURIComponent(payload.email)}`;
-             return;
+            window.location.href = `/verify-email?email=${encodeURIComponent(payload.email)}`;
+            return;
           }
           toast({
             title: "Login Failed",
@@ -70,8 +77,9 @@ const Login = () => {
         }
       },
       onError: (error: any) => {
-        const msg = error.response?.data?.resp_msg || error.message || "Login failed";
-        
+        const msg =
+          error.response?.data?.resp_msg || error.message || "Login failed";
+
         // Check if the error indicates unverified email
         if (msg.toLowerCase().includes("not verified")) {
           // Redirect to verify-email without storing tokens
@@ -93,7 +101,7 @@ const Login = () => {
       <BackgroundDecorator />
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8">
-         <Logo/>
+          <Logo />
           <h1 className="heading-subsection">Welcome back</h1>
           <p className="heading-description">
             {productParam
@@ -128,7 +136,12 @@ const Login = () => {
               </Link>
             </div>
 
-            <Button variant="default" className="w-full" type="submit" disabled={isPending}>
+            <Button
+              variant="default"
+              className="w-full"
+              type="submit"
+              disabled={isPending}
+            >
               {isPending ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />

@@ -1,4 +1,10 @@
-import { EmailProvider, GmailAppPasswordPayload, GmailOAuthCallbackPayload, GmailOAuthUrlResponse, SimpleConfigPayload } from "@/types/appSettings";
+import {
+  EmailProvider,
+  GmailAppPasswordPayload,
+  GmailOAuthCallbackPayload,
+  GmailOAuthUrlResponse,
+  SimpleConfigPayload,
+} from "@/types/appSettings";
 import getApiClient from "./apiClient";
 
 // ──────────────────────────────────────────
@@ -110,11 +116,14 @@ export interface ListWebhookLogsResponse {
 // GET APP SETTINGS
 // ──────────────────────────────────────────
 
-export const getAppSettingsService = async (appId: string, accountId?: string) => {
+export const getAppSettingsService = async (
+  appId: string,
+  accountId?: string,
+) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().get<any>(
     `/api/apps/${appId}/settings`,
-    config
+    config,
   );
   return data.data as AppSettings;
 };
@@ -126,13 +135,13 @@ export const getAppSettingsService = async (appId: string, accountId?: string) =
 export const updateAppSettingsService = async (
   appId: string,
   payload: UpdateAppSettingsPayload,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().patch<any>(
     `/api/apps/${appId}`,
     payload,
-    config
+    config,
   );
   return data.data;
 };
@@ -144,13 +153,13 @@ export const updateAppSettingsService = async (
 export const updateAllowedDomainsService = async (
   appId: string,
   payload: UpdateAllowedDomainsPayload,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().put<any>(
     `/api/apps/${appId}/settings/domains`,
     payload,
-    config
+    config,
   );
   return data.data;
 };
@@ -159,11 +168,14 @@ export const updateAllowedDomainsService = async (
 // LIST WEBHOOKS
 // ──────────────────────────────────────────
 
-export const listWebhooksService = async (appId: string, accountId?: string) => {
+export const listWebhooksService = async (
+  appId: string,
+  accountId?: string,
+) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().get<any>(
     `/api/apps/${appId}/webhooks`,
-    config
+    config,
   );
   return data.data as ListWebhooksResponse;
 };
@@ -175,13 +187,13 @@ export const listWebhooksService = async (appId: string, accountId?: string) => 
 export const createWebhookService = async (
   appId: string,
   payload: CreateWebhookPayload,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().post<any>(
     `/api/apps/${appId}/webhooks`,
     payload,
-    config
+    config,
   );
   return data.data as Webhook;
 };
@@ -194,13 +206,13 @@ export const updateWebhookService = async (
   appId: string,
   webhookId: string,
   payload: UpdateWebhookPayload,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().put<any>(
     `/api/apps/${appId}/webhooks/${webhookId}`,
     payload,
-    config
+    config,
   );
   return data.data as Webhook;
 };
@@ -212,12 +224,12 @@ export const updateWebhookService = async (
 export const deleteWebhookService = async (
   appId: string,
   webhookId: string,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().delete<any>(
     `/api/apps/${appId}/webhooks/${webhookId}`,
-    config
+    config,
   );
   return data.data;
 };
@@ -230,13 +242,13 @@ export const testWebhookService = async (
   appId: string,
   webhookId: string,
   event: string,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().post<any>(
     `/api/apps/${appId}/webhooks/${webhookId}/test`,
     { event },
-    config
+    config,
   );
   return data.data as WebhookTestResponse;
 };
@@ -253,7 +265,7 @@ export const getWebhookLogsService = async (
     limit?: number;
     status?: "success" | "failed" | "pending";
   },
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const queryParams = new URLSearchParams();
@@ -266,7 +278,7 @@ export const getWebhookLogsService = async (
 
   const { data } = await getApiClient().get<any>(
     `/api/apps/${appId}/webhooks/${webhookId}/logs${query}`,
-    config
+    config,
   );
   return data.data as ListWebhookLogsResponse;
 };
@@ -277,7 +289,10 @@ export const getWebhookLogsService = async (
 
 export const deleteAppService = async (appId: string, accountId?: string) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
-  const { data } = await getApiClient().delete<any>(`/api/apps/${appId}`, config);
+  const { data } = await getApiClient().delete<any>(
+    `/api/apps/${appId}`,
+    config,
+  );
   return data.data;
 };
 
@@ -300,19 +315,36 @@ export interface SetEmailConfigPayload {
   replyToName?: string | null;
 }
 
-export const getEmailConfigService = async (appId: string, accountId?: string): Promise<AppEmailConfig> => {
+export const getEmailConfigService = async (
+  appId: string,
+  accountId?: string,
+): Promise<AppEmailConfig> => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
-  const { data } = await getApiClient().get<any>(`/api/apps/${appId}/email-config`, config);
+  const { data } = await getApiClient().get<any>(
+    `/api/apps/${appId}/email-config`,
+    config,
+  );
   return data.data as AppEmailConfig;
 };
 
-export const setEmailConfigService = async (appId: string, payload: SetEmailConfigPayload, accountId?: string): Promise<AppEmailConfig> => {
+export const setEmailConfigService = async (
+  appId: string,
+  payload: SetEmailConfigPayload,
+  accountId?: string,
+): Promise<AppEmailConfig> => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
-  const { data } = await getApiClient().post<any>(`/api/apps/${appId}/email-config`, payload, config);
+  const { data } = await getApiClient().post<any>(
+    `/api/apps/${appId}/email-config`,
+    payload,
+    config,
+  );
   return data.data as AppEmailConfig;
 };
 
-export const resetEmailConfigService = async (appId: string, accountId?: string): Promise<void> => {
+export const resetEmailConfigService = async (
+  appId: string,
+  accountId?: string,
+): Promise<void> => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   await getApiClient().delete<any>(`/api/apps/${appId}/email-config`, config);
 };
@@ -320,25 +352,33 @@ export const resetEmailConfigService = async (appId: string, accountId?: string)
 export interface DNSVerificationResult {
   domain: string;
   spf: {
-    status: 'verified' | 'not_found' | 'invalid' | 'error';
+    status: "verified" | "not_found" | "invalid" | "error";
     records: string[];
     message: string;
   };
   dkim: {
-    status: 'verified' | 'not_found' | 'invalid' | 'error';
+    status: "verified" | "not_found" | "invalid" | "error";
     records: string[];
     message: string;
   };
   dmarc: {
-    status: 'verified' | 'not_found' | 'optional';
+    status: "verified" | "not_found" | "optional";
     records: string[];
     message: string;
   };
 }
 
-export const verifyDNSService = async (appId: string, email: string, accountId?: string): Promise<DNSVerificationResult> => {
+export const verifyDNSService = async (
+  appId: string,
+  email: string,
+  accountId?: string,
+): Promise<DNSVerificationResult> => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
-  const res = await getApiClient().post<any>(`/api/apps/${appId}/email-config/verify-dns`, { email }, config);
+  const res = await getApiClient().post<any>(
+    `/api/apps/${appId}/email-config/verify-dns`,
+    { email },
+    config,
+  );
   return res.data.data as DNSVerificationResult;
 };
 
@@ -386,21 +426,42 @@ export interface DomainVerificationResult {
   dmarcVerified: boolean;
 }
 
-export const createDomainService = async (appId: string, payload: CreateDomainPayload, accountId?: string): Promise<CustomDomain> => {
+export const createDomainService = async (
+  appId: string,
+  payload: CreateDomainPayload,
+  accountId?: string,
+): Promise<CustomDomain> => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
-  const { data } = await getApiClient().post<any>(`/api/apps/${appId}/email-provider/custom-domain`, payload, config);
+  const { data } = await getApiClient().post<any>(
+    `/api/apps/${appId}/email-provider/custom-domain`,
+    payload,
+    config,
+  );
   return data.data as CustomDomain;
 };
 
-export const getDomainRecordsService = async (appId: string, accountId?: string): Promise<DomainDNSRecords | null> => {
+export const getDomainRecordsService = async (
+  appId: string,
+  accountId?: string,
+): Promise<DomainDNSRecords | null> => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
-  const { data } = await getApiClient().get<any>(`/api/apps/${appId}/email-provider/custom-domain/records`, config);
+  const { data } = await getApiClient().get<any>(
+    `/api/apps/${appId}/email-provider/custom-domain/records`,
+    config,
+  );
   return data.data as DomainDNSRecords | null;
 };
 
-export const verifyDomainService = async (appId: string, accountId?: string): Promise<DomainVerificationResult> => {
+export const verifyDomainService = async (
+  appId: string,
+  accountId?: string,
+): Promise<DomainVerificationResult> => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
-  const { data } = await getApiClient().post<any>(`/api/apps/${appId}/email-provider/custom-domain/verify`, {}, config);
+  const { data } = await getApiClient().post<any>(
+    `/api/apps/${appId}/email-provider/custom-domain/verify`,
+    {},
+    config,
+  );
   return data.data as DomainVerificationResult;
 };
 
@@ -409,9 +470,15 @@ export const verifyDomainService = async (appId: string, accountId?: string): Pr
 // ──────────────────────────────────────────
 
 // Get current email provider config
-export const getEmailProviderService = async (appId: string, accountId?: string): Promise<EmailProvider | null> => {
+export const getEmailProviderService = async (
+  appId: string,
+  accountId?: string,
+): Promise<EmailProvider | null> => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
-  const { data } = await getApiClient().get<any>(`/api/apps/${appId}/email-provider`, config);
+  const { data } = await getApiClient().get<any>(
+    `/api/apps/${appId}/email-provider`,
+    config,
+  );
   return data.data as EmailProvider | null;
 };
 
@@ -419,17 +486,27 @@ export const getEmailProviderService = async (appId: string, accountId?: string)
 export const setSimpleEmailConfigService = async (
   appId: string,
   payload: SimpleConfigPayload,
-  accountId?: string
+  accountId?: string,
 ): Promise<EmailProvider> => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
-  const { data } = await getApiClient().post<any>(`/api/apps/${appId}/email-provider/simple`, payload, config);
+  const { data } = await getApiClient().post<any>(
+    `/api/apps/${appId}/email-provider/simple`,
+    payload,
+    config,
+  );
   return data.data as EmailProvider;
 };
 
 // Get Gmail OAuth2 URL
-export const getGmailOAuthUrlService = async (appId: string, accountId?: string): Promise<GmailOAuthUrlResponse> => {
+export const getGmailOAuthUrlService = async (
+  appId: string,
+  accountId?: string,
+): Promise<GmailOAuthUrlResponse> => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
-  const { data } = await getApiClient().get<any>(`/api/apps/${appId}/email-provider/gmail/oauth/url`, config);
+  const { data } = await getApiClient().get<any>(
+    `/api/apps/${appId}/email-provider/gmail/oauth/url`,
+    config,
+  );
   return data.data as GmailOAuthUrlResponse;
 };
 
@@ -437,10 +514,14 @@ export const getGmailOAuthUrlService = async (appId: string, accountId?: string)
 export const saveGmailOAuthCallbackService = async (
   appId: string,
   payload: GmailOAuthCallbackPayload,
-  accountId?: string
+  accountId?: string,
 ): Promise<EmailProvider> => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
-  const { data } = await getApiClient().post<any>(`/api/apps/${appId}/email-provider/gmail/oauth/callback`, payload, config);
+  const { data } = await getApiClient().post<any>(
+    `/api/apps/${appId}/email-provider/gmail/oauth/callback`,
+    payload,
+    config,
+  );
   return data.data as EmailProvider;
 };
 
@@ -448,15 +529,22 @@ export const saveGmailOAuthCallbackService = async (
 export const setGmailAppPasswordService = async (
   appId: string,
   payload: GmailAppPasswordPayload,
-  accountId?: string
+  accountId?: string,
 ): Promise<EmailProvider> => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
-  const { data } = await getApiClient().post<any>(`/api/apps/${appId}/email-provider/gmail/app-password`, payload, config);
+  const { data } = await getApiClient().post<any>(
+    `/api/apps/${appId}/email-provider/gmail/app-password`,
+    payload,
+    config,
+  );
   return data.data as EmailProvider;
 };
 
 // Reset to default email provider
-export const resetEmailProviderService = async (appId: string, accountId?: string): Promise<void> => {
+export const resetEmailProviderService = async (
+  appId: string,
+  accountId?: string,
+): Promise<void> => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   await getApiClient().delete<any>(`/api/apps/${appId}/email-provider`, config);
 };
