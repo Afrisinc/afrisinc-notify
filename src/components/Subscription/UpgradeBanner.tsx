@@ -20,7 +20,9 @@ export function UpgradeBanner() {
   const { currentPlan, limitedMetrics, recommendedPlan } = data;
 
   return (
-    <Card className="border-warning/30 bg-gradient-to-r from-warning/10 via-warning/5 to-transparent overflow-hidden">
+    // "relative" added so the absolute overlay div is scoped inside the card
+    // and doesn't bleed out to cover sibling elements like tab triggers
+    <Card className="relative border-warning/30 bg-gradient-to-r from-warning/10 via-warning/5 to-transparent overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-r from-warning/5 to-transparent opacity-50" />
       <CardHeader className="relative pb-3">
         <div className="flex items-start justify-between">
@@ -68,7 +70,6 @@ export function UpgradeBanner() {
             <p className="text-xs font-semibold text-content-secondary uppercase">Key Improvements</p>
             <div className="space-y-1">
               {recommendedPlan.improvements.slice(0, 3).map((improvement) => {
-                // Format limit values for display
                 const formatLimit = (value: number | string) => {
                   if (value === -1) return 'Unlimited';
                   if (value === 0) return 'Not included';
