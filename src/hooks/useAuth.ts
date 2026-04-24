@@ -168,22 +168,17 @@ export function useUserProfile(options?: { enabled?: boolean }) {
  * Returns null if organization is not selected or account not found
  */
 export function useCurrentAccountId(): string | null {
-  try {
-    const { currentOrg } = useOrg();
-    const { getAccountIdForOrg } = useUser();
+  const { currentOrg } = useOrg();
+  const { getAccountIdForOrg } = useUser();
 
-    if (!currentOrg?.id) {
-      console.warn('No current organization selected');
-      return null;
-    }
-
-    const accountId = getAccountIdForOrg(currentOrg.id);
-    if (!accountId) {
-      console.warn(`No account found for organization: ${currentOrg.id}`);
-    }
-    return accountId;
-  } catch (error) {
-    console.warn('Could not get current account ID:', error);
+  if (!currentOrg?.id) {
+    console.warn('No current organization selected');
     return null;
   }
+
+  const accountId = getAccountIdForOrg(currentOrg.id);
+  if (!accountId) {
+    console.warn(`No account found for organization: ${currentOrg.id}`);
+  }
+  return accountId;
 }
