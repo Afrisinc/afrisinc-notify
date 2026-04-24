@@ -9,7 +9,7 @@ export interface CreateAppPayload {
 }
 
 export interface CreateAppTemplatePayload {
-  channel: "EMAIL" | "SMS" | "PUSH" | "IN_APP";
+  channel: "EMAIL" | "SMS" | "PUSH" | "IN_APP" | "WHATSAPP";
   code: string;
   content: string;
   subject?: string;

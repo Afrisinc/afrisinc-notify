@@ -64,6 +64,9 @@ import AppSettings from "./pages/dashboard/app/AppSettings";
 import EditorPage from "./pages/editor/[id]";
 import EditorPageLegacy from "./pages/editor/legacy";
 
+// Channel Editors (SMS, Push, In-App, WhatsApp)
+import ChannelEditorPage from "./pages/editor/ChannelEditorPage";
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: { retry: 1, refetchOnWindowFocus: false },
@@ -162,6 +165,15 @@ const App = () => {
                       </ProtectedRoute>
                     }
                   />
+                  {/* Channel Editors: SMS, Push, In-App, WhatsApp */}
+                  <Route
+                    path="/editor/:appId/:channel/:templateId"
+                    element={
+                      <ProtectedRoute>
+                        <ChannelEditorPage />
+                      </ProtectedRoute>
+                    }
+                  />
                   {/* Legacy route support - redirect old format to new */}
                   <Route
                     path="/editor/:templateId"
@@ -181,6 +193,8 @@ const App = () => {
                     <Route path="apps" element={<AppsList />} />
                     <Route path="templates" element={<MyTemplates />} />
                     <Route path="templates/:id" element={<UserTemplateEditor />} />
+                    {/* Non-email user template editors */}
+                    <Route path="templates/:channel/:id" element={<UserTemplateEditor />} />
 
                     {/* App Dashboard with sub-navigation */}
                     <Route path="apps/:appId" element={<AppDashboardLayout />}>
