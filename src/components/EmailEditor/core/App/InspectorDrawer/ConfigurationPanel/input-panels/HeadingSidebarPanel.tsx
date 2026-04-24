@@ -1,19 +1,26 @@
-import React, { useState } from 'react';
-import { ZodError } from 'zod';
+import React, { useState } from "react";
+import { ZodError } from "zod";
 
-import { ToggleButton } from '@mui/material';
-import { HeadingProps, HeadingPropsDefaults, HeadingPropsSchema } from '@usewaypoint/block-heading';
+import { ToggleButton } from "@mui/material";
+import {
+  HeadingProps,
+  HeadingPropsDefaults,
+  HeadingPropsSchema,
+} from "@usewaypoint/block-heading";
 
-import BaseSidebarPanel from './helpers/BaseSidebarPanel';
-import RadioGroupInput from './helpers/inputs/RadioGroupInput';
-import TextInput from './helpers/inputs/TextInput';
-import MultiStylePropertyPanel from './helpers/style-inputs/MultiStylePropertyPanel';
+import BaseSidebarPanel from "./helpers/BaseSidebarPanel";
+import RadioGroupInput from "./helpers/inputs/RadioGroupInput";
+import TextInput from "./helpers/inputs/TextInput";
+import MultiStylePropertyPanel from "./helpers/style-inputs/MultiStylePropertyPanel";
 
 type HeadingSidebarPanelProps = {
   data: HeadingProps;
   setData: (v: HeadingProps) => void;
 };
-export default function HeadingSidebarPanel({ data, setData }: HeadingSidebarPanelProps) {
+export default function HeadingSidebarPanel({
+  data,
+  setData,
+}: HeadingSidebarPanelProps) {
   const [, setErrors] = useState<ZodError | null>(null);
 
   const updateData = (d: unknown) => {
@@ -48,7 +55,14 @@ export default function HeadingSidebarPanel({ data, setData }: HeadingSidebarPan
         <ToggleButton value="h3">H3</ToggleButton>
       </RadioGroupInput>
       <MultiStylePropertyPanel
-        names={['color', 'backgroundColor', 'fontFamily', 'fontWeight', 'textAlign', 'padding']}
+        names={[
+          "color",
+          "backgroundColor",
+          "fontFamily",
+          "fontWeight",
+          "textAlign",
+          "padding",
+        ]}
         value={data.style}
         onChange={(style) => updateData({ ...data, style })}
       />

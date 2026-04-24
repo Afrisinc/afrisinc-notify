@@ -66,11 +66,15 @@ export function TemplateGalleryHero({
               className="max-w-3xl"
             >
               <h1 className="heading-hero mb-6">
-                <span className="text-content block">Perfect notifications</span>
+                <span className="text-content block">
+                  Perfect notifications
+                </span>
                 <span className="text-gradient-primary block">in minutes</span>
               </h1>
               <p className="text-lg text-content-secondary max-w-2xl leading-relaxed">
-                Browse 100+ proven templates. Customize in seconds. Every template ships with dark mode, mobile layouts, and full variable support—ready to send today.
+                Browse 100+ proven templates. Customize in seconds. Every
+                template ships with dark mode, mobile layouts, and full variable
+                support—ready to send today.
               </p>
             </motion.div>
 
@@ -107,16 +111,22 @@ export function TemplateGalleryHero({
               className="hidden md:grid grid-cols-3 divide-x divide-border pt-6 border-t border-border/30"
             >
               <div className="text-center px-8">
-                <div className="text-2xl font-bold text-content">{templatesCount}+</div>
+                <div className="text-2xl font-bold text-content">
+                  {templatesCount}+
+                </div>
                 <p className="text-xs text-content-secondary mt-1">Templates</p>
               </div>
               <div className="text-center px-8">
                 <div className="text-2xl font-bold text-content">2.5M+</div>
-                <p className="text-xs text-content-secondary mt-1">Sent Successfully</p>
+                <p className="text-xs text-content-secondary mt-1">
+                  Sent Successfully
+                </p>
               </div>
               <div className="text-center px-8">
                 <div className="text-2xl font-bold text-content">4.9★</div>
-                <p className="text-xs text-content-secondary mt-1">Community Rating</p>
+                <p className="text-xs text-content-secondary mt-1">
+                  Community Rating
+                </p>
               </div>
             </motion.div>
           </motion.div>
@@ -129,7 +139,9 @@ export function TemplateGalleryHero({
           <div className="space-y-4 py-4">
             {/* Mobile Filter Toggle */}
             <div className="md:hidden flex items-center justify-between">
-              <p className="text-sm font-semibold text-content">Browse by Channel</p>
+              <p className="text-sm font-semibold text-content">
+                Browse by Channel
+              </p>
               <Button
                 variant="ghost"
                 size="sm"

@@ -26,7 +26,7 @@ import { useCurrentAccountId } from "@/hooks/useAuth";
 export function useCampaigns(
   appId: string,
   params?: ListCampaignsParams,
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean },
 ) {
   const accountId = useCurrentAccountId();
 
@@ -44,14 +44,16 @@ export function useCampaigns(
 export function useCampaign(
   appId: string,
   campaignId: string,
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean },
 ) {
   const accountId = useCurrentAccountId();
 
   return useQuery({
     queryKey: ["campaign", appId, campaignId, accountId],
-    queryFn: () => getCampaignService(appId, campaignId, accountId ?? undefined),
-    enabled: (options?.enabled ?? true) && !!appId && !!campaignId && !!accountId,
+    queryFn: () =>
+      getCampaignService(appId, campaignId, accountId ?? undefined),
+    enabled:
+      (options?.enabled ?? true) && !!appId && !!campaignId && !!accountId,
   });
 }
 
@@ -64,8 +66,13 @@ export function useCreateCampaign() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ appId, payload }: { appId: string; payload: CreateCampaignPayload }) =>
-      createCampaignService(appId, payload, accountId ?? undefined),
+    mutationFn: ({
+      appId,
+      payload,
+    }: {
+      appId: string;
+      payload: CreateCampaignPayload;
+    }) => createCampaignService(appId, payload, accountId ?? undefined),
     onSuccess: (_data, { appId }) => {
       // Invalidate campaigns list to refetch
       queryClient.invalidateQueries({
@@ -92,7 +99,8 @@ export function useUpdateCampaign() {
       appId: string;
       campaignId: string;
       payload: Partial<CreateCampaignPayload>;
-    }) => updateCampaignService(appId, campaignId, payload, accountId ?? undefined),
+    }) =>
+      updateCampaignService(appId, campaignId, payload, accountId ?? undefined),
     onSuccess: (_data, { appId, campaignId }) => {
       // Invalidate both specific campaign and campaigns list
       queryClient.invalidateQueries({
@@ -114,8 +122,13 @@ export function useDeleteCampaign() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ appId, campaignId }: { appId: string; campaignId: string }) =>
-      deleteCampaignService(appId, campaignId, accountId ?? undefined),
+    mutationFn: ({
+      appId,
+      campaignId,
+    }: {
+      appId: string;
+      campaignId: string;
+    }) => deleteCampaignService(appId, campaignId, accountId ?? undefined),
     onSuccess: (_data, { appId }) => {
       // Invalidate campaigns list to refetch
       queryClient.invalidateQueries({
@@ -142,7 +155,8 @@ export function useSendCampaign() {
       appId: string;
       campaignId: string;
       payload?: SendCampaignPayload;
-    }) => sendCampaignService(appId, campaignId, payload, accountId ?? undefined),
+    }) =>
+      sendCampaignService(appId, campaignId, payload, accountId ?? undefined),
     onSuccess: (_data, { appId, campaignId }) => {
       // Invalidate campaign and stats queries
       queryClient.invalidateQueries({
@@ -176,7 +190,12 @@ export function useScheduleCampaign() {
       campaignId: string;
       scheduledAt: string;
     }) =>
-      scheduleCampaignService(appId, campaignId, { scheduledAt }, accountId ?? undefined),
+      scheduleCampaignService(
+        appId,
+        campaignId,
+        { scheduledAt },
+        accountId ?? undefined,
+      ),
     onSuccess: (_data, { appId, campaignId }) => {
       // Invalidate both specific campaign and campaigns list
       queryClient.invalidateQueries({
@@ -207,7 +226,12 @@ export function useDuplicateCampaign() {
       campaignId: string;
       newName: string;
     }) =>
-      duplicateCampaignService(appId, campaignId, { newName }, accountId ?? undefined),
+      duplicateCampaignService(
+        appId,
+        campaignId,
+        { newName },
+        accountId ?? undefined,
+      ),
     onSuccess: (_data, { appId }) => {
       // Invalidate campaigns list to refetch
       queryClient.invalidateQueries({
@@ -224,14 +248,16 @@ export function useDuplicateCampaign() {
 export function useCampaignStats(
   appId: string,
   campaignId: string,
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean },
 ) {
   const accountId = useCurrentAccountId();
 
   return useQuery({
     queryKey: ["campaignStats", appId, campaignId, accountId],
-    queryFn: () => getCampaignStatsService(appId, campaignId, accountId ?? undefined),
-    enabled: (options?.enabled ?? true) && !!appId && !!campaignId && !!accountId,
+    queryFn: () =>
+      getCampaignStatsService(appId, campaignId, accountId ?? undefined),
+    enabled:
+      (options?.enabled ?? true) && !!appId && !!campaignId && !!accountId,
   });
 }
 
@@ -242,7 +268,7 @@ export function useCampaignStats(
 export function useCampaignsSummaryStats(
   appId: string,
   params?: CampaignsSummaryParams,
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean },
 ) {
   const accountId = useCurrentAccountId();
 

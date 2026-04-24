@@ -79,12 +79,42 @@ export default function AppOverview() {
   }
 
   const metrics = [
-    { label: "Sent Today", value: overview.recentActivity.totalToday, icon: Activity, color: "text-primary" },
-    { label: "Total Sent", value: overview.stats.totalNotificationsSent, icon: Mail, color: "text-primary" },
-    { label: "Templates", value: overview.stats.totalTemplates, icon: Bell, color: "text-success" },
-    { label: "Active Keys", value: overview.stats.activeApiKeys, icon: TrendingUp, color: "text-warning" },
-    { label: "This Week", value: overview.recentActivity.totalThisWeek, icon: Activity, color: "text-accent" },
-    { label: "This Month", value: overview.recentActivity.totalThisMonth, icon: AlertTriangle, color: "text-destructive" },
+    {
+      label: "Sent Today",
+      value: overview.recentActivity.totalToday,
+      icon: Activity,
+      color: "text-primary",
+    },
+    {
+      label: "Total Sent",
+      value: overview.stats.totalNotificationsSent,
+      icon: Mail,
+      color: "text-primary",
+    },
+    {
+      label: "Templates",
+      value: overview.stats.totalTemplates,
+      icon: Bell,
+      color: "text-success",
+    },
+    {
+      label: "Active Keys",
+      value: overview.stats.activeApiKeys,
+      icon: TrendingUp,
+      color: "text-warning",
+    },
+    {
+      label: "This Week",
+      value: overview.recentActivity.totalThisWeek,
+      icon: Activity,
+      color: "text-accent",
+    },
+    {
+      label: "This Month",
+      value: overview.recentActivity.totalThisMonth,
+      icon: AlertTriangle,
+      color: "text-destructive",
+    },
   ];
 
   return (
@@ -98,7 +128,9 @@ export default function AppOverview() {
           <Card key={m.label} className="border-border/60">
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-content-secondary font-medium">{m.label}</span>
+                <span className="text-xs text-content-secondary font-medium">
+                  {m.label}
+                </span>
                 <m.icon className={`h-3.5 w-3.5 ${m.color}`} />
               </div>
               <div className="text-2xl font-bold text-content">{m.value}</div>
@@ -110,19 +142,59 @@ export default function AppOverview() {
       {/* Chart */}
       <Card className="border-border/60">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-content-secondary">Notifications Over Time</CardTitle>
+          <CardTitle className="text-sm font-medium text-content-secondary">
+            Notifications Over Time
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <ChartContainer config={chartConfig} className="h-[280px] w-full">
-            <AreaChart data={overview.chartData} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
+            <AreaChart
+              data={overview.chartData}
+              margin={{ top: 5, right: 10, left: 0, bottom: 0 }}
+            >
               <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-              <XAxis dataKey="date" className="text-xs" tick={{ fill: "hsl(var(--muted-foreground))" }} />
-              <YAxis className="text-xs" tick={{ fill: "hsl(var(--muted-foreground))" }} />
+              <XAxis
+                dataKey="date"
+                className="text-xs"
+                tick={{ fill: "hsl(var(--muted-foreground))" }}
+              />
+              <YAxis
+                className="text-xs"
+                tick={{ fill: "hsl(var(--muted-foreground))" }}
+              />
               <ChartTooltip content={<ChartTooltipContent />} />
-              <Area type="monotone" dataKey="email" stackId="1" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.3} />
-              <Area type="monotone" dataKey="sms" stackId="1" stroke="hsl(var(--success))" fill="hsl(var(--success))" fillOpacity={0.3} />
-              <Area type="monotone" dataKey="push" stackId="1" stroke="hsl(var(--warning))" fill="hsl(var(--warning))" fillOpacity={0.3} />
-              <Area type="monotone" dataKey="inApp" stackId="1" stroke="hsl(var(--accent-foreground))" fill="hsl(var(--accent-foreground))" fillOpacity={0.2} />
+              <Area
+                type="monotone"
+                dataKey="email"
+                stackId="1"
+                stroke="hsl(var(--primary))"
+                fill="hsl(var(--primary))"
+                fillOpacity={0.3}
+              />
+              <Area
+                type="monotone"
+                dataKey="sms"
+                stackId="1"
+                stroke="hsl(var(--success))"
+                fill="hsl(var(--success))"
+                fillOpacity={0.3}
+              />
+              <Area
+                type="monotone"
+                dataKey="push"
+                stackId="1"
+                stroke="hsl(var(--warning))"
+                fill="hsl(var(--warning))"
+                fillOpacity={0.3}
+              />
+              <Area
+                type="monotone"
+                dataKey="inApp"
+                stackId="1"
+                stroke="hsl(var(--accent-foreground))"
+                fill="hsl(var(--accent-foreground))"
+                fillOpacity={0.2}
+              />
             </AreaChart>
           </ChartContainer>
         </CardContent>
@@ -131,7 +203,9 @@ export default function AppOverview() {
       {/* Summary Stats */}
       <Card className="border-border/60">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-content-secondary">Summary</CardTitle>
+          <CardTitle className="text-sm font-medium text-content-secondary">
+            Summary
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
@@ -145,7 +219,9 @@ export default function AppOverview() {
             </div>
             <div className="flex items-center justify-between text-sm py-2">
               <span className="text-content-secondary">Last Updated</span>
-              <span className="text-xs text-content-secondary">{new Date().toLocaleDateString()}</span>
+              <span className="text-xs text-content-secondary">
+                {new Date().toLocaleDateString()}
+              </span>
             </div>
           </div>
         </CardContent>

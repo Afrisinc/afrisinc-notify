@@ -7,7 +7,13 @@ import {
 } from "@/hooks/useAppSettings";
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,8 +33,20 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { DnsRecordRow } from "./DnsRecordRow";
-import { Mail, Plus, ArrowLeft, Check, AlertCircle, Loader, Trash2, Edit2 } from "lucide-react";
-import { type DomainDNSRecord, type CustomDomain } from "@/services/appSettings";
+import {
+  Mail,
+  Plus,
+  ArrowLeft,
+  Check,
+  AlertCircle,
+  Loader,
+  Trash2,
+  Edit2,
+} from "lucide-react";
+import {
+  type DomainDNSRecord,
+  type CustomDomain,
+} from "@/services/appSettings";
 
 type Step = "list" | "form" | "dns" | "verified";
 
@@ -55,9 +73,13 @@ export function EmailDomainSection({ appId }: EmailDomainSectionProps) {
   const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
 
   // Fetch domain records if domainId exists
-  const { data: domainData, isLoading: domainLoading } = useGetDomainRecords(appId, domainId || "", {
-    enabled: !!domainId,
-  });
+  const { data: domainData, isLoading: domainLoading } = useGetDomainRecords(
+    appId,
+    domainId || "",
+    {
+      enabled: !!domainId,
+    },
+  );
 
   // Update current domain when data loads
   useEffect(() => {
@@ -124,7 +146,8 @@ export function EmailDomainSection({ appId }: EmailDomainSectionProps) {
       });
 
       // Check if all records are verified
-      const allVerified = result.checks.spf && result.checks.dkim && result.checks.dmarc;
+      const allVerified =
+        result.checks.spf && result.checks.dkim && result.checks.dmarc;
 
       if (allVerified && currentDomain) {
         setStep("verified");
@@ -135,7 +158,8 @@ export function EmailDomainSection({ appId }: EmailDomainSectionProps) {
       } else {
         toast({
           title: "Verification Status",
-          description: "DNS records checked. Some records may still be pending.",
+          description:
+            "DNS records checked. Some records may still be pending.",
         });
       }
     } catch (err) {
@@ -172,7 +196,9 @@ export function EmailDomainSection({ appId }: EmailDomainSectionProps) {
     }
   };
 
-  const getRecordStatus = (recordId: string): "verified" | "pending" | "error" | "optional" => {
+  const getRecordStatus = (
+    recordId: string,
+  ): "verified" | "pending" | "error" | "optional" => {
     if (!currentDomain) return "pending";
 
     const verified = currentDomain.verified;
@@ -191,7 +217,9 @@ export function EmailDomainSection({ appId }: EmailDomainSectionProps) {
           <CardTitle className="text-base flex items-center gap-2">
             <Mail className="h-4 w-4" /> Email Sending Domain
           </CardTitle>
-          <CardDescription>Configure your custom email sender address.</CardDescription>
+          <CardDescription>
+            Configure your custom email sender address.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <Skeleton className="h-10 w-full" />
@@ -210,14 +238,20 @@ export function EmailDomainSection({ appId }: EmailDomainSectionProps) {
           <CardTitle className="text-base flex items-center gap-2">
             <Mail className="h-4 w-4" /> Email Sending Domain
           </CardTitle>
-          <CardDescription>Configure your custom email sender address with DKIM verification.</CardDescription>
+          <CardDescription>
+            Configure your custom email sender address with DKIM verification.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8 space-y-4">
             <Mail className="h-12 w-12 icon-muted mx-auto" />
             <div>
-              <h3 className="text-sm font-medium text-content mb-1">No custom domain connected yet</h3>
-              <p className="text-sm text-content-secondary">Emails send from notify@afrisinc.com by default.</p>
+              <h3 className="text-sm font-medium text-content mb-1">
+                No custom domain connected yet
+              </h3>
+              <p className="text-sm text-content-secondary">
+                Emails send from notify@afrisinc.com by default.
+              </p>
             </div>
             <Button onClick={() => setStep("form")}>
               <Plus className="h-4 w-4 mr-2" /> Connect Your Domain
@@ -239,7 +273,9 @@ export function EmailDomainSection({ appId }: EmailDomainSectionProps) {
             </Button>
             <div>
               <CardTitle className="text-base">Connect Custom Domain</CardTitle>
-              <CardDescription>Set up your custom email sender with DKIM support.</CardDescription>
+              <CardDescription>
+                Set up your custom email sender with DKIM support.
+              </CardDescription>
             </div>
           </div>
         </CardHeader>
@@ -273,7 +309,11 @@ export function EmailDomainSection({ appId }: EmailDomainSectionProps) {
 
           <Button
             onClick={handleCreateDomain}
-            disabled={createDomainMutation.isPending || !fromEmail.trim() || !domain.trim()}
+            disabled={
+              createDomainMutation.isPending ||
+              !fromEmail.trim() ||
+              !domain.trim()
+            }
             className="w-full"
           >
             {createDomainMutation.isPending ? (
@@ -300,7 +340,9 @@ export function EmailDomainSection({ appId }: EmailDomainSectionProps) {
               <CardTitle className="text-base flex items-center gap-2">
                 <Mail className="h-4 w-4" /> Email Sending Domain
               </CardTitle>
-              <CardDescription className="mt-1">{currentDomain.domain}</CardDescription>
+              <CardDescription className="mt-1">
+                {currentDomain.domain}
+              </CardDescription>
             </div>
             <Badge variant={step === "verified" ? "default" : "secondary"}>
               {step === "verified" ? "Verified" : currentDomain.status}
@@ -324,9 +366,12 @@ export function EmailDomainSection({ appId }: EmailDomainSectionProps) {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-semibold text-content">Add these DNS records</h3>
+                <h3 className="text-sm font-semibold text-content">
+                  Add these DNS records
+                </h3>
                 <p className="text-xs text-content-secondary mt-1">
-                  Copy each record below and add to your DNS provider. Changes take 5–30 minutes to propagate.
+                  Copy each record below and add to your DNS provider. Changes
+                  take 5–30 minutes to propagate.
                 </p>
               </div>
             </div>
@@ -375,9 +420,16 @@ export function EmailDomainSection({ appId }: EmailDomainSectionProps) {
             <Button variant="ghost" size="sm" onClick={() => setStep("form")}>
               <Edit2 className="h-3.5 w-3.5 mr-1.5" /> Edit
             </Button>
-            <AlertDialog open={showRemoveConfirm} onOpenChange={setShowRemoveConfirm}>
+            <AlertDialog
+              open={showRemoveConfirm}
+              onOpenChange={setShowRemoveConfirm}
+            >
               <AlertDialogTrigger asChild>
-                <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-destructive hover:text-destructive"
+                >
                   <Trash2 className="h-3.5 w-3.5 mr-1.5" /> Remove Domain
                 </Button>
               </AlertDialogTrigger>
@@ -385,8 +437,9 @@ export function EmailDomainSection({ appId }: EmailDomainSectionProps) {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Remove Custom Domain?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This will stop using {currentDomain.domain} for email. Emails will revert to notify@afrisinc.com.
-                    This action cannot be undone.
+                    This will stop using {currentDomain.domain} for email.
+                    Emails will revert to notify@afrisinc.com. This action
+                    cannot be undone.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>

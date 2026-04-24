@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-import { AddOutlined, CloseOutlined } from '@mui/icons-material';
-import { ButtonBase, InputLabel, Menu, Stack } from '@mui/material';
+import { AddOutlined, CloseOutlined } from "@mui/icons-material";
+import { ButtonBase, InputLabel, Menu, Stack } from "@mui/material";
 
-import Picker from './Picker';
+import Picker from "./Picker";
 
 const BUTTON_SX = {
-  border: '1px solid',
-  borderColor: 'cadet.400',
+  border: "1px solid",
+  borderColor: "cadet.400",
   width: 32,
   height: 32,
-  borderRadius: '4px',
-  bgcolor: '#FFFFFF',
+  borderRadius: "4px",
+  bgcolor: "#FFFFFF",
 };
 
 type Props =
@@ -27,7 +27,12 @@ type Props =
       onChange: (value: string) => void;
       defaultValue: string;
     };
-export default function ColorInput({ label, defaultValue, onChange, nullable }: Props) {
+export default function ColorInput({
+  label,
+  defaultValue,
+  onChange,
+  nullable,
+}: Props) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [value, setValue] = useState(defaultValue);
   const handleClickOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -38,7 +43,7 @@ export default function ColorInput({ label, defaultValue, onChange, nullable }: 
     if (!nullable) {
       return null;
     }
-    if (typeof value !== 'string' || value.trim().length === 0) {
+    if (typeof value !== "string" || value.trim().length === 0) {
       return null;
     }
     return (
@@ -48,14 +53,19 @@ export default function ColorInput({ label, defaultValue, onChange, nullable }: 
           onChange(null);
         }}
       >
-        <CloseOutlined fontSize="small" sx={{ color: 'grey.600' }} />
+        <CloseOutlined fontSize="small" sx={{ color: "grey.600" }} />
       </ButtonBase>
     );
   };
 
   const renderOpenButton = () => {
     if (value) {
-      return <ButtonBase onClick={handleClickOpen} sx={{ ...BUTTON_SX, bgcolor: value }} />;
+      return (
+        <ButtonBase
+          onClick={handleClickOpen}
+          sx={{ ...BUTTON_SX, bgcolor: value }}
+        />
+      );
     }
     return (
       <ButtonBase onClick={handleClickOpen} sx={{ ...BUTTON_SX }}>
@@ -76,11 +86,11 @@ export default function ColorInput({ label, defaultValue, onChange, nullable }: 
         open={Boolean(anchorEl)}
         onClose={() => setAnchorEl(null)}
         MenuListProps={{
-          sx: { height: 'auto', padding: 0 },
+          sx: { height: "auto", padding: 0 },
         }}
       >
         <Picker
-          value={value || ''}
+          value={value || ""}
           onChange={(v) => {
             setValue(v);
             onChange(v);

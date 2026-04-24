@@ -12,9 +12,24 @@ export const defaultTemplates: Template[] = [
     author: "Notify",
     isFree: true,
     variables: [
-      { name: "user_name", type: "string", example: "John Doe", required: true },
-      { name: "company_name", type: "string", example: "Acme Corp", required: true },
-      { name: "cta_url", type: "url", example: "https://example.com/onboard", required: true },
+      {
+        name: "user_name",
+        type: "string",
+        example: "John Doe",
+        required: true,
+      },
+      {
+        name: "company_name",
+        type: "string",
+        example: "Acme Corp",
+        required: true,
+      },
+      {
+        name: "cta_url",
+        type: "url",
+        example: "https://example.com/onboard",
+        required: true,
+      },
     ],
     content: {
       email: {
@@ -40,8 +55,18 @@ export const defaultTemplates: Template[] = [
     isFree: true,
     variables: [
       { name: "user_name", type: "string", example: "John", required: true },
-      { name: "verification_code", type: "string", example: "123456", required: true },
-      { name: "verification_link", type: "url", example: "https://example.com/verify", required: true },
+      {
+        name: "verification_code",
+        type: "string",
+        example: "123456",
+        required: true,
+      },
+      {
+        name: "verification_link",
+        type: "url",
+        example: "https://example.com/verify",
+        required: true,
+      },
     ],
     content: {
       email: {
@@ -70,7 +95,12 @@ export const defaultTemplates: Template[] = [
     isFree: true,
     variables: [
       { name: "user_name", type: "string", example: "John", required: true },
-      { name: "reset_link", type: "url", example: "https://example.com/reset", required: true },
+      {
+        name: "reset_link",
+        type: "url",
+        example: "https://example.com/reset",
+        required: true,
+      },
       { name: "expiry_hours", type: "number", example: "24", required: true },
     ],
     content: {
@@ -98,7 +128,12 @@ export const defaultTemplates: Template[] = [
     isFree: true,
     variables: [
       { name: "otp_code", type: "string", example: "123456", required: true },
-      { name: "company_name", type: "string", example: "Acme Corp", required: true },
+      {
+        name: "company_name",
+        type: "string",
+        example: "Acme Corp",
+        required: true,
+      },
     ],
     content: {
       sms: {
@@ -118,10 +153,30 @@ export const defaultTemplates: Template[] = [
     author: "Notify",
     isFree: true,
     variables: [
-      { name: "customer_name", type: "string", example: "Jane Smith", required: true },
-      { name: "order_id", type: "string", example: "ORD-12345", required: true },
-      { name: "order_total", type: "string", example: "$99.99", required: true },
-      { name: "tracking_url", type: "url", example: "https://tracking.example.com", required: false },
+      {
+        name: "customer_name",
+        type: "string",
+        example: "Jane Smith",
+        required: true,
+      },
+      {
+        name: "order_id",
+        type: "string",
+        example: "ORD-12345",
+        required: true,
+      },
+      {
+        name: "order_total",
+        type: "string",
+        example: "$99.99",
+        required: true,
+      },
+      {
+        name: "tracking_url",
+        type: "url",
+        example: "https://tracking.example.com",
+        required: false,
+      },
     ],
     content: {
       email: {
@@ -149,10 +204,25 @@ export const defaultTemplates: Template[] = [
     author: "Notify",
     isFree: true,
     variables: [
-      { name: "customer_name", type: "string", example: "John Doe", required: true },
+      {
+        name: "customer_name",
+        type: "string",
+        example: "John Doe",
+        required: true,
+      },
       { name: "amount", type: "string", example: "$49.99", required: true },
-      { name: "transaction_id", type: "string", example: "TXN-98765", required: true },
-      { name: "receipt_date", type: "string", example: "March 8, 2026", required: true },
+      {
+        name: "transaction_id",
+        type: "string",
+        example: "TXN-98765",
+        required: true,
+      },
+      {
+        name: "receipt_date",
+        type: "string",
+        example: "March 8, 2026",
+        required: true,
+      },
     ],
     content: {
       email: {
@@ -182,9 +252,19 @@ export const defaultTemplates: Template[] = [
     author: "Notify",
     isFree: true,
     variables: [
-      { name: "subscriber_name", type: "string", example: "John", required: true },
+      {
+        name: "subscriber_name",
+        type: "string",
+        example: "John",
+        required: true,
+      },
       { name: "month", type: "string", example: "March", required: true },
-      { name: "cta_url", type: "url", example: "https://example.com/latest", required: true },
+      {
+        name: "cta_url",
+        type: "url",
+        example: "https://example.com/latest",
+        required: true,
+      },
     ],
     content: {
       email: {
@@ -211,8 +291,18 @@ export const defaultTemplates: Template[] = [
     isFree: true,
     variables: [
       { name: "user_name", type: "string", example: "John", required: true },
-      { name: "alert_message", type: "string", example: "New login from unknown location", required: true },
-      { name: "action_url", type: "url", example: "https://example.com/security", required: true },
+      {
+        name: "alert_message",
+        type: "string",
+        example: "New login from unknown location",
+        required: true,
+      },
+      {
+        name: "action_url",
+        type: "url",
+        example: "https://example.com/security",
+        required: true,
+      },
     ],
     content: {
       email: {
@@ -253,6 +343,6 @@ export function searchTemplates(query: string): Template[] {
     (t) =>
       t.name.toLowerCase().includes(lowerQuery) ||
       t.description.toLowerCase().includes(lowerQuery) ||
-      t.tags?.some((tag) => tag.toLowerCase().includes(lowerQuery))
+      t.tags?.some((tag) => tag.toLowerCase().includes(lowerQuery)),
   );
 }

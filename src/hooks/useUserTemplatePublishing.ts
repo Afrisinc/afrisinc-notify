@@ -15,7 +15,10 @@ import { useCurrentAccountId } from "./useAuth";
 // LIST USER TEMPLATES
 // ──────────────────────────────────────────
 
-export function useUserTemplates(params?: ListUserTemplatesParams, options?: { enabled?: boolean }) {
+export function useUserTemplates(
+  params?: ListUserTemplatesParams,
+  options?: { enabled?: boolean },
+) {
   const accountId = useCurrentAccountId();
 
   return useQuery({
@@ -54,8 +57,13 @@ export function useUpdateUserTemplate() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ templateId, payload }: { templateId: string; payload: CreateUserTemplatePayload }) =>
-      updateUserTemplateService(templateId, accountId ?? "", payload),
+    mutationFn: ({
+      templateId,
+      payload,
+    }: {
+      templateId: string;
+      payload: CreateUserTemplatePayload;
+    }) => updateUserTemplateService(templateId, accountId ?? "", payload),
     onSuccess: () => {
       // Invalidate user templates list to refresh with updated template
       queryClient.invalidateQueries({

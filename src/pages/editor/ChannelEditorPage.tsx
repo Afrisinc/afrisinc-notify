@@ -28,9 +28,18 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCurrentAccountId } from "@/hooks/useAuth";
 import { SmsEditor, type SmsEditorValue } from "@/components/editors/SmsEditor";
-import { PushEditor, type PushEditorValue } from "@/components/editors/PushEditor";
-import { InAppEditor, type InAppEditorValue } from "@/components/editors/InAppEditor";
-import { WhatsAppEditor, type WhatsAppEditorValue } from "@/components/editors/WhatsAppEditor";
+import {
+  PushEditor,
+  type PushEditorValue,
+} from "@/components/editors/PushEditor";
+import {
+  InAppEditor,
+  type InAppEditorValue,
+} from "@/components/editors/InAppEditor";
+import {
+  WhatsAppEditor,
+  type WhatsAppEditorValue,
+} from "@/components/editors/WhatsAppEditor";
 import { Loader2 } from "lucide-react";
 
 type ChannelParam = "sms" | "push" | "in-app" | "whatsapp";
@@ -40,14 +49,17 @@ function toTemplateCode(name: string): string {
   const code = name
     .trim()
     .toUpperCase()
-    .replace(/[\s\-./]+/g, "_")   // spaces, hyphens, dots → underscore
-    .replace(/[^A-Z_]/g, "")      // strip anything not A-Z or _
-    .replace(/^_+|_+$/g, "")      // trim leading/trailing underscores
-    .replace(/_+/g, "_");         // collapse multiple underscores
+    .replace(/[\s\-./]+/g, "_") // spaces, hyphens, dots → underscore
+    .replace(/[^A-Z_]/g, "") // strip anything not A-Z or _
+    .replace(/^_+|_+$/g, "") // trim leading/trailing underscores
+    .replace(/_+/g, "_"); // collapse multiple underscores
   return code || "TEMPLATE";
 }
 
-const CHANNEL_TO_API: Record<ChannelParam, "SMS" | "PUSH" | "IN_APP" | "WHATSAPP"> = {
+const CHANNEL_TO_API: Record<
+  ChannelParam,
+  "SMS" | "PUSH" | "IN_APP" | "WHATSAPP"
+> = {
   sms: "SMS",
   push: "PUSH",
   "in-app": "IN_APP",
@@ -69,16 +81,24 @@ export default function ChannelEditorPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [designJson, setDesignJson] = useState<Record<string, any> | null>(null);
+  const [designJson, setDesignJson] = useState<Record<string, any> | null>(
+    null,
+  );
   const [existingCode, setExistingCode] = useState<string>("");
   const [existingLanguage, setExistingLanguage] = useState<string>("en");
 
   const isNew = templateId === "new";
   const safeChannel = (channel ?? "sms") as ChannelParam;
-  const backPath = appId ? `/dashboard/apps/${appId}/templates` : "/dashboard/templates";
+  const backPath = appId
+    ? `/dashboard/apps/${appId}/templates`
+    : "/dashboard/templates";
 
   useEffect(() => {
-    if (!appId) { setError("Missing appId"); setLoading(false); return; }
+    if (!appId) {
+      setError("Missing appId");
+      setLoading(false);
+      return;
+    }
 
     const load = async () => {
       try {
@@ -91,14 +111,25 @@ export default function ChannelEditorPage() {
         }
 
         if (!isNew && templateId && accountId) {
-          const data = await getAppTemplateService(appId, templateId, accountId);
+          const data = await getAppTemplateService(
+            appId,
+            templateId,
+            accountId,
+          );
           const tpl = (data as any)?.template || data;
           // Prefer design_json for full editor state; fall back to parsing content
           const dj = tpl.design_json;
           if (dj && typeof dj === "object" && Object.keys(dj).length > 0) {
             setDesignJson(dj);
-          } else if (typeof tpl.content === "string" && tpl.content.trim().startsWith("{")) {
-            try { setDesignJson(JSON.parse(tpl.content)); } catch { setDesignJson({ body: tpl.content }); }
+          } else if (
+            typeof tpl.content === "string" &&
+            tpl.content.trim().startsWith("{")
+          ) {
+            try {
+              setDesignJson(JSON.parse(tpl.content));
+            } catch {
+              setDesignJson({ body: tpl.content });
+            }
           } else {
             setDesignJson({ body: tpl.content ?? "" });
           }
@@ -153,12 +184,16 @@ export default function ChannelEditorPage() {
         await updateAppTemplateService(appId, templateId, payload, accountId);
       }
 
-      toast({ title: "Template saved", description: `"${code}" saved successfully.` });
+      toast({
+        title: "Template saved",
+        description: `"${code}" saved successfully.`,
+      });
       navigate(backPath);
     } catch (err) {
       toast({
         title: "Save failed",
-        description: err instanceof Error ? err.message : "Could not save template",
+        description:
+          err instanceof Error ? err.message : "Could not save template",
         variant: "destructive",
       });
     } finally {
@@ -171,7 +206,10 @@ export default function ChannelEditorPage() {
   // ------------------------------------------------------------------
   const dj = designJson ?? {};
   const displayName = existingCode
-    ? existingCode.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase())
+    ? existingCode
+        .replace(/_/g, " ")
+        .toLowerCase()
+        .replace(/\b\w/g, (c) => c.toUpperCase())
     : "";
 
   const initialSms: Partial<SmsEditorValue> = {
@@ -234,9 +272,14 @@ export default function ChannelEditorPage() {
     return (
       <div className="flex items-center justify-center h-screen bg-background">
         <div className="text-center space-y-3">
-          <p className="text-lg font-semibold text-foreground">Failed to Load</p>
+          <p className="text-lg font-semibold text-foreground">
+            Failed to Load
+          </p>
           <p className="text-sm text-muted-foreground">{error}</p>
-          <button onClick={() => navigate(backPath)} className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm hover:bg-primary/90">
+          <button
+            onClick={() => navigate(backPath)}
+            className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm hover:bg-primary/90"
+          >
             Go back
           </button>
         </div>
@@ -271,12 +314,15 @@ export default function ChannelEditorPage() {
             onSave={async (v: PushEditorValue) =>
               handleSave({
                 name: v.name,
-                content: v.body,                        // body → worker uses this
-                subject: v.title,                       // title → subject field
+                content: v.body, // body → worker uses this
+                subject: v.title, // title → subject field
                 design_json: {
-                  title: v.title, body: v.body,
-                  iconUrl: v.iconUrl, imageUrl: v.imageUrl,
-                  actionUrl: v.actionUrl, variables: v.variables,
+                  title: v.title,
+                  body: v.body,
+                  iconUrl: v.iconUrl,
+                  imageUrl: v.imageUrl,
+                  actionUrl: v.actionUrl,
+                  variables: v.variables,
                 },
                 variables: v.variables,
               })
@@ -296,10 +342,15 @@ export default function ChannelEditorPage() {
                 content: v.body,
                 subject: v.title,
                 design_json: {
-                  type: v.type, title: v.title, body: v.body,
-                  ctaLabel: v.ctaLabel, ctaUrl: v.ctaUrl,
-                  autoDismiss: v.autoDismiss, dismissAfter: v.dismissAfter,
-                  position: v.position, variables: v.variables,
+                  type: v.type,
+                  title: v.title,
+                  body: v.body,
+                  ctaLabel: v.ctaLabel,
+                  ctaUrl: v.ctaUrl,
+                  autoDismiss: v.autoDismiss,
+                  dismissAfter: v.dismissAfter,
+                  position: v.position,
+                  variables: v.variables,
                 },
                 variables: v.variables,
               })
@@ -320,10 +371,15 @@ export default function ChannelEditorPage() {
                 subject: v.name,
                 language: v.language,
                 design_json: {
-                  category: v.category, language: v.language,
-                  headerType: v.headerType, headerText: v.headerText,
-                  headerMediaUrl: v.headerMediaUrl, body: v.body,
-                  footer: v.footer, buttons: v.buttons, variables: v.variables,
+                  category: v.category,
+                  language: v.language,
+                  headerType: v.headerType,
+                  headerText: v.headerText,
+                  headerMediaUrl: v.headerMediaUrl,
+                  body: v.body,
+                  footer: v.footer,
+                  buttons: v.buttons,
+                  variables: v.variables,
                 },
                 variables: v.variables,
               })
@@ -336,7 +392,9 @@ export default function ChannelEditorPage() {
       default:
         return (
           <div className="flex items-center justify-center h-full">
-            <p className="text-muted-foreground">Unknown channel: {safeChannel}</p>
+            <p className="text-muted-foreground">
+              Unknown channel: {safeChannel}
+            </p>
           </div>
         );
     }
@@ -357,7 +415,9 @@ export default function ChannelEditorPage() {
                   {(user.firstName?.[0] ?? user.email[0]).toUpperCase()}
                 </div>
                 <span className="text-sm text-muted-foreground hidden sm:block">
-                  {user.firstName ? `${user.firstName} ${user.lastName ?? ""}`.trim() : user.email}
+                  {user.firstName
+                    ? `${user.firstName} ${user.lastName ?? ""}`.trim()
+                    : user.email}
                 </span>
               </div>
             )}

@@ -17,12 +17,24 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { EmailEditor } from "@/components/EmailEditor/EmailEditor";
 import theme from "@/components/EmailEditor/core/theme";
 import { SmsEditor, type SmsEditorValue } from "@/components/editors/SmsEditor";
-import { PushEditor, type PushEditorValue } from "@/components/editors/PushEditor";
-import { InAppEditor, type InAppEditorValue } from "@/components/editors/InAppEditor";
-import { WhatsAppEditor, type WhatsAppEditorValue } from "@/components/editors/WhatsAppEditor";
+import {
+  PushEditor,
+  type PushEditorValue,
+} from "@/components/editors/PushEditor";
+import {
+  InAppEditor,
+  type InAppEditorValue,
+} from "@/components/editors/InAppEditor";
+import {
+  WhatsAppEditor,
+  type WhatsAppEditorValue,
+} from "@/components/editors/WhatsAppEditor";
 import { useToast } from "@/hooks/use-toast";
 import { useCurrentAccountId } from "@/hooks/useAuth";
-import { createTemplateService, updateTemplateService } from "@/services/templatesService";
+import {
+  createTemplateService,
+  updateTemplateService,
+} from "@/services/templatesService";
 import { Loader2 } from "lucide-react";
 import getApiClient from "@/services/apiClient";
 
@@ -56,14 +68,19 @@ async function fetchUserTemplate(templateId: string, accountId: string) {
 }
 
 export default function UserTemplateEditor() {
-  const { id: templateId, channel } = useParams<{ id: string; channel?: ChannelParam }>();
+  const { id: templateId, channel } = useParams<{
+    id: string;
+    channel?: ChannelParam;
+  }>();
   const navigate = useNavigate();
   const { toast } = useToast();
   const accountId = useCurrentAccountId();
 
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [designJson, setDesignJson] = useState<Record<string, any> | null>(null);
+  const [designJson, setDesignJson] = useState<Record<string, any> | null>(
+    null,
+  );
   const [existingCode, setExistingCode] = useState<string>("");
   const [existingLanguage, setExistingLanguage] = useState<string>("en");
 
@@ -81,8 +98,15 @@ export default function UserTemplateEditor() {
         const dj = tpl.design_json;
         if (dj && typeof dj === "object" && Object.keys(dj).length > 0) {
           setDesignJson(dj);
-        } else if (typeof tpl.content === "string" && tpl.content.trim().startsWith("{")) {
-          try { setDesignJson(JSON.parse(tpl.content)); } catch { setDesignJson({ body: tpl.content }); }
+        } else if (
+          typeof tpl.content === "string" &&
+          tpl.content.trim().startsWith("{")
+        ) {
+          try {
+            setDesignJson(JSON.parse(tpl.content));
+          } catch {
+            setDesignJson({ body: tpl.content });
+          }
         } else {
           setDesignJson({ body: tpl.content ?? "" });
         }
@@ -97,13 +121,17 @@ export default function UserTemplateEditor() {
     load();
   }, [templateId, accountId, isNew, safeChannel]);
 
-  if (!templateId) return <div className="p-8 text-muted-foreground">Invalid template</div>;
+  if (!templateId)
+    return <div className="p-8 text-muted-foreground">Invalid template</div>;
 
   if (safeChannel === "email") {
     return (
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <EmailEditor templateId={templateId} onCancel={() => navigate(backPath)} />
+        <EmailEditor
+          templateId={templateId}
+          onCancel={() => navigate(backPath)}
+        />
       </ThemeProvider>
     );
   }
@@ -149,12 +177,16 @@ export default function UserTemplateEditor() {
         await updateTemplateService(templateId, base);
       }
 
-      toast({ title: "Template saved", description: `"${code}" saved successfully.` });
+      toast({
+        title: "Template saved",
+        description: `"${code}" saved successfully.`,
+      });
       navigate(backPath);
     } catch (err) {
       toast({
         title: "Save failed",
-        description: err instanceof Error ? err.message : "Could not save template",
+        description:
+          err instanceof Error ? err.message : "Could not save template",
         variant: "destructive",
       });
     } finally {
@@ -164,17 +196,26 @@ export default function UserTemplateEditor() {
 
   const dj = designJson ?? {};
   const displayName = existingCode
-    ? existingCode.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase())
+    ? existingCode
+        .replace(/_/g, " ")
+        .toLowerCase()
+        .replace(/\b\w/g, (c) => c.toUpperCase())
     : "";
 
   switch (safeChannel) {
     case "sms":
       return (
         <SmsEditor
-          initialValue={{ name: displayName, body: dj.body ?? "", variables: dj.variables ?? [] }}
+          initialValue={{
+            name: displayName,
+            body: dj.body ?? "",
+            variables: dj.variables ?? [],
+          }}
           onSave={async (v: SmsEditorValue) =>
             handleSave({
-              name: v.name, content: v.body, subject: v.name,
+              name: v.name,
+              content: v.body,
+              subject: v.name,
               design_json: { body: v.body, variables: v.variables },
               variables: v.variables,
             })
@@ -186,11 +227,28 @@ export default function UserTemplateEditor() {
     case "push":
       return (
         <PushEditor
-          initialValue={{ name: displayName, title: dj.title ?? "", body: dj.body ?? "", iconUrl: dj.iconUrl ?? "", imageUrl: dj.imageUrl ?? "", actionUrl: dj.actionUrl ?? "", variables: dj.variables ?? [] }}
+          initialValue={{
+            name: displayName,
+            title: dj.title ?? "",
+            body: dj.body ?? "",
+            iconUrl: dj.iconUrl ?? "",
+            imageUrl: dj.imageUrl ?? "",
+            actionUrl: dj.actionUrl ?? "",
+            variables: dj.variables ?? [],
+          }}
           onSave={async (v: PushEditorValue) =>
             handleSave({
-              name: v.name, content: v.body, subject: v.title,
-              design_json: { title: v.title, body: v.body, iconUrl: v.iconUrl, imageUrl: v.imageUrl, actionUrl: v.actionUrl, variables: v.variables },
+              name: v.name,
+              content: v.body,
+              subject: v.title,
+              design_json: {
+                title: v.title,
+                body: v.body,
+                iconUrl: v.iconUrl,
+                imageUrl: v.imageUrl,
+                actionUrl: v.actionUrl,
+                variables: v.variables,
+              },
               variables: v.variables,
             })
           }
@@ -201,11 +259,34 @@ export default function UserTemplateEditor() {
     case "in-app":
       return (
         <InAppEditor
-          initialValue={{ name: displayName, type: dj.type ?? "toast", title: dj.title ?? "", body: dj.body ?? "", ctaLabel: dj.ctaLabel ?? "", ctaUrl: dj.ctaUrl ?? "", autoDismiss: dj.autoDismiss ?? true, dismissAfter: dj.dismissAfter ?? 5, position: dj.position ?? "top-right", variables: dj.variables ?? [] }}
+          initialValue={{
+            name: displayName,
+            type: dj.type ?? "toast",
+            title: dj.title ?? "",
+            body: dj.body ?? "",
+            ctaLabel: dj.ctaLabel ?? "",
+            ctaUrl: dj.ctaUrl ?? "",
+            autoDismiss: dj.autoDismiss ?? true,
+            dismissAfter: dj.dismissAfter ?? 5,
+            position: dj.position ?? "top-right",
+            variables: dj.variables ?? [],
+          }}
           onSave={async (v: InAppEditorValue) =>
             handleSave({
-              name: v.name, content: v.body, subject: v.title,
-              design_json: { type: v.type, title: v.title, body: v.body, ctaLabel: v.ctaLabel, ctaUrl: v.ctaUrl, autoDismiss: v.autoDismiss, dismissAfter: v.dismissAfter, position: v.position, variables: v.variables },
+              name: v.name,
+              content: v.body,
+              subject: v.title,
+              design_json: {
+                type: v.type,
+                title: v.title,
+                body: v.body,
+                ctaLabel: v.ctaLabel,
+                ctaUrl: v.ctaUrl,
+                autoDismiss: v.autoDismiss,
+                dismissAfter: v.dismissAfter,
+                position: v.position,
+                variables: v.variables,
+              },
               variables: v.variables,
             })
           }
@@ -216,11 +297,35 @@ export default function UserTemplateEditor() {
     case "whatsapp":
       return (
         <WhatsAppEditor
-          initialValue={{ name: displayName, category: dj.category ?? "UTILITY", language: dj.language ?? existingLanguage, headerType: dj.headerType ?? "none", headerText: dj.headerText ?? "", headerMediaUrl: dj.headerMediaUrl ?? "", body: dj.body ?? "", footer: dj.footer ?? "", buttons: dj.buttons ?? [], variables: dj.variables ?? [] }}
+          initialValue={{
+            name: displayName,
+            category: dj.category ?? "UTILITY",
+            language: dj.language ?? existingLanguage,
+            headerType: dj.headerType ?? "none",
+            headerText: dj.headerText ?? "",
+            headerMediaUrl: dj.headerMediaUrl ?? "",
+            body: dj.body ?? "",
+            footer: dj.footer ?? "",
+            buttons: dj.buttons ?? [],
+            variables: dj.variables ?? [],
+          }}
           onSave={async (v: WhatsAppEditorValue) =>
             handleSave({
-              name: v.name, content: v.body, subject: v.name, language: v.language,
-              design_json: { category: v.category, language: v.language, headerType: v.headerType, headerText: v.headerText, headerMediaUrl: v.headerMediaUrl, body: v.body, footer: v.footer, buttons: v.buttons, variables: v.variables },
+              name: v.name,
+              content: v.body,
+              subject: v.name,
+              language: v.language,
+              design_json: {
+                category: v.category,
+                language: v.language,
+                headerType: v.headerType,
+                headerText: v.headerText,
+                headerMediaUrl: v.headerMediaUrl,
+                body: v.body,
+                footer: v.footer,
+                buttons: v.buttons,
+                variables: v.variables,
+              },
               variables: v.variables,
             })
           }
@@ -229,6 +334,10 @@ export default function UserTemplateEditor() {
         />
       );
     default:
-      return <div className="p-8 text-muted-foreground">Unknown channel: {safeChannel}</div>;
+      return (
+        <div className="p-8 text-muted-foreground">
+          Unknown channel: {safeChannel}
+        </div>
+      );
   }
 }

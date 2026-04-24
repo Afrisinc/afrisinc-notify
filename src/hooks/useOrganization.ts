@@ -26,7 +26,8 @@ export function useCreateOrganization() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: CreateOrganizationPayload) => createOrganizationService(payload),
+    mutationFn: (payload: CreateOrganizationPayload) =>
+      createOrganizationService(payload),
     onSuccess: () => {
       // Invalidate and immediately refetch user organizations
       queryClient.invalidateQueries({
@@ -59,8 +60,13 @@ export function useUpdateOrganization() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ orgId, payload }: { orgId: string; payload: UpdateOrganizationPayload }) =>
-      updateOrganizationService(orgId, payload),
+    mutationFn: ({
+      orgId,
+      payload,
+    }: {
+      orgId: string;
+      payload: UpdateOrganizationPayload;
+    }) => updateOrganizationService(orgId, payload),
     onSuccess: (_data, { orgId }) => {
       // Invalidate organization queries
       queryClient.invalidateQueries({
@@ -97,8 +103,15 @@ export function useCreateOrganizationInvite() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ orgId, accountId, payload }: { orgId: string; accountId: string; payload: CreateInvitePayload }) =>
-      createOrganizationInviteService(orgId, accountId, payload),
+    mutationFn: ({
+      orgId,
+      accountId,
+      payload,
+    }: {
+      orgId: string;
+      accountId: string;
+      payload: CreateInvitePayload;
+    }) => createOrganizationInviteService(orgId, accountId, payload),
     onSuccess: (_data, { orgId }) => {
       // Invalidate organization invites
       queryClient.invalidateQueries({
@@ -112,7 +125,11 @@ export function useCreateOrganizationInvite() {
  * Get organization members with pagination
  * Any member can view member list
  */
-export function useOrganizationMembers(orgId: string, page: number = 1, limit: number = 10) {
+export function useOrganizationMembers(
+  orgId: string,
+  page: number = 1,
+  limit: number = 10,
+) {
   return useQuery({
     queryKey: ["organizationMembers", orgId, page, limit],
     queryFn: () => getOrganizationMembersService(orgId, page, limit),
@@ -124,7 +141,11 @@ export function useOrganizationMembers(orgId: string, page: number = 1, limit: n
  * Get organization invites with pagination
  * Any member can view the pending invites
  */
-export function useOrganizationInvites(orgId: string, page: number = 1, limit: number = 10) {
+export function useOrganizationInvites(
+  orgId: string,
+  page: number = 1,
+  limit: number = 10,
+) {
   return useQuery({
     queryKey: ["organizationInvites", orgId, page, limit],
     queryFn: () => getOrganizationInvitesService(orgId, page, limit),
@@ -201,7 +222,7 @@ export function useAcceptInvite() {
       queryClient.invalidateQueries({
         queryKey: ["userInvites"],
       });
-// Invalidate user organizations so the new org shows up for the user immediately
+      // Invalidate user organizations so the new org shows up for the user immediately
       queryClient.invalidateQueries({
         queryKey: ["userOrganizations"],
       });

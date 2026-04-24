@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ChannelSelectorDialog, type TemplateChannel } from "@/components/editors/ChannelSelectorDialog";
+import {
+  ChannelSelectorDialog,
+  type TemplateChannel,
+} from "@/components/editors/ChannelSelectorDialog";
 import { appTemplates } from "@/data/mockData";
 import { useAppTemplates, useDeleteAppTemplate } from "@/hooks/useApps";
 import { useSendNotification } from "@/hooks/useNotifications";
@@ -26,7 +29,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,7 +47,18 @@ import {
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus, Pencil, Copy, Trash2, Send, Store, FileText, Eye, Variable, Loader2 } from "lucide-react";
+import {
+  Plus,
+  Pencil,
+  Copy,
+  Trash2,
+  Send,
+  Store,
+  FileText,
+  Eye,
+  Variable,
+  Loader2,
+} from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -80,17 +100,28 @@ export default function AppTemplates() {
   const sendNotificationMutation = useSendNotification();
 
   // Fetch templates from app endpoint
-  const { data: appTemplatesResponse, isLoading } = useAppTemplates(appId || "", {
-    enabled: !!appId,
-  });
+  const { data: appTemplatesResponse, isLoading } = useAppTemplates(
+    appId || "",
+    {
+      enabled: !!appId,
+    },
+  );
 
   // Extract templates from response or use mock data
-  const templates = appTemplatesResponse?.templates || appTemplates.filter((t) => t.appId === appId);
+  const templates =
+    appTemplatesResponse?.templates ||
+    appTemplates.filter((t) => t.appId === appId);
 
   const [search, setSearch] = useState("");
   const [channelFilter, setChannelFilter] = useState("all");
-  const [deleteConfirm, setDeleteConfirm] = useState<{ appId: string; templateId: string } | null>(null);
-  const [sendNotifyDialog, setSendNotifyDialog] = useState<{ templateId: string; templateName: string } | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<{
+    appId: string;
+    templateId: string;
+  } | null>(null);
+  const [sendNotifyDialog, setSendNotifyDialog] = useState<{
+    templateId: string;
+    templateName: string;
+  } | null>(null);
   const [channelSelectorOpen, setChannelSelectorOpen] = useState(false);
 
   const handleCreateTemplate = (channel: TemplateChannel) => {
@@ -130,15 +161,15 @@ export default function AppTemplates() {
         templateId: deleteConfirm.templateId,
       });
       toast({
-        title: 'Success',
-        description: 'Template deleted successfully',
+        title: "Success",
+        description: "Template deleted successfully",
       });
       setDeleteConfirm(null);
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to delete template',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to delete template",
+        variant: "destructive",
       });
     }
   };
@@ -154,16 +185,16 @@ export default function AppTemplates() {
         appId,
       });
       toast({
-        title: 'Success',
+        title: "Success",
         description: `Notification sent to ${data.recipient}`,
       });
       setSendNotifyDialog(null);
       form.reset();
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to send notification',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to send notification",
+        variant: "destructive",
       });
     }
   };
@@ -171,7 +202,8 @@ export default function AppTemplates() {
   const filtered = templates.filter((t) => {
     // Handle both API response format (nested template) and mock format
     const template = (t as any).template || t;
-    const name = typeof template.name === "string" ? template.name : template.code || "";
+    const name =
+      typeof template.name === "string" ? template.name : template.code || "";
     const matchSearch = name.toLowerCase().includes(search.toLowerCase());
     const channel = (template.channel || "").toLowerCase();
     const filterChannel = channelFilter.toLowerCase();
@@ -192,7 +224,9 @@ export default function AppTemplates() {
             className="flex-1 max-w-sm"
           />
           <Select value={channelFilter} onValueChange={setChannelFilter}>
-            <SelectTrigger className="w-[130px]"><SelectValue placeholder="Channel" /></SelectTrigger>
+            <SelectTrigger className="w-[130px]">
+              <SelectValue placeholder="Channel" />
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Channels</SelectItem>
               <SelectItem value="email">Email</SelectItem>
@@ -203,7 +237,11 @@ export default function AppTemplates() {
           </Select>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={() => navigate("/dashboard/marketplace")}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate("/dashboard/marketplace")}
+          >
             <Store className="h-3.5 w-3.5 mr-1.5" /> Marketplace
           </Button>
           <Button size="sm" onClick={() => setChannelSelectorOpen(true)}>
@@ -217,7 +255,9 @@ export default function AppTemplates() {
         <Card>
           <CardContent className="py-8 flex items-center justify-center gap-2">
             <Loader2 className="h-4 w-4 animate-spin" />
-            <span className="text-sm text-content-secondary">Loading templates...</span>
+            <span className="text-sm text-content-secondary">
+              Loading templates...
+            </span>
           </CardContent>
         </Card>
       )}
@@ -227,7 +267,9 @@ export default function AppTemplates() {
         <Card className="border-dashed border-2">
           <CardContent className="py-16 text-center">
             <FileText className="h-10 w-10 icon-muted mx-auto mb-3" />
-            <p className="text-sm text-content-secondary">No templates found. Create one or import from the marketplace.</p>
+            <p className="text-sm text-content-secondary">
+              No templates found. Create one or import from the marketplace.
+            </p>
           </CardContent>
         </Card>
       ) : !isLoading ? (
@@ -238,20 +280,30 @@ export default function AppTemplates() {
             const templateId = tpl.id || item.id;
 
             // Use utility to extract variable names from API or mock data
-            const templateName = tpl.subject || tpl.code || tpl.description || "Untitled";
+            const templateName =
+              tpl.subject || tpl.code || tpl.description || "Untitled";
             const variables = extractVariableNames(tpl);
             const createdBy = tpl.createdBy || "System";
-            const updatedAt = tpl.updatedAt ? new Date(tpl.updatedAt).toLocaleDateString() : "Unknown";
+            const updatedAt = tpl.updatedAt
+              ? new Date(tpl.updatedAt).toLocaleDateString()
+              : "Unknown";
             const version = tpl.version || 1;
             const isActive = tpl.active !== false;
 
             return (
-              <Card key={templateId} className="border-border/60 hover:border-border transition-colors">
+              <Card
+                key={templateId}
+                className="border-border/60 hover:border-border transition-colors"
+              >
                 <CardContent className="flex items-center justify-between py-3 px-4">
                   <div className="flex items-center gap-3 min-w-0">
                     <div className="flex flex-col min-w-0">
-                      <span className="text-sm font-medium text-foreground truncate">{templateName}</span>
-                      <span className="text-xs text-muted-foreground">v{version} · {createdBy} · {updatedAt}</span>
+                      <span className="text-sm font-medium text-foreground truncate">
+                        {templateName}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        v{version} · {createdBy} · {updatedAt}
+                      </span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 flex-wrap">
@@ -260,7 +312,11 @@ export default function AppTemplates() {
                         <Variable className="h-3.5 w-3.5 text-muted-foreground" />
                         <div className="flex gap-1 flex-wrap">
                           {variables.slice(0, 2).map((v: any, idx: number) => (
-                            <Badge key={idx} variant="outline" className="text-[9px] py-0">
+                            <Badge
+                              key={idx}
+                              variant="outline"
+                              className="text-[9px] py-0"
+                            >
                               {v}
                             </Badge>
                           ))}
@@ -268,16 +324,24 @@ export default function AppTemplates() {
                             <TooltipProvider>
                               <Tooltip>
                                 <TooltipTrigger asChild>
-                                  <Badge variant="outline" className="text-[9px] py-0 cursor-help">
+                                  <Badge
+                                    variant="outline"
+                                    className="text-[9px] py-0 cursor-help"
+                                  >
                                     +{variables.length - 2}
                                   </Badge>
                                 </TooltipTrigger>
                                 <TooltipContent className="max-w-xs">
                                   <div className="space-y-1">
-                                    <p className="text-xs font-medium">Available variables:</p>
+                                    <p className="text-xs font-medium">
+                                      Available variables:
+                                    </p>
                                     <div className="flex flex-wrap gap-1">
                                       {variables.map((v: any, idx: number) => (
-                                        <code key={idx} className="text-[10px] bg-muted/50 px-1.5 py-0.5 rounded">
+                                        <code
+                                          key={idx}
+                                          className="text-[10px] bg-muted/50 px-1.5 py-0.5 rounded"
+                                        >
                                           {`{{${v}}}`}
                                         </code>
                                       ))}
@@ -290,55 +354,72 @@ export default function AppTemplates() {
                         </div>
                       </div>
                     )}
-                    <Badge variant="secondary" className={`text-[10px] ${channelColor[tpl.channel]}`}>
+                    <Badge
+                      variant="secondary"
+                      className={`text-[10px] ${channelColor[tpl.channel]}`}
+                    >
                       {tpl.channel || "N/A"}
                     </Badge>
-                    <Badge variant="secondary" className={`text-[10px] ${statusColor[isActive ? "active" : "draft"]}`}>
+                    <Badge
+                      variant="secondary"
+                      className={`text-[10px] ${statusColor[isActive ? "active" : "draft"]}`}
+                    >
                       {isActive ? "active" : "draft"}
                     </Badge>
-                  <div className="flex gap-0.5 ml-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-7 w-7"
-                      onClick={() => handleEditTemplate(tpl, templateId)}
-                      title="View template"
-                    >
-                      <Eye className="h-3 w-3" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-7 w-7"
-                      onClick={() => handleEditTemplate(tpl, templateId)}
-                      title="Edit template"
-                    >
-                      <Pencil className="h-3 w-3" />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="h-7 w-7" title="Duplicate template"><Copy className="h-3 w-3" /></Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-7 w-7 hover:text-primary"
-                      title="Send notification"
-                      onClick={() => setSendNotifyDialog({ templateId, templateName })}
-                    >
-                      <Send className="h-3 w-3" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-7 w-7 hover:text-destructive"
-                      title="Delete template"
-                      onClick={() => setDeleteConfirm({ appId: appId || "", templateId })}
-                      disabled={deleteTemplateMutation.isPending}
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </Button>
+                    <div className="flex gap-0.5 ml-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7"
+                        onClick={() => handleEditTemplate(tpl, templateId)}
+                        title="View template"
+                      >
+                        <Eye className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7"
+                        onClick={() => handleEditTemplate(tpl, templateId)}
+                        title="Edit template"
+                      >
+                        <Pencil className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7"
+                        title="Duplicate template"
+                      >
+                        <Copy className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 hover:text-primary"
+                        title="Send notification"
+                        onClick={() =>
+                          setSendNotifyDialog({ templateId, templateName })
+                        }
+                      >
+                        <Send className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 hover:text-destructive"
+                        title="Delete template"
+                        onClick={() =>
+                          setDeleteConfirm({ appId: appId || "", templateId })
+                        }
+                        disabled={deleteTemplateMutation.isPending}
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
             );
           })}
         </div>
@@ -352,27 +433,36 @@ export default function AppTemplates() {
       />
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!deleteConfirm} onOpenChange={(open) => !open && setDeleteConfirm(null)}>
+      <AlertDialog
+        open={!!deleteConfirm}
+        onOpenChange={(open) => !open && setDeleteConfirm(null)}
+      >
         <AlertDialogContent>
           <AlertDialogTitle>Delete Template</AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to delete this template? This action cannot be undone.
+            Are you sure you want to delete this template? This action cannot be
+            undone.
           </AlertDialogDescription>
           <div className="flex justify-end gap-2">
-            <AlertDialogCancel disabled={deleteTemplateMutation.isPending}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleteTemplateMutation.isPending}>
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteTemplate}
               disabled={deleteTemplateMutation.isPending}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {deleteTemplateMutation.isPending ? 'Deleting...' : 'Delete'}
+              {deleteTemplateMutation.isPending ? "Deleting..." : "Delete"}
             </AlertDialogAction>
           </div>
         </AlertDialogContent>
       </AlertDialog>
 
       {/* Send Notification Dialog */}
-      <Dialog open={!!sendNotifyDialog} onOpenChange={(open) => !open && setSendNotifyDialog(null)}>
+      <Dialog
+        open={!!sendNotifyDialog}
+        onOpenChange={(open) => !open && setSendNotifyDialog(null)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Send Notification</DialogTitle>
@@ -382,7 +472,10 @@ export default function AppTemplates() {
           </DialogHeader>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSendNotification)} className="space-y-4">
+            <form
+              onSubmit={form.handleSubmit(handleSendNotification)}
+              className="space-y-4"
+            >
               <FormField
                 control={form.control}
                 name="channel"

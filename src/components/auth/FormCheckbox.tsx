@@ -7,7 +7,16 @@ interface FormCheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> 
 }
 
 const FormCheckbox = forwardRef<HTMLInputElement, FormCheckboxProps>(
-  ({ label, id, labelClassName = "text-sm text-foreground", containerClassName = "flex items-center gap-2", ...props }, ref) => {
+  (
+    {
+      label,
+      id,
+      labelClassName = "text-sm text-foreground",
+      containerClassName = "flex items-center gap-2",
+      ...props
+    },
+    ref,
+  ) => {
     return (
       <label className={`${containerClassName} cursor-pointer`}>
         <input
@@ -20,7 +29,7 @@ const FormCheckbox = forwardRef<HTMLInputElement, FormCheckboxProps>(
         {label && <span className={labelClassName}>{label}</span>}
       </label>
     );
-  }
+  },
 );
 
 FormCheckbox.displayName = "FormCheckbox";

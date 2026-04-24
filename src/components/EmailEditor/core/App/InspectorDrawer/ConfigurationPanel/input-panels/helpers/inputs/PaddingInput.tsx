@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 import {
   AlignHorizontalLeftOutlined,
   AlignHorizontalRightOutlined,
   AlignVerticalBottomOutlined,
   AlignVerticalTopOutlined,
-} from '@mui/icons-material';
-import { InputLabel, Stack } from '@mui/material';
+} from "@mui/icons-material";
+import { InputLabel, Stack } from "@mui/material";
 
-import RawSliderInput from './raw/RawSliderInput';
+import RawSliderInput from "./raw/RawSliderInput";
 
 type TPaddingValue = {
   top: number;
@@ -50,7 +50,7 @@ export default function PaddingInput({ label, defaultValue, onChange }: Props) {
       <RawSliderInput
         iconLabel={<AlignVerticalTopOutlined sx={{ fontSize: 16 }} />}
         value={value.top}
-        setValue={(num) => handleChange('top', num)}
+        setValue={(num) => handleChange("top", num)}
         units="px"
         step={4}
         min={0}
@@ -61,7 +61,7 @@ export default function PaddingInput({ label, defaultValue, onChange }: Props) {
       <RawSliderInput
         iconLabel={<AlignVerticalBottomOutlined sx={{ fontSize: 16 }} />}
         value={value.bottom}
-        setValue={(num) => handleChange('bottom', num)}
+        setValue={(num) => handleChange("bottom", num)}
         units="px"
         step={4}
         min={0}
@@ -72,7 +72,7 @@ export default function PaddingInput({ label, defaultValue, onChange }: Props) {
       <RawSliderInput
         iconLabel={<AlignHorizontalLeftOutlined sx={{ fontSize: 16 }} />}
         value={value.left}
-        setValue={(num) => handleChange('left', num)}
+        setValue={(num) => handleChange("left", num)}
         units="px"
         step={4}
         min={0}
@@ -83,7 +83,7 @@ export default function PaddingInput({ label, defaultValue, onChange }: Props) {
       <RawSliderInput
         iconLabel={<AlignHorizontalRightOutlined sx={{ fontSize: 16 }} />}
         value={value.right}
-        setValue={(num) => handleChange('right', num)}
+        setValue={(num) => handleChange("right", num)}
         units="px"
         step={4}
         min={0}

@@ -19,15 +19,15 @@
  * 7. React Query handles cache invalidation and refetch
  */
 
-import React, { useEffect } from 'react';
-import { ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import { ArrowLeft, Save, Download, X } from 'lucide-react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import React, { useEffect } from "react";
+import { ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import { ArrowLeft, Save, Download, X } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Form,
   FormControl,
@@ -35,18 +35,24 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import theme from './core/theme';
-import App from './core/App';
-import { useEmailEditor } from './hooks/useEmailEditor';
-import { useToast } from '@/hooks/use-toast';
-import { useInspectorDrawerOpen } from './core/documents/editor/EditorContext';
-import { INSPECTOR_DRAWER_WIDTH } from './core/App/InspectorDrawer';
+} from "@/components/ui/form";
+import theme from "./core/theme";
+import App from "./core/App";
+import { useEmailEditor } from "./hooks/useEmailEditor";
+import { useToast } from "@/hooks/use-toast";
+import { useInspectorDrawerOpen } from "./core/documents/editor/EditorContext";
+import { INSPECTOR_DRAWER_WIDTH } from "./core/App/InspectorDrawer";
 
 // Validation schema
 const templateHeaderSchema = z.object({
-  templateName: z.string().min(1, 'Template name is required').min(3, 'Template name must be at least 3 characters'),
-  subject: z.string().min(1, 'Subject is required').min(3, 'Subject must be at least 3 characters'),
+  templateName: z
+    .string()
+    .min(1, "Template name is required")
+    .min(3, "Template name must be at least 3 characters"),
+  subject: z
+    .string()
+    .min(1, "Subject is required")
+    .min(3, "Subject must be at least 3 characters"),
 });
 
 type TemplateHeaderFormData = z.infer<typeof templateHeaderSchema>;
@@ -57,7 +63,11 @@ interface EmailEditorProps {
   onCancel: () => void;
 }
 
-export const EmailEditor: React.FC<EmailEditorProps> = ({ appId, templateId, onCancel }) => {
+export const EmailEditor: React.FC<EmailEditorProps> = ({
+  appId,
+  templateId,
+  onCancel,
+}) => {
   const { toast } = useToast();
   const inspectorDrawerOpen = useInspectorDrawerOpen();
   const {
@@ -76,8 +86,8 @@ export const EmailEditor: React.FC<EmailEditorProps> = ({ appId, templateId, onC
   const form = useForm<TemplateHeaderFormData>({
     resolver: zodResolver(templateHeaderSchema),
     defaultValues: {
-      templateName: templateName || '',
-      subject: subject || '',
+      templateName: templateName || "",
+      subject: subject || "",
     },
     values: {
       templateName,
@@ -85,16 +95,16 @@ export const EmailEditor: React.FC<EmailEditorProps> = ({ appId, templateId, onC
     },
   });
 
-  const isNewTemplate = templateId === 'new';
+  const isNewTemplate = templateId === "new";
 
   const handleSave = async () => {
     // Validate form before saving
     const isValid = await form.trigger();
     if (!isValid) {
       toast({
-        title: 'Validation Error',
-        description: 'Please fix the errors in the form',
-        variant: 'destructive',
+        title: "Validation Error",
+        description: "Please fix the errors in the form",
+        variant: "destructive",
       });
       return;
     }
@@ -102,14 +112,17 @@ export const EmailEditor: React.FC<EmailEditorProps> = ({ appId, templateId, onC
     try {
       await save();
       toast({
-        title: 'Success',
-        description: isNewTemplate ? 'Template created successfully' : 'Template updated successfully',
+        title: "Success",
+        description: isNewTemplate
+          ? "Template created successfully"
+          : "Template updated successfully",
       });
     } catch (err) {
       toast({
-        title: 'Error',
-        description: error || `Failed to ${isNewTemplate ? 'create' : 'update'} template`,
-        variant: 'destructive',
+        title: "Error",
+        description:
+          error || `Failed to ${isNewTemplate ? "create" : "update"} template`,
+        variant: "destructive",
       });
     }
   };
@@ -118,22 +131,22 @@ export const EmailEditor: React.FC<EmailEditorProps> = ({ appId, templateId, onC
     try {
       const html = exportHTML();
       // Create a blob and trigger download
-      const blob = new Blob([html], { type: 'text/html' });
+      const blob = new Blob([html], { type: "text/html" });
       const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-      link.download = `${templateName || 'email'}.html`;
+      link.download = `${templateName || "email"}.html`;
       link.click();
       URL.revokeObjectURL(url);
       toast({
-        title: 'Success',
-        description: 'Email HTML exported successfully',
+        title: "Success",
+        description: "Email HTML exported successfully",
       });
     } catch (err) {
       toast({
-        title: 'Error',
-        description: 'Failed to export HTML',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to export HTML",
+        variant: "destructive",
       });
     }
   };
@@ -142,9 +155,9 @@ export const EmailEditor: React.FC<EmailEditorProps> = ({ appId, templateId, onC
   useEffect(() => {
     if (error) {
       toast({
-        title: 'Template Loading Error',
+        title: "Template Loading Error",
         description: error,
-        variant: 'destructive',
+        variant: "destructive",
       });
     }
   }, [error, toast]);
@@ -170,9 +183,7 @@ export const EmailEditor: React.FC<EmailEditorProps> = ({ appId, templateId, onC
         }}
       >
         <div className="mb-3">
-          <p className="heading-label">
-            Notify Email Template Editor
-          </p>
+          <p className="heading-label">Notify Email Template Editor</p>
         </div>
         <div className="flex items-center justify-between gap-4">
           {/* Left: Back button + Template name & subject */}
@@ -258,17 +269,21 @@ export const EmailEditor: React.FC<EmailEditorProps> = ({ appId, templateId, onC
               disabled={isSaving}
               size="sm"
               className="gap-2"
-              title={isNewTemplate ? 'Create new template' : 'Update template'}
+              title={isNewTemplate ? "Create new template" : "Update template"}
             >
               {isSaving ? (
                 <>
                   <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span className="hidden sm:inline">{isNewTemplate ? 'Creating...' : 'Updating...'}</span>
+                  <span className="hidden sm:inline">
+                    {isNewTemplate ? "Creating..." : "Updating..."}
+                  </span>
                 </>
               ) : (
                 <>
                   <Save className="h-4 w-4" />
-                  <span className="hidden sm:inline">{isNewTemplate ? 'Save' : 'Update'}</span>
+                  <span className="hidden sm:inline">
+                    {isNewTemplate ? "Save" : "Update"}
+                  </span>
                 </>
               )}
             </Button>

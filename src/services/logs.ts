@@ -86,7 +86,7 @@ export interface ExportLogsParams {
 export const listNotificationLogsService = async (
   appId: string,
   params?: ListNotificationLogsParams,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const queryParams = new URLSearchParams();
@@ -106,7 +106,7 @@ export const listNotificationLogsService = async (
 
   const { data } = await getApiClient().get<any>(
     `/api/apps/${appId}/notifications${query}`,
-    config
+    config,
   );
   return data.data as ListNotificationLogsResponse;
 };
@@ -118,12 +118,12 @@ export const listNotificationLogsService = async (
 export const getNotificationLogService = async (
   appId: string,
   notificationId: string,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().get<any>(
     `/api/apps/${appId}/notifications/${notificationId}`,
-    config
+    config,
   );
   return data.data as NotificationLog;
 };
@@ -134,12 +134,12 @@ export const getNotificationLogService = async (
 
 export const getNotificationStatusService = async (
   notificationId: string,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().get<any>(
     `/notify/${notificationId}`,
-    config
+    config,
   );
   return data.data as Partial<NotificationLog>;
 };
@@ -151,7 +151,7 @@ export const getNotificationStatusService = async (
 export const exportNotificationLogsService = async (
   appId: string,
   params?: ExportLogsParams,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const queryParams = new URLSearchParams();
@@ -164,7 +164,9 @@ export const exportNotificationLogsService = async (
   if (params?.campaignId) queryParams.append("campaignId", params.campaignId);
   if (params?.templateId) queryParams.append("templateId", params.templateId);
   if (params?.fields) {
-    const fieldsStr = Array.isArray(params.fields) ? params.fields.join(",") : params.fields;
+    const fieldsStr = Array.isArray(params.fields)
+      ? params.fields.join(",")
+      : params.fields;
     queryParams.append("fields", fieldsStr);
   }
 
@@ -175,7 +177,7 @@ export const exportNotificationLogsService = async (
     {
       ...config,
       responseType: "blob",
-    }
+    },
   );
 
   return response.data;
@@ -187,7 +189,7 @@ export const exportNotificationLogsService = async (
 
 export const listGeneralNotificationLogsService = async (
   params?: ListNotificationLogsParams,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const queryParams = new URLSearchParams();
@@ -204,7 +206,7 @@ export const listGeneralNotificationLogsService = async (
 
   const { data } = await getApiClient().get<any>(
     `/notify/logs${query}`,
-    config
+    config,
   );
   return data.data;
 };

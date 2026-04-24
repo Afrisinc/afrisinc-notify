@@ -1,13 +1,17 @@
-import React from 'react';
+import React from "react";
 
-import { TextField, Typography } from '@mui/material';
+import { TextField, Typography } from "@mui/material";
 
 type TextDimensionInputProps = {
   label: string;
   defaultValue: number | null | undefined;
   onChange: (v: number | null) => void;
 };
-export default function TextDimensionInput({ label, defaultValue, onChange }: TextDimensionInputProps) {
+export default function TextDimensionInput({
+  label,
+  defaultValue,
+  onChange,
+}: TextDimensionInputProps) {
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (ev) => {
     const value = parseInt(ev.target.value);
     onChange(isNaN(value) ? null : value);

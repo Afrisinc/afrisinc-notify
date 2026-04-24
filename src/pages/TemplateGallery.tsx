@@ -55,11 +55,31 @@ const filterTabs: { id: TemplateFilter; label: string }[] = [
   { id: "in-app", label: "In-App" },
 ];
 
-const sortOptions: { value: SortOption; label: string; icon: React.ReactNode }[] = [
-  { value: "trending", label: "Trending Now", icon: <Flame className="h-4 w-4 text-orange-500" /> },
-  { value: "rating", label: "Highest Rated", icon: <Award className="h-4 w-4 text-primary" /> },
-  { value: "popular", label: "Most Popular", icon: <TrendingUp className="h-4 w-4 text-green-500" /> },
-  { value: "newest", label: "Just Added", icon: <Clock className="h-4 w-4 text-blue-500" /> },
+const sortOptions: {
+  value: SortOption;
+  label: string;
+  icon: React.ReactNode;
+}[] = [
+  {
+    value: "trending",
+    label: "Trending Now",
+    icon: <Flame className="h-4 w-4 text-orange-500" />,
+  },
+  {
+    value: "rating",
+    label: "Highest Rated",
+    icon: <Award className="h-4 w-4 text-primary" />,
+  },
+  {
+    value: "popular",
+    label: "Most Popular",
+    icon: <TrendingUp className="h-4 w-4 text-green-500" />,
+  },
+  {
+    value: "newest",
+    label: "Just Added",
+    icon: <Clock className="h-4 w-4 text-blue-500" />,
+  },
 ];
 
 export default function TemplateGallery() {
@@ -67,11 +87,14 @@ export default function TemplateGallery() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<TemplateFilter>("all");
   const [sortBy, setSortBy] = useState<SortOption>("trending");
-  const [previewTemplate, setPreviewTemplate] = useState<MarketplaceTemplate | null>(null);
+  const [previewTemplate, setPreviewTemplate] =
+    useState<MarketplaceTemplate | null>(null);
   const [showFilters, setShowFilters] = useState(false);
 
   const handleExplore = () => {
-    document.getElementById('templates-grid')?.scrollIntoView({ behavior: 'smooth' });
+    document
+      .getElementById("templates-grid")
+      ?.scrollIntoView({ behavior: "smooth" });
   };
 
   // Fetch templates using React Query
@@ -95,7 +118,9 @@ export default function TemplateGallery() {
   });
 
   // Get current templates and loading state
-  const apiTemplates = searchQuery ? searchData?.templates : templatesData?.templates;
+  const apiTemplates = searchQuery
+    ? searchData?.templates
+    : templatesData?.templates;
   const isLoading = searchQuery ? isLoadingSearch : isLoadingAll;
   const error = searchQuery ? errorSearch : errorAll;
 
@@ -108,9 +133,13 @@ export default function TemplateGallery() {
         !searchQuery ||
         tpl.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         tpl.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (tpl.tags && tpl.tags.some((tag: string) => tag.toLowerCase().includes(searchQuery.toLowerCase())));
+        (tpl.tags &&
+          tpl.tags.some((tag: string) =>
+            tag.toLowerCase().includes(searchQuery.toLowerCase()),
+          ));
 
-      const matchesChannel = activeFilter === "all" || tpl.channel === activeFilter;
+      const matchesChannel =
+        activeFilter === "all" || tpl.channel === activeFilter;
 
       return matchesSearch && matchesChannel;
     });
@@ -123,7 +152,10 @@ export default function TemplateGallery() {
         case "popular":
           return (b.downloads || 0) - (a.downloads || 0);
         case "newest":
-          return new Date(b.updatedAt || 0).getTime() - new Date(a.updatedAt || 0).getTime();
+          return (
+            new Date(b.updatedAt || 0).getTime() -
+            new Date(a.updatedAt || 0).getTime()
+          );
         case "trending":
         default:
           return (b.installs || 0) - (a.installs || 0);
@@ -166,7 +198,10 @@ export default function TemplateGallery() {
           {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {Array.from({ length: 12 }).map((_, i) => (
-                <Card key={i} className="border-border/40 rounded-2xl overflow-hidden">
+                <Card
+                  key={i}
+                  className="border-border/40 rounded-2xl overflow-hidden"
+                >
                   <div className="h-48 bg-gradient-to-br from-muted to-muted/50 animate-pulse" />
                   <CardContent className="pt-4 space-y-3">
                     <Skeleton className="h-4 w-3/4" />
@@ -195,8 +230,13 @@ export default function TemplateGallery() {
               >
                 <AlertCircle className="h-10 w-10 text-primary/50" />
               </motion.div>
-              <h3 className="text-lg font-bold text-content mb-2">No templates match</h3>
-              <p className="text-content-secondary mb-6 max-w-sm mx-auto">Try different keywords or explore templates from other categories.</p>
+              <h3 className="text-lg font-bold text-content mb-2">
+                No templates match
+              </h3>
+              <p className="text-content-secondary mb-6 max-w-sm mx-auto">
+                Try different keywords or explore templates from other
+                categories.
+              </p>
               <Button
                 variant="outline"
                 onClick={() => {
@@ -221,8 +261,16 @@ export default function TemplateGallery() {
                   groupedByCategory[cat].push(template);
                 });
 
-                const categoryOrder = ["transactional", "marketing", "authentication", "alerts", "ecommerce"];
-                const sortedCategories = categoryOrder.filter((cat) => groupedByCategory[cat]);
+                const categoryOrder = [
+                  "transactional",
+                  "marketing",
+                  "authentication",
+                  "alerts",
+                  "ecommerce",
+                ];
+                const sortedCategories = categoryOrder.filter(
+                  (cat) => groupedByCategory[cat],
+                );
 
                 if (sortedCategories.length === 0) {
                   sortedCategories.push(...Object.keys(groupedByCategory));
@@ -290,7 +338,8 @@ export default function TemplateGallery() {
               Pick a template. Send today.
             </h2>
             <p className="text-content-secondary text-lg">
-              All templates include mobile layouts, dark mode, and full variable support. Customize once, use everywhere.
+              All templates include mobile layouts, dark mode, and full variable
+              support. Customize once, use everywhere.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
               <Button

@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   directLoginService,
   registrationService,
@@ -10,13 +10,11 @@ import {
   getUserOrganizationsService,
   getUserAppsService,
   getUserProfileService,
-} from '@/services/auth';
-import type { LoginSchemaType, RegisterSchemaType } from '@/lib/schemas/auth';
-import type { SignupPayload } from '@/components/auth/signup/schemas';
-import { useOrg } from '@/contexts/OrgContext';
-import { useUser } from '@/contexts/UserContext';
-
-
+} from "@/services/auth";
+import type { LoginSchemaType, RegisterSchemaType } from "@/lib/schemas/auth";
+import type { SignupPayload } from "@/components/auth/signup/schemas";
+import { useOrg } from "@/contexts/OrgContext";
+import { useUser } from "@/contexts/UserContext";
 
 /**
  * Direct email/password login mutation
@@ -33,7 +31,7 @@ export function useDirectLogin() {
           JSON.stringify({
             id: data.data.user_id,
             email: data.data.email,
-          })
+          }),
         );
       }
     },
@@ -55,7 +53,7 @@ export function useRegister() {
           JSON.stringify({
             id: data.data.user_id,
             email: data.data.email,
-          })
+          }),
         );
       }
     },
@@ -77,7 +75,7 @@ export function useSignup() {
           JSON.stringify({
             id: data.data.user_id,
             email: data.data.email,
-          })
+          }),
         );
       }
     },
@@ -133,7 +131,7 @@ export function useResetPassword() {
  */
 export function useUserOrganizations(options?: { enabled?: boolean }) {
   return useQuery({
-    queryKey: ['userOrganizations'],
+    queryKey: ["userOrganizations"],
     queryFn: () => getUserOrganizationsService(),
     enabled: options?.enabled ?? true,
   });
@@ -144,7 +142,7 @@ export function useUserOrganizations(options?: { enabled?: boolean }) {
  */
 export function useUserApps(options?: { enabled?: boolean }) {
   return useQuery({
-    queryKey: ['userApps'],
+    queryKey: ["userApps"],
     queryFn: () => getUserAppsService(),
     enabled: options?.enabled ?? true,
   });
@@ -155,7 +153,7 @@ export function useUserApps(options?: { enabled?: boolean }) {
  */
 export function useUserProfile(options?: { enabled?: boolean }) {
   return useQuery({
-    queryKey: ['userProfile'],
+    queryKey: ["userProfile"],
     queryFn: () => getUserProfileService(),
     staleTime: 1000 * 60 * 5, // 5 minutes
     enabled: options?.enabled ?? true,
@@ -172,7 +170,7 @@ export function useCurrentAccountId(): string | null {
   const { getAccountIdForOrg } = useUser();
 
   if (!currentOrg?.id) {
-    console.warn('No current organization selected');
+    console.warn("No current organization selected");
     return null;
   }
 

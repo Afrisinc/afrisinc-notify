@@ -3,9 +3,14 @@
  * Provides data fetching, caching, and state management
  */
 
-import { useQuery, useMutation, UseQueryResult, UseMutationResult } from '@tanstack/react-query';
-import { useCurrentAccountId } from '@/hooks/useAuth';
-import { Template } from '@/types/templates';
+import {
+  useQuery,
+  useMutation,
+  UseQueryResult,
+  UseMutationResult,
+} from "@tanstack/react-query";
+import { useCurrentAccountId } from "@/hooks/useAuth";
+import { Template } from "@/types/templates";
 import {
   fetchTemplates,
   fetchTemplate,
@@ -22,20 +27,28 @@ import {
   deleteTemplateService,
   duplicateTemplateService,
   CreateTemplatePayload,
-} from '@/services/templatesService';
+} from "@/services/templatesService";
 
 /**
  * Query key factory for templates
  */
 const templatesQueryKeys = {
-  all: () => ['templates'],
-  lists: () => [...templatesQueryKeys.all(), 'list'],
+  all: () => ["templates"],
+  lists: () => [...templatesQueryKeys.all(), "list"],
   list: (filters: any) => [...templatesQueryKeys.lists(), filters],
-  details: () => [...templatesQueryKeys.all(), 'detail'],
+  details: () => [...templatesQueryKeys.all(), "detail"],
   detail: (slug: string) => [...templatesQueryKeys.details(), slug],
-  search: (query: string, channel?: string) => [...templatesQueryKeys.all(), 'search', { query, channel }],
-  channel: (channel: string) => [...templatesQueryKeys.all(), 'channel', channel],
-  profile: () => [...templatesQueryKeys.all(), 'profile'],
+  search: (query: string, channel?: string) => [
+    ...templatesQueryKeys.all(),
+    "search",
+    { query, channel },
+  ],
+  channel: (channel: string) => [
+    ...templatesQueryKeys.all(),
+    "channel",
+    channel,
+  ],
+  profile: () => [...templatesQueryKeys.all(), "profile"],
 };
 
 /**
@@ -48,7 +61,7 @@ export function useTemplates(
     channel?: string;
     search?: string;
     enabled?: boolean;
-  } = {}
+  } = {},
 ): UseQueryResult<{ templates: Template[]; total: number }> {
   const { limit = 20, offset = 0, channel, search, enabled = true } = options;
 
@@ -72,12 +85,12 @@ export function useTemplates(
  */
 export function useTemplate(
   slug: string | null | undefined,
-  options: { enabled?: boolean } = {}
+  options: { enabled?: boolean } = {},
 ): UseQueryResult<Template> {
   const { enabled = !!slug } = options;
 
   return useQuery({
-    queryKey: templatesQueryKeys.detail(slug || ''),
+    queryKey: templatesQueryKeys.detail(slug || ""),
     queryFn: () => fetchTemplate(slug!),
     enabled: enabled && !!slug,
     staleTime: 1000 * 60 * 10, // 10 minutes
@@ -90,12 +103,12 @@ export function useTemplate(
  */
 export function useTemplateById(
   id: string | null | undefined,
-  options: { enabled?: boolean } = {}
+  options: { enabled?: boolean } = {},
 ): UseQueryResult<Template> {
   const { enabled = !!id } = options;
 
   return useQuery({
-    queryKey: [...templatesQueryKeys.all(), 'byId', id],
+    queryKey: [...templatesQueryKeys.all(), "byId", id],
     queryFn: () => getTemplateById(id!),
     enabled: enabled && !!id,
     staleTime: 1000 * 60 * 10, // 10 minutes
@@ -113,7 +126,7 @@ export function useSearchTemplates(
     limit?: number;
     offset?: number;
     enabled?: boolean;
-  } = {}
+  } = {},
 ): UseQueryResult<{ templates: Template[]; total: number }> {
   const { channel, limit = 20, offset = 0, enabled = !!query } = options;
 
@@ -141,7 +154,7 @@ export function useTemplatesByChannel(
     limit?: number;
     offset?: number;
     enabled?: boolean;
-  } = {}
+  } = {},
 ): UseQueryResult<{ templates: Template[]; total: number }> {
   const { limit = 20, offset = 0, enabled = !!channel } = options;
 
@@ -163,7 +176,7 @@ export function useTemplatesByChannel(
  * Hook to fetch user profile
  */
 export function useUserProfile(
-  options: { enabled?: boolean } = {}
+  options: { enabled?: boolean } = {},
 ): UseQueryResult<any[]> {
   const { enabled = true } = options;
 
@@ -179,7 +192,11 @@ export function useUserProfile(
 /**
  * Hook to create a new project
  */
-export function useCreateProject(): UseMutationResult<any, Error, { name: string; description?: string }> {
+export function useCreateProject(): UseMutationResult<
+  any,
+  Error,
+  { name: string; description?: string }
+> {
   return useMutation({
     mutationFn: (data) => createProject(data),
     onSuccess: () => {
@@ -193,7 +210,7 @@ export function useCreateProject(): UseMutationResult<any, Error, { name: string
  * Hook to update a project
  */
 export function useUpdateProject(
-  id: string
+  id: string,
 ): UseMutationResult<any, Error, { name?: string; description?: string }> {
   return useMutation({
     mutationFn: (data) => updateProject(id, data),
@@ -214,12 +231,12 @@ export function useDeleteProject(): UseMutationResult<void, Error, string> {
  */
 export function useProject(
   id: string | null | undefined,
-  options: { enabled?: boolean } = {}
+  options: { enabled?: boolean } = {},
 ): UseQueryResult<any> {
   const { enabled = !!id } = options;
 
   return useQuery({
-    queryKey: [...templatesQueryKeys.all(), 'project', id],
+    queryKey: [...templatesQueryKeys.all(), "project", id],
     queryFn: () => getProject(id!),
     enabled: enabled && !!id,
     staleTime: 1000 * 60 * 10, // 10 minutes
@@ -230,7 +247,11 @@ export function useProject(
 /**
  * Hook to create a new template
  */
-export function useCreateTemplate(): UseMutationResult<any, Error, CreateTemplatePayload> {
+export function useCreateTemplate(): UseMutationResult<
+  any,
+  Error,
+  CreateTemplatePayload
+> {
   return useMutation({
     mutationFn: (payload) => createTemplateService(payload),
   });
@@ -239,7 +260,11 @@ export function useCreateTemplate(): UseMutationResult<any, Error, CreateTemplat
 /**
  * Hook to update a template
  */
-export function useUpdateTemplate(): UseMutationResult<any, Error, { id: string; payload: Partial<CreateTemplatePayload> }> {
+export function useUpdateTemplate(): UseMutationResult<
+  any,
+  Error,
+  { id: string; payload: Partial<CreateTemplatePayload> }
+> {
   return useMutation({
     mutationFn: ({ id, payload }) => updateTemplateService(id, payload),
   });
@@ -259,8 +284,13 @@ export function useDeleteTemplate(): UseMutationResult<any, Error, string> {
 /**
  * Hook to duplicate a template
  */
-export function useDuplicateTemplate(): UseMutationResult<any, Error, { templateId: string; newName?: string }> {
+export function useDuplicateTemplate(): UseMutationResult<
+  any,
+  Error,
+  { templateId: string; newName?: string }
+> {
   return useMutation({
-    mutationFn: ({ templateId, newName }) => duplicateTemplateService(templateId, newName),
+    mutationFn: ({ templateId, newName }) =>
+      duplicateTemplateService(templateId, newName),
   });
 }

@@ -15,7 +15,10 @@ import {
 // LIST MARKETPLACE TEMPLATES
 // ──────────────────────────────────────────
 
-export function useMarketplaceTemplates(params?: ListTemplatesParams, options?: { enabled?: boolean }) {
+export function useMarketplaceTemplates(
+  params?: ListTemplatesParams,
+  options?: { enabled?: boolean },
+) {
   return useQuery({
     queryKey: ["marketplaceTemplates", params],
     queryFn: () => listMarketplaceTemplatesService(params),
@@ -27,7 +30,10 @@ export function useMarketplaceTemplates(params?: ListTemplatesParams, options?: 
 // GET MARKETPLACE TEMPLATE DETAILS
 // ──────────────────────────────────────────
 
-export function useMarketplaceTemplate(templateId: string, options?: { enabled?: boolean }) {
+export function useMarketplaceTemplate(
+  templateId: string,
+  options?: { enabled?: boolean },
+) {
   return useQuery({
     queryKey: ["marketplaceTemplate", templateId],
     queryFn: () => getMarketplaceTemplateService(templateId),
@@ -95,7 +101,10 @@ export function useRateMarketplaceTemplate() {
 // GET USER'S RATING FOR TEMPLATE
 // ──────────────────────────────────────────
 
-export function useTemplateRating(templateId: string, options?: { enabled?: boolean }) {
+export function useTemplateRating(
+  templateId: string,
+  options?: { enabled?: boolean },
+) {
   return useQuery({
     queryKey: ["templateRating", templateId],
     queryFn: () => getTemplateRatingService(templateId),

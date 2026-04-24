@@ -16,7 +16,8 @@ interface Testimonial {
 const DEFAULT_TESTIMONIALS: Testimonial[] = [
   {
     id: "1",
-    quote: "Notify replaced three different services for us. One API for email, SMS, and push — it just works.",
+    quote:
+      "Notify replaced three different services for us. One API for email, SMS, and push — it just works.",
     author: "Amara Osei",
     company: "Paystack",
     title: "Lead Engineer",
@@ -25,7 +26,8 @@ const DEFAULT_TESTIMONIALS: Testimonial[] = [
   },
   {
     id: "2",
-    quote: "The template system saved our team hours every week. We went from custom code to drag-and-drop in a day.",
+    quote:
+      "The template system saved our team hours every week. We went from custom code to drag-and-drop in a day.",
     author: "David Chen",
     company: "Flutterwave",
     title: "Product Manager",
@@ -34,7 +36,8 @@ const DEFAULT_TESTIMONIALS: Testimonial[] = [
   },
   {
     id: "3",
-    quote: "Delivery analytics changed how we think about notifications. We can see exactly what's working and what isn't.",
+    quote:
+      "Delivery analytics changed how we think about notifications. We can see exactly what's working and what isn't.",
     author: "Sarah Kimani",
     company: "Chipper Cash",
     title: "Growth Lead",
@@ -43,7 +46,8 @@ const DEFAULT_TESTIMONIALS: Testimonial[] = [
   },
   {
     id: "4",
-    quote: "Migration was seamless. Their team helped us move over 2M monthly notifications without a single dropped message.",
+    quote:
+      "Migration was seamless. Their team helped us move over 2M monthly notifications without a single dropped message.",
     author: "Kwame Asante",
     company: "Andela",
     title: "CTO",
@@ -64,8 +68,14 @@ export function Testimonials({
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
 
-  const next = useCallback(() => setCurrent((p) => (p + 1) % testimonials.length), [testimonials.length]);
-  const prev = useCallback(() => setCurrent((p) => (p === 0 ? testimonials.length - 1 : p - 1)), [testimonials.length]);
+  const next = useCallback(
+    () => setCurrent((p) => (p + 1) % testimonials.length),
+    [testimonials.length],
+  );
+  const prev = useCallback(
+    () => setCurrent((p) => (p === 0 ? testimonials.length - 1 : p - 1)),
+    [testimonials.length],
+  );
 
   useEffect(() => {
     if (!autoRotate || paused) return;
@@ -95,7 +105,9 @@ export function Testimonials({
           className="text-center mb-12"
         >
           <h2 className="heading-section">Loved by developers & teams</h2>
-          <p className="text-foreground/75 dark:text-foreground/80 mt-3">See what our customers say about Notify</p>
+          <p className="text-foreground/75 dark:text-foreground/80 mt-3">
+            See what our customers say about Notify
+          </p>
         </motion.div>
 
         <div
@@ -133,15 +145,24 @@ export function Testimonials({
                   className="h-12 w-12 rounded-full bg-muted"
                 />
                 <div className="text-left">
-                  <p className="font-semibold text-foreground dark:text-white">{t.author}</p>
-                  <p className="text-sm text-foreground/70 dark:text-foreground/75">{t.title} at {t.company}</p>
+                  <p className="font-semibold text-foreground dark:text-white">
+                    {t.author}
+                  </p>
+                  <p className="text-sm text-foreground/70 dark:text-foreground/75">
+                    {t.title} at {t.company}
+                  </p>
                 </div>
               </div>
             </motion.div>
           </AnimatePresence>
 
           <div className="flex items-center justify-center gap-4 mt-6">
-            <Button variant="outline" size="icon" onClick={prev} aria-label="Previous testimonial">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={prev}
+              aria-label="Previous testimonial"
+            >
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <div className="flex gap-2">
@@ -154,7 +175,12 @@ export function Testimonials({
                 />
               ))}
             </div>
-            <Button variant="outline" size="icon" onClick={next} aria-label="Next testimonial">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={next}
+              aria-label="Next testimonial"
+            >
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>

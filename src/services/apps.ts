@@ -93,7 +93,7 @@ export const createAppService = async (payload: CreateAppPayload) => {
       headers: {
         "x-account-id": payload.accountId,
       },
-    }
+    },
   );
   return data.data;
 };
@@ -122,16 +122,25 @@ export const getAppService = async (appId: string, accountId?: string) => {
  * Get app overview with statistics and chart data
  * Includes x-account-id header if provided
  */
-export const getAppOverviewService = async (appId: string, accountId?: string) => {
+export const getAppOverviewService = async (
+  appId: string,
+  accountId?: string,
+) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
-  const { data } = await getApiClient().get(`/api/apps/${appId}/overview`, config);
+  const { data } = await getApiClient().get(
+    `/api/apps/${appId}/overview`,
+    config,
+  );
   return data.data as AppOverview;
 };
 
 /**
  * Update app
  */
-export const updateAppService = async (appId: string, payload: Partial<CreateAppPayload>) => {
+export const updateAppService = async (
+  appId: string,
+  payload: Partial<CreateAppPayload>,
+) => {
   const { data } = await getApiClient().put(`/api/apps/${appId}`, payload);
   return data.data;
 };
@@ -155,13 +164,13 @@ export const deleteAppService = async (appId: string) => {
 export const createAppTemplateService = async (
   appId: string,
   payload: CreateAppTemplatePayload,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().post(
     `/api/apps/${appId}/templates`,
     payload,
-    config
+    config,
   );
   return data.data;
 };
@@ -170,11 +179,14 @@ export const createAppTemplateService = async (
  * Get all app templates
  * GET /api/apps/:appId/templates
  */
-export const getAppTemplatesService = async (appId: string, accountId?: string) => {
+export const getAppTemplatesService = async (
+  appId: string,
+  accountId?: string,
+) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().get<any>(
     `/api/apps/${appId}/templates`,
-    config
+    config,
   );
   return data.data as AppTemplatesResponse;
 };
@@ -186,12 +198,12 @@ export const getAppTemplatesService = async (appId: string, accountId?: string) 
 export const getAppTemplateService = async (
   appId: string,
   templateId: string,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().get<any>(
     `/api/apps/${appId}/templates/${templateId}`,
-    config
+    config,
   );
   return data.data as AppTemplateResponse;
 };
@@ -204,13 +216,13 @@ export const updateAppTemplateService = async (
   appId: string,
   templateId: string,
   payload: Partial<CreateAppTemplatePayload>,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().put<any>(
     `/api/apps/${appId}/templates/${templateId}`,
     payload,
-    config
+    config,
   );
   return data.data as AppTemplateResponse;
 };
@@ -222,12 +234,12 @@ export const updateAppTemplateService = async (
 export const deleteAppTemplateService = async (
   appId: string,
   templateId: string,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().delete<any>(
     `/api/apps/${appId}/templates/${templateId}`,
-    config
+    config,
   );
   return data.data;
 };
@@ -236,24 +248,47 @@ export const deleteAppTemplateService = async (
 // APP NOTIFICATIONS LOGS
 // ──────────────────────────────────────────
 
-export interface NotificationLog {
+export interface NotificationProviderLog {
   id: string;
   provider: string;
-  status: "SENT" | "FAILED" | "PENDING" | "BOUNCED" | "success" | "failed";
-  response: string;
-  timestamp: string;
+  status: "SENT" | "FAILED" | "PENDING" | "BOUNCED";
+  channel?: string;
+  response?: Record<string, any> | string | null;
+  createdAt: string;
 }
 
 export interface AppNotification {
   id: string;
   appId: string;
+  accountId?: string;
   recipient: string;
   channel: "EMAIL" | "SMS" | "PUSH" | "IN_APP" | "WHATSAPP";
   status: "SENT" | "FAILED" | "PENDING" | "BOUNCED" | "QUEUED";
-  templateCode?: string; // Template code/name
-  templateId?: string; // Template ID (if available)
-  timestamp: string;
-  logs: NotificationLog[];
+  deliveryState?:
+    | "SENT"
+    | "DELIVERED"
+    | "FAILED"
+    | "PENDING"
+    | "BOUNCED"
+    | "QUEUED";
+  source?: string;
+  provider?: string;
+  templateCode?: string;
+  templateId?: string;
+  retryCount?: number;
+  createdAt?: string;
+  sentAt?: string;
+  logs?: NotificationProviderLog[];
+}
+
+export interface AppNotificationsSummary {
+  totalCount: number;
+  deliveredCount: number;
+  failedCount: number;
+  pendingCount: number;
+  bouncedCount: number;
+  deliveryRate: number;
+  failureRate: number;
 }
 
 export interface AppNotificationsResponse {
@@ -263,6 +298,7 @@ export interface AppNotificationsResponse {
   page: number;
   limit: number;
   totalPages: number;
+  summary?: AppNotificationsSummary;
 }
 
 /**
@@ -274,10 +310,15 @@ export const getAppNotificationsService = async (
   params?: {
     page?: number;
     limit?: number;
-    status?: "SENT" | "FAILED" | "PENDING" | "BOUNCED";
+    status?: "SENT" | "FAILED" | "PENDING" | "BOUNCED" | "QUEUED";
     channel?: "EMAIL" | "SMS" | "PUSH" | "IN_APP" | "WHATSAPP";
+    search?: string;
+    dateFrom?: string;
+    dateTo?: string;
+    templateId?: string;
+    provider?: string;
   },
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const queryParams = new URLSearchParams();
@@ -286,12 +327,17 @@ export const getAppNotificationsService = async (
   if (params?.limit) queryParams.append("limit", params.limit.toString());
   if (params?.status) queryParams.append("status", params.status);
   if (params?.channel) queryParams.append("channel", params.channel);
+  if (params?.search) queryParams.append("search", params.search);
+  if (params?.dateFrom) queryParams.append("dateFrom", params.dateFrom);
+  if (params?.dateTo) queryParams.append("dateTo", params.dateTo);
+  if (params?.templateId) queryParams.append("templateId", params.templateId);
+  if (params?.provider) queryParams.append("provider", params.provider);
 
   const query = queryParams.toString() ? `?${queryParams.toString()}` : "";
 
   const { data } = await getApiClient().get<any>(
     `/api/apps/${appId}/notifications${query}`,
-    config
+    config,
   );
   return data.data as AppNotificationsResponse;
 };
@@ -336,13 +382,13 @@ export interface CreateApiKeyResponse {
 export const createApiKeyService = async (
   appId: string,
   payload: CreateApiKeyPayload,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().post<any>(
     `/api/apps/${appId}/api-keys`,
     payload,
-    config
+    config,
   );
   return data.data as CreateApiKeyResponse;
 };
@@ -355,7 +401,7 @@ export const getApiKeysService = async (appId: string, accountId?: string) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().get<any>(
     `/api/apps/${appId}/api-keys`,
-    config
+    config,
   );
   return data.data as ApiKeysResponse;
 };
@@ -367,12 +413,12 @@ export const getApiKeysService = async (appId: string, accountId?: string) => {
 export const getApiKeyService = async (
   appId: string,
   keyId: string,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().get<any>(
     `/api/apps/${appId}/api-keys/${keyId}`,
-    config
+    config,
   );
   return data.data as ApiKey;
 };
@@ -384,12 +430,12 @@ export const getApiKeyService = async (
 export const deleteApiKeyService = async (
   appId: string,
   keyId: string,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().delete<any>(
     `/api/apps/${appId}/api-keys/${keyId}`,
-    config
+    config,
   );
   return data.data;
 };

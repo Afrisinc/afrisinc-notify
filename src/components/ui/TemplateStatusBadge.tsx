@@ -15,30 +15,30 @@ const CONFIG: Record<Status, StatusConfig> = {
   published: {
     label: "Published",
     Icon: CheckCircle2,
-    bg: "bg-emerald-500/10 dark:bg-emerald-500/15",
-    text: "text-emerald-700 dark:text-emerald-400",
-    dot: "bg-emerald-500",
+    bg: "bg-success/10",
+    text: "text-success",
+    dot: "bg-success",
   },
   private: {
     label: "Private",
     Icon: Lock,
-    bg: "bg-slate-500/10 dark:bg-slate-500/15",
-    text: "text-slate-600 dark:text-slate-400",
-    dot: "bg-slate-400",
+    bg: "bg-muted",
+    text: "text-muted-foreground",
+    dot: "bg-muted-foreground/50",
   },
   draft: {
     label: "Draft",
     Icon: FileEdit,
-    bg: "bg-amber-500/10 dark:bg-amber-500/15",
-    text: "text-amber-700 dark:text-amber-400",
-    dot: "bg-amber-500",
+    bg: "bg-warning/10",
+    text: "text-warning",
+    dot: "bg-warning",
   },
   archived: {
     label: "Archived",
     Icon: ArchiveX,
-    bg: "bg-rose-500/10 dark:bg-rose-500/15",
-    text: "text-rose-700 dark:text-rose-400",
-    dot: "bg-rose-500",
+    bg: "bg-destructive/10",
+    text: "text-destructive",
+    dot: "bg-destructive",
   },
 };
 
@@ -54,22 +54,42 @@ function resolveStatus(isPublic?: boolean, isActive?: boolean): Status {
   return "private";
 }
 
-export function TemplateStatusBadge({ isPublic, isActive = true, className }: TemplateStatusBadgeProps) {
+export function TemplateStatusBadge({
+  isPublic,
+  isActive = true,
+  className,
+}: TemplateStatusBadgeProps) {
   const status = resolveStatus(isPublic, isActive);
   const { label, Icon, bg, text } = CONFIG[status];
   return (
-    <span className={cn("inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold", bg, text, className)}>
+    <span
+      className={cn(
+        "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold",
+        bg,
+        text,
+        className,
+      )}
+    >
       <Icon className="h-3 w-3 shrink-0" />
       {label}
     </span>
   );
 }
 
-export function TemplateStatusDot({ isPublic, isActive = true, className }: TemplateStatusBadgeProps) {
+export function TemplateStatusDot({
+  isPublic,
+  isActive = true,
+  className,
+}: TemplateStatusBadgeProps) {
   const status = resolveStatus(isPublic, isActive);
   const { label, dot } = CONFIG[status];
   return (
-    <span className={cn("inline-flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground", className)}>
+    <span
+      className={cn(
+        "inline-flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground",
+        className,
+      )}
+    >
       <span className={cn("h-1.5 w-1.5 rounded-full shrink-0", dot)} />
       {label}
     </span>

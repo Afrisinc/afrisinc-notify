@@ -1,21 +1,56 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useCampaigns, useCreateCampaign, useUpdateCampaign, useDeleteCampaign, useSendCampaign, useScheduleCampaign, useDuplicateCampaign } from "@/hooks/useCampaigns";
+import {
+  useCampaigns,
+  useCreateCampaign,
+  useUpdateCampaign,
+  useDeleteCampaign,
+  useSendCampaign,
+  useScheduleCampaign,
+  useDuplicateCampaign,
+} from "@/hooks/useCampaigns";
 import { useAppTemplates } from "@/hooks/useApps";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Megaphone, Send, Clock, CheckCircle2, XCircle, AlertCircle, ChevronRight, ChevronLeft, Trash2, BarChart3 } from "lucide-react";
+import {
+  Plus,
+  Megaphone,
+  Send,
+  Clock,
+  CheckCircle2,
+  XCircle,
+  AlertCircle,
+  ChevronRight,
+  ChevronLeft,
+  Trash2,
+  BarChart3,
+} from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { SearchInput } from "@/components/ui/search-input";
 
-const statusConfig: Record<string, { icon: typeof CheckCircle2; color: string }> = {
+const statusConfig: Record<
+  string,
+  { icon: typeof CheckCircle2; color: string }
+> = {
   draft: { icon: AlertCircle, color: "text-muted-foreground" },
   scheduled: { icon: Clock, color: "text-warning" },
   sending: { icon: Send, color: "text-primary" },
@@ -29,7 +64,9 @@ export default function AppCampaigns() {
   const [search, setSearch] = useState("");
   const [showCreate, setShowCreate] = useState(false);
   const [step, setStep] = useState(1);
-  const [selectedCampaignId, setSelectedCampaignId] = useState<string | null>(null);
+  const [selectedCampaignId, setSelectedCampaignId] = useState<string | null>(
+    null,
+  );
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [newCampaignData, setNewCampaignData] = useState({
     name: "",
@@ -40,7 +77,11 @@ export default function AppCampaigns() {
   });
 
   // Fetch data
-  const { data: campaignsResponse, isLoading, error } = useCampaigns(appId || "", { page: 1, limit: 100 });
+  const {
+    data: campaignsResponse,
+    isLoading,
+    error,
+  } = useCampaigns(appId || "", { page: 1, limit: 100 });
   const { data: templatesResponse } = useAppTemplates(appId || "");
 
   const campaigns = campaignsResponse?.campaigns || [];
@@ -55,7 +96,7 @@ export default function AppCampaigns() {
   const duplicateMutation = useDuplicateCampaign();
 
   const filtered = campaigns.filter((c) =>
-    c.name.toLowerCase().includes(search.toLowerCase())
+    c.name.toLowerCase().includes(search.toLowerCase()),
   );
 
   const handleCreateCampaign = async () => {
@@ -149,7 +190,9 @@ export default function AppCampaigns() {
     return (
       <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />
-        <AlertDescription>Failed to load campaigns. Please try again.</AlertDescription>
+        <AlertDescription>
+          Failed to load campaigns. Please try again.
+        </AlertDescription>
       </Alert>
     );
   }
@@ -164,7 +207,13 @@ export default function AppCampaigns() {
           size="sm"
           className="flex-1 max-w-sm"
         />
-        <Button size="sm" onClick={() => { setStep(1); setShowCreate(true); }}>
+        <Button
+          size="sm"
+          onClick={() => {
+            setStep(1);
+            setShowCreate(true);
+          }}
+        >
           <Plus className="h-3.5 w-3.5 mr-1.5" /> Create Campaign
         </Button>
       </div>
@@ -173,7 +222,9 @@ export default function AppCampaigns() {
         <Card className="border-dashed border-2">
           <CardContent className="py-16 text-center">
             <Megaphone className="h-10 w-10 icon-muted mx-auto mb-3" />
-            <p className="text-sm text-content-secondary">No campaigns yet. Create one to start sending bulk notifications.</p>
+            <p className="text-sm text-content-secondary">
+              No campaigns yet. Create one to start sending bulk notifications.
+            </p>
           </CardContent>
         </Card>
       ) : (
@@ -181,24 +232,42 @@ export default function AppCampaigns() {
           {filtered.map((camp) => {
             const cfg = statusConfig[camp.status];
             const Icon = cfg.icon;
-            const tpl = templates.find((t) => t.template?.id === camp.templateId || t.id === camp.templateId);
+            const tpl = templates.find(
+              (t) =>
+                t.template?.id === camp.templateId || t.id === camp.templateId,
+            );
             return (
-              <Card key={camp.id} className="border-border/60 hover:border-border transition-colors">
+              <Card
+                key={camp.id}
+                className="border-border/60 hover:border-border transition-colors"
+              >
                 <CardContent className="flex items-center justify-between py-4 px-4">
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className={`h-8 w-8 rounded-full flex items-center justify-center bg-muted ${cfg.color}`}>
+                    <div
+                      className={`h-8 w-8 rounded-full flex items-center justify-center bg-muted ${cfg.color}`}
+                    >
                       <Icon className="h-4 w-4" />
                     </div>
                     <div className="min-w-0">
-                      <span className="text-sm font-medium text-content truncate block">{camp.name}</span>
+                      <span className="text-sm font-medium text-content truncate block">
+                        {camp.name}
+                      </span>
                       <span className="text-xs text-content-secondary">
-                        {tpl?.name || "Unknown template"} · {camp.recipientCount} recipients
+                        {tpl?.name || "Unknown template"} ·{" "}
+                        {camp.recipientCount} recipients
                       </span>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 shrink-0">
-                    <Badge variant="secondary" className="text-[10px]">{camp.channel}</Badge>
-                    <Badge variant="outline" className={`text-[10px] ${cfg.color}`}>{camp.status}</Badge>
+                    <Badge variant="secondary" className="text-[10px]">
+                      {camp.channel}
+                    </Badge>
+                    <Badge
+                      variant="outline"
+                      className={`text-[10px] ${cfg.color}`}
+                    >
+                      {camp.status}
+                    </Badge>
                     {camp.status === "completed" && (
                       <span className="text-xs text-content-secondary">
                         {camp.deliveredCount}/{camp.sentCount} delivered
@@ -215,7 +284,9 @@ export default function AppCampaigns() {
                         variant="ghost"
                         onClick={(e) => {
                           e.stopPropagation();
-                          navigate(`/dashboard/apps/${appId}/campaigns/${camp.id}/analytics`);
+                          navigate(
+                            `/dashboard/apps/${appId}/campaigns/${camp.id}/analytics`,
+                          );
                         }}
                       >
                         <BarChart3 className="h-3.5 w-3.5 text-primary" />
@@ -271,15 +342,16 @@ export default function AppCampaigns() {
       <Dialog open={showCreate} onOpenChange={setShowCreate}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>
-              Create Campaign — Step {step} of 4
-            </DialogTitle>
+            <DialogTitle>Create Campaign — Step {step} of 4</DialogTitle>
           </DialogHeader>
 
           {/* Step indicator */}
           <div className="flex gap-1 mb-2">
             {[1, 2, 3, 4].map((s) => (
-              <div key={s} className={`h-1 flex-1 rounded-full ${s <= step ? "bg-primary" : "bg-muted"}`} />
+              <div
+                key={s}
+                className={`h-1 flex-1 rounded-full ${s <= step ? "bg-primary" : "bg-muted"}`}
+              />
             ))}
           </div>
 
@@ -290,7 +362,12 @@ export default function AppCampaigns() {
                 <Input
                   placeholder="e.g. Welcome Series"
                   value={newCampaignData.name}
-                  onChange={(e) => setNewCampaignData({ ...newCampaignData, name: e.target.value })}
+                  onChange={(e) =>
+                    setNewCampaignData({
+                      ...newCampaignData,
+                      name: e.target.value,
+                    })
+                  }
                 />
               </div>
               <div>
@@ -298,7 +375,10 @@ export default function AppCampaigns() {
                 <Select
                   value={newCampaignData.channel}
                   onValueChange={(v) =>
-                    setNewCampaignData({ ...newCampaignData, channel: v as "email" | "sms" | "push" | "in_app" })
+                    setNewCampaignData({
+                      ...newCampaignData,
+                      channel: v as "email" | "sms" | "push" | "in_app",
+                    })
                   }
                 >
                   <SelectTrigger>
@@ -319,7 +399,9 @@ export default function AppCampaigns() {
             <div className="space-y-4">
               <Label>Select Template *</Label>
               {templates.length === 0 ? (
-                <p className="text-sm text-muted-foreground py-4 text-center">No templates available. Create one first.</p>
+                <p className="text-sm text-muted-foreground py-4 text-center">
+                  No templates available. Create one first.
+                </p>
               ) : (
                 <div className="space-y-2 max-h-[300px] overflow-y-auto">
                   {templates.map((t) => (
@@ -330,14 +412,19 @@ export default function AppCampaigns() {
                         setNewCampaignData({ ...newCampaignData, templateId });
                       }}
                       className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
-                        newCampaignData.templateId === t.template?.id || newCampaignData.templateId === t.id
+                        newCampaignData.templateId === t.template?.id ||
+                        newCampaignData.templateId === t.id
                           ? "border-primary bg-primary/5"
                           : "border-border hover:border-primary/50"
                       }`}
                     >
                       <div className="flex-1 min-w-0">
-                        <span className="text-sm font-medium block truncate">{t.template?.code || t.code || "Unknown"}</span>
-                        <span className="text-xs text-muted-foreground">{t.template?.channel || "—"}</span>
+                        <span className="text-sm font-medium block truncate">
+                          {t.template?.code || t.code || "Unknown"}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {t.template?.channel || "—"}
+                        </span>
                       </div>
                       <Badge variant="secondary" className="text-[10px]">
                         {t.status || "active"}
@@ -355,7 +442,10 @@ export default function AppCampaigns() {
               <Select
                 value={newCampaignData.recipientType}
                 onValueChange={(v) =>
-                  setNewCampaignData({ ...newCampaignData, recipientType: v as "all" | "tags" | "segment" | "custom" })
+                  setNewCampaignData({
+                    ...newCampaignData,
+                    recipientType: v as "all" | "tags" | "segment" | "custom",
+                  })
                 }
               >
                 <SelectTrigger>
@@ -374,7 +464,12 @@ export default function AppCampaigns() {
                   type="number"
                   placeholder="0"
                   value={newCampaignData.recipientCount}
-                  onChange={(e) => setNewCampaignData({ ...newCampaignData, recipientCount: parseInt(e.target.value) || 0 })}
+                  onChange={(e) =>
+                    setNewCampaignData({
+                      ...newCampaignData,
+                      recipientCount: parseInt(e.target.value) || 0,
+                    })
+                  }
                 />
               </div>
             </div>
@@ -383,14 +478,31 @@ export default function AppCampaigns() {
           {step === 4 && (
             <div className="space-y-4">
               <p className="text-sm text-muted-foreground">
-                Campaign will be created as a draft. You can send it immediately or schedule it for later.
+                Campaign will be created as a draft. You can send it immediately
+                or schedule it for later.
               </p>
               <div className="p-4 rounded-lg bg-muted/50">
                 <p className="text-sm font-medium">Campaign Summary</p>
                 <div className="text-xs text-muted-foreground space-y-1 mt-2">
-                  <p>Name: <span className="text-foreground">{newCampaignData.name || "—"}</span></p>
-                  <p>Channel: <span className="text-foreground">{newCampaignData.channel}</span></p>
-                  <p>Recipients: <span className="text-foreground">{newCampaignData.recipientCount} contacts ({newCampaignData.recipientType})</span></p>
+                  <p>
+                    Name:{" "}
+                    <span className="text-foreground">
+                      {newCampaignData.name || "—"}
+                    </span>
+                  </p>
+                  <p>
+                    Channel:{" "}
+                    <span className="text-foreground">
+                      {newCampaignData.channel}
+                    </span>
+                  </p>
+                  <p>
+                    Recipients:{" "}
+                    <span className="text-foreground">
+                      {newCampaignData.recipientCount} contacts (
+                      {newCampaignData.recipientType})
+                    </span>
+                  </p>
                 </div>
               </div>
             </div>
@@ -399,7 +511,11 @@ export default function AppCampaigns() {
           <DialogFooter className="flex justify-between">
             <div>
               {step > 1 && (
-                <Button variant="outline" onClick={() => setStep(step - 1)} disabled={createMutation.isPending}>
+                <Button
+                  variant="outline"
+                  onClick={() => setStep(step - 1)}
+                  disabled={createMutation.isPending}
+                >
                   <ChevronLeft className="h-3.5 w-3.5 mr-1" /> Back
                 </Button>
               )}
@@ -409,14 +525,18 @@ export default function AppCampaigns() {
                 <Button
                   onClick={() => setStep(step + 1)}
                   disabled={
-                    (step === 1 && (!newCampaignData.name || !newCampaignData.channel)) ||
+                    (step === 1 &&
+                      (!newCampaignData.name || !newCampaignData.channel)) ||
                     (step === 2 && !newCampaignData.templateId)
                   }
                 >
                   Next <ChevronRight className="h-3.5 w-3.5 ml-1" />
                 </Button>
               ) : (
-                <Button onClick={handleCreateCampaign} disabled={createMutation.isPending}>
+                <Button
+                  onClick={handleCreateCampaign}
+                  disabled={createMutation.isPending}
+                >
                   <Send className="h-3.5 w-3.5 mr-1.5" />
                   {createMutation.isPending ? "Creating..." : "Create Campaign"}
                 </Button>
@@ -433,10 +553,14 @@ export default function AppCampaigns() {
             <DialogTitle>Delete Campaign?</DialogTitle>
           </DialogHeader>
           <p className="text-sm text-muted-foreground">
-            This action cannot be undone. The campaign and all its data will be permanently deleted.
+            This action cannot be undone. The campaign and all its data will be
+            permanently deleted.
           </p>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowDeleteConfirm(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteConfirm(false)}
+            >
               Cancel
             </Button>
             <Button

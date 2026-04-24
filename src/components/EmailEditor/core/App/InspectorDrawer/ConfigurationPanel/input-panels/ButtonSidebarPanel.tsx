@@ -1,20 +1,27 @@
-import React, { useState } from 'react';
-import { ZodError } from 'zod';
+import React, { useState } from "react";
+import { ZodError } from "zod";
 
-import { ToggleButton } from '@mui/material';
-import { ButtonProps, ButtonPropsDefaults, ButtonPropsSchema } from '@usewaypoint/block-button';
+import { ToggleButton } from "@mui/material";
+import {
+  ButtonProps,
+  ButtonPropsDefaults,
+  ButtonPropsSchema,
+} from "@usewaypoint/block-button";
 
-import BaseSidebarPanel from './helpers/BaseSidebarPanel';
-import ColorInput from './helpers/inputs/ColorInput';
-import RadioGroupInput from './helpers/inputs/RadioGroupInput';
-import TextInput from './helpers/inputs/TextInput';
-import MultiStylePropertyPanel from './helpers/style-inputs/MultiStylePropertyPanel';
+import BaseSidebarPanel from "./helpers/BaseSidebarPanel";
+import ColorInput from "./helpers/inputs/ColorInput";
+import RadioGroupInput from "./helpers/inputs/RadioGroupInput";
+import TextInput from "./helpers/inputs/TextInput";
+import MultiStylePropertyPanel from "./helpers/style-inputs/MultiStylePropertyPanel";
 
 type ButtonSidebarPanelProps = {
   data: ButtonProps;
   setData: (v: ButtonProps) => void;
 };
-export default function ButtonSidebarPanel({ data, setData }: ButtonSidebarPanelProps) {
+export default function ButtonSidebarPanel({
+  data,
+  setData,
+}: ButtonSidebarPanelProps) {
   const [, setErrors] = useState<ZodError | null>(null);
 
   const updateData = (d: unknown) => {
@@ -31,26 +38,39 @@ export default function ButtonSidebarPanel({ data, setData }: ButtonSidebarPanel
   const url = data.props?.url ?? ButtonPropsDefaults.url;
   const fullWidth = data.props?.fullWidth ?? ButtonPropsDefaults.fullWidth;
   const size = data.props?.size ?? ButtonPropsDefaults.size;
-  const buttonStyle = data.props?.buttonStyle ?? ButtonPropsDefaults.buttonStyle;
-  const buttonTextColor = data.props?.buttonTextColor ?? ButtonPropsDefaults.buttonTextColor;
-  const buttonBackgroundColor = data.props?.buttonBackgroundColor ?? ButtonPropsDefaults.buttonBackgroundColor;
+  const buttonStyle =
+    data.props?.buttonStyle ?? ButtonPropsDefaults.buttonStyle;
+  const buttonTextColor =
+    data.props?.buttonTextColor ?? ButtonPropsDefaults.buttonTextColor;
+  const buttonBackgroundColor =
+    data.props?.buttonBackgroundColor ??
+    ButtonPropsDefaults.buttonBackgroundColor;
 
   return (
     <BaseSidebarPanel title="Button block">
       <TextInput
         label="Text"
         defaultValue={text}
-        onChange={(text) => updateData({ ...data, props: { ...data.props, text } })}
+        onChange={(text) =>
+          updateData({ ...data, props: { ...data.props, text } })
+        }
       />
       <TextInput
         label="Url"
         defaultValue={url}
-        onChange={(url) => updateData({ ...data, props: { ...data.props, url } })}
+        onChange={(url) =>
+          updateData({ ...data, props: { ...data.props, url } })
+        }
       />
       <RadioGroupInput
         label="Width"
-        defaultValue={fullWidth ? 'FULL_WIDTH' : 'AUTO'}
-        onChange={(v) => updateData({ ...data, props: { ...data.props, fullWidth: v === 'FULL_WIDTH' } })}
+        defaultValue={fullWidth ? "FULL_WIDTH" : "AUTO"}
+        onChange={(v) =>
+          updateData({
+            ...data,
+            props: { ...data.props, fullWidth: v === "FULL_WIDTH" },
+          })
+        }
       >
         <ToggleButton value="FULL_WIDTH">Full</ToggleButton>
         <ToggleButton value="AUTO">Auto</ToggleButton>
@@ -58,7 +78,9 @@ export default function ButtonSidebarPanel({ data, setData }: ButtonSidebarPanel
       <RadioGroupInput
         label="Size"
         defaultValue={size}
-        onChange={(size) => updateData({ ...data, props: { ...data.props, size } })}
+        onChange={(size) =>
+          updateData({ ...data, props: { ...data.props, size } })
+        }
       >
         <ToggleButton value="x-small">Xs</ToggleButton>
         <ToggleButton value="small">Sm</ToggleButton>
@@ -68,7 +90,9 @@ export default function ButtonSidebarPanel({ data, setData }: ButtonSidebarPanel
       <RadioGroupInput
         label="Style"
         defaultValue={buttonStyle}
-        onChange={(buttonStyle) => updateData({ ...data, props: { ...data.props, buttonStyle } })}
+        onChange={(buttonStyle) =>
+          updateData({ ...data, props: { ...data.props, buttonStyle } })
+        }
       >
         <ToggleButton value="rectangle">Rectangle</ToggleButton>
         <ToggleButton value="rounded">Rounded</ToggleButton>
@@ -77,15 +101,29 @@ export default function ButtonSidebarPanel({ data, setData }: ButtonSidebarPanel
       <ColorInput
         label="Text color"
         defaultValue={buttonTextColor}
-        onChange={(buttonTextColor) => updateData({ ...data, props: { ...data.props, buttonTextColor } })}
+        onChange={(buttonTextColor) =>
+          updateData({ ...data, props: { ...data.props, buttonTextColor } })
+        }
       />
       <ColorInput
         label="Button color"
         defaultValue={buttonBackgroundColor}
-        onChange={(buttonBackgroundColor) => updateData({ ...data, props: { ...data.props, buttonBackgroundColor } })}
+        onChange={(buttonBackgroundColor) =>
+          updateData({
+            ...data,
+            props: { ...data.props, buttonBackgroundColor },
+          })
+        }
       />
       <MultiStylePropertyPanel
-        names={['backgroundColor', 'fontFamily', 'fontSize', 'fontWeight', 'textAlign', 'padding']}
+        names={[
+          "backgroundColor",
+          "fontFamily",
+          "fontSize",
+          "fontWeight",
+          "textAlign",
+          "padding",
+        ]}
         value={data.style}
         onChange={(style) => updateData({ ...data, style })}
       />

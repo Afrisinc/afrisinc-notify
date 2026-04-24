@@ -1,6 +1,19 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { Mail, MessageSquare, Bell, Monitor, MessageCircle, ArrowRight } from "lucide-react";
+import {
+  Mail,
+  MessageSquare,
+  Bell,
+  Monitor,
+  MessageCircle,
+  ArrowRight,
+} from "lucide-react";
 
 export type TemplateChannel = "email" | "sms" | "push" | "in-app" | "whatsapp";
 
@@ -32,7 +45,8 @@ const CHANNELS: ChannelOption[] = [
     icon: MessageSquare,
     color: "text-emerald-600 dark:text-emerald-400",
     bgColor: "bg-emerald-50 dark:bg-emerald-950/30",
-    borderColor: "border-emerald-200 hover:border-emerald-400 dark:border-emerald-800 dark:hover:border-emerald-500",
+    borderColor:
+      "border-emerald-200 hover:border-emerald-400 dark:border-emerald-800 dark:hover:border-emerald-500",
   },
   {
     id: "push",
@@ -41,7 +55,8 @@ const CHANNELS: ChannelOption[] = [
     icon: Bell,
     color: "text-amber-600 dark:text-amber-400",
     bgColor: "bg-amber-50 dark:bg-amber-950/30",
-    borderColor: "border-amber-200 hover:border-amber-400 dark:border-amber-800 dark:hover:border-amber-500",
+    borderColor:
+      "border-amber-200 hover:border-amber-400 dark:border-amber-800 dark:hover:border-amber-500",
   },
   {
     id: "in-app",
@@ -50,16 +65,19 @@ const CHANNELS: ChannelOption[] = [
     icon: Monitor,
     color: "text-violet-600 dark:text-violet-400",
     bgColor: "bg-violet-50 dark:bg-violet-950/30",
-    borderColor: "border-violet-200 hover:border-violet-400 dark:border-violet-800 dark:hover:border-violet-500",
+    borderColor:
+      "border-violet-200 hover:border-violet-400 dark:border-violet-800 dark:hover:border-violet-500",
   },
   {
     id: "whatsapp",
     label: "WhatsApp",
-    description: "WhatsApp Business message templates with headers, body, and buttons",
+    description:
+      "WhatsApp Business message templates with headers, body, and buttons",
     icon: MessageCircle,
     color: "text-green-600 dark:text-green-400",
     bgColor: "bg-green-50 dark:bg-green-950/30",
-    borderColor: "border-green-200 hover:border-green-400 dark:border-green-800 dark:hover:border-green-500",
+    borderColor:
+      "border-green-200 hover:border-green-400 dark:border-green-800 dark:hover:border-green-500",
     badge: "Meta API",
   },
 ];
@@ -70,7 +88,11 @@ interface ChannelSelectorDialogProps {
   onSelect: (channel: TemplateChannel) => void;
 }
 
-export function ChannelSelectorDialog({ open, onOpenChange, onSelect }: ChannelSelectorDialogProps) {
+export function ChannelSelectorDialog({
+  open,
+  onOpenChange,
+  onSelect,
+}: ChannelSelectorDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl p-0 overflow-hidden rounded-2xl">
@@ -96,23 +118,32 @@ export function ChannelSelectorDialog({ open, onOpenChange, onSelect }: ChannelS
                   "group flex items-center gap-4 w-full text-left rounded-xl border p-4",
                   "transition-all duration-150 cursor-pointer",
                   "bg-card hover:bg-muted/40 dark:hover:bg-muted/20",
-                  channel.borderColor
+                  channel.borderColor,
                 )}
               >
-                <div className={cn("flex-shrink-0 h-11 w-11 rounded-xl flex items-center justify-center", channel.bgColor)}>
+                <div
+                  className={cn(
+                    "flex-shrink-0 h-11 w-11 rounded-xl flex items-center justify-center",
+                    channel.bgColor,
+                  )}
+                >
                   <Icon className={cn("h-5 w-5", channel.color)} />
                 </div>
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-foreground">{channel.label}</span>
+                    <span className="text-sm font-semibold text-foreground">
+                      {channel.label}
+                    </span>
                     {channel.badge && (
                       <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">
                         {channel.badge}
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{channel.description}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                    {channel.description}
+                  </p>
                 </div>
 
                 <ArrowRight className="h-4 w-4 text-muted-foreground/40 group-hover:text-muted-foreground transition-colors flex-shrink-0" />

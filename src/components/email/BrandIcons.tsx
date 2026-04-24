@@ -3,7 +3,7 @@
  */
 
 // Gmail official icon
-export function GmailIcon({ className = 'w-5 h-5' }: { className?: string }) {
+export function GmailIcon({ className = "w-5 h-5" }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 32 32"
@@ -36,7 +36,7 @@ export function GmailIcon({ className = 'w-5 h-5' }: { className?: string }) {
 }
 
 // Twilio official icon
-export function TwilioIcon({ className = 'w-5 h-5' }: { className?: string }) {
+export function TwilioIcon({ className = "w-5 h-5" }: { className?: string }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -58,19 +58,23 @@ export function TwilioIcon({ className = 'w-5 h-5' }: { className?: string }) {
 }
 
 // Notify/AfriSinc official logo
-export function NotifyIcon({ className = 'w-5 h-5' }: { className?: string }) {
+export function NotifyIcon({ className = "w-5 h-5" }: { className?: string }) {
   return (
     <img
       src="/notify-logo.png"
       alt="Notify"
       className={className}
-      style={{ objectFit: 'contain' }}
+      style={{ objectFit: "contain" }}
     />
   );
 }
 
 // Custom Domain icon (DNS)
-export function CustomDomainIcon({ className = 'w-5 h-5' }: { className?: string }) {
+export function CustomDomainIcon({
+  className = "w-5 h-5",
+}: {
+  className?: string;
+}) {
   return (
     <svg
       viewBox="0 0 24 24"

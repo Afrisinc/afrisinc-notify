@@ -11,12 +11,17 @@ interface TemplateCategorySectionProps {
 }
 
 const categoryDescriptions: Record<string, string> = {
-  transactional: "Order confirmations, receipts, and account updates—the messages your users count on.",
-  marketing: "Campaigns that get opened. Built for clicks, optimized for conversions.",
-  security: "Password resets, 2FA codes, and security alerts. Built to protect.",
-  authentication: "Welcome sequences and onboarding flows that get people started.",
+  transactional:
+    "Order confirmations, receipts, and account updates—the messages your users count on.",
+  marketing:
+    "Campaigns that get opened. Built for clicks, optimized for conversions.",
+  security:
+    "Password resets, 2FA codes, and security alerts. Built to protect.",
+  authentication:
+    "Welcome sequences and onboarding flows that get people started.",
   ecommerce: "From abandoned carts to post-purchase delight. Close more sales.",
-  alerts: "System incidents to uptime notifications. Keep your users in the loop.",
+  alerts:
+    "System incidents to uptime notifications. Keep your users in the loop.",
 };
 
 export function TemplateCategorySection({
@@ -26,7 +31,8 @@ export function TemplateCategorySection({
   onViewCategory,
   count,
 }: TemplateCategorySectionProps) {
-  const displayDescription = description || categoryDescriptions[category] || description;
+  const displayDescription =
+    description || categoryDescriptions[category] || description;
 
   return (
     <motion.div
@@ -42,9 +48,13 @@ export function TemplateCategorySection({
           {/* Category accent indicator */}
           <div className="flex items-center gap-3">
             <div className="w-1 h-8 bg-gradient-to-b from-primary via-primary to-primary/50 rounded-full" />
-            <h2 className="text-3xl md:text-4xl font-bold text-content">{title}</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-content">
+              {title}
+            </h2>
           </div>
-          <p className="text-base text-content-secondary max-w-2xl leading-relaxed">{displayDescription}</p>
+          <p className="text-base text-content-secondary max-w-2xl leading-relaxed">
+            {displayDescription}
+          </p>
           {count && (
             <p className="text-xs font-semibold text-primary/70 uppercase tracking-wide">
               {count} {count === 1 ? "template" : "templates"}

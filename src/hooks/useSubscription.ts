@@ -1,12 +1,12 @@
-import { useQuery } from '@tanstack/react-query';
-import { subscriptionService } from '@/services/subscriptionService';
+import { useQuery } from "@tanstack/react-query";
+import { subscriptionService } from "@/services/subscriptionService";
 
 /**
  * Hook to fetch usage dashboard data
  */
 export function useUsageDashboard(accountId?: string) {
   return useQuery({
-    queryKey: ['subscription', 'dashboard', accountId],
+    queryKey: ["subscription", "dashboard", accountId],
     queryFn: () => subscriptionService.getUsageDashboard(accountId),
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 3,
@@ -17,10 +17,15 @@ export function useUsageDashboard(accountId?: string) {
 /**
  * Hook to fetch usage breakdown for a date range
  */
-export function useUsageBreakdown(accountId?: string, startDate?: string, endDate?: string) {
+export function useUsageBreakdown(
+  accountId?: string,
+  startDate?: string,
+  endDate?: string,
+) {
   return useQuery({
-    queryKey: ['subscription', 'breakdown', accountId, startDate, endDate],
-    queryFn: () => subscriptionService.getUsageBreakdown(accountId, startDate, endDate),
+    queryKey: ["subscription", "breakdown", accountId, startDate, endDate],
+    queryFn: () =>
+      subscriptionService.getUsageBreakdown(accountId, startDate, endDate),
     staleTime: 10 * 60 * 1000, // 10 minutes
     retry: 2,
     enabled: !!accountId && (!!startDate || !!endDate),
@@ -32,8 +37,9 @@ export function useUsageBreakdown(accountId?: string, startDate?: string, endDat
  */
 export function useFeatureCheck(feature: string, accountId?: string) {
   const { data, isLoading } = useQuery({
-    queryKey: ['subscription', 'feature', feature, accountId],
-    queryFn: () => subscriptionService.checkFeatureAvailability(feature, accountId),
+    queryKey: ["subscription", "feature", feature, accountId],
+    queryFn: () =>
+      subscriptionService.checkFeatureAvailability(feature, accountId),
     staleTime: 30 * 60 * 1000, // 30 minutes
     retry: 1,
     enabled: !!feature && !!accountId,
@@ -51,7 +57,7 @@ export function useFeatureCheck(feature: string, accountId?: string) {
  */
 export function useUpgradeRecommendations(accountId?: string) {
   return useQuery({
-    queryKey: ['subscription', 'recommendations', accountId],
+    queryKey: ["subscription", "recommendations", accountId],
     queryFn: () => subscriptionService.getUpgradeRecommendations(accountId),
     staleTime: 15 * 60 * 1000, // 15 minutes
     retry: 2,
@@ -64,7 +70,7 @@ export function useUpgradeRecommendations(accountId?: string) {
  */
 export function usePlans(accountId?: string) {
   return useQuery({
-    queryKey: ['plans', accountId],
+    queryKey: ["plans", accountId],
     queryFn: () => subscriptionService.getPlans(accountId),
     staleTime: 60 * 60 * 1000, // 1 hour
     retry: 1,
@@ -77,7 +83,7 @@ export function usePlans(accountId?: string) {
  */
 export function useCurrentSubscription(accountId?: string) {
   return useQuery({
-    queryKey: ['subscription', 'current', accountId],
+    queryKey: ["subscription", "current", accountId],
     queryFn: () => subscriptionService.getSubscription(accountId),
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 2,

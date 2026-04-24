@@ -38,7 +38,9 @@ function decodeJwtPayload(token: string): Record<string, unknown> | null {
   }
 }
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState<NotifyUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -118,17 +120,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (!response.ok) {
         const errorData = await response.json();
-        return { error: new Error(errorData.resp_msg || "Password reset failed") };
+        return {
+          error: new Error(errorData.resp_msg || "Password reset failed"),
+        };
       }
 
       return { error: null };
     } catch (error) {
-      return { error: error instanceof Error ? error : new Error("Password reset failed") };
+      return {
+        error:
+          error instanceof Error ? error : new Error("Password reset failed"),
+      };
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, signOut, resetPassword }}>
+    <AuthContext.Provider
+      value={{ user, token, loading, signOut, resetPassword }}
+    >
       {children}
     </AuthContext.Provider>
   );

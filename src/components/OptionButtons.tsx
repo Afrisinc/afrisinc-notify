@@ -30,35 +30,48 @@ interface OptionButtonsProps {
 
 // Channel color mapping (matches existing theme)
 const channelColors: Record<string, string> = {
-  email: "from-primary/10 to-primary/5 text-primary border-primary/20 hover:border-primary/40 hover:bg-primary/15",
+  email:
+    "from-primary/10 to-primary/5 text-primary border-primary/20 hover:border-primary/40 hover:bg-primary/15",
   sms: "from-green-500/10 to-green-500/5 text-green-600 dark:text-green-400 border-green-500/20 hover:border-green-500/40 hover:bg-green-500/15",
   push: "from-amber-500/10 to-amber-500/5 text-amber-600 dark:text-amber-400 border-amber-500/20 hover:border-amber-500/40 hover:bg-amber-500/15",
-  "in-app": "from-cyan-500/10 to-cyan-500/5 text-cyan-600 dark:text-cyan-400 border-cyan-500/20 hover:border-cyan-500/40 hover:bg-cyan-500/15",
+  "in-app":
+    "from-cyan-500/10 to-cyan-500/5 text-cyan-600 dark:text-cyan-400 border-cyan-500/20 hover:border-cyan-500/40 hover:bg-cyan-500/15",
 };
 
 // Category color mapping (semantic)
 const categoryColors: Record<string, string> = {
-  authentication: "from-primary/10 to-primary/5 text-primary border-primary/20 hover:border-primary/40",
-  transactional: "from-blue-500/10 to-blue-500/5 text-blue-600 dark:text-blue-400 border-blue-500/20 hover:border-blue-500/40",
-  marketing: "from-purple-500/10 to-purple-500/5 text-purple-600 dark:text-purple-400 border-purple-500/20 hover:border-purple-500/40",
-  alerts: "from-orange-500/10 to-orange-500/5 text-orange-600 dark:text-orange-400 border-orange-500/20 hover:border-orange-500/40",
-  ecommerce: "from-emerald-500/10 to-emerald-500/5 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 hover:border-emerald-500/40",
+  authentication:
+    "from-primary/10 to-primary/5 text-primary border-primary/20 hover:border-primary/40",
+  transactional:
+    "from-blue-500/10 to-blue-500/5 text-blue-600 dark:text-blue-400 border-blue-500/20 hover:border-blue-500/40",
+  marketing:
+    "from-purple-500/10 to-purple-500/5 text-purple-600 dark:text-purple-400 border-purple-500/20 hover:border-purple-500/40",
+  alerts:
+    "from-orange-500/10 to-orange-500/5 text-orange-600 dark:text-orange-400 border-orange-500/20 hover:border-orange-500/40",
+  ecommerce:
+    "from-emerald-500/10 to-emerald-500/5 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 hover:border-emerald-500/40",
 };
 
 // Pricing tier colors
 const pricingColors: Record<string, string> = {
   free: "from-green-500/10 to-green-500/5 text-green-600 dark:text-green-400 border-green-500/20 hover:border-green-500/40",
-  starter: "from-blue-500/10 to-blue-500/5 text-blue-600 dark:text-blue-400 border-blue-500/20 hover:border-blue-500/40",
+  starter:
+    "from-blue-500/10 to-blue-500/5 text-blue-600 dark:text-blue-400 border-blue-500/20 hover:border-blue-500/40",
   pro: "from-primary/10 to-primary/5 text-primary border-primary/20 hover:border-primary/40",
-  enterprise: "from-purple-500/10 to-purple-500/5 text-purple-600 dark:text-purple-400 border-purple-500/20 hover:border-purple-500/40",
+  enterprise:
+    "from-purple-500/10 to-purple-500/5 text-purple-600 dark:text-purple-400 border-purple-500/20 hover:border-purple-500/40",
 };
 
 // Status colors
 const statusColors: Record<string, string> = {
-  active: "from-green-500/10 to-green-500/5 text-green-600 dark:text-green-400 border-green-500/20 hover:border-green-500/40",
-  inactive: "from-gray-500/10 to-gray-500/5 text-gray-600 dark:text-gray-400 border-gray-500/20 hover:border-gray-500/40",
-  pending: "from-amber-500/10 to-amber-500/5 text-amber-600 dark:text-amber-400 border-amber-500/20 hover:border-amber-500/40",
-  archived: "from-slate-500/10 to-slate-500/5 text-slate-600 dark:text-slate-400 border-slate-500/20 hover:border-slate-500/40",
+  active:
+    "from-green-500/10 to-green-500/5 text-green-600 dark:text-green-400 border-green-500/20 hover:border-green-500/40",
+  inactive:
+    "from-gray-500/10 to-gray-500/5 text-gray-600 dark:text-gray-400 border-gray-500/20 hover:border-gray-500/40",
+  pending:
+    "from-amber-500/10 to-amber-500/5 text-amber-600 dark:text-amber-400 border-amber-500/20 hover:border-amber-500/40",
+  archived:
+    "from-slate-500/10 to-slate-500/5 text-slate-600 dark:text-slate-400 border-slate-500/20 hover:border-slate-500/40",
 };
 
 // Get color for variant and option id
@@ -158,9 +171,7 @@ export function OptionButtons({
             `}
           >
             {option.icon && (
-              <span className={sizeClass.iconSize}>
-                {option.icon}
-              </span>
+              <span className={sizeClass.iconSize}>{option.icon}</span>
             )}
             <span className="whitespace-nowrap">{option.label}</span>
 

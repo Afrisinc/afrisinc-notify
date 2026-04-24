@@ -9,7 +9,7 @@ export const useCampaignAnalytics = (appId: string, campaignId: string) => {
     queryKey: ["campaignAnalytics", appId, campaignId],
     queryFn: async () => {
       const response = await apiClient.get(
-        `/api/apps/${appId}/campaigns/${campaignId}/analytics`
+        `/api/apps/${appId}/campaigns/${campaignId}/analytics`,
       );
       return response.data;
     },
@@ -27,7 +27,7 @@ export const useCampaignEvents = (
     eventType?: string;
     page?: number;
     limit?: number;
-  } = {}
+  } = {},
 ) => {
   return useQuery({
     queryKey: ["campaignEvents", appId, campaignId, filters],
@@ -38,7 +38,7 @@ export const useCampaignEvents = (
       if (filters.limit) params.append("limit", String(filters.limit));
 
       const response = await apiClient.get(
-        `/api/apps/${appId}/campaigns/${campaignId}/events?${params.toString()}`
+        `/api/apps/${appId}/campaigns/${campaignId}/events?${params.toString()}`,
       );
       return response.data;
     },
@@ -52,13 +52,13 @@ export const useCampaignEvents = (
 export const useContactInteraction = (
   appId: string,
   campaignId: string,
-  contactId: string
+  contactId: string,
 ) => {
   return useQuery({
     queryKey: ["contactInteraction", appId, campaignId, contactId],
     queryFn: async () => {
       const response = await apiClient.get(
-        `/api/apps/${appId}/campaigns/${campaignId}/contacts/${contactId}/interaction`
+        `/api/apps/${appId}/campaigns/${campaignId}/contacts/${contactId}/interaction`,
       );
       return response.data;
     },
@@ -74,7 +74,7 @@ export const useTopCampaigns = (appId: string, limit: number = 10) => {
     queryKey: ["topCampaigns", appId, limit],
     queryFn: async () => {
       const response = await apiClient.get(
-        `/api/apps/${appId}/campaigns/analytics/top?limit=${limit}`
+        `/api/apps/${appId}/campaigns/analytics/top?limit=${limit}`,
       );
       return response.data;
     },
@@ -96,7 +96,7 @@ export const useCompareCampaigns = () => {
     }) => {
       const response = await apiClient.post(
         `/api/apps/${appId}/campaigns/analytics/compare`,
-        { campaignIds }
+        { campaignIds },
       );
       return response.data;
     },
@@ -119,7 +119,7 @@ export const useRecordCampaignEvent = () => {
     }) => {
       const response = await apiClient.post(
         `/api/apps/${appId}/campaigns/${campaignId}/events`,
-        event
+        event,
       );
       return response.data;
     },

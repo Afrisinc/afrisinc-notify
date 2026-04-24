@@ -6,7 +6,13 @@ import {
 } from "@/hooks/useAppSettings";
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -74,12 +80,14 @@ export function EmailDomainSection({ appId }: EmailDomainSectionProps) {
       setStep("dns");
       toast({
         title: "Success",
-        description: "Domain configured successfully. Please verify DNS records.",
+        description:
+          "Domain configured successfully. Please verify DNS records.",
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to create domain",
+        description:
+          error instanceof Error ? error.message : "Failed to create domain",
         variant: "destructive",
       });
     }
@@ -89,7 +97,8 @@ export function EmailDomainSection({ appId }: EmailDomainSectionProps) {
     try {
       const result = await verifyDomainMutation.mutateAsync({ appId });
 
-      const allVerified = result.spfVerified && result.dkimVerified && result.dmarcVerified;
+      const allVerified =
+        result.spfVerified && result.dkimVerified && result.dmarcVerified;
 
       if (allVerified) {
         setStep("verified");
@@ -106,7 +115,8 @@ export function EmailDomainSection({ appId }: EmailDomainSectionProps) {
     } catch (error) {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to verify domain",
+        description:
+          error instanceof Error ? error.message : "Failed to verify domain",
         variant: "destructive",
       });
     }
@@ -120,7 +130,9 @@ export function EmailDomainSection({ appId }: EmailDomainSectionProps) {
           <CardTitle className="text-base flex items-center gap-2">
             <Mail className="h-4 w-4" /> Custom Domain
           </CardTitle>
-          <CardDescription>Configure your custom domain for email sending.</CardDescription>
+          <CardDescription>
+            Configure your custom domain for email sending.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <Skeleton className="h-10 w-full" />
@@ -138,14 +150,20 @@ export function EmailDomainSection({ appId }: EmailDomainSectionProps) {
           <CardTitle className="text-base flex items-center gap-2">
             <Mail className="h-4 w-4" /> Custom Domain
           </CardTitle>
-          <CardDescription>Configure your custom domain for email sending.</CardDescription>
+          <CardDescription>
+            Configure your custom domain for email sending.
+          </CardDescription>
         </CardHeader>
         <CardContent className="text-center py-8">
           <div className="space-y-4">
             <Mail className="h-12 w-12 icon-muted mx-auto" />
             <div>
-              <h3 className="text-sm font-medium text-content mb-1">No custom domain configured</h3>
-              <p className="text-sm text-content-secondary mb-4">Set up your custom domain to send emails with your own domain.</p>
+              <h3 className="text-sm font-medium text-content mb-1">
+                No custom domain configured
+              </h3>
+              <p className="text-sm text-content-secondary mb-4">
+                Set up your custom domain to send emails with your own domain.
+              </p>
             </div>
             <Button onClick={() => setStep("form")}>
               <Plus className="h-4 w-4 mr-2" /> Configure Domain
@@ -171,7 +189,9 @@ export function EmailDomainSection({ appId }: EmailDomainSectionProps) {
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <div>
-              <CardTitle className="text-base">Configure Custom Domain</CardTitle>
+              <CardTitle className="text-base">
+                Configure Custom Domain
+              </CardTitle>
               <CardDescription>Enter your domain details</CardDescription>
             </div>
           </div>
@@ -265,19 +285,29 @@ export function EmailDomainSection({ appId }: EmailDomainSectionProps) {
         </CardHeader>
         <CardContent className="space-y-6">
           <div>
-            <h4 className="text-sm font-semibold text-content mb-2">Domain: {records.domain}</h4>
+            <h4 className="text-sm font-semibold text-content mb-2">
+              Domain: {records.domain}
+            </h4>
             <p className="text-xs text-content-secondary mb-4">
-              Add these DNS records to your domain registrar to complete the setup.
+              Add these DNS records to your domain registrar to complete the
+              setup.
             </p>
           </div>
 
           <div className="space-y-3">
             {dnsRecords.map((record: any) => (
-              <div key={record.id} className="border border-border/60 rounded-lg p-3 space-y-2 bg-surface/30">
+              <div
+                key={record.id}
+                className="border border-border/60 rounded-lg p-3 space-y-2 bg-surface/30"
+              >
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-content">Type: {record.type}</p>
-                    <p className="text-xs text-content-secondary">Name: {record.name}</p>
+                    <p className="text-sm font-medium text-content">
+                      Type: {record.type}
+                    </p>
+                    <p className="text-xs text-content-secondary">
+                      Name: {record.name}
+                    </p>
                   </div>
                   <Badge variant={record.verified ? "default" : "secondary"}>
                     {record.verified ? "Verified" : "Pending"}
@@ -305,7 +335,8 @@ export function EmailDomainSection({ appId }: EmailDomainSectionProps) {
 
           <Alert className="bg-blue-50 border-blue-200">
             <AlertDescription className="text-blue-800">
-              DNS changes can take 5-30 minutes to propagate. Click "Check Verification" once you've added the records.
+              DNS changes can take 5-30 minutes to propagate. Click "Check
+              Verification" once you've added the records.
             </AlertDescription>
           </Alert>
 
@@ -350,13 +381,16 @@ export function EmailDomainSection({ appId }: EmailDomainSectionProps) {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="bg-surface rounded-lg border border-border/60 p-4 space-y-3">
-            <p className="text-xs font-semibold text-content-secondary uppercase tracking-wide">Active Domain</p>
+            <p className="text-xs font-semibold text-content-secondary uppercase tracking-wide">
+              Active Domain
+            </p>
             <p className="text-2xl font-bold text-content break-all">
               {getDomainRecordsQuery.data.domain}
             </p>
             <div className="space-y-1">
               <p className="text-sm text-content-secondary">
-                <span className="font-semibold text-content">Sender:</span> {getDomainRecordsQuery.data.fromName || "No name set"}
+                <span className="font-semibold text-content">Sender:</span>{" "}
+                {getDomainRecordsQuery.data.fromName || "No name set"}
               </p>
               <p className="text-sm text-content-secondary font-mono">
                 {getDomainRecordsQuery.data.fromEmail || "No email set"}
@@ -369,7 +403,9 @@ export function EmailDomainSection({ appId }: EmailDomainSectionProps) {
 
           <Alert className="bg-surface/60 border-border/60">
             <AlertDescription className="text-content-secondary text-xs">
-              <strong className="text-content">SPF:</strong> ✅ Verified | <strong className="text-content">DKIM:</strong> ✅ Verified | <strong className="text-content">DMARC:</strong> ✅ Verified
+              <strong className="text-content">SPF:</strong> ✅ Verified |{" "}
+              <strong className="text-content">DKIM:</strong> ✅ Verified |{" "}
+              <strong className="text-content">DMARC:</strong> ✅ Verified
             </AlertDescription>
           </Alert>
 

@@ -19,15 +19,24 @@
  * - EditorContext: Zustand store for document state management
  */
 
-import { useEffect, useState } from 'react';
-import { useAppContext } from '@/contexts/AppContext';
-import { getAppTemplateService } from '@/services/apps';
-import { useDocument, resetDocument } from '../core/documents/editor/EditorContext';
-import { renderToStaticMarkup, TReaderDocument } from '@usewaypoint/email-builder';
-import { useCurrentAccountId } from '@/hooks/useAuth';
-import { useCreateAppTemplate, useUpdateAppTemplate } from '@/hooks/useApps';
-import { getUserTemplateForEditingService } from '@/services/userTemplatePublishing';
-import { useCreateUserTemplate, useUpdateUserTemplate } from '@/hooks/useUserTemplatePublishing';
+import { useEffect, useState } from "react";
+import { useAppContext } from "@/contexts/AppContext";
+import { getAppTemplateService } from "@/services/apps";
+import {
+  useDocument,
+  resetDocument,
+} from "../core/documents/editor/EditorContext";
+import {
+  renderToStaticMarkup,
+  TReaderDocument,
+} from "@usewaypoint/email-builder";
+import { useCurrentAccountId } from "@/hooks/useAuth";
+import { useCreateAppTemplate, useUpdateAppTemplate } from "@/hooks/useApps";
+import { getUserTemplateForEditingService } from "@/services/userTemplatePublishing";
+import {
+  useCreateUserTemplate,
+  useUpdateUserTemplate,
+} from "@/hooks/useUserTemplatePublishing";
 
 interface UseEmailEditorOptions {
   appId?: string;
@@ -57,7 +66,7 @@ function extractJsonFromHtml(html: string): object | null {
     const decoded = atob(match[1]);
     return JSON.parse(decoded);
   } catch {
-    console.warn('Failed to parse emailbuilder JSON from HTML comment');
+    console.warn("Failed to parse emailbuilder JSON from HTML comment");
     return null;
   }
 }
@@ -66,7 +75,7 @@ function extractJsonFromHtml(html: string): object | null {
  * Extract clean HTML without the JSON comment
  */
 function cleanHtmlFromComment(html: string): string {
-  return html.replace(/\n?<!-- emailbuilder-json:.+? -->/g, '').trim();
+  return html.replace(/\n?<!-- emailbuilder-json:.+? -->/g, "").trim();
 }
 
 /**
@@ -86,13 +95,13 @@ function embedJsonInHtml(html: string, json: object): string {
 function createEmptyEmailDocument(): TReaderDocument {
   return {
     root: {
-      type: 'EmailLayout',
+      type: "EmailLayout",
       data: {
-        backdropColor: '#F5F5F5',
-        canvasColor: '#FFFFFF',
+        backdropColor: "#F5F5F5",
+        canvasColor: "#FFFFFF",
         borderColor: null,
         borderRadius: 0,
-        textColor: '#000000',
+        textColor: "#000000",
         fontFamily: null,
         childrenIds: [],
       },
@@ -103,7 +112,10 @@ function createEmptyEmailDocument(): TReaderDocument {
 /**
  * Hook to manage email template editor state and operations
  */
-export function useEmailEditor({ appId, templateId }: UseEmailEditorOptions): UseEmailEditorReturn {
+export function useEmailEditor({
+  appId,
+  templateId,
+}: UseEmailEditorOptions): UseEmailEditorReturn {
   const { selectedApp } = useAppContext();
   const currentDocument = useDocument();
   const accountId = useCurrentAccountId();
@@ -119,8 +131,8 @@ export function useEmailEditor({ appId, templateId }: UseEmailEditorOptions): Us
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [templateName, setTemplateName] = useState('');
-  const [subject, setSubject] = useState('');
+  const [templateName, setTemplateName] = useState("");
+  const [subject, setSubject] = useState("");
 
   /**
    * Load template on mount or when templateId changes
@@ -135,16 +147,18 @@ export function useEmailEditor({ appId, templateId }: UseEmailEditorOptions): Us
         setError(null);
 
         if (!accountId) {
-          setError('No account selected. Please select an organization.');
+          setError("No account selected. Please select an organization.");
           setIsLoading(false);
           return;
         }
 
         // For new templates, initialize with empty document
-        if (templateId === 'new') {
-          resetDocument(createEmptyEmailDocument() as Parameters<typeof resetDocument>[0]);
-          setTemplateName('');
-          setSubject('');
+        if (templateId === "new") {
+          resetDocument(
+            createEmptyEmailDocument() as Parameters<typeof resetDocument>[0],
+          );
+          setTemplateName("");
+          setSubject("");
           setIsLoading(false);
           return;
         }
@@ -153,20 +167,34 @@ export function useEmailEditor({ appId, templateId }: UseEmailEditorOptions): Us
 
         // Load app template if appId is provided
         if (appId) {
-          const response = await getAppTemplateService(appId, templateId, accountId);
-          template = (response.template || response) as unknown as Record<string, unknown>;
+          const response = await getAppTemplateService(
+            appId,
+            templateId,
+            accountId,
+          );
+          template = (response.template || response) as unknown as Record<
+            string,
+            unknown
+          >;
         } else {
           // Load user template using dedicated edit endpoint
-          template = (await getUserTemplateForEditingService(templateId, accountId)) as unknown as Record<string, unknown>;
+          template = (await getUserTemplateForEditingService(
+            templateId,
+            accountId,
+          )) as unknown as Record<string, unknown>;
         }
 
         // Extract template data
-        setTemplateName(String(template.name || template.description || template.code || ''));
-        
+        setTemplateName(
+          String(template.name || template.description || template.code || ""),
+        );
+
         const content = template.content as Record<string, unknown> | undefined;
-        const emailContent = content?.email as Record<string, unknown> | undefined;
-        
-        setSubject(String(emailContent?.subject || template.subject || ''));
+        const emailContent = content?.email as
+          | Record<string, unknown>
+          | undefined;
+
+        setSubject(String(emailContent?.subject || template.subject || ""));
 
         // Priority 1: Use designJson if provided by backend (new API response format)
         let designJson = template.designJson;
@@ -177,28 +205,33 @@ export function useEmailEditor({ appId, templateId }: UseEmailEditorOptions): Us
         }
 
         // Priority 3: Extract JSON from HTML comment if designJson not available
-        if (!designJson && typeof emailContent?.html === 'string') {
+        if (!designJson && typeof emailContent?.html === "string") {
           designJson = extractJsonFromHtml(emailContent.html);
         }
 
         // Priority 4: Extract JSON from old content field format
-        if (!designJson && typeof content?.html === 'string') {
+        if (!designJson && typeof content?.html === "string") {
           designJson = extractJsonFromHtml(content.html);
         }
 
-        if (designJson && typeof designJson === 'object') {
+        if (designJson && typeof designJson === "object") {
           // Use the stored JSON to initialize the editor
           resetDocument(designJson as Parameters<typeof resetDocument>[0]);
         } else {
           // Fallback: start with empty editor if no JSON found
-          resetDocument(createEmptyEmailDocument() as Parameters<typeof resetDocument>[0]);
+          resetDocument(
+            createEmptyEmailDocument() as Parameters<typeof resetDocument>[0],
+          );
         }
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to load template';
+        const message =
+          err instanceof Error ? err.message : "Failed to load template";
         setError(message);
-        console.error('Error loading template:', err);
+        console.error("Error loading template:", err);
         // Initialize with empty document on error
-        resetDocument(createEmptyEmailDocument() as Parameters<typeof resetDocument>[0]);
+        resetDocument(
+          createEmptyEmailDocument() as Parameters<typeof resetDocument>[0],
+        );
       } finally {
         setIsLoading(false);
       }
@@ -217,12 +250,12 @@ export function useEmailEditor({ appId, templateId }: UseEmailEditorOptions): Us
    */
   const save = async (): Promise<void> => {
     if (!templateId || (appId && !selectedApp)) {
-      setError('Missing required template information');
+      setError("Missing required template information");
       return;
     }
 
     if (!templateName) {
-      setError('Template name is required');
+      setError("Template name is required");
       return;
     }
 
@@ -232,24 +265,27 @@ export function useEmailEditor({ appId, templateId }: UseEmailEditorOptions): Us
 
       // Render the document to static markup HTML
       // renderToStaticMarkup from @usewaypoint/email-builder converts the document to HTML
-      const htmlContent = renderToStaticMarkup(currentDocument as TReaderDocument, { rootBlockId: 'root' });
+      const htmlContent = renderToStaticMarkup(
+        currentDocument as TReaderDocument,
+        { rootBlockId: "root" },
+      );
 
       // Embed the JSON in the HTML as a comment for round-trip editing
       const htmlWithJson = embedJsonInHtml(htmlContent, currentDocument);
 
       const payload = {
-        code: templateName.toUpperCase().replace(/\s+/g, '_'),
-        channel: 'EMAIL' as const,
+        code: templateName.toUpperCase().replace(/\s+/g, "_"),
+        channel: "EMAIL" as const,
         subject: subject,
         content: htmlWithJson,
         design_json: currentDocument,
-        editor_type: 'visual',
+        editor_type: "visual",
         description: templateName,
       };
 
       // Save app template if appId is provided
       if (appId) {
-        if (templateId === 'new') {
+        if (templateId === "new") {
           await createAppMutation.mutateAsync({ appId, payload });
         } else {
           await updateAppMutation.mutateAsync({ appId, templateId, payload });
@@ -259,8 +295,8 @@ export function useEmailEditor({ appId, templateId }: UseEmailEditorOptions): Us
         // Generate slug from template code (lowercase, hyphenated)
         const slug = payload.code
           .toLowerCase()
-          .replace(/\s+/g, '-')
-          .replace(/[^a-z0-9-]/g, '');
+          .replace(/\s+/g, "-")
+          .replace(/[^a-z0-9-]/g, "");
 
         const userTemplatePayload = {
           code: payload.code,
@@ -268,13 +304,13 @@ export function useEmailEditor({ appId, templateId }: UseEmailEditorOptions): Us
           channel: payload.channel as "EMAIL" | "SMS" | "PUSH" | "IN_APP",
           subject: payload.subject,
           content: payload.content,
-          language: 'en',
+          language: "en",
           description: payload.description,
           design_json: payload.design_json,
           editor_type: payload.editor_type,
         };
 
-        if (templateId === 'new') {
+        if (templateId === "new") {
           await createUserMutation.mutateAsync(userTemplatePayload);
         } else {
           await updateUserMutation.mutateAsync({
@@ -284,9 +320,10 @@ export function useEmailEditor({ appId, templateId }: UseEmailEditorOptions): Us
         }
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to save template';
+      const message =
+        err instanceof Error ? err.message : "Failed to save template";
       setError(message);
-      console.error('Error saving template:', err);
+      console.error("Error saving template:", err);
       throw err;
     } finally {
       setIsSaving(false);
@@ -298,7 +335,10 @@ export function useEmailEditor({ appId, templateId }: UseEmailEditorOptions): Us
    * This is the HTML that would be sent to users
    */
   const exportHTML = (): string => {
-    const htmlContent = renderToStaticMarkup(currentDocument as TReaderDocument, { rootBlockId: 'root' });
+    const htmlContent = renderToStaticMarkup(
+      currentDocument as TReaderDocument,
+      { rootBlockId: "root" },
+    );
     return cleanHtmlFromComment(htmlContent);
   };
 
