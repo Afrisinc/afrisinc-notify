@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ChannelSelectorDialog, type TemplateChannel } from "@/components/editors/ChannelSelectorDialog";
 import { useUserTemplates, usePublishTemplate, useUnpublishTemplate } from "@/hooks/useUserTemplatePublishing";
 import { useCurrentAccountId } from "@/hooks/useAuth";
 import { useDeleteTemplate, useDuplicateTemplate } from "@/hooks/useTemplates";
@@ -31,6 +32,16 @@ export default function MyTemplates() {
   const [deleteDialog, setDeleteDialog] = useState<string | null>(null);
   const [duplicateDialog, setDuplicateDialog] = useState<string | null>(null);
   const [page, setPage] = useState(1);
+  const [channelSelectorOpen, setChannelSelectorOpen] = useState(false);
+
+  const handleCreateNew = (channel: TemplateChannel) => {
+    setChannelSelectorOpen(false);
+    if (channel === "email") {
+      navigate("/dashboard/templates/new");
+    } else {
+      navigate(`/dashboard/templates/${channel}/new`);
+    }
+  };
 
   // Fetch user templates
   const { data: templatesResponse, isLoading, error, refetch } = useUserTemplates(
@@ -178,6 +189,13 @@ export default function MyTemplates() {
     }
   };
 
+  function getEditPath(template: { id: string; channel?: string }) {
+    const ch = (template.channel || "EMAIL").toUpperCase();
+    if (ch === "EMAIL") return `/dashboard/templates/${template.id}`;
+    const slug = ch === "IN_APP" ? "in-app" : ch.toLowerCase();
+    return `/dashboard/templates/${slug}/${template.id}`;
+  }
+
   return (
     <div className="space-y-12 animate-fade-in">
       {/* Header - Minimal & Professional */}
@@ -224,7 +242,7 @@ export default function MyTemplates() {
               ]}
             />
             <Button
-              onClick={() => navigate("/dashboard/templates/new")}
+              onClick={() => setChannelSelectorOpen(true)}
               className="gap-2 h-12 rounded-xl bg-primary hover:bg-primary/90 text-white shadow-primary/30 px-6 font-semibold"
             >
               <Plus className="h-5 w-5" /> Create New
@@ -272,7 +290,7 @@ export default function MyTemplates() {
               </div>
               {templates.length === 0 && (
                 <Button
-                  onClick={() => navigate("/dashboard/templates/new")}
+                  onClick={() => setChannelSelectorOpen(true)}
                   className="mt-2 gap-2 h-11 bg-primary hover:bg-primary/90 text-white shadow-primary/30 px-6 font-semibold rounded-xl"
                 >
                   <Plus className="h-4 w-4" /> Create Your First Template
@@ -299,8 +317,8 @@ export default function MyTemplates() {
               >
                 <MyTemplateCard
                   template={template}
-                  onEdit={() => navigate(`/dashboard/templates/${template.id}`)}
-                  onView={() => navigate(`/dashboard/templates/${template.id}`)}
+                  onEdit={() => navigate(getEditPath(template))}
+                  onView={() => navigate(getEditPath(template))}
                   onDuplicate={() => setDuplicateDialog(template.id)}
                   onDelete={() => setDeleteDialog(template.id)}
                   onPublish={() => setPublishDialogId(template.id)}
@@ -347,6 +365,13 @@ export default function MyTemplates() {
           )}
         </>
       )}
+
+      {/* Channel selector for creating new templates */}
+      <ChannelSelectorDialog
+        open={channelSelectorOpen}
+        onOpenChange={setChannelSelectorOpen}
+        onSelect={handleCreateNew}
+      />
 
       {/* Publish Template Dialog - Professional Flow */}
       <PublishTemplateDialog

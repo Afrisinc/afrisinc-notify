@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { ChannelSelectorDialog, type TemplateChannel } from "@/components/editors/ChannelSelectorDialog";
 import { appTemplates } from "@/data/mockData";
 import { useAppTemplates, useDeleteAppTemplate } from "@/hooks/useApps";
 import { useSendNotification } from "@/hooks/useNotifications";
@@ -90,6 +91,26 @@ export default function AppTemplates() {
   const [channelFilter, setChannelFilter] = useState("all");
   const [deleteConfirm, setDeleteConfirm] = useState<{ appId: string; templateId: string } | null>(null);
   const [sendNotifyDialog, setSendNotifyDialog] = useState<{ templateId: string; templateName: string } | null>(null);
+  const [channelSelectorOpen, setChannelSelectorOpen] = useState(false);
+
+  const handleCreateTemplate = (channel: TemplateChannel) => {
+    setChannelSelectorOpen(false);
+    if (channel === "email") {
+      navigate(`/editor/${appId}/new`);
+    } else {
+      navigate(`/editor/${appId}/${channel}/new`);
+    }
+  };
+
+  const handleEditTemplate = (tpl: any, templateId: string) => {
+    const channel = (tpl.channel || "").toLowerCase();
+    const channelNormalized = channel === "in_app" ? "in-app" : channel;
+    if (channelNormalized === "email" || !channelNormalized) {
+      navigate(`/editor/${appId}/${templateId}`);
+    } else {
+      navigate(`/editor/${appId}/${channelNormalized}/${templateId}`);
+    }
+  };
 
   // Form for sending notification
   const form = useForm<SendNotificationFormData>({
@@ -185,7 +206,7 @@ export default function AppTemplates() {
           <Button variant="outline" size="sm" onClick={() => navigate("/dashboard/marketplace")}>
             <Store className="h-3.5 w-3.5 mr-1.5" /> Marketplace
           </Button>
-          <Button size="sm" onClick={() => navigate(`/editor/${appId}/new`)}>
+          <Button size="sm" onClick={() => setChannelSelectorOpen(true)}>
             <Plus className="h-3.5 w-3.5 mr-1.5" /> Create Template
           </Button>
         </div>
@@ -280,15 +301,8 @@ export default function AppTemplates() {
                       variant="ghost"
                       size="icon"
                       className="h-7 w-7"
-                      onClick={() => {
-                        // Email templates use dedicated editor, others use dashboard editor
-                        if ((tpl.channel || "").toLowerCase() === 'email') {
-                          navigate(`/editor/${appId}/${templateId}`);
-                        } else {
-                          navigate(`/dashboard/apps/${appId}/templates/${templateId}`);
-                        }
-                      }}
-                      title="View/Edit template"
+                      onClick={() => handleEditTemplate(tpl, templateId)}
+                      title="View template"
                     >
                       <Eye className="h-3 w-3" />
                     </Button>
@@ -296,14 +310,7 @@ export default function AppTemplates() {
                       variant="ghost"
                       size="icon"
                       className="h-7 w-7"
-                      onClick={() => {
-                        // Email templates use dedicated editor, others use dashboard editor
-                        if ((tpl.channel || "").toLowerCase() === 'email') {
-                          navigate(`/editor/${appId}/${templateId}`);
-                        } else {
-                          navigate(`/dashboard/apps/${appId}/templates/${templateId}`);
-                        }
-                      }}
+                      onClick={() => handleEditTemplate(tpl, templateId)}
                       title="Edit template"
                     >
                       <Pencil className="h-3 w-3" />
@@ -336,6 +343,13 @@ export default function AppTemplates() {
           })}
         </div>
       ) : null}
+
+      {/* Channel Selector Dialog */}
+      <ChannelSelectorDialog
+        open={channelSelectorOpen}
+        onOpenChange={setChannelSelectorOpen}
+        onSelect={handleCreateTemplate}
+      />
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={!!deleteConfirm} onOpenChange={(open) => !open && setDeleteConfirm(null)}>
