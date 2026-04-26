@@ -3,14 +3,6 @@ import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   accountDetailsSchema,
   type AccountDetailsValues,
@@ -28,8 +20,6 @@ interface StepAccountDetailsProps {
   isSubmitting: boolean;
 }
 
-const companySizes = ["1-10", "11-50", "51-200", "201-500", "500+"];
-
 const StepAccountDetails = ({
   accountType,
   defaultValues,
@@ -44,7 +34,6 @@ const StepAccountDetails = ({
     register,
     handleSubmit,
     watch,
-    setValue,
     formState: { errors },
   } = useForm<AccountDetailsValues>({
     resolver: zodResolver(accountDetailsSchema),
@@ -81,13 +70,11 @@ const StepAccountDetails = ({
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-5">
       {accountType === "personal" ? (
-        <FormInput
-          id="displayName"
-          label="Display Name (optional)"
-          placeholder="How you'd like to be known"
-          error={errors.displayName?.message}
-          {...register("displayName")}
-        />
+        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+          <p className="text-blue-700 dark:text-blue-400 text-sm">
+            Personal account setup complete! You're all set to start using Notify.
+          </p>
+        </div>
       ) : (
         <>
           <div className="space-y-2">
@@ -106,57 +93,12 @@ const StepAccountDetails = ({
           </div>
 
           <FormInput
-            id="jobTitle"
-            label="Your Job Title (optional)"
-            placeholder="e.g. CTO, Product Manager"
-            error={errors.jobTitle?.message}
-            {...register("jobTitle")}
-          />
-
-          <FormInput
             id="companyEmail"
             label="Company Email"
             type="email"
             placeholder="company@example.com"
             error={errors.companyEmail?.message}
             {...register("companyEmail")}
-          />
-
-          <FormInput
-            id="industry"
-            label="Industry (optional)"
-            placeholder="e.g. Fintech, Healthcare"
-            error={errors.industry?.message}
-            {...register("industry")}
-          />
-
-          <div className="space-y-2">
-            <Label className="heading-label">
-              Company Size{" "}
-              <span className="text-secondary font-normal text-sm">
-                (optional)
-              </span>
-            </Label>
-            <Select onValueChange={(val) => setValue("companySize", val)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select company size" />
-              </SelectTrigger>
-              <SelectContent>
-                {companySizes.map((size) => (
-                  <SelectItem key={size} value={size}>
-                    {size} employees
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <FormInput
-            id="website"
-            label="Website (optional)"
-            placeholder="https://yourcompany.com"
-            error={errors.website?.message}
-            {...register("website")}
           />
         </>
       )}
