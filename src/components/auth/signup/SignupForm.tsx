@@ -61,26 +61,31 @@ const SignupForm = () => {
     (values: AccountDetailsValues) => {
       if (!accountType) return;
 
+      // Validate company account requirements
+      if (accountType === "company") {
+        if (!values.organizationName?.trim()) {
+          toast.error("Organization name is required for company accounts");
+          return;
+        }
+        if (!values.companyEmail?.trim()) {
+          toast.error("Company email is required for company accounts");
+          return;
+        }
+      }
+
       const payload: SignupPayload = {
-        firstName: identityData.firstName!,
-        lastName: identityData.lastName!,
-        email: identityData.email!,
-        password: identityData.password!,
+        firstName: identityData.firstName,
+        lastName: identityData.lastName,
+        email: identityData.email,
+        password: identityData.password,
         phone: identityData.phone,
-        location: identityData.location || undefined,
         account_type: accountType,
-        account_name:
-          accountType === "company"
-            ? values.organizationName || ""
-            : values.displayName ||
-              `${identityData.firstName || ""} ${identityData.lastName || ""}`.trim(),
-        displayName: values.displayName,
-        organizationName: values.organizationName,
-        jobTitle: values.jobTitle,
-        companyEmail: values.companyEmail || undefined,
-        industry: values.industry,
-        companySize: values.companySize,
-        website: values.website || undefined,
+        // Optional fields - only include if they have values
+        ...(identityData.location && { location: identityData.location }),
+        ...(values.organizationName && {
+          organizationName: values.organizationName,
+        }),
+        ...(values.companyEmail && { companyEmail: values.companyEmail }),
       };
 
       mutate(payload, {

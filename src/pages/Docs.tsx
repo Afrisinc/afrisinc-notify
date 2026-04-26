@@ -202,7 +202,7 @@ const Docs = () => {
               </p>
               <CodeBlock
                 language="curl"
-                code={`curl -X POST https://api.notifyr.dev/v1/send \\\n  -H "Authorization: Bearer ntfr_sk_live_abc123" \\\n  -H "Content-Type: application/json" \\\n  -d '{\n    "channel": "email",\n    "to": "user@example.com",\n    "template_id": "tpl_welcome",\n    "data": {\n      "name": "Jane",\n      "company": "Acme"\n    }\n  }'`}
+                code={`curl -X POST https://api.notify.dev/v1/send \\\n  -H "Authorization: Bearer ntfr_sk_live_abc123" \\\n  -H "Content-Type: application/json" \\\n  -d '{\n    "channel": "email",\n    "to": "user@example.com",\n    "template_id": "tpl_welcome",\n    "data": {\n      "name": "Jane",\n      "company": "Acme"\n    }\n  }'`}
               />
               <h3 className="text-sm font-semibold mt-4 dark:text-white">
                 Response
@@ -227,7 +227,7 @@ const Docs = () => {
               </p>
               <CodeBlock
                 language="javascript"
-                code={`import { Notify } from "@notifyr/node";\n\nconst notifyr = new Notify("ntfr_sk_live_abc123");\n\nawait notifyr.send({\n  channel: "sms",\n  to: "+15550123",\n  template: "otp_code",\n  data: { code: "482901" },\n});`}
+                code={`import { Notify } from "@notifyr/node";\n\nconst notifyr = new Notify("ntfr_sk_live_abc123");\n\nawait notify.send({\n  channel: "sms",\n  to: "+15550123",\n  template: "otp_code",\n  data: { code: "482901" },\n});`}
               />
             </section>
 
