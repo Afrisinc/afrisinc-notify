@@ -58,7 +58,8 @@ export default function AppDashboardLayout() {
   // Update tracking refs when org changes
   useEffect(() => {
     if (!orgLoading && currentOrg) {
-      const orgChanged = prevOrgIdRef.current && prevOrgIdRef.current !== currentOrg.id;
+      const orgChanged =
+        prevOrgIdRef.current && prevOrgIdRef.current !== currentOrg.id;
       prevOrgIdRef.current = currentOrg.id;
 
       if (orgChanged && appId) {
@@ -76,7 +77,8 @@ export default function AppDashboardLayout() {
   useEffect(() => {
     if (!appLoading && error && appId && currentOrg) {
       // Check if this is an error from a fresh org switch
-      const orgSwitched = !initialErrorRef.current && prevOrgIdRef.current === currentOrg.id;
+      const orgSwitched =
+        !initialErrorRef.current && prevOrgIdRef.current === currentOrg.id;
 
       if (orgSwitched) {
         // App not found/unauthorized in new org - redirect silently

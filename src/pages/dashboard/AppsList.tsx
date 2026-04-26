@@ -39,11 +39,10 @@ export default function AppsList() {
   const [newDesc, setNewDesc] = useState("");
 
   // Fetch organization apps with optimized endpoint (includes search filtering on backend)
-  const { data: appsResponse, isLoading: appsLoading } = useAppsByOrganizationDetails(
-    currentOrg?.id || "",
-    search || undefined,
-    { enabled: !!currentOrg?.id },
-  );
+  const { data: appsResponse, isLoading: appsLoading } =
+    useAppsByOrganizationDetails(currentOrg?.id || "", search || undefined, {
+      enabled: !!currentOrg?.id,
+    });
 
   // Get apps from optimized response format
   const orgApps = appsResponse?.apps || [];

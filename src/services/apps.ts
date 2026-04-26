@@ -134,10 +134,16 @@ export const getAppsService = async (accountId?: string, orgId?: string) => {
  * Uses new endpoint format: /organizations/:orgId/apps/:appId (no headers needed)
  * Falls back to old format with headers for backwards compatibility
  */
-export const getAppService = async (appId: string, accountId?: string, orgId?: string) => {
+export const getAppService = async (
+  appId: string,
+  accountId?: string,
+  orgId?: string,
+) => {
   // If organization ID is provided, use new endpoint format
   if (orgId) {
-    const { data } = await getApiClient().get(`/api/organizations/${orgId}/apps/${appId}`);
+    const { data } = await getApiClient().get(
+      `/api/organizations/${orgId}/apps/${appId}`,
+    );
     return data.data;
   }
 

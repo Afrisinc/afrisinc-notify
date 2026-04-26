@@ -116,7 +116,7 @@ export default function ChannelEditorPage() {
           const app = await getAppService(
             appId,
             accountId ?? undefined,
-            currentOrg?.id
+            currentOrg?.id,
           );
           setSelectedApp(app);
         }
@@ -191,9 +191,20 @@ export default function ChannelEditorPage() {
       };
 
       if (isNew) {
-        await createAppTemplateService(appId, payload, accountId ?? undefined, currentOrg?.id);
+        await createAppTemplateService(
+          appId,
+          payload,
+          accountId ?? undefined,
+          currentOrg?.id,
+        );
       } else if (templateId) {
-        await updateAppTemplateService(appId, templateId, payload, accountId ?? undefined, currentOrg?.id);
+        await updateAppTemplateService(
+          appId,
+          templateId,
+          payload,
+          accountId ?? undefined,
+          currentOrg?.id,
+        );
       }
 
       toast({

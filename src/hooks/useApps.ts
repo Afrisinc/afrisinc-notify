@@ -87,7 +87,8 @@ export function useApp(appId: string, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: ["app", appId, currentOrg?.id || accountId],
     queryFn: () => getAppService(appId, accountId ?? undefined, currentOrg?.id),
-    enabled: (options?.enabled ?? true) && !!appId && !!(currentOrg?.id || accountId),
+    enabled:
+      (options?.enabled ?? true) && !!appId && !!(currentOrg?.id || accountId),
   });
 }
 
@@ -122,7 +123,8 @@ export function useAppOverview(
 
       return getAppOverviewService(url, accountId ?? undefined, currentOrg?.id);
     },
-    enabled: (options?.enabled ?? true) && !!appId && !!(currentOrg?.id || accountId),
+    enabled:
+      (options?.enabled ?? true) && !!appId && !!(currentOrg?.id || accountId),
   });
 }
 
@@ -167,8 +169,10 @@ export function useAppTemplates(
 
   return useQuery({
     queryKey: ["appTemplates", appId, currentOrg?.id || accountId],
-    queryFn: () => getAppTemplatesService(appId, accountId ?? undefined, currentOrg?.id),
-    enabled: (options?.enabled ?? true) && !!appId && !!(currentOrg?.id || accountId),
+    queryFn: () =>
+      getAppTemplatesService(appId, accountId ?? undefined, currentOrg?.id),
+    enabled:
+      (options?.enabled ?? true) && !!appId && !!(currentOrg?.id || accountId),
   });
 }
 
@@ -187,9 +191,17 @@ export function useAppTemplate(
   return useQuery({
     queryKey: ["appTemplate", appId, templateId, currentOrg?.id || accountId],
     queryFn: () =>
-      getAppTemplateService(appId, templateId, accountId ?? undefined, currentOrg?.id),
+      getAppTemplateService(
+        appId,
+        templateId,
+        accountId ?? undefined,
+        currentOrg?.id,
+      ),
     enabled:
-      (options?.enabled ?? true) && !!appId && !!templateId && !!(currentOrg?.id || accountId),
+      (options?.enabled ?? true) &&
+      !!appId &&
+      !!templateId &&
+      !!(currentOrg?.id || accountId),
   });
 }
 
@@ -208,7 +220,13 @@ export function useCreateAppTemplate() {
     }: {
       appId: string;
       payload: CreateAppTemplatePayload;
-    }) => createAppTemplateService(appId, payload, accountId ?? undefined, currentOrg?.id),
+    }) =>
+      createAppTemplateService(
+        appId,
+        payload,
+        accountId ?? undefined,
+        currentOrg?.id,
+      ),
     onSuccess: (_data, { appId }) => {
       // Invalidate app templates query to refetch
       queryClient.invalidateQueries({
@@ -270,7 +288,13 @@ export function useDeleteAppTemplate() {
     }: {
       appId: string;
       templateId: string;
-    }) => deleteAppTemplateService(appId, templateId, accountId ?? undefined, currentOrg?.id),
+    }) =>
+      deleteAppTemplateService(
+        appId,
+        templateId,
+        accountId ?? undefined,
+        currentOrg?.id,
+      ),
     onSuccess: (_data, { appId, templateId }) => {
       // Invalidate both specific template and templates list
       queryClient.invalidateQueries({
@@ -312,8 +336,14 @@ export function useAppNotifications(
   return useQuery({
     queryKey: ["appNotifications", appId, currentOrg?.id || accountId, params],
     queryFn: () =>
-      getAppNotificationsService(appId, params, accountId ?? undefined, currentOrg?.id),
-    enabled: (options?.enabled ?? true) && !!appId && !!(currentOrg?.id || accountId),
+      getAppNotificationsService(
+        appId,
+        params,
+        accountId ?? undefined,
+        currentOrg?.id,
+      ),
+    enabled:
+      (options?.enabled ?? true) && !!appId && !!(currentOrg?.id || accountId),
   });
 }
 
@@ -336,7 +366,13 @@ export function useCreateApiKey() {
     }: {
       appId: string;
       payload: CreateApiKeyPayload;
-    }) => createApiKeyService(appId, payload, accountId ?? undefined, currentOrg?.id),
+    }) =>
+      createApiKeyService(
+        appId,
+        payload,
+        accountId ?? undefined,
+        currentOrg?.id,
+      ),
     onSuccess: (_data, { appId }) => {
       // Invalidate API keys query to refetch
       queryClient.invalidateQueries({

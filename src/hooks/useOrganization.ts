@@ -226,6 +226,10 @@ export function useAcceptInvite() {
       queryClient.invalidateQueries({
         queryKey: ["userOrganizations"],
       });
+      // Invalidate user profile to reload accounts for the new organization
+      queryClient.invalidateQueries({
+        queryKey: ["userProfile"],
+      });
     },
   });
 }
