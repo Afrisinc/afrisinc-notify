@@ -1,7 +1,7 @@
+import { useEffect, useRef } from "react";
 import { useParams, useNavigate, Outlet, useLocation } from "react-router-dom";
-import { organizations } from "@/data/mockData";
+import { useQueryClient } from "@tanstack/react-query";
 import { useOrg } from "@/contexts/OrgContext";
-import { useAppContext } from "@/contexts/AppContext";
 import { useAppData } from "@/hooks/useAppData";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -49,6 +49,44 @@ export default function AppDashboardLayout() {
   const location = useLocation();
   const { currentOrg, loading: orgLoading } = useOrg();
   const { app, isLoading: appLoading, error } = useAppData(appId);
+  const queryClient = useQueryClient();
+
+  // Track organization to detect switches
+  const prevOrgIdRef = useRef<string | undefined>(currentOrg?.id);
+  const initialErrorRef = useRef<boolean>(false);
+
+  // Update tracking refs when org changes
+  useEffect(() => {
+    if (!orgLoading && currentOrg) {
+      const orgChanged = prevOrgIdRef.current && prevOrgIdRef.current !== currentOrg.id;
+      prevOrgIdRef.current = currentOrg.id;
+
+      if (orgChanged && appId) {
+        // Mark that we're waiting for a refetch after org switch
+        initialErrorRef.current = false;
+        // Invalidate the app query to force refetch for new organization
+        queryClient.invalidateQueries({
+          queryKey: ["app", appId],
+        });
+      }
+    }
+  }, [currentOrg?.id, appId, queryClient, orgLoading]);
+
+  // Handle errors - redirect if app doesn't exist in current organization
+  useEffect(() => {
+    if (!appLoading && error && appId && currentOrg) {
+      // Check if this is an error from a fresh org switch
+      const orgSwitched = !initialErrorRef.current && prevOrgIdRef.current === currentOrg.id;
+
+      if (orgSwitched) {
+        // App not found/unauthorized in new org - redirect silently
+        navigate("/dashboard/apps", { replace: true });
+      } else {
+        // Mark that we've seen an error (for initial load)
+        initialErrorRef.current = true;
+      }
+    }
+  }, [error, appLoading, appId, currentOrg, navigate]);
 
   // Wait for organization to load
   if (orgLoading || !currentOrg) {

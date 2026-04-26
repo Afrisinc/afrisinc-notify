@@ -27,6 +27,7 @@ import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCurrentAccountId } from "@/hooks/useAuth";
+import { useOrg } from "@/contexts/OrgContext";
 import { SmsEditor, type SmsEditorValue } from "@/components/editors/SmsEditor";
 import {
   PushEditor,
@@ -76,6 +77,7 @@ export default function ChannelEditorPage() {
   const { toast } = useToast();
   const { user } = useAuth();
   const accountId = useCurrentAccountId();
+  const { currentOrg } = useOrg();
   const { selectedApp, setSelectedApp } = useAppContext();
 
   const [loading, setLoading] = useState(true);
@@ -106,7 +108,11 @@ export default function ChannelEditorPage() {
         setError(null);
 
         if (!selectedApp || selectedApp.id !== appId) {
-          const app = await getAppService(appId);
+          const app = await getAppService(
+            appId,
+            accountId ?? undefined,
+            currentOrg?.id
+          );
           setSelectedApp(app);
         }
 

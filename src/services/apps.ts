@@ -77,6 +77,22 @@ export interface AppOverview {
   };
 }
 
+export interface OrganizationAppDetails {
+  id: string;
+  name: string;
+  environment: "production" | "staging" | "development";
+  status: string;
+  createdAt: string;
+  templateCount: number;
+  templatesSent: number;
+}
+
+export interface OrganizationAppsDetailsResponse {
+  organization_id: string;
+  apps: OrganizationAppDetails[];
+  total: number;
+}
+
 /**
  * Create a new app
  */
@@ -100,33 +116,55 @@ export const createAppService = async (payload: CreateAppPayload) => {
 
 /**
  * Get all apps (filtered by organization)
- * Includes x-account-id header if provided
+ * Includes x-account-id header if provided, or x-organization-id for invited members
  */
-export const getAppsService = async (accountId?: string) => {
-  const config = accountId ? { headers: { "x-account-id": accountId } } : {};
+export const getAppsService = async (accountId?: string, orgId?: string) => {
+  const config: any = {};
+  if (accountId) {
+    config.headers = { "x-account-id": accountId };
+  } else if (orgId) {
+    config.headers = { "x-organization-id": orgId };
+  }
   const { data } = await getApiClient().get("/api/apps", config);
   return data.data;
 };
 
 /**
  * Get single app by ID
- * Includes x-account-id header if provided
+ * Uses new endpoint format: /organizations/:orgId/apps/:appId (no headers needed)
+ * Falls back to old format with headers for backwards compatibility
  */
-export const getAppService = async (appId: string, accountId?: string) => {
-  const config = accountId ? { headers: { "x-account-id": accountId } } : {};
+export const getAppService = async (appId: string, accountId?: string, orgId?: string) => {
+  // If organization ID is provided, use new endpoint format
+  if (orgId) {
+    const { data } = await getApiClient().get(`/api/organizations/${orgId}/apps/${appId}`);
+    return data.data;
+  }
+
+  // Otherwise use old format with account ID header
+  const config: any = {};
+  if (accountId) {
+    config.headers = { "x-account-id": accountId };
+  }
   const { data } = await getApiClient().get(`/api/apps/${appId}`, config);
   return data.data;
 };
 
 /**
  * Get app overview with statistics and chart data
- * Includes x-account-id header if provided
+ * Includes x-account-id header if provided, or x-organization-id for invited members
  */
 export const getAppOverviewService = async (
   appId: string,
   accountId?: string,
+  orgId?: string,
 ) => {
-  const config = accountId ? { headers: { "x-account-id": accountId } } : {};
+  const config: any = {};
+  if (accountId) {
+    config.headers = { "x-account-id": accountId };
+  } else if (orgId) {
+    config.headers = { "x-organization-id": orgId };
+  }
   const { data } = await getApiClient().get(
     `/api/apps/${appId}/overview`,
     config,
@@ -182,8 +220,14 @@ export const createAppTemplateService = async (
 export const getAppTemplatesService = async (
   appId: string,
   accountId?: string,
+  orgId?: string,
 ) => {
-  const config = accountId ? { headers: { "x-account-id": accountId } } : {};
+  const config: any = {};
+  if (accountId) {
+    config.headers = { "x-account-id": accountId };
+  } else if (orgId) {
+    config.headers = { "x-organization-id": orgId };
+  }
   const { data } = await getApiClient().get<any>(
     `/api/apps/${appId}/templates`,
     config,
@@ -199,8 +243,14 @@ export const getAppTemplateService = async (
   appId: string,
   templateId: string,
   accountId?: string,
+  orgId?: string,
 ) => {
-  const config = accountId ? { headers: { "x-account-id": accountId } } : {};
+  const config: any = {};
+  if (accountId) {
+    config.headers = { "x-account-id": accountId };
+  } else if (orgId) {
+    config.headers = { "x-organization-id": orgId };
+  }
   const { data } = await getApiClient().get<any>(
     `/api/apps/${appId}/templates/${templateId}`,
     config,
@@ -319,8 +369,14 @@ export const getAppNotificationsService = async (
     provider?: string;
   },
   accountId?: string,
+  orgId?: string,
 ) => {
-  const config = accountId ? { headers: { "x-account-id": accountId } } : {};
+  const config: any = {};
+  if (accountId) {
+    config.headers = { "x-account-id": accountId };
+  } else if (orgId) {
+    config.headers = { "x-organization-id": orgId };
+  }
   const queryParams = new URLSearchParams();
 
   if (params?.page) queryParams.append("page", params.page.toString());
@@ -391,6 +447,27 @@ export const createApiKeyService = async (
     config,
   );
   return data.data as CreateApiKeyResponse;
+};
+
+/**
+ * Get organization apps with basic details (name, environment, template count, etc.)
+ * Supports search filtering
+ * GET /organizations/:orgId/apps/details?search=query
+ */
+export const getAppsByOrganizationDetailsService = async (
+  orgId: string,
+  search?: string,
+) => {
+  const params = new URLSearchParams();
+  if (search) {
+    params.append("search", search);
+  }
+
+  const query = params.toString() ? `?${params.toString()}` : "";
+  const { data } = await getApiClient().get<any>(
+    `/api/organizations/${orgId}/apps/details${query}`,
+  );
+  return data.data as OrganizationAppsDetailsResponse;
 };
 
 /**

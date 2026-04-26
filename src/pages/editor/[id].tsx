@@ -44,7 +44,12 @@ const EditorPage = () => {
           setError(null);
 
           // Fetch app to get organization_id
-          const app = await getAppService(appId);
+          // If we have currentOrg, use it; otherwise use account ID as fallback
+          const app = await getAppService(
+            appId,
+            undefined,
+            currentOrg?.id
+          );
           setSelectedApp(app);
 
           // Set organization if available
@@ -87,7 +92,12 @@ const EditorPage = () => {
         setError(null);
 
         // Fetch app to get organization_id
-        const app = await getAppService(appId);
+        // If we have currentOrg, use it; otherwise use account ID as fallback
+        const app = await getAppService(
+          appId,
+          undefined,
+          currentOrg?.id
+        );
         setSelectedApp(app);
 
         // Set organization if available
