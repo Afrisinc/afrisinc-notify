@@ -77,7 +77,7 @@ export default function ChannelEditorPage() {
   const { toast } = useToast();
   const { user } = useAuth();
   const accountId = useCurrentAccountId();
-  const { currentOrg } = useOrg();
+  const { currentOrg, loading: orgLoading } = useOrg();
   const { selectedApp, setSelectedApp } = useAppContext();
 
   const [loading, setLoading] = useState(true);
@@ -102,6 +102,11 @@ export default function ChannelEditorPage() {
       return;
     }
 
+    // Wait for organization context to load
+    if (orgLoading) {
+      return;
+    }
+
     const load = async () => {
       try {
         setLoading(true);
@@ -121,6 +126,7 @@ export default function ChannelEditorPage() {
             appId,
             templateId,
             accountId,
+            currentOrg?.id,
           );
           const tpl = (data as any)?.template || data;
           // Prefer design_json for full editor state; fall back to parsing content
@@ -149,7 +155,7 @@ export default function ChannelEditorPage() {
       }
     };
     load();
-  }, [appId, templateId, isNew, accountId]);
+  }, [appId, templateId, isNew, accountId, currentOrg?.id, orgLoading]);
 
   /**
    * Save to API.
@@ -185,9 +191,9 @@ export default function ChannelEditorPage() {
       };
 
       if (isNew) {
-        await createAppTemplateService(appId, payload, accountId);
+        await createAppTemplateService(appId, payload, accountId ?? undefined, currentOrg?.id);
       } else if (templateId) {
-        await updateAppTemplateService(appId, templateId, payload, accountId);
+        await updateAppTemplateService(appId, templateId, payload, accountId ?? undefined, currentOrg?.id);
       }
 
       toast({

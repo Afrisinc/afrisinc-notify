@@ -21,6 +21,7 @@
 
 import { useEffect, useState } from "react";
 import { useAppContext } from "@/contexts/AppContext";
+import { useOrg } from "@/contexts/OrgContext";
 import { getAppTemplateService } from "@/services/apps";
 import {
   useDocument,
@@ -117,6 +118,7 @@ export function useEmailEditor({
   templateId,
 }: UseEmailEditorOptions): UseEmailEditorReturn {
   const { selectedApp } = useAppContext();
+  const { currentOrg, loading: orgLoading } = useOrg();
   const currentDocument = useDocument();
   const accountId = useCurrentAccountId();
 
@@ -137,7 +139,7 @@ export function useEmailEditor({
   /**
    * Load template on mount or when templateId changes
    * Supports both app templates (with appId) and user templates (without appId)
-   * Only loads when accountId is available (organization is set)
+   * Only loads when organization is set and accountId is available
    * Skips loading for new templates (templateId === 'new')
    */
   useEffect(() => {
@@ -146,8 +148,19 @@ export function useEmailEditor({
         setIsLoading(true);
         setError(null);
 
+        // Wait for organization context to load
+        if (orgLoading) {
+          return;
+        }
+
+        if (!currentOrg) {
+          setError("No organization selected. Please select an organization.");
+          setIsLoading(false);
+          return;
+        }
+
         if (!accountId) {
-          setError("No account selected. Please select an organization.");
+          setError("No account found for this organization.");
           setIsLoading(false);
           return;
         }
@@ -240,7 +253,7 @@ export function useEmailEditor({
     if (templateId) {
       loadTemplate();
     }
-  }, [appId, templateId, accountId]);
+  }, [appId, templateId, accountId, orgLoading, currentOrg]);
 
   /**
    * Save template with current editor state
