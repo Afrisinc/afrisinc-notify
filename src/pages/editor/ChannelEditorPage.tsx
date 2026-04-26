@@ -27,6 +27,7 @@ import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCurrentAccountId } from "@/hooks/useAuth";
+import { useOrg } from "@/contexts/OrgContext";
 import { SmsEditor, type SmsEditorValue } from "@/components/editors/SmsEditor";
 import {
   PushEditor,
@@ -76,6 +77,7 @@ export default function ChannelEditorPage() {
   const { toast } = useToast();
   const { user } = useAuth();
   const accountId = useCurrentAccountId();
+  const { currentOrg, loading: orgLoading } = useOrg();
   const { selectedApp, setSelectedApp } = useAppContext();
 
   const [loading, setLoading] = useState(true);
@@ -100,13 +102,22 @@ export default function ChannelEditorPage() {
       return;
     }
 
+    // Wait for organization context to load
+    if (orgLoading) {
+      return;
+    }
+
     const load = async () => {
       try {
         setLoading(true);
         setError(null);
 
         if (!selectedApp || selectedApp.id !== appId) {
-          const app = await getAppService(appId);
+          const app = await getAppService(
+            appId,
+            accountId ?? undefined,
+            currentOrg?.id,
+          );
           setSelectedApp(app);
         }
 
@@ -115,6 +126,7 @@ export default function ChannelEditorPage() {
             appId,
             templateId,
             accountId,
+            currentOrg?.id,
           );
           const tpl = (data as any)?.template || data;
           // Prefer design_json for full editor state; fall back to parsing content
@@ -143,7 +155,7 @@ export default function ChannelEditorPage() {
       }
     };
     load();
-  }, [appId, templateId, isNew, accountId]);
+  }, [appId, templateId, isNew, accountId, currentOrg?.id, orgLoading]);
 
   /**
    * Save to API.
@@ -179,9 +191,20 @@ export default function ChannelEditorPage() {
       };
 
       if (isNew) {
-        await createAppTemplateService(appId, payload, accountId);
+        await createAppTemplateService(
+          appId,
+          payload,
+          accountId ?? undefined,
+          currentOrg?.id,
+        );
       } else if (templateId) {
-        await updateAppTemplateService(appId, templateId, payload, accountId);
+        await updateAppTemplateService(
+          appId,
+          templateId,
+          payload,
+          accountId ?? undefined,
+          currentOrg?.id,
+        );
       }
 
       toast({

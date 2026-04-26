@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Channel } from "@/components/ui/ChannelBadge";
-import type { AppNotification, AppNotificationsSummary } from "@/services/apps";
+import type { AppNotification, AppNotificationsSummary } from "@/types/apps";
 
 // ── Helpers ─────────────────────────────────────────────────
 
