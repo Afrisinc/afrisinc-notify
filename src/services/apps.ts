@@ -152,18 +152,25 @@ export const getAppService = async (appId: string, accountId?: string, orgId?: s
 
 /**
  * Get app overview with statistics and chart data
- * Includes x-account-id header if provided, or x-organization-id for invited members
+ * Uses new endpoint format: /organizations/:orgId/apps/:appId/overview
  */
 export const getAppOverviewService = async (
   appId: string,
   accountId?: string,
   orgId?: string,
 ) => {
+  // If organization ID is provided, use new endpoint format
+  if (orgId) {
+    const { data } = await getApiClient().get(
+      `/api/organizations/${orgId}/apps/${appId}/overview`,
+    );
+    return data.data as AppOverview;
+  }
+
+  // Otherwise use old format with account ID header (backwards compatibility)
   const config: any = {};
   if (accountId) {
     config.headers = { "x-account-id": accountId };
-  } else if (orgId) {
-    config.headers = { "x-organization-id": orgId };
   }
   const { data } = await getApiClient().get(
     `/api/apps/${appId}/overview`,
@@ -197,13 +204,24 @@ export const deleteAppService = async (appId: string) => {
 
 /**
  * Create app template
- * POST /api/apps/:appId/templates
+ * POST /api/organizations/:orgId/apps/:appId/templates
  */
 export const createAppTemplateService = async (
   appId: string,
   payload: CreateAppTemplatePayload,
   accountId?: string,
+  orgId?: string,
 ) => {
+  // If organization ID is provided, use new endpoint format
+  if (orgId) {
+    const { data } = await getApiClient().post(
+      `/api/organizations/${orgId}/apps/${appId}/templates`,
+      payload,
+    );
+    return data.data;
+  }
+
+  // Otherwise use old format with account ID header (backwards compatibility)
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().post(
     `/api/apps/${appId}/templates`,
@@ -215,18 +233,25 @@ export const createAppTemplateService = async (
 
 /**
  * Get all app templates
- * GET /api/apps/:appId/templates
+ * GET /api/organizations/:orgId/apps/:appId/templates
  */
 export const getAppTemplatesService = async (
   appId: string,
   accountId?: string,
   orgId?: string,
 ) => {
+  // If organization ID is provided, use new endpoint format
+  if (orgId) {
+    const { data } = await getApiClient().get<any>(
+      `/api/organizations/${orgId}/apps/${appId}/templates`,
+    );
+    return data.data as AppTemplatesResponse;
+  }
+
+  // Otherwise use old format with headers (backwards compatibility)
   const config: any = {};
   if (accountId) {
     config.headers = { "x-account-id": accountId };
-  } else if (orgId) {
-    config.headers = { "x-organization-id": orgId };
   }
   const { data } = await getApiClient().get<any>(
     `/api/apps/${appId}/templates`,
@@ -237,7 +262,7 @@ export const getAppTemplatesService = async (
 
 /**
  * Get app template by ID
- * GET /api/apps/:appId/templates/:templateId
+ * GET /api/organizations/:orgId/apps/:appId/templates/:templateId
  */
 export const getAppTemplateService = async (
   appId: string,
@@ -245,11 +270,18 @@ export const getAppTemplateService = async (
   accountId?: string,
   orgId?: string,
 ) => {
+  // If organization ID is provided, use new endpoint format
+  if (orgId) {
+    const { data } = await getApiClient().get<any>(
+      `/api/organizations/${orgId}/apps/${appId}/templates/${templateId}`,
+    );
+    return data.data as AppTemplateResponse;
+  }
+
+  // Otherwise use old format with headers (backwards compatibility)
   const config: any = {};
   if (accountId) {
     config.headers = { "x-account-id": accountId };
-  } else if (orgId) {
-    config.headers = { "x-organization-id": orgId };
   }
   const { data } = await getApiClient().get<any>(
     `/api/apps/${appId}/templates/${templateId}`,
@@ -260,14 +292,25 @@ export const getAppTemplateService = async (
 
 /**
  * Update app template
- * PUT /api/apps/:appId/templates/:templateId
+ * PUT /api/organizations/:orgId/apps/:appId/templates/:templateId
  */
 export const updateAppTemplateService = async (
   appId: string,
   templateId: string,
   payload: Partial<CreateAppTemplatePayload>,
   accountId?: string,
+  orgId?: string,
 ) => {
+  // If organization ID is provided, use new endpoint format
+  if (orgId) {
+    const { data } = await getApiClient().put<any>(
+      `/api/organizations/${orgId}/apps/${appId}/templates/${templateId}`,
+      payload,
+    );
+    return data.data as AppTemplateResponse;
+  }
+
+  // Otherwise use old format with account ID header (backwards compatibility)
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().put<any>(
     `/api/apps/${appId}/templates/${templateId}`,
@@ -279,13 +322,23 @@ export const updateAppTemplateService = async (
 
 /**
  * Delete app template
- * DELETE /api/apps/:appId/templates/:templateId
+ * DELETE /api/organizations/:orgId/apps/:appId/templates/:templateId
  */
 export const deleteAppTemplateService = async (
   appId: string,
   templateId: string,
   accountId?: string,
+  orgId?: string,
 ) => {
+  // If organization ID is provided, use new endpoint format
+  if (orgId) {
+    const { data } = await getApiClient().delete<any>(
+      `/api/organizations/${orgId}/apps/${appId}/templates/${templateId}`,
+    );
+    return data.data;
+  }
+
+  // Otherwise use old format with account ID header (backwards compatibility)
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().delete<any>(
     `/api/apps/${appId}/templates/${templateId}`,
@@ -353,7 +406,7 @@ export interface AppNotificationsResponse {
 
 /**
  * Get app notification logs
- * GET /api/apps/:appId/notifications
+ * GET /api/organizations/:orgId/apps/:appId/notifications
  */
 export const getAppNotificationsService = async (
   appId: string,
@@ -371,12 +424,6 @@ export const getAppNotificationsService = async (
   accountId?: string,
   orgId?: string,
 ) => {
-  const config: any = {};
-  if (accountId) {
-    config.headers = { "x-account-id": accountId };
-  } else if (orgId) {
-    config.headers = { "x-organization-id": orgId };
-  }
   const queryParams = new URLSearchParams();
 
   if (params?.page) queryParams.append("page", params.page.toString());
@@ -391,6 +438,19 @@ export const getAppNotificationsService = async (
 
   const query = queryParams.toString() ? `?${queryParams.toString()}` : "";
 
+  // If organization ID is provided, use new endpoint format
+  if (orgId) {
+    const { data } = await getApiClient().get<any>(
+      `/api/organizations/${orgId}/apps/${appId}/notifications${query}`,
+    );
+    return data.data as AppNotificationsResponse;
+  }
+
+  // Otherwise use old format with headers (backwards compatibility)
+  const config: any = {};
+  if (accountId) {
+    config.headers = { "x-account-id": accountId };
+  }
   const { data } = await getApiClient().get<any>(
     `/api/apps/${appId}/notifications${query}`,
     config,
@@ -433,13 +493,24 @@ export interface CreateApiKeyResponse {
 
 /**
  * Create new API key
- * POST /api/apps/:appId/api-keys
+ * POST /api/organizations/:orgId/apps/:appId/api-keys
  */
 export const createApiKeyService = async (
   appId: string,
   payload: CreateApiKeyPayload,
   accountId?: string,
+  orgId?: string,
 ) => {
+  // If organization ID is provided, use new endpoint format
+  if (orgId) {
+    const { data } = await getApiClient().post<any>(
+      `/api/organizations/${orgId}/apps/${appId}/api-keys`,
+      payload,
+    );
+    return data.data as CreateApiKeyResponse;
+  }
+
+  // Otherwise use old format with account ID header (backwards compatibility)
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().post<any>(
     `/api/apps/${appId}/api-keys`,

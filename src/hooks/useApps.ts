@@ -197,6 +197,7 @@ export function useAppTemplate(
  * Create app template
  */
 export function useCreateAppTemplate() {
+  const { currentOrg } = useOrg();
   const accountId = useCurrentAccountId();
   const queryClient = useQueryClient();
 
@@ -207,7 +208,7 @@ export function useCreateAppTemplate() {
     }: {
       appId: string;
       payload: CreateAppTemplatePayload;
-    }) => createAppTemplateService(appId, payload, accountId ?? undefined),
+    }) => createAppTemplateService(appId, payload, accountId ?? undefined, currentOrg?.id),
     onSuccess: (_data, { appId }) => {
       // Invalidate app templates query to refetch
       queryClient.invalidateQueries({
@@ -221,6 +222,7 @@ export function useCreateAppTemplate() {
  * Update app template
  */
 export function useUpdateAppTemplate() {
+  const { currentOrg } = useOrg();
   const accountId = useCurrentAccountId();
   const queryClient = useQueryClient();
 
@@ -239,6 +241,7 @@ export function useUpdateAppTemplate() {
         templateId,
         payload,
         accountId ?? undefined,
+        currentOrg?.id,
       ),
     onSuccess: (_data, { appId, templateId }) => {
       // Invalidate both specific template and templates list
@@ -256,6 +259,7 @@ export function useUpdateAppTemplate() {
  * Delete app template
  */
 export function useDeleteAppTemplate() {
+  const { currentOrg } = useOrg();
   const accountId = useCurrentAccountId();
   const queryClient = useQueryClient();
 
@@ -266,7 +270,7 @@ export function useDeleteAppTemplate() {
     }: {
       appId: string;
       templateId: string;
-    }) => deleteAppTemplateService(appId, templateId, accountId ?? undefined),
+    }) => deleteAppTemplateService(appId, templateId, accountId ?? undefined, currentOrg?.id),
     onSuccess: (_data, { appId, templateId }) => {
       // Invalidate both specific template and templates list
       queryClient.invalidateQueries({
@@ -321,6 +325,7 @@ export function useAppNotifications(
  * Create API key
  */
 export function useCreateApiKey() {
+  const { currentOrg } = useOrg();
   const accountId = useCurrentAccountId();
   const queryClient = useQueryClient();
 
@@ -331,7 +336,7 @@ export function useCreateApiKey() {
     }: {
       appId: string;
       payload: CreateApiKeyPayload;
-    }) => createApiKeyService(appId, payload, accountId ?? undefined),
+    }) => createApiKeyService(appId, payload, accountId ?? undefined, currentOrg?.id),
     onSuccess: (_data, { appId }) => {
       // Invalidate API keys query to refetch
       queryClient.invalidateQueries({
