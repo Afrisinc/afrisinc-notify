@@ -145,13 +145,15 @@ export function useEmailEditor({
   useEffect(() => {
     const loadTemplate = async () => {
       try {
-        setIsLoading(true);
-        setError(null);
-
         // Wait for organization context to load
         if (orgLoading) {
+          setIsLoading(true);
+          setError(null);
           return;
         }
+
+        setIsLoading(true);
+        setError(null);
 
         if (!currentOrg) {
           setError("No organization selected. Please select an organization.");
