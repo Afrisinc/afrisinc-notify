@@ -287,7 +287,11 @@ export const getWebhookLogsService = async (
 // DELETE APP
 // ──────────────────────────────────────────
 
-export const deleteAppService = async (appId: string, orgId: string, accountId?: string) => {
+export const deleteAppService = async (
+  appId: string,
+  orgId: string,
+  accountId?: string,
+) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().delete<any>(
     `/api/organizations/${orgId}/apps/${appId}`,

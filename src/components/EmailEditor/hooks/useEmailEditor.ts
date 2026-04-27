@@ -185,7 +185,7 @@ export function useEmailEditor({
           const response = await getAppTemplateService(
             appId,
             templateId,
-            currentOrg?.id || '',
+            currentOrg?.id || "",
           );
           template = (response.template || response) as unknown as Record<
             string,

@@ -257,7 +257,6 @@ export function useAppTemplate(
  */
 export function useCreateAppTemplate() {
   const { currentOrg } = useOrg();
-  console.log("Current org if", currentOrg)
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -413,7 +412,12 @@ export function useCreateApiKey() {
       if (!currentOrg?.id) {
         throw new Error("Organization must be selected to create API key");
       }
-      return createApiKeyService(appId, currentOrg.id, payload, accountId ?? undefined);
+      return createApiKeyService(
+        appId,
+        currentOrg.id,
+        payload,
+        accountId ?? undefined,
+      );
     },
     onSuccess: (_data, { appId }) => {
       // Invalidate API keys query to refetch
@@ -440,7 +444,8 @@ export function useApiKeys(appId: string, options?: { enabled?: boolean }) {
       }
       return getApiKeysService(appId, currentOrg.id, accountId ?? undefined);
     },
-    enabled: (options?.enabled ?? true) && !!appId && !!accountId && !!currentOrg?.id,
+    enabled:
+      (options?.enabled ?? true) && !!appId && !!accountId && !!currentOrg?.id,
   });
 }
 
@@ -453,18 +458,12 @@ export function useApiKey(
   keyId: string,
   options?: { enabled?: boolean },
 ) {
-  const { currentOrg } = useOrg();
   const accountId = useCurrentAccountId();
 
   return useQuery({
     queryKey: ["apiKey", appId, keyId, accountId],
-    queryFn: () => {
-      if (!currentOrg?.id) {
-        throw new Error("Organization must be selected to fetch API key");
-      }
-      return getApiKeyService(appId, currentOrg.id, keyId, accountId ?? undefined);
-    },
-    enabled: (options?.enabled ?? true) && !!appId && !!keyId && !!accountId && !!currentOrg?.id,
+    queryFn: () => getApiKeyService(appId, keyId, accountId ?? undefined),
+    enabled: (options?.enabled ?? true) && !!appId && !!keyId && !!accountId,
   });
 }
 
@@ -472,17 +471,12 @@ export function useApiKey(
  * Delete API key
  */
 export function useDeleteApiKey() {
-  const { currentOrg } = useOrg();
   const accountId = useCurrentAccountId();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ appId, keyId }: { appId: string; keyId: string }) => {
-      if (!currentOrg?.id) {
-        throw new Error("Organization must be selected to delete API key");
-      }
-      return deleteApiKeyService(appId, currentOrg.id, keyId, accountId ?? undefined);
-    },
+    mutationFn: ({ appId, keyId }: { appId: string; keyId: string }) =>
+      deleteApiKeyService(appId, keyId, accountId ?? undefined),
     onSuccess: (_data, { appId }) => {
       // Invalidate API keys query to refetch
       queryClient.invalidateQueries({

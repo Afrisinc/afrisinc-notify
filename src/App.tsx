@@ -88,13 +88,6 @@ const App = () => {
     const state = params.get("state");
     const referrer = sessionStorage.getItem("oauth_referrer");
 
-    console.log("OAuth redirect check:", {
-      code: !!code,
-      state: !!state,
-      referrer,
-      pathname: window.location.pathname,
-    });
-
     // If we have OAuth params and a saved referrer, redirect to referrer with params
     if (
       code &&
@@ -102,7 +95,6 @@ const App = () => {
       referrer &&
       !window.location.pathname.includes("settings")
     ) {
-      console.log("Redirecting to referrer with OAuth params:", referrer);
       // Redirect to the referrer page (AppSettings) with OAuth params intact
       // so the GmailSection component can process them
       const redirectUrl = `${referrer}?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`;

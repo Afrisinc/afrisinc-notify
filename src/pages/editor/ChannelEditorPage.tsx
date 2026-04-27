@@ -102,7 +102,11 @@ export default function ChannelEditorPage() {
   useEffect(() => {
     if (!initialOrgId && currentOrg?.id) {
       setInitialOrgId(currentOrg.id);
-    } else if (initialOrgId && currentOrg?.id && initialOrgId !== currentOrg.id) {
+    } else if (
+      initialOrgId &&
+      currentOrg?.id &&
+      initialOrgId !== currentOrg.id
+    ) {
       // Organization changed, redirect to new org's apps
       navigate(`/dashboard/apps`);
     }
@@ -126,10 +130,7 @@ export default function ChannelEditorPage() {
         setError(null);
 
         if (!selectedApp || selectedApp.id !== appId) {
-          const app = await getAppService(
-            appId,
-            currentOrg?.id || '',
-          );
+          const app = await getAppService(appId, currentOrg?.id || "");
           setSelectedApp(app);
         }
 
@@ -137,7 +138,7 @@ export default function ChannelEditorPage() {
           const data = await getAppTemplateService(
             appId,
             templateId,
-            currentOrg?.id || '',
+            currentOrg?.id || "",
           );
           const tpl = (data as any)?.template || data;
           // Prefer design_json for full editor state; fall back to parsing content
@@ -202,17 +203,13 @@ export default function ChannelEditorPage() {
       };
 
       if (isNew) {
-        await createAppTemplateService(
-          appId,
-          payload,
-          currentOrg?.id || '',
-        );
+        await createAppTemplateService(appId, payload, currentOrg?.id || "");
       } else if (templateId) {
         await updateAppTemplateService(
           appId,
           templateId,
           payload,
-          currentOrg?.id || '',
+          currentOrg?.id || "",
         );
       }
 
