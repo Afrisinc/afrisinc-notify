@@ -33,7 +33,11 @@ const EditorPage = () => {
   useEffect(() => {
     if (!initialOrgId && currentOrg?.id) {
       setInitialOrgId(currentOrg.id);
-    } else if (initialOrgId && currentOrg?.id && initialOrgId !== currentOrg.id) {
+    } else if (
+      initialOrgId &&
+      currentOrg?.id &&
+      initialOrgId !== currentOrg.id
+    ) {
       // Organization changed, redirect to new org's apps
       navigate(`/dashboard/apps`);
     }
@@ -55,7 +59,7 @@ const EditorPage = () => {
           setError(null);
 
           // Fetch app to get organization_id
-          const app = await getAppService(appId, currentOrg?.id || '');
+          const app = await getAppService(appId, currentOrg?.id || "");
           setSelectedApp(app);
 
           // Set organization if available
@@ -98,7 +102,7 @@ const EditorPage = () => {
         setError(null);
 
         // Fetch app to get organization_id
-        const app = await getAppService(appId, currentOrg?.id || '');
+        const app = await getAppService(appId, currentOrg?.id || "");
         setSelectedApp(app);
 
         // Set organization if available

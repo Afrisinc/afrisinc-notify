@@ -72,13 +72,14 @@ const StepAccountDetails = ({
       {accountType === "personal" ? (
         <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
           <p className="text-blue-700 dark:text-blue-400 text-sm">
-            Personal account setup complete! You're all set to start using Notify.
+            Personal account setup complete! You're all set to start using
+            Notify.
           </p>
         </div>
       ) : (
         <>
           <div className="space-y-2">
-            <FormInput  
+            <FormInput
               id="organizationName"
               label="Organization Name"
               placeholder="Your company name"

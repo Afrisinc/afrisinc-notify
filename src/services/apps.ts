@@ -280,7 +280,11 @@ export const getAppsByOrganizationDetailsService = async (
  * Get all API keys for an app
  * GET /api/organizations/:orgId/apps/:appId/api-keys
  */
-export const getApiKeysService = async (appId: string, orgId: string, accountId?: string) => {
+export const getApiKeysService = async (
+  appId: string,
+  orgId: string,
+  accountId?: string,
+) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().get<any>(
     `/api/organizations/${orgId}/apps/${appId}/api-keys`,
