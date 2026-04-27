@@ -95,6 +95,19 @@ export default function ChannelEditorPage() {
     ? `/dashboard/apps/${appId}/templates`
     : "/dashboard/templates";
 
+  // Track the initial organization to detect changes
+  const [initialOrgId, setInitialOrgId] = useState<string | null>(null);
+
+  // Redirect to apps list if organization changes
+  useEffect(() => {
+    if (!initialOrgId && currentOrg?.id) {
+      setInitialOrgId(currentOrg.id);
+    } else if (initialOrgId && currentOrg?.id && initialOrgId !== currentOrg.id) {
+      // Organization changed, redirect to new org's apps
+      navigate(`/dashboard/apps`);
+    }
+  }, [currentOrg?.id, initialOrgId, navigate]);
+
   useEffect(() => {
     if (!appId) {
       setError("Missing appId");
@@ -115,8 +128,7 @@ export default function ChannelEditorPage() {
         if (!selectedApp || selectedApp.id !== appId) {
           const app = await getAppService(
             appId,
-            accountId ?? undefined,
-            currentOrg?.id,
+            currentOrg?.id || '',
           );
           setSelectedApp(app);
         }
@@ -125,8 +137,7 @@ export default function ChannelEditorPage() {
           const data = await getAppTemplateService(
             appId,
             templateId,
-            accountId,
-            currentOrg?.id,
+            currentOrg?.id || '',
           );
           const tpl = (data as any)?.template || data;
           // Prefer design_json for full editor state; fall back to parsing content
