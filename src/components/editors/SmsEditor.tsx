@@ -12,7 +12,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
@@ -26,7 +25,6 @@ import {
 import {
   VariableInserter,
   insertVariableAtCursor,
-  extractVariables,
   type TemplateVariable,
 } from "./VariableInserter";
 import { cn } from "@/lib/utils";

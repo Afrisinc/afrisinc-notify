@@ -194,16 +194,14 @@ export default function ChannelEditorPage() {
         await createAppTemplateService(
           appId,
           payload,
-          accountId ?? undefined,
-          currentOrg?.id,
+          currentOrg?.id || '',
         );
       } else if (templateId) {
         await updateAppTemplateService(
           appId,
           templateId,
           payload,
-          accountId ?? undefined,
-          currentOrg?.id,
+          currentOrg?.id || '',
         );
       }
 

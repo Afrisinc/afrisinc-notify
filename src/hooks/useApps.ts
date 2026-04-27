@@ -257,6 +257,7 @@ export function useAppTemplate(
  */
 export function useCreateAppTemplate() {
   const { currentOrg } = useOrg();
+  console.log("Current org if", currentOrg)
   const queryClient = useQueryClient();
 
   return useMutation({
