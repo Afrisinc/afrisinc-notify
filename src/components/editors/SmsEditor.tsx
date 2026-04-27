@@ -12,7 +12,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
@@ -26,7 +25,6 @@ import {
 import {
   VariableInserter,
   insertVariableAtCursor,
-  extractVariables,
   type TemplateVariable,
 } from "./VariableInserter";
 import { cn } from "@/lib/utils";
@@ -43,9 +41,10 @@ function isGSM7(text: string): boolean {
   return true;
 }
 
-function getSmsStats(body: string) {
-  const unicode = !isGSM7(body);
-  const len = body.length;
+function getSmsStats(body: string | undefined) {
+  const bodyStr = body ?? "";
+  const unicode = !isGSM7(bodyStr);
+  const len = bodyStr.length;
   const singleLimit = unicode ? 70 : 160;
   const multiLimit = unicode ? 67 : 153;
   const segments =

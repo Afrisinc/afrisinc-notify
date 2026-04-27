@@ -51,12 +51,13 @@ export function useCreateApp() {
       });
     },
     onSuccess: (_data, variables) => {
-      // Refetch organization apps and general apps list directly
+      // Refetch apps with the specific organization ID
       queryClient.refetchQueries({
-        queryKey: ["organizationApps", variables.orgId],
+        queryKey: ["apps", variables.orgId],
       });
+      // Also refetch the organization apps details
       queryClient.refetchQueries({
-        queryKey: ["apps"],
+        queryKey: ["organizationAppsDetails", variables.orgId],
       });
     },
   });
@@ -143,6 +144,7 @@ export function useAppOverview(
  */
 export function useUpdateApp() {
   const { currentOrg } = useOrg();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({
@@ -157,6 +159,17 @@ export function useUpdateApp() {
       }
       return updateAppService(appId, currentOrg.id, payload);
     },
+    onSuccess: (_data, { appId }) => {
+      // Refetch the specific app and apps list
+      if (currentOrg?.id) {
+        queryClient.refetchQueries({
+          queryKey: ["app", appId, currentOrg.id],
+        });
+        queryClient.refetchQueries({
+          queryKey: ["apps", currentOrg.id],
+        });
+      }
+    },
   });
 }
 
@@ -165,6 +178,7 @@ export function useUpdateApp() {
  */
 export function useDeleteApp() {
   const { currentOrg } = useOrg();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (appId: string) => {
@@ -172,6 +186,18 @@ export function useDeleteApp() {
         throw new Error("Organization must be selected to delete app");
       }
       return deleteAppService(appId, currentOrg.id);
+    },
+    onSuccess: () => {
+      // Refetch apps list after deletion
+      if (currentOrg?.id) {
+        queryClient.refetchQueries({
+          queryKey: ["apps", currentOrg.id],
+        });
+        // Also refetch organization apps details
+        queryClient.refetchQueries({
+          queryKey: ["organizationAppsDetails", currentOrg.id],
+        });
+      }
     },
   });
 }
@@ -231,6 +257,7 @@ export function useAppTemplate(
  */
 export function useCreateAppTemplate() {
   const { currentOrg } = useOrg();
+  console.log("Current org if", currentOrg)
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -371,6 +398,7 @@ export function useAppNotifications(
  * Create API key
  */
 export function useCreateApiKey() {
+  const { currentOrg } = useOrg();
   const accountId = useCurrentAccountId();
   const queryClient = useQueryClient();
 
@@ -381,7 +409,12 @@ export function useCreateApiKey() {
     }: {
       appId: string;
       payload: CreateApiKeyPayload;
-    }) => createApiKeyService(appId, payload, accountId ?? undefined),
+    }) => {
+      if (!currentOrg?.id) {
+        throw new Error("Organization must be selected to create API key");
+      }
+      return createApiKeyService(appId, currentOrg.id, payload, accountId ?? undefined);
+    },
     onSuccess: (_data, { appId }) => {
       // Invalidate API keys query to refetch
       queryClient.invalidateQueries({
@@ -396,12 +429,18 @@ export function useCreateApiKey() {
  * Automatically includes x-account-id header from current organization
  */
 export function useApiKeys(appId: string, options?: { enabled?: boolean }) {
+  const { currentOrg } = useOrg();
   const accountId = useCurrentAccountId();
 
   return useQuery({
     queryKey: ["apiKeys", appId, accountId],
-    queryFn: () => getApiKeysService(appId, accountId ?? undefined),
-    enabled: (options?.enabled ?? true) && !!appId && !!accountId,
+    queryFn: () => {
+      if (!currentOrg?.id) {
+        throw new Error("Organization must be selected to fetch API keys");
+      }
+      return getApiKeysService(appId, currentOrg.id, accountId ?? undefined);
+    },
+    enabled: (options?.enabled ?? true) && !!appId && !!accountId && !!currentOrg?.id,
   });
 }
 
@@ -414,12 +453,18 @@ export function useApiKey(
   keyId: string,
   options?: { enabled?: boolean },
 ) {
+  const { currentOrg } = useOrg();
   const accountId = useCurrentAccountId();
 
   return useQuery({
     queryKey: ["apiKey", appId, keyId, accountId],
-    queryFn: () => getApiKeyService(appId, keyId, accountId ?? undefined),
-    enabled: (options?.enabled ?? true) && !!appId && !!keyId && !!accountId,
+    queryFn: () => {
+      if (!currentOrg?.id) {
+        throw new Error("Organization must be selected to fetch API key");
+      }
+      return getApiKeyService(appId, currentOrg.id, keyId, accountId ?? undefined);
+    },
+    enabled: (options?.enabled ?? true) && !!appId && !!keyId && !!accountId && !!currentOrg?.id,
   });
 }
 
@@ -427,12 +472,17 @@ export function useApiKey(
  * Delete API key
  */
 export function useDeleteApiKey() {
+  const { currentOrg } = useOrg();
   const accountId = useCurrentAccountId();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ appId, keyId }: { appId: string; keyId: string }) =>
-      deleteApiKeyService(appId, keyId, accountId ?? undefined),
+    mutationFn: ({ appId, keyId }: { appId: string; keyId: string }) => {
+      if (!currentOrg?.id) {
+        throw new Error("Organization must be selected to delete API key");
+      }
+      return deleteApiKeyService(appId, currentOrg.id, keyId, accountId ?? undefined);
+    },
     onSuccess: (_data, { appId }) => {
       // Invalidate API keys query to refetch
       queryClient.invalidateQueries({

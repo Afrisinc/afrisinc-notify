@@ -27,6 +27,17 @@ const EditorPage = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [initialOrgId, setInitialOrgId] = useState<string | null>(null);
+
+  // Redirect to apps list if organization changes
+  useEffect(() => {
+    if (!initialOrgId && currentOrg?.id) {
+      setInitialOrgId(currentOrg.id);
+    } else if (initialOrgId && currentOrg?.id && initialOrgId !== currentOrg.id) {
+      // Organization changed, redirect to new org's apps
+      navigate(`/dashboard/apps`);
+    }
+  }, [currentOrg?.id, initialOrgId, navigate]);
 
   // Fetch app if not in context
   useEffect(() => {
@@ -44,8 +55,7 @@ const EditorPage = () => {
           setError(null);
 
           // Fetch app to get organization_id
-          // If we have currentOrg, use it; otherwise use account ID as fallback
-          const app = await getAppService(appId, undefined, currentOrg?.id);
+          const app = await getAppService(appId, currentOrg?.id || '');
           setSelectedApp(app);
 
           // Set organization if available
@@ -88,8 +98,7 @@ const EditorPage = () => {
         setError(null);
 
         // Fetch app to get organization_id
-        // If we have currentOrg, use it; otherwise use account ID as fallback
-        const app = await getAppService(appId, undefined, currentOrg?.id);
+        const app = await getAppService(appId, currentOrg?.id || '');
         setSelectedApp(app);
 
         // Set organization if available

@@ -31,6 +31,7 @@ import {
   type CreateDomainPayload,
 } from "@/services/appSettings";
 import { useCurrentAccountId } from "@/hooks/useAuth";
+import { useOrg } from "@/contexts/OrgContext";
 
 // ──────────────────────────────────────────
 // GET APP SETTINGS
@@ -228,11 +229,16 @@ export function useWebhookLogs(
 // ──────────────────────────────────────────
 
 export function useDeleteApp() {
+  const { currentOrg } = useOrg();
   const accountId = useCurrentAccountId();
 
   return useMutation({
-    mutationFn: (appId: string) =>
-      deleteAppService(appId, accountId ?? undefined),
+    mutationFn: (appId: string) => {
+      if (!currentOrg?.id) {
+        throw new Error("Organization must be selected to delete app");
+      }
+      return deleteAppService(appId, currentOrg.id, accountId ?? undefined);
+    },
   });
 }
 

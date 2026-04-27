@@ -70,6 +70,7 @@ export function OrgProvider({ children }: { children: ReactNode }) {
       const defaultOrg = matchedOrg || organizations[0];
 
       if (defaultOrg && (!currentOrg || currentOrg.id !== defaultOrg.id)) {
+        console.log("Current id in context:", defaultOrg)
         setCurrentOrg(defaultOrg);
         localStorage.setItem("selected_org_id", defaultOrg.id);
       }

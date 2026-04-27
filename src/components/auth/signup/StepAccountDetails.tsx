@@ -78,7 +78,7 @@ const StepAccountDetails = ({
       ) : (
         <>
           <div className="space-y-2">
-            <FormInput
+            <FormInput  
               id="organizationName"
               label="Organization Name"
               placeholder="Your company name"
