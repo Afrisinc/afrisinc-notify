@@ -35,20 +35,15 @@ export type {
 
 /**
  * Create a new app
+ * Uses organization-based endpoint: /organizations/:orgId/apps
  */
 export const createAppService = async (payload: CreateAppPayload) => {
   const { data } = await getApiClient().post(
-    "/api/apps",
+    `/api/organizations/${payload.orgId}/apps`,
     {
       name: payload.name,
-      orgId: payload.orgId,
       environment: payload.environment || "development",
       description: payload.description,
-    },
-    {
-      headers: {
-        "x-account-id": payload.accountId,
-      },
     },
   );
   return data.data;
@@ -56,7 +51,7 @@ export const createAppService = async (payload: CreateAppPayload) => {
 
 /**
  * Get all apps (filtered by organization)
- * Includes x-account-id header if provided, or x-organization-id for invited members
+ * Uses organization-based endpoint: /organizations/:orgId/apps
  */
 export const getAppsService = async (orgId: string) => {
   const { data } = await getApiClient().get(`/api/organizations/${orgId}/apps`);
@@ -243,16 +238,17 @@ export const getAppNotificationsService = async (
 
 /**
  * Create new API key
- * POST /api/apps/:appId/api-keys
+ * POST /api/organizations/:orgId/apps/:appId/api-keys
  */
 export const createApiKeyService = async (
   appId: string,
+  orgId: string,
   payload: CreateApiKeyPayload,
   accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().post<any>(
-    `/api/apps/${appId}/api-keys`,
+    `/api/organizations/${orgId}/apps/${appId}/api-keys`,
     payload,
     config,
   );
@@ -282,12 +278,12 @@ export const getAppsByOrganizationDetailsService = async (
 
 /**
  * Get all API keys for an app
- * GET /api/apps/:appId/api-keys
+ * GET /api/organizations/:orgId/apps/:appId/api-keys
  */
-export const getApiKeysService = async (appId: string, accountId?: string) => {
+export const getApiKeysService = async (appId: string, orgId: string, accountId?: string) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().get<any>(
-    `/api/apps/${appId}/api-keys`,
+    `/api/organizations/${orgId}/apps/${appId}/api-keys`,
     config,
   );
   return data.data as ApiKeysResponse;
@@ -295,16 +291,17 @@ export const getApiKeysService = async (appId: string, accountId?: string) => {
 
 /**
  * Get API key details
- * GET /api/apps/:appId/api-keys/:keyId
+ * GET /api/organizations/:orgId/apps/:appId/api-keys/:keyId
  */
 export const getApiKeyService = async (
   appId: string,
+  orgId: string,
   keyId: string,
   accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().get<any>(
-    `/api/apps/${appId}/api-keys/${keyId}`,
+    `/api/organizations/${orgId}/apps/${appId}/api-keys/${keyId}`,
     config,
   );
   return data.data as ApiKey;
@@ -312,16 +309,17 @@ export const getApiKeyService = async (
 
 /**
  * Delete/revoke API key
- * DELETE /api/apps/:appId/api-keys/:keyId
+ * DELETE /api/organizations/:orgId/apps/:appId/api-keys/:keyId
  */
 export const deleteApiKeyService = async (
   appId: string,
+  orgId: string,
   keyId: string,
   accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().delete<any>(
-    `/api/apps/${appId}/api-keys/${keyId}`,
+    `/api/organizations/${orgId}/apps/${appId}/api-keys/${keyId}`,
     config,
   );
   return data.data;
