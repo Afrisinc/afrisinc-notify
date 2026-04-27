@@ -113,7 +113,7 @@ export interface CreateUserTemplateResponse {
 
 export const listUserTemplatesService = async (
   accountId: string,
-  params?: ListUserTemplatesParams
+  params?: ListUserTemplatesParams,
 ) => {
   const queryParams = new URLSearchParams();
 
@@ -125,7 +125,7 @@ export const listUserTemplatesService = async (
   const config = { headers: { "x-account-id": accountId } };
   const { data } = await getApiClient().get<any>(
     `/api/templates/my-templates${query}`,
-    config
+    config,
   );
   return {
     data: data.data,
@@ -139,12 +139,12 @@ export const listUserTemplatesService = async (
 
 export const getUserTemplateForEditingService = async (
   templateId: string,
-  accountId: string
+  accountId: string,
 ) => {
   const config = { headers: { "x-account-id": accountId } };
   const { data } = await getApiClient().get<any>(
     `/api/templates/${templateId}/edit`,
-    config
+    config,
   );
   return data.data as UserTemplate;
 };
@@ -155,29 +155,29 @@ export const getUserTemplateForEditingService = async (
 
 // Category mapping: Frontend -> Backend
 const categoryMap: Record<string, string> = {
-  "Transactional": "TRANSACTIONAL",
-  "Marketing": "MARKETING",
-  "Authentication": "AUTH",
-  "Security": "AUTH",
+  Transactional: "TRANSACTIONAL",
+  Marketing: "MARKETING",
+  Authentication: "AUTH",
+  Security: "AUTH",
   "E-Commerce": "TRANSACTIONAL",
-  "Alerts": "NOTIFICATION",
+  Alerts: "NOTIFICATION",
 };
 
 export const publishTemplateService = async (
   templateId: string,
   accountId: string,
-  payload?: PublishTemplatePayload | FormData
+  payload?: PublishTemplatePayload | FormData,
 ) => {
   const config = {
     headers: {
       "x-account-id": accountId,
-    }
+    },
   };
 
   console.log("🚀 Publishing template with payload:", {
     templateId,
     accountId,
-    payload
+    payload,
   });
 
   let requestPayload: any;
@@ -196,7 +196,9 @@ export const publishTemplateService = async (
 
     if (payload?.title) requestPayload.title = payload.title;
     if (payload?.description) requestPayload.description = payload.description;
-    if (payload?.category) requestPayload.category = categoryMap[payload.category] || payload.category;
+    if (payload?.category)
+      requestPayload.category =
+        categoryMap[payload.category] || payload.category;
     if (payload?.tags) requestPayload.tags = payload.tags;
 
     // Use previewImageUrl string for data URLs
@@ -221,7 +223,7 @@ export const publishTemplateService = async (
   const { data } = await getApiClient().post<any>(
     `/api/templates/${templateId}/publish`,
     requestPayload,
-    config
+    config,
   );
   return data.data as PublishTemplateResponse;
 };
@@ -232,13 +234,13 @@ export const publishTemplateService = async (
 
 export const createUserTemplateService = async (
   accountId: string,
-  payload: CreateUserTemplatePayload
+  payload: CreateUserTemplatePayload,
 ) => {
   const config = { headers: { "x-account-id": accountId } };
   const { data } = await getApiClient().post<any>(
     `/api/templates`,
     payload,
-    config
+    config,
   );
   return data.data as CreateUserTemplateResponse;
 };
@@ -250,13 +252,13 @@ export const createUserTemplateService = async (
 export const updateUserTemplateService = async (
   templateId: string,
   accountId: string,
-  payload: CreateUserTemplatePayload
+  payload: CreateUserTemplatePayload,
 ) => {
   const config = { headers: { "x-account-id": accountId } };
   const { data } = await getApiClient().put<any>(
     `/api/templates/${templateId}`,
     payload,
-    config
+    config,
   );
   return data.data as CreateUserTemplateResponse;
 };
@@ -267,13 +269,13 @@ export const updateUserTemplateService = async (
 
 export const unpublishTemplateService = async (
   templateId: string,
-  accountId: string
+  accountId: string,
 ) => {
   const config = { headers: { "x-account-id": accountId } };
   const { data } = await getApiClient().put<any>(
     `/api/templates/${templateId}/unpublish`,
     {},
-    config
+    config,
   );
   return data.data as UnpublishTemplateResponse;
 };

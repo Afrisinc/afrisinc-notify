@@ -1,13 +1,13 @@
-import { TEditorConfiguration } from '../../documents/editor/core';
+import { TEditorConfiguration } from "../../documents/editor/core";
 
 const EMPTY_EMAIL_MESSAGE: TEditorConfiguration = {
   root: {
-    type: 'EmailLayout',
+    type: "EmailLayout",
     data: {
-      backdropColor: '#F5F5F5',
-      canvasColor: '#FFFFFF',
-      textColor: '#262626',
-      fontFamily: 'MODERN_SANS',
+      backdropColor: "#F5F5F5",
+      canvasColor: "#FFFFFF",
+      textColor: "#262626",
+      fontFamily: "MODERN_SANS",
       childrenIds: [],
     },
   },

@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-import { Box, Button, SxProps } from '@mui/material';
+import { Box, Button, SxProps } from "@mui/material";
 
 type Props = {
   paletteColors: string[];
@@ -21,20 +21,27 @@ export default function Swatch({ paletteColors, value, onChange }: Props) {
         sx={{
           ...TILE_BUTTON,
           backgroundColor: colorValue,
-          border: '1px solid',
-          borderColor: value === colorValue ? 'black' : 'grey.200',
+          border: "1px solid",
+          borderColor: value === colorValue ? "black" : "grey.200",
           minWidth: 24,
-          display: 'inline-flex',
-          '&:hover': {
+          display: "inline-flex",
+          "&:hover": {
             backgroundColor: colorValue,
-            borderColor: 'grey.500',
+            borderColor: "grey.500",
           },
         }}
       />
     );
   };
   return (
-    <Box width="100%" sx={{ display: 'grid', gap: 1, gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr 1fr' }}>
+    <Box
+      width="100%"
+      sx={{
+        display: "grid",
+        gap: 1,
+        gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr",
+      }}
+    >
       {paletteColors.map((c) => renderButton(c))}
     </Box>
   );

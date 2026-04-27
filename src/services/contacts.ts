@@ -96,7 +96,7 @@ export interface ExportContactsParams {
 export const listContactsService = async (
   appId: string,
   params?: ListContactsParams,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const queryParams = new URLSearchParams();
@@ -106,16 +106,19 @@ export const listContactsService = async (
   if (params?.search) queryParams.append("search", params.search);
   if (params?.status) queryParams.append("status", params.status);
   if (params?.tags) {
-    const tagsStr = Array.isArray(params.tags) ? params.tags.join(",") : params.tags;
+    const tagsStr = Array.isArray(params.tags)
+      ? params.tags.join(",")
+      : params.tags;
     queryParams.append("tags", tagsStr);
   }
-  if (params?.subscribed !== undefined) queryParams.append("subscribed", String(params.subscribed));
+  if (params?.subscribed !== undefined)
+    queryParams.append("subscribed", String(params.subscribed));
 
   const query = queryParams.toString() ? `?${queryParams.toString()}` : "";
 
   const { data } = await getApiClient().get<any>(
     `/api/apps/${appId}/contacts${query}`,
-    config
+    config,
   );
   return data.data as ListContactsResponse;
 };
@@ -127,13 +130,13 @@ export const listContactsService = async (
 export const createContactService = async (
   appId: string,
   payload: CreateContactPayload,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().post<any>(
     `/api/apps/${appId}/contacts`,
     payload,
-    config
+    config,
   );
   return data.data as Contact;
 };
@@ -145,12 +148,12 @@ export const createContactService = async (
 export const getContactService = async (
   appId: string,
   contactId: string,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().get<any>(
     `/api/apps/${appId}/contacts/${contactId}`,
-    config
+    config,
   );
   return data.data as Contact;
 };
@@ -163,13 +166,13 @@ export const updateContactService = async (
   appId: string,
   contactId: string,
   payload: Partial<CreateContactPayload>,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().put<any>(
     `/api/apps/${appId}/contacts/${contactId}`,
     payload,
-    config
+    config,
   );
   return data.data as Contact;
 };
@@ -181,12 +184,12 @@ export const updateContactService = async (
 export const deleteContactService = async (
   appId: string,
   contactId: string,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().delete<any>(
     `/api/apps/${appId}/contacts/${contactId}`,
-    config
+    config,
   );
   return data.data;
 };
@@ -198,13 +201,13 @@ export const deleteContactService = async (
 export const bulkImportContactsService = async (
   appId: string,
   payload: BulkImportPayload,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().post<any>(
     `/api/apps/${appId}/contacts/import`,
     payload,
-    config
+    config,
   );
   return data.data as BulkImportResponse;
 };
@@ -216,7 +219,7 @@ export const bulkImportContactsService = async (
 export const exportContactsService = async (
   appId: string,
   params?: ExportContactsParams,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const queryParams = new URLSearchParams();
@@ -224,11 +227,15 @@ export const exportContactsService = async (
   if (params?.format) queryParams.append("format", params.format);
   if (params?.status) queryParams.append("status", params.status);
   if (params?.tags) {
-    const tagsStr = Array.isArray(params.tags) ? params.tags.join(",") : params.tags;
+    const tagsStr = Array.isArray(params.tags)
+      ? params.tags.join(",")
+      : params.tags;
     queryParams.append("tags", tagsStr);
   }
   if (params?.fields) {
-    const fieldsStr = Array.isArray(params.fields) ? params.fields.join(",") : params.fields;
+    const fieldsStr = Array.isArray(params.fields)
+      ? params.fields.join(",")
+      : params.fields;
     queryParams.append("fields", fieldsStr);
   }
 
@@ -239,7 +246,7 @@ export const exportContactsService = async (
     {
       ...config,
       responseType: "blob",
-    }
+    },
   );
 
   return response.data;
@@ -252,14 +259,16 @@ export const exportContactsService = async (
 export const searchContactsService = async (
   appId: string,
   params: SearchContactsParams,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const queryParams = new URLSearchParams();
 
   queryParams.append("q", params.q);
   if (params?.fields) {
-    const fieldsStr = Array.isArray(params.fields) ? params.fields.join(",") : params.fields;
+    const fieldsStr = Array.isArray(params.fields)
+      ? params.fields.join(",")
+      : params.fields;
     queryParams.append("fields", fieldsStr);
   }
   if (params?.limit) queryParams.append("limit", params.limit.toString());
@@ -268,7 +277,7 @@ export const searchContactsService = async (
 
   const { data } = await getApiClient().get<any>(
     `/api/apps/${appId}/contacts/search${query}`,
-    config
+    config,
   );
   return data.data as SearchContactsResponse;
 };

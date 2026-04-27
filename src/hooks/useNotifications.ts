@@ -46,7 +46,7 @@ export function useSendBulkNotifications() {
         templateId,
         recipients,
         payload,
-        accountId ?? undefined
+        accountId ?? undefined,
       ),
   });
 }
@@ -57,13 +57,14 @@ export function useSendBulkNotifications() {
  */
 export function useNotificationStatus(
   notificationId: string,
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean },
 ) {
   const accountId = useCurrentAccountId();
 
   return useQuery({
     queryKey: ["notificationStatus", notificationId, accountId],
-    queryFn: () => getNotificationStatusService(notificationId, accountId ?? undefined),
+    queryFn: () =>
+      getNotificationStatusService(notificationId, accountId ?? undefined),
     enabled: (options?.enabled ?? true) && !!notificationId && !!accountId,
   });
 }
@@ -79,7 +80,7 @@ export function useNotificationHistory(
     limit?: number;
     offset?: number;
     enabled?: boolean;
-  }
+  },
 ) {
   const accountId = useCurrentAccountId();
 
@@ -98,7 +99,7 @@ export function useNotificationHistory(
         options?.channel,
         options?.limit,
         options?.offset,
-        accountId ?? undefined
+        accountId ?? undefined,
       ),
     enabled: (options?.enabled ?? true) && !!recipient && !!accountId,
   });
@@ -111,7 +112,7 @@ export function useNotificationHistory(
 export function useNotificationStatusPolling(
   notificationId: string,
   pollInterval: number = 2000,
-  options?: { enabled?: boolean; maxAttempts?: number }
+  options?: { enabled?: boolean; maxAttempts?: number },
 ) {
   const accountId = useCurrentAccountId();
   const [attempts, setAttempts] = useState(0);
@@ -121,11 +122,18 @@ export function useNotificationStatusPolling(
     queryKey: ["notificationStatusPoll", notificationId, accountId],
     queryFn: () => {
       setAttempts((prev) => prev + 1);
-      return getNotificationStatusService(notificationId, accountId ?? undefined);
+      return getNotificationStatusService(
+        notificationId,
+        accountId ?? undefined,
+      );
     },
     refetchInterval: (data) => {
       // Stop polling if status is final (sent, failed, etc.) or max attempts reached
-      if (data?.status === "sent" || data?.status === "failed" || attempts >= maxAttempts) {
+      if (
+        data?.status === "sent" ||
+        data?.status === "failed" ||
+        attempts >= maxAttempts
+      ) {
         return false;
       }
       return pollInterval;

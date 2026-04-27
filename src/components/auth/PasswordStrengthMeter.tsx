@@ -6,11 +6,27 @@ interface PasswordStrengthMeterProps {
 }
 
 const REQUIREMENTS = [
-  { key: "length", label: "At least 8 characters", test: (p: string) => p.length >= 8 },
-  { key: "upper", label: "One uppercase letter", test: (p: string) => /[A-Z]/.test(p) },
-  { key: "lower", label: "One lowercase letter", test: (p: string) => /[a-z]/.test(p) },
+  {
+    key: "length",
+    label: "At least 8 characters",
+    test: (p: string) => p.length >= 8,
+  },
+  {
+    key: "upper",
+    label: "One uppercase letter",
+    test: (p: string) => /[A-Z]/.test(p),
+  },
+  {
+    key: "lower",
+    label: "One lowercase letter",
+    test: (p: string) => /[a-z]/.test(p),
+  },
   { key: "number", label: "One number", test: (p: string) => /\d/.test(p) },
-  { key: "special", label: "One special character", test: (p: string) => /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(p) },
+  {
+    key: "special",
+    label: "One special character",
+    test: (p: string) => /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(p),
+  },
 ];
 
 function getStrength(password: string) {
@@ -22,7 +38,10 @@ function getStrength(password: string) {
   return { score: 100, label: "Very Strong", color: "bg-success" };
 }
 
-export function PasswordStrengthMeter({ password, showRequirements = true }: PasswordStrengthMeterProps) {
+export function PasswordStrengthMeter({
+  password,
+  showRequirements = true,
+}: PasswordStrengthMeterProps) {
   const { score, label, color } = getStrength(password);
 
   if (!password) return null;
@@ -37,9 +56,15 @@ export function PasswordStrengthMeter({ password, showRequirements = true }: Pas
           />
         </div>
         {label && (
-          <span className={`text-xs font-medium ml-3 ${
-            score <= 25 ? "text-destructive" : score <= 50 ? "text-warning" : "text-success"
-          }`}>
+          <span
+            className={`text-xs font-medium ml-3 ${
+              score <= 25
+                ? "text-destructive"
+                : score <= 50
+                  ? "text-warning"
+                  : "text-success"
+            }`}
+          >
             {label}
           </span>
         )}
@@ -56,7 +81,11 @@ export function PasswordStrengthMeter({ password, showRequirements = true }: Pas
                 ) : (
                   <X className="h-3 w-3 text-muted-foreground/50" />
                 )}
-                <span className={met ? "text-foreground" : "text-muted-foreground"}>{req.label}</span>
+                <span
+                  className={met ? "text-foreground" : "text-muted-foreground"}
+                >
+                  {req.label}
+                </span>
               </li>
             );
           })}

@@ -1,4 +1,4 @@
-import getApiClient from './apiClient';
+import getApiClient from "./apiClient";
 
 export interface PlanLimit {
   metric: string;
@@ -63,33 +63,46 @@ export const subscriptionService = {
    * Get usage dashboard with all plan limits and current usage
    */
   async getUsageDashboard(accountId?: string): Promise<UsageDashboard> {
-    const config = accountId ? { headers: { 'x-account-id': accountId } } : {};
-    const response = await getClient().get('/api/subscriptions/dashboard/usage', config);
+    const config = accountId ? { headers: { "x-account-id": accountId } } : {};
+    const response = await getClient().get(
+      "/api/subscriptions/dashboard/usage",
+      config,
+    );
     return response.data.data;
   },
 
   /**
    * Get usage breakdown for a specific date range
    */
-  async getUsageBreakdown(accountId?: string, startDate?: string, endDate?: string): Promise<UsageBreakdown> {
+  async getUsageBreakdown(
+    accountId?: string,
+    startDate?: string,
+    endDate?: string,
+  ): Promise<UsageBreakdown> {
     const params = new URLSearchParams();
-    if (startDate) params.append('startDate', startDate);
-    if (endDate) params.append('endDate', endDate);
+    if (startDate) params.append("startDate", startDate);
+    if (endDate) params.append("endDate", endDate);
 
-    const query = params.toString() ? `?${params.toString()}` : '';
-    const config = accountId ? { headers: { 'x-account-id': accountId } } : {};
-    const response = await getClient().get(`/api/subscriptions/dashboard/breakdown${query}`, config);
+    const query = params.toString() ? `?${params.toString()}` : "";
+    const config = accountId ? { headers: { "x-account-id": accountId } } : {};
+    const response = await getClient().get(
+      `/api/subscriptions/dashboard/breakdown${query}`,
+      config,
+    );
     return response.data.data;
   },
 
   /**
    * Check if a feature is available in the current plan
    */
-  async checkFeatureAvailability(feature: string, accountId?: string): Promise<FeatureCheckResult> {
-    const config = accountId ? { headers: { 'x-account-id': accountId } } : {};
+  async checkFeatureAvailability(
+    feature: string,
+    accountId?: string,
+  ): Promise<FeatureCheckResult> {
+    const config = accountId ? { headers: { "x-account-id": accountId } } : {};
     const response = await getClient().get(
       `/api/subscriptions/features/check?feature=${feature}`,
-      config
+      config,
     );
     return response.data.data;
   },
@@ -97,9 +110,14 @@ export const subscriptionService = {
   /**
    * Get upgrade recommendations based on current usage
    */
-  async getUpgradeRecommendations(accountId?: string): Promise<UpgradeRecommendation> {
-    const config = accountId ? { headers: { 'x-account-id': accountId } } : {};
-    const response = await getClient().get('/api/subscriptions/recommendations/upgrade', config);
+  async getUpgradeRecommendations(
+    accountId?: string,
+  ): Promise<UpgradeRecommendation> {
+    const config = accountId ? { headers: { "x-account-id": accountId } } : {};
+    const response = await getClient().get(
+      "/api/subscriptions/recommendations/upgrade",
+      config,
+    );
     return response.data.data;
   },
 
@@ -107,8 +125,8 @@ export const subscriptionService = {
    * Get all available plans
    */
   async getPlans(accountId?: string) {
-    const config = accountId ? { headers: { 'x-account-id': accountId } } : {};
-    const response = await getClient().get('/api/plans', config);
+    const config = accountId ? { headers: { "x-account-id": accountId } } : {};
+    const response = await getClient().get("/api/plans", config);
     return response.data.data;
   },
 
@@ -116,20 +134,31 @@ export const subscriptionService = {
    * Get subscription details
    */
   async getSubscription(accountId?: string) {
-    const config = accountId ? { headers: { 'x-account-id': accountId } } : {};
-    const response = await getClient().get('/api/subscriptions/current', config);
+    const config = accountId ? { headers: { "x-account-id": accountId } } : {};
+    const response = await getClient().get(
+      "/api/subscriptions/current",
+      config,
+    );
     return response.data.data;
   },
 
   /**
    * Upgrade to a new plan
    */
-  async upgradePlan(planName: string, billingCycle: 'monthly' | 'yearly' = 'monthly', accountId?: string) {
-    const config = accountId ? { headers: { 'x-account-id': accountId } } : {};
-    const response = await getClient().post('/api/subscriptions/upgrade', {
-      plan: planName,
-      billing_cycle: billingCycle,
-    }, config);
+  async upgradePlan(
+    planName: string,
+    billingCycle: "monthly" | "yearly" = "monthly",
+    accountId?: string,
+  ) {
+    const config = accountId ? { headers: { "x-account-id": accountId } } : {};
+    const response = await getClient().post(
+      "/api/subscriptions/upgrade",
+      {
+        plan: planName,
+        billing_cycle: billingCycle,
+      },
+      config,
+    );
     return response.data.data;
   },
 };

@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useUserTemplates, usePublishTemplate, useUnpublishTemplate } from "@/hooks/useUserTemplatePublishing";
+import {
+  ChannelSelectorDialog,
+  type TemplateChannel,
+} from "@/components/editors/ChannelSelectorDialog";
+import {
+  useUserTemplates,
+  usePublishTemplate,
+  useUnpublishTemplate,
+} from "@/hooks/useUserTemplatePublishing";
 import { useCurrentAccountId } from "@/hooks/useAuth";
 import { useDeleteTemplate, useDuplicateTemplate } from "@/hooks/useTemplates";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,7 +19,10 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { SelectFilter } from "@/components/ui/select-filter";
 import { MyTemplateCard } from "@/components/MyTemplateCard";
 import { MyTemplateSkeletonGrid } from "@/components/MyTemplateCardSkeleton";
-import { PublishTemplateDialog, type PublishTemplateData } from "@/components/PublishTemplateDialog";
+import {
+  PublishTemplateDialog,
+  type PublishTemplateData,
+} from "@/components/PublishTemplateDialog";
 import { Plus, AlertCircle, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
@@ -25,17 +36,33 @@ export default function MyTemplates() {
   const { toast } = useToast();
 
   const [search, setSearch] = useState("");
-  const [visibilityFilter, setVisibilityFilter] = useState<VisibilityFilter>("all");
+  const [visibilityFilter, setVisibilityFilter] =
+    useState<VisibilityFilter>("all");
   const [publishDialogId, setPublishDialogId] = useState<string | null>(null);
   const [unpublishDialog, setUnpublishDialog] = useState<string | null>(null);
   const [deleteDialog, setDeleteDialog] = useState<string | null>(null);
   const [duplicateDialog, setDuplicateDialog] = useState<string | null>(null);
   const [page, setPage] = useState(1);
+  const [channelSelectorOpen, setChannelSelectorOpen] = useState(false);
+
+  const handleCreateNew = (channel: TemplateChannel) => {
+    setChannelSelectorOpen(false);
+    if (channel === "email") {
+      navigate("/dashboard/templates/new");
+    } else {
+      navigate(`/dashboard/templates/${channel}/new`);
+    }
+  };
 
   // Fetch user templates
-  const { data: templatesResponse, isLoading, error, refetch } = useUserTemplates(
+  const {
+    data: templatesResponse,
+    isLoading,
+    error,
+    refetch,
+  } = useUserTemplates(
     { limit: 10, offset: (page - 1) * 10 },
-    { enabled: !!accountId }
+    { enabled: !!accountId },
   );
 
   // Mutations
@@ -52,7 +79,12 @@ export default function MyTemplates() {
   const filtered = templates.filter((t) => {
     if (visibilityFilter === "published" && !t.isPublic) return false;
     if (visibilityFilter === "private" && t.isPublic) return false;
-    if (search && !t.code.toLowerCase().includes(search.toLowerCase()) && !t.description.toLowerCase().includes(search.toLowerCase())) return false;
+    if (
+      search &&
+      !t.code.toLowerCase().includes(search.toLowerCase()) &&
+      !t.description.toLowerCase().includes(search.toLowerCase())
+    )
+      return false;
     return true;
   });
 
@@ -100,7 +132,8 @@ export default function MyTemplates() {
 
       toast({
         title: "Success",
-        description: "Template published to marketplace! It's now available for other users to discover.",
+        description:
+          "Template published to marketplace! It's now available for other users to discover.",
       });
 
       setPublishDialogId(null);
@@ -108,7 +141,8 @@ export default function MyTemplates() {
     } catch (error) {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to publish template",
+        description:
+          error instanceof Error ? error.message : "Failed to publish template",
         variant: "destructive",
       });
     }
@@ -128,7 +162,10 @@ export default function MyTemplates() {
     } catch (error) {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to unpublish template",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to unpublish template",
         variant: "destructive",
       });
     }
@@ -148,7 +185,8 @@ export default function MyTemplates() {
     } catch (error) {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to delete template",
+        description:
+          error instanceof Error ? error.message : "Failed to delete template",
         variant: "destructive",
       });
     }
@@ -172,11 +210,21 @@ export default function MyTemplates() {
     } catch (error) {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to duplicate template",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to duplicate template",
         variant: "destructive",
       });
     }
   };
+
+  function getEditPath(template: { id: string; channel?: string }) {
+    const ch = (template.channel || "EMAIL").toUpperCase();
+    if (ch === "EMAIL") return `/dashboard/templates/${template.id}`;
+    const slug = ch === "IN_APP" ? "in-app" : ch.toLowerCase();
+    return `/dashboard/templates/${slug}/${template.id}`;
+  }
 
   return (
     <div className="space-y-12 animate-fade-in">
@@ -191,7 +239,9 @@ export default function MyTemplates() {
           My Templates
         </h1>
         <p className="text-base text-content-secondary dark:text-foreground/70 max-w-2xl leading-relaxed">
-          Your hub to build, manage, and monetize notification templates. Publish to the marketplace and earn recognition from thousands of users.
+          Your hub to build, manage, and monetize notification templates.
+          Publish to the marketplace and earn recognition from thousands of
+          users.
         </p>
       </motion.div>
 
@@ -224,7 +274,7 @@ export default function MyTemplates() {
               ]}
             />
             <Button
-              onClick={() => navigate("/dashboard/templates/new")}
+              onClick={() => setChannelSelectorOpen(true)}
               className="gap-2 h-12 rounded-xl bg-primary hover:bg-primary/90 text-white shadow-primary/30 px-6 font-semibold"
             >
               <Plus className="h-5 w-5" /> Create New
@@ -235,8 +285,15 @@ export default function MyTemplates() {
 
       {/* Error State */}
       {error && (
-        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-          <Alert variant="destructive" className="rounded-2xl border-destructive/30 bg-destructive/5 dark:bg-destructive/10 px-6 py-4">
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <Alert
+            variant="destructive"
+            className="rounded-2xl border-destructive/30 bg-destructive/5 dark:bg-destructive/10 px-6 py-4"
+          >
             <AlertCircle className="h-5 w-5 flex-shrink-0" />
             <AlertDescription className="text-sm font-medium">
               Failed to load templates. Please refresh the page or try again.
@@ -262,7 +319,9 @@ export default function MyTemplates() {
               </div>
               <div className="space-y-3 max-w-md mx-auto">
                 <h3 className="text-2xl font-bold text-content dark:text-white leading-tight">
-                  {templates.length === 0 ? "No templates yet" : "No results found"}
+                  {templates.length === 0
+                    ? "No templates yet"
+                    : "No results found"}
                 </h3>
                 <p className="text-base text-content-secondary dark:text-foreground/70 leading-relaxed">
                   {templates.length === 0
@@ -272,7 +331,7 @@ export default function MyTemplates() {
               </div>
               {templates.length === 0 && (
                 <Button
-                  onClick={() => navigate("/dashboard/templates/new")}
+                  onClick={() => setChannelSelectorOpen(true)}
                   className="mt-2 gap-2 h-11 bg-primary hover:bg-primary/90 text-white shadow-primary/30 px-6 font-semibold rounded-xl"
                 >
                   <Plus className="h-4 w-4" /> Create Your First Template
@@ -299,8 +358,8 @@ export default function MyTemplates() {
               >
                 <MyTemplateCard
                   template={template}
-                  onEdit={() => navigate(`/dashboard/templates/${template.id}`)}
-                  onView={() => navigate(`/dashboard/templates/${template.id}`)}
+                  onEdit={() => navigate(getEditPath(template))}
+                  onView={() => navigate(getEditPath(template))}
                   onDuplicate={() => setDuplicateDialog(template.id)}
                   onDelete={() => setDeleteDialog(template.id)}
                   onPublish={() => setPublishDialogId(template.id)}
@@ -329,10 +388,18 @@ export default function MyTemplates() {
                 Previous
               </Button>
               <div className="flex items-center gap-3 px-6 py-2 bg-card/50 dark:bg-slate-800/50 rounded-xl border border-border/20 dark:border-border/40">
-                <span className="text-xs font-bold text-content-secondary dark:text-foreground/60 uppercase tracking-wider">Page</span>
-                <span className="text-base font-bold text-content dark:text-white">{page}</span>
-                <span className="text-xs font-bold text-content-secondary dark:text-foreground/60">of</span>
-                <span className="text-base font-bold text-content dark:text-white">{totalPages}</span>
+                <span className="text-xs font-bold text-content-secondary dark:text-foreground/60 uppercase tracking-wider">
+                  Page
+                </span>
+                <span className="text-base font-bold text-content dark:text-white">
+                  {page}
+                </span>
+                <span className="text-xs font-bold text-content-secondary dark:text-foreground/60">
+                  of
+                </span>
+                <span className="text-base font-bold text-content dark:text-white">
+                  {totalPages}
+                </span>
               </div>
               <Button
                 variant="outline"
@@ -347,6 +414,13 @@ export default function MyTemplates() {
           )}
         </>
       )}
+
+      {/* Channel selector for creating new templates */}
+      <ChannelSelectorDialog
+        open={channelSelectorOpen}
+        onOpenChange={setChannelSelectorOpen}
+        onSelect={handleCreateNew}
+      />
 
       {/* Publish Template Dialog - Professional Flow */}
       <PublishTemplateDialog

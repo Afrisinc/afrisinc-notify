@@ -100,7 +100,9 @@ export function ConfirmDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md bg-surface dark:bg-card border-border">
         <DialogHeader>
-          <DialogTitle className="text-content dark:text-foreground">{title}</DialogTitle>
+          <DialogTitle className="text-content dark:text-foreground">
+            {title}
+          </DialogTitle>
           {description && (
             <DialogDescription className="text-content-secondary dark:text-muted-foreground">
               {description}

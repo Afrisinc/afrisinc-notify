@@ -21,9 +21,7 @@ export function SearchInput({
   const isLarge = size === "lg";
 
   return (
-    <div
-      className={`relative ${isLarge ? "group" : ""} ${className}`}
-    >
+    <div className={`relative ${isLarge ? "group" : ""} ${className}`}>
       <Search
         className={`absolute top-1/2 -translate-y-1/2 flex-shrink-0 ${
           isLarge

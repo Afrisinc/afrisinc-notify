@@ -8,13 +8,29 @@ interface TrustBadge {
 }
 
 const DEFAULT_BADGES: TrustBadge[] = [
-  { icon: <TrendingUp className="h-8 w-8" />, number: "99.9%", label: "API Uptime" },
-  { icon: <Users className="h-8 w-8" />, number: "10K+", label: "Active Users" },
+  {
+    icon: <TrendingUp className="h-8 w-8" />,
+    number: "99.9%",
+    label: "API Uptime",
+  },
+  {
+    icon: <Users className="h-8 w-8" />,
+    number: "10K+",
+    label: "Active Users",
+  },
   { icon: <Shield className="h-8 w-8" />, number: "SOC 2", label: "Certified" },
-  { icon: <Award className="h-8 w-8" />, number: "4.8/5", label: "Average Rating" },
+  {
+    icon: <Award className="h-8 w-8" />,
+    number: "4.8/5",
+    label: "Average Rating",
+  },
 ];
 
-export function TrustBadges({ badges = DEFAULT_BADGES }: { badges?: TrustBadge[] }) {
+export function TrustBadges({
+  badges = DEFAULT_BADGES,
+}: {
+  badges?: TrustBadge[];
+}) {
   return (
     <section className="py-16 border-t border-border/50">
       <div className="container">
@@ -35,8 +51,12 @@ export function TrustBadges({ badges = DEFAULT_BADGES }: { badges?: TrustBadge[]
               className="flex flex-col items-center text-center gap-2 p-4"
             >
               <div className="text-primary">{b.icon}</div>
-              <span className="text-2xl font-bold text-foreground dark:text-white">{b.number}</span>
-              <span className="text-sm text-foreground/70 dark:text-foreground/75">{b.label}</span>
+              <span className="text-2xl font-bold text-foreground dark:text-white">
+                {b.number}
+              </span>
+              <span className="text-sm text-foreground/70 dark:text-foreground/75">
+                {b.label}
+              </span>
             </motion.div>
           ))}
         </motion.div>

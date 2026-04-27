@@ -47,12 +47,16 @@ export function DashboardSidebar() {
 
   const orgNav = [
     { title: "Billing", url: "/dashboard/billing", icon: CreditCard },
-    { 
-      title: currentOrg?.name === "Personal" ? "My Invites" : "Members", 
-      url: "/dashboard/organization/members", 
-      icon: currentOrg?.name === "Personal" ? Mail : Users 
+    {
+      title: currentOrg?.name === "Personal" ? "My Invites" : "Members",
+      url: "/dashboard/organization/members",
+      icon: currentOrg?.name === "Personal" ? Mail : Users,
     },
-    { title: "Settings", url: "/dashboard/organization/settings", icon: Settings },
+    {
+      title: "Settings",
+      url: "/dashboard/organization/settings",
+      icon: Settings,
+    },
   ];
 
   const isActive = (path: string) => {
@@ -65,7 +69,7 @@ export function DashboardSidebar() {
       <SidebarHeader className="p-3">
         {!collapsed && (
           <div className="flex items-center gap-2 px-1 mb-3">
-           <Logo/>
+            <Logo />
           </div>
         )}
         <OrgSwitcher />

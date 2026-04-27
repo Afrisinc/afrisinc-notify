@@ -24,12 +24,19 @@ const FormCountrySelect = forwardRef<HTMLButtonElement, FormCountrySelectProps>(
         {label && <Label className="heading-label">{label}</Label>}
         <div className="relative">
           <Select value={value} onValueChange={onValueChange}>
-            <SelectTrigger ref={ref} className="pl-9 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-50">
+            <SelectTrigger
+              ref={ref}
+              className="pl-9 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-50"
+            >
               <SelectValue placeholder="Select your country" />
             </SelectTrigger>
             <SelectContent className="max-h-64 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-50">
               {COUNTRY_NAMES.map((country) => (
-                <SelectItem key={country} value={country} className="dark:hover:bg-slate-800 dark:focus:bg-slate-800">
+                <SelectItem
+                  key={country}
+                  value={country}
+                  className="dark:hover:bg-slate-800 dark:focus:bg-slate-800"
+                >
                   {country}
                 </SelectItem>
               ))}
@@ -40,7 +47,7 @@ const FormCountrySelect = forwardRef<HTMLButtonElement, FormCountrySelectProps>(
         {error && <p className="text-sm text-destructive">{error}</p>}
       </div>
     );
-  }
+  },
 );
 
 FormCountrySelect.displayName = "FormCountrySelect";

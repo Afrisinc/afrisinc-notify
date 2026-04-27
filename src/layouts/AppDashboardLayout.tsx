@@ -1,7 +1,7 @@
+import { useEffect, useRef } from "react";
 import { useParams, useNavigate, Outlet, useLocation } from "react-router-dom";
-import { organizations } from "@/data/mockData";
+import { useQueryClient } from "@tanstack/react-query";
 import { useOrg } from "@/contexts/OrgContext";
-import { useAppContext } from "@/contexts/AppContext";
 import { useAppData } from "@/hooks/useAppData";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -34,9 +34,12 @@ const appNav = [
 
 const envColor = (env: string) => {
   switch (env) {
-    case "production": return "bg-success/15 text-success border-success/30";
-    case "staging": return "bg-warning/15 text-warning border-warning/30";
-    default: return "bg-muted text-muted-foreground border-border";
+    case "production":
+      return "bg-success/15 text-success border-success/30";
+    case "staging":
+      return "bg-warning/15 text-warning border-warning/30";
+    default:
+      return "bg-muted text-muted-foreground border-border";
   }
 };
 
@@ -46,6 +49,46 @@ export default function AppDashboardLayout() {
   const location = useLocation();
   const { currentOrg, loading: orgLoading } = useOrg();
   const { app, isLoading: appLoading, error } = useAppData(appId);
+  const queryClient = useQueryClient();
+
+  // Track organization to detect switches
+  const prevOrgIdRef = useRef<string | undefined>(currentOrg?.id);
+  const initialErrorRef = useRef<boolean>(false);
+
+  // Update tracking refs when org changes
+  useEffect(() => {
+    if (!orgLoading && currentOrg) {
+      const orgChanged =
+        prevOrgIdRef.current && prevOrgIdRef.current !== currentOrg.id;
+      prevOrgIdRef.current = currentOrg.id;
+
+      if (orgChanged && appId) {
+        // Mark that we're waiting for a refetch after org switch
+        initialErrorRef.current = false;
+        // Invalidate the app query to force refetch for new organization
+        queryClient.invalidateQueries({
+          queryKey: ["app", appId],
+        });
+      }
+    }
+  }, [currentOrg?.id, appId, queryClient, orgLoading]);
+
+  // Handle errors - redirect if app doesn't exist in current organization
+  useEffect(() => {
+    if (!appLoading && error && appId && currentOrg) {
+      // Check if this is an error from a fresh org switch
+      const orgSwitched =
+        !initialErrorRef.current && prevOrgIdRef.current === currentOrg.id;
+
+      if (orgSwitched) {
+        // App not found/unauthorized in new org - redirect silently
+        navigate("/dashboard/apps", { replace: true });
+      } else {
+        // Mark that we've seen an error (for initial load)
+        initialErrorRef.current = true;
+      }
+    }
+  }, [error, appLoading, appId, currentOrg, navigate]);
 
   // Wait for organization to load
   if (orgLoading || !currentOrg) {
@@ -75,7 +118,11 @@ export default function AppDashboardLayout() {
         <h2 className="text-lg font-medium text-foreground">
           {error instanceof Error ? error.message : "App not found"}
         </h2>
-        <Button variant="outline" className="mt-4" onClick={() => navigate("/dashboard/apps")}>
+        <Button
+          variant="outline"
+          className="mt-4"
+          onClick={() => navigate("/dashboard/apps")}
+        >
           Back to Apps
         </Button>
       </div>
@@ -90,32 +137,62 @@ export default function AppDashboardLayout() {
       {/* ── Top Header ── */}
       <div className="flex flex-col gap-4 mb-6">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => navigate("/dashboard/apps")}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 shrink-0"
+            onClick={() => navigate("/dashboard/apps")}
+          >
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2.5 flex-wrap">
-              <h1 className="text-xl font-semibold text-foreground truncate">{app.name}</h1>
-              <Badge variant="outline" className={cn("text-[10px] px-2 py-0.5 font-medium border", envColor(app.environment))}>
+              <h1 className="text-xl font-semibold text-foreground truncate">
+                {app.name}
+              </h1>
+              <Badge
+                variant="outline"
+                className={cn(
+                  "text-[10px] px-2 py-0.5 font-medium border",
+                  envColor(app.environment),
+                )}
+              >
                 {app.environment}
               </Badge>
             </div>
-            <p className="text-xs text-muted-foreground mt-0.5">{currentOrg.name} · {app.description || "No description"}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {currentOrg.name} · {app.description || "No description"}
+            </p>
           </div>
         </div>
 
         {/* Quick Actions */}
         <div className="flex items-center gap-2 flex-wrap">
-          <Button size="sm" onClick={() => navigate(`${basePath}/notifications/send`)}>
+          <Button
+            size="sm"
+            onClick={() => navigate(`${basePath}/notifications/send`)}
+          >
             <Send className="h-3.5 w-3.5 mr-1.5" /> Send Notification
           </Button>
-          <Button variant="outline" size="sm" onClick={() => navigate(`${basePath}/contacts`)}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate(`${basePath}/contacts`)}
+          >
             <Upload className="h-3.5 w-3.5 mr-1.5" /> Import Contacts
           </Button>
-          <Button variant="outline" size="sm" onClick={() => navigate(`${basePath}/templates`)}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate(`${basePath}/templates`)}
+          >
             <Plus className="h-3.5 w-3.5 mr-1.5" /> Create Template
           </Button>
-          <Button variant="outline" size="sm" onClick={() => navigate(`${basePath}/api-keys`)}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate(`${basePath}/api-keys`)}
+          >
             <Key className="h-3.5 w-3.5 mr-1.5" /> API Keys
           </Button>
         </div>
@@ -124,16 +201,19 @@ export default function AppDashboardLayout() {
       {/* ── Secondary Navigation ── */}
       <div className="flex items-center gap-1 border-b border-border mb-6 overflow-x-auto pb-px">
         {appNav.map((item) => {
-          const isActive = currentSub === item.path || (item.path === "" && currentSub === "");
+          const isActive =
+            currentSub === item.path || (item.path === "" && currentSub === "");
           return (
             <button
               key={item.path}
-              onClick={() => navigate(item.path ? `${basePath}/${item.path}` : basePath)}
+              onClick={() =>
+                navigate(item.path ? `${basePath}/${item.path}` : basePath)
+              }
               className={cn(
                 "flex items-center gap-1.5 px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors border-b-2 -mb-px",
                 isActive
                   ? "border-primary text-primary"
-                  : "border-transparent text-muted-foreground dark:text-text-content-secondary hover:text-foreground dark:hover:text-foreground hover:border-border"
+                  : "border-transparent text-muted-foreground dark:text-text-content-secondary hover:text-foreground dark:hover:text-foreground hover:border-border",
               )}
             >
               <item.icon className="h-3.5 w-3.5" />

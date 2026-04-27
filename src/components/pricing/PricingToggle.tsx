@@ -6,10 +6,16 @@ interface PricingToggleProps {
   savingsPercent?: number;
 }
 
-export function PricingToggle({ value, onChange, savingsPercent = 20 }: PricingToggleProps) {
+export function PricingToggle({
+  value,
+  onChange,
+  savingsPercent = 20,
+}: PricingToggleProps) {
   return (
     <div className="flex items-center justify-center gap-3">
-      <span className={`text-sm font-medium ${value === "monthly" ? "text-foreground dark:text-white" : "text-muted-foreground dark:text-foreground/60"}`}>
+      <span
+        className={`text-sm font-medium ${value === "monthly" ? "text-foreground dark:text-white" : "text-muted-foreground dark:text-foreground/60"}`}
+      >
         Monthly
       </span>
       <button
@@ -26,11 +32,16 @@ export function PricingToggle({ value, onChange, savingsPercent = 20 }: PricingT
           }`}
         />
       </button>
-      <span className={`text-sm font-medium ${value === "annual" ? "text-foreground dark:text-white" : "text-muted-foreground dark:text-foreground/60"}`}>
+      <span
+        className={`text-sm font-medium ${value === "annual" ? "text-foreground dark:text-white" : "text-muted-foreground dark:text-foreground/60"}`}
+      >
         Annual
       </span>
       {value === "annual" && (
-        <Badge variant="secondary" className="text-xs bg-success/10 text-success border-success/20">
+        <Badge
+          variant="secondary"
+          className="text-xs bg-success/10 text-success border-success/20"
+        >
           Save {savingsPercent}%
         </Badge>
       )}

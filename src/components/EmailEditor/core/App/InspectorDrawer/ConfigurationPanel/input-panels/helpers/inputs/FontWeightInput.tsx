@@ -1,15 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-import { ToggleButton } from '@mui/material';
+import { ToggleButton } from "@mui/material";
 
-import RadioGroupInput from './RadioGroupInput';
+import RadioGroupInput from "./RadioGroupInput";
 
 type Props = {
   label: string;
   defaultValue: string;
   onChange: (value: string) => void;
 };
-export default function FontWeightInput({ label, defaultValue, onChange }: Props) {
+export default function FontWeightInput({
+  label,
+  defaultValue,
+  onChange,
+}: Props) {
   const [value, setValue] = useState(defaultValue);
   return (
     <RadioGroupInput

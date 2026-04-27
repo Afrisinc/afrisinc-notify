@@ -16,7 +16,8 @@ const VerifyEmail = () => {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
   const { mutate } = useVerifyEmail();
-  const { mutate: resendMutate, isPending: isResending } = useResendVerificationEmail();
+  const { mutate: resendMutate, isPending: isResending } =
+    useResendVerificationEmail();
   const { toast } = useToast();
 
   const token = searchParams.get("token");
@@ -36,7 +37,9 @@ const VerifyEmail = () => {
           setMessage("Your email has been verified successfully.");
         } else {
           setState("error");
-          setMessage(res.resp_msg || "Verification failed. The link may have expired.");
+          setMessage(
+            res.resp_msg || "Verification failed. The link may have expired.",
+          );
         }
       },
       onError: () => {
@@ -51,81 +54,99 @@ const VerifyEmail = () => {
       <BackgroundDecorator />
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8">
-          <Logo/>
+          <Logo />
           <h1 className="heading-subsection">Email Verification</h1>
         </div>
 
         <AuthCard>
           <div className="text-center space-y-4">
             {state === "idle" && (
-            <>
-              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto">
-                <Mail className="w-8 h-8 icon-muted" />
-              </div>
-              <h2 className="heading-label">Check your inbox</h2>
-              <p className="text-secondary text-sm">
-                We sent you a verification link. Click it to activate your account.
-              </p>
-              <p className="text-secondary text-sm">
-                Didn't receive it? Check your spam folder or request a new one.      
-              </p>
-              <Button 
-                variant="default" 
-                className="w-full" 
-                type="button" 
-                disabled={isResending || !emailParam}
-                onClick={() => {
-                  if (!emailParam) return;
-                  resendMutate(emailParam, {
-                    onSuccess: () => {
-                      toast({ title: "Email sent", description: "A new verification email has been sent." });
-                    },
-                    onError: (error: any) => {
-                      const msg = error.response?.data?.resp_msg || "Failed to resend verification email.";
-                      toast({ title: "Error", description: msg, variant: "destructive" });
-                    }
-                  });
-                }}
-              >
-                {isResending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
-                {isResending ? "Sending..." : "Resend Verification Email"}
-              </Button>
-            </>
-          )}
+              <>
+                <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto">
+                  <Mail className="w-8 h-8 icon-muted" />
+                </div>
+                <h2 className="heading-label">Check your inbox</h2>
+                <p className="text-secondary text-sm">
+                  We sent you a verification link. Click it to activate your
+                  account.
+                </p>
+                <p className="text-secondary text-sm">
+                  Didn't receive it? Check your spam folder or request a new
+                  one.
+                </p>
+                <Button
+                  variant="default"
+                  className="w-full"
+                  type="button"
+                  disabled={isResending || !emailParam}
+                  onClick={() => {
+                    if (!emailParam) return;
+                    resendMutate(emailParam, {
+                      onSuccess: () => {
+                        toast({
+                          title: "Email sent",
+                          description:
+                            "A new verification email has been sent.",
+                        });
+                      },
+                      onError: (error: any) => {
+                        const msg =
+                          error.response?.data?.resp_msg ||
+                          "Failed to resend verification email.";
+                        toast({
+                          title: "Error",
+                          description: msg,
+                          variant: "destructive",
+                        });
+                      },
+                    });
+                  }}
+                >
+                  {isResending ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : null}
+                  {isResending ? "Sending..." : "Resend Verification Email"}
+                </Button>
+              </>
+            )}
 
-          {state === "loading" && (
-            <>
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                <Loader2 className="w-8 h-8 text-primary animate-spin" />
-              </div>
-              <h2 className="heading-label">Verifying your email...</h2>
-            </>
-          )}
+            {state === "loading" && (
+              <>
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                  <Loader2 className="w-8 h-8 text-primary animate-spin" />
+                </div>
+                <h2 className="heading-label">Verifying your email...</h2>
+              </>
+            )}
 
-          {state === "success" && (
-            <>
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                <CheckCircle className="w-8 h-8 text-primary" />
-              </div>
-              <h2 className="heading-label">Email verified!</h2>
-              <p className="text-secondary text-sm">{message}</p>
-              <Button variant="default" className="w-full mt-2" onClick={() => navigate("/login")}>
-                Sign In
-              </Button>
-            </>
-          )}
+            {state === "success" && (
+              <>
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                  <CheckCircle className="w-8 h-8 text-primary" />
+                </div>
+                <h2 className="heading-label">Email verified!</h2>
+                <p className="text-secondary text-sm">{message}</p>
+                <Button
+                  variant="default"
+                  className="w-full mt-2"
+                  onClick={() => navigate("/login")}
+                >
+                  Sign In
+                </Button>
+              </>
+            )}
 
-          {state === "error" && (
-            <>
-              <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto">
-                <XCircle className="w-8 h-8 text-destructive" />
-              </div>
-              <h2 className="heading-label">Verification failed</h2>
-              <p className="text-secondary text-sm">{message}</p>
-              <Button variant="outline" className="w-full mt-2" asChild>
-                <Link to="/forgot-password">Request a new link</Link>
-              </Button>
-            </>
+            {state === "error" && (
+              <>
+                <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto">
+                  <XCircle className="w-8 h-8 text-destructive" />
+                </div>
+                <h2 className="heading-label">Verification failed</h2>
+                <p className="text-secondary text-sm">{message}</p>
+                <Button variant="outline" className="w-full mt-2" asChild>
+                  <Link to="/forgot-password">Request a new link</Link>
+                </Button>
+              </>
             )}
           </div>
         </AuthCard>

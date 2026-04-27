@@ -10,7 +10,12 @@ interface StepAccountTypeProps {
   onBack: () => void;
 }
 
-const options: { type: AccountType; title: string; description: string; icon: typeof User }[] = [
+const options: {
+  type: AccountType;
+  title: string;
+  description: string;
+  icon: typeof User;
+}[] = [
   {
     type: "personal",
     title: "Personal Account",
@@ -25,7 +30,12 @@ const options: { type: AccountType; title: string; description: string; icon: ty
   },
 ];
 
-const StepAccountType = ({ selected, onSelect, onNext, onBack }: StepAccountTypeProps) => {
+const StepAccountType = ({
+  selected,
+  onSelect,
+  onNext,
+  onBack,
+}: StepAccountTypeProps) => {
   return (
     <div className="space-y-5">
       <p className="heading-label text-center">How will you use Nofiyr?</p>
@@ -41,9 +51,13 @@ const StepAccountType = ({ selected, onSelect, onNext, onBack }: StepAccountType
             }`}
           >
             <CardContent className="flex items-center gap-4 p-4">
-              <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${
-                selected === type ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-              }`}>
+              <div
+                className={`flex h-10 w-10 items-center justify-center rounded-lg ${
+                  selected === type
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-muted-foreground"
+                }`}
+              >
                 <Icon className="h-5 w-5" />
               </div>
               <div>
@@ -55,10 +69,21 @@ const StepAccountType = ({ selected, onSelect, onNext, onBack }: StepAccountType
         ))}
       </div>
       <div className="flex gap-3">
-        <Button type="button" variant="primary-light" className="flex-1" onClick={onBack}>
+        <Button
+          type="button"
+          variant="primary-light"
+          className="flex-1"
+          onClick={onBack}
+        >
           ← Back
         </Button>
-        <Button type="button" variant="default" className="flex-1" disabled={!selected} onClick={onNext}>
+        <Button
+          type="button"
+          variant="default"
+          className="flex-1"
+          disabled={!selected}
+          onClick={onNext}
+        >
           Continue →
         </Button>
       </div>

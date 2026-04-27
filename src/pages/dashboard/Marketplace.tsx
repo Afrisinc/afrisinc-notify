@@ -65,11 +65,31 @@ const priceOptions = [
   { id: "paid", label: "Paid" },
 ];
 
-const sortOptions: { value: SortOption; label: string; icon: React.ReactNode }[] = [
-  { value: "trending", label: "Trending Now", icon: <Flame className="h-4 w-4 text-orange-500" /> },
-  { value: "rating", label: "Highest Rated", icon: <Award className="h-4 w-4 text-primary" /> },
-  { value: "popular", label: "Most Popular", icon: <TrendingUp className="h-4 w-4 text-green-500" /> },
-  { value: "newest", label: "Just Added", icon: <Clock className="h-4 w-4 text-blue-500" /> },
+const sortOptions: {
+  value: SortOption;
+  label: string;
+  icon: React.ReactNode;
+}[] = [
+  {
+    value: "trending",
+    label: "Trending Now",
+    icon: <Flame className="h-4 w-4 text-orange-500" />,
+  },
+  {
+    value: "rating",
+    label: "Highest Rated",
+    icon: <Award className="h-4 w-4 text-primary" />,
+  },
+  {
+    value: "popular",
+    label: "Most Popular",
+    icon: <TrendingUp className="h-4 w-4 text-green-500" />,
+  },
+  {
+    value: "newest",
+    label: "Just Added",
+    icon: <Clock className="h-4 w-4 text-blue-500" />,
+  },
 ];
 
 const ITEMS_PER_PAGE = 12;
@@ -83,13 +103,17 @@ export default function Marketplace() {
   const [channelFilter, setChannelFilter] = useState<ChannelFilter>("all");
   const [priceFilter, setPriceFilter] = useState<PriceFilter>("all");
   const [sortBy, setSortBy] = useState<SortOption>("trending");
-  const [installTemplate, setInstallTemplate] = useState<MarketplaceTemplate | null>(null);
-  const [previewTemplate, setPreviewTemplate] = useState<MarketplaceTemplate | null>(null);
+  const [installTemplate, setInstallTemplate] =
+    useState<MarketplaceTemplate | null>(null);
+  const [previewTemplate, setPreviewTemplate] =
+    useState<MarketplaceTemplate | null>(null);
   const [selectedAppId, setSelectedAppId] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [allLoadedTemplates, setAllLoadedTemplates] = useState<MarketplaceTemplate[]>([]);
+  const [allLoadedTemplates, setAllLoadedTemplates] = useState<
+    MarketplaceTemplate[]
+  >([]);
 
   // Use real API if available, fallback to mock data
   let templates: MarketplaceTemplate[] = [];
@@ -97,7 +121,11 @@ export default function Marketplace() {
   let error: Error | null = null;
   let totalCount = 0;
 
-  const { data: templatesResponse, isLoading: apiLoading, error: apiError } = useMarketplaceTemplates({
+  const {
+    data: templatesResponse,
+    isLoading: apiLoading,
+    error: apiError,
+  } = useMarketplaceTemplates({
     search: search || undefined,
     channel: channelFilter !== "all" ? channelFilter : undefined,
     price: priceFilter !== "all" ? priceFilter : undefined,
@@ -127,9 +155,12 @@ export default function Marketplace() {
         !search ||
         tpl.name.toLowerCase().includes(search.toLowerCase()) ||
         tpl.description.toLowerCase().includes(search.toLowerCase()) ||
-        tpl.tags.some((tag) => tag.toLowerCase().includes(search.toLowerCase()));
+        tpl.tags.some((tag) =>
+          tag.toLowerCase().includes(search.toLowerCase()),
+        );
 
-      const matchesChannel = channelFilter === "all" || tpl.channel === channelFilter;
+      const matchesChannel =
+        channelFilter === "all" || tpl.channel === channelFilter;
       const matchesPrice =
         priceFilter === "all" ||
         (priceFilter === "free" && tpl.price === 0) ||
@@ -146,7 +177,9 @@ export default function Marketplace() {
         case "popular":
           return b.downloads - a.downloads;
         case "newest":
-          return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+          return (
+            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+          );
         case "trending":
         default:
           return b.installs - a.installs;
@@ -184,7 +217,7 @@ export default function Marketplace() {
       setCurrentPage(1);
       setAllLoadedTemplates([]);
     },
-    []
+    [],
   );
 
   const hasMoreTemplates = currentPage * ITEMS_PER_PAGE < totalCount;
@@ -208,7 +241,8 @@ export default function Marketplace() {
     } catch (err) {
       toast({
         title: "Error",
-        description: err instanceof Error ? err.message : "Failed to install template",
+        description:
+          err instanceof Error ? err.message : "Failed to install template",
         variant: "destructive",
       });
     }
@@ -228,12 +262,16 @@ export default function Marketplace() {
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
               <Sparkles className="h-5 w-5 text-primary" />
-              <h1 className="text-3xl font-bold text-content dark:text-white">Marketplace</h1>
+              <h1 className="text-3xl font-bold text-content dark:text-white">
+                Marketplace
+              </h1>
             </div>
           </div>
         </div>
         <p className="text-base text-content-secondary dark:text-foreground/70 leading-relaxed max-w-2xl font-medium">
-          Pick templates built for real-world use. Every one includes dark mode, mobile layouts, and full variable support. Install to any app in seconds.
+          Pick templates built for real-world use. Every one includes dark mode,
+          mobile layouts, and full variable support. Install to any app in
+          seconds.
         </p>
       </motion.div>
 
@@ -274,9 +312,7 @@ export default function Marketplace() {
 
         {/* Desktop Filters / Mobile Expanded */}
         <div
-          className={`space-y-5 ${
-            showFilters ? "block" : "hidden lg:block"
-          }`}
+          className={`space-y-5 ${showFilters ? "block" : "hidden lg:block"}`}
         >
           {/* Row 1: Channel Filter */}
           <div className="space-y-3">
@@ -286,7 +322,9 @@ export default function Marketplace() {
             <OptionButtons
               options={channelOptions}
               selected={channelFilter}
-              onSelect={(id) => handleFilterChange(setChannelFilter, id as ChannelFilter)}
+              onSelect={(id) =>
+                handleFilterChange(setChannelFilter, id as ChannelFilter)
+              }
               variant="channel"
               size="md"
               shape="pill"
@@ -303,7 +341,9 @@ export default function Marketplace() {
               <OptionButtons
                 options={priceOptions}
                 selected={priceFilter}
-                onSelect={(id) => handleFilterChange(setPriceFilter, id as PriceFilter)}
+                onSelect={(id) =>
+                  handleFilterChange(setPriceFilter, id as PriceFilter)
+                }
                 variant="pricing"
                 size="md"
                 shape="pill"
@@ -315,7 +355,12 @@ export default function Marketplace() {
               <Label className="text-xs font-bold text-content-secondary uppercase tracking-wider">
                 Sort By
               </Label>
-              <Select value={sortBy} onValueChange={(value) => handleFilterChange(setSortBy, value as SortOption)}>
+              <Select
+                value={sortBy}
+                onValueChange={(value) =>
+                  handleFilterChange(setSortBy, value as SortOption)
+                }
+              >
                 <SelectTrigger className="h-10 text-xs border-border/40 bg-card rounded-lg hover:border-primary/40 transition-colors focus:ring-primary/40">
                   <SelectValue />
                 </SelectTrigger>
@@ -339,9 +384,13 @@ export default function Marketplace() {
               Results
             </p>
             <div className="flex items-center gap-2">
-              <span className="text-2xl font-bold text-primary">{filteredAndSortedTemplates.length}</span>
+              <span className="text-2xl font-bold text-primary">
+                {filteredAndSortedTemplates.length}
+              </span>
               <p className="text-xs text-content-secondary font-medium">
-                {filteredAndSortedTemplates.length === 1 ? "template" : "templates"}
+                {filteredAndSortedTemplates.length === 1
+                  ? "template"
+                  : "templates"}
               </p>
             </div>
           </div>
@@ -382,9 +431,12 @@ export default function Marketplace() {
               >
                 <Store className="h-16 w-16 text-primary/30" />
               </motion.div>
-              <h3 className="text-lg font-bold text-content mb-2">No templates found</h3>
+              <h3 className="text-lg font-bold text-content mb-2">
+                No templates found
+              </h3>
               <p className="text-sm text-content-secondary mb-6 max-w-sm mx-auto">
-                Try different keywords, or explore our full gallery with all channels and price points.
+                Try different keywords, or explore our full gallery with all
+                channels and price points.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Button
@@ -418,7 +470,8 @@ export default function Marketplace() {
                       if (!userApps.length) {
                         toast({
                           title: "No apps",
-                          description: "Create an app first to install templates.",
+                          description:
+                            "Create an app first to install templates.",
                           variant: "destructive",
                         });
                         return;
@@ -462,7 +515,10 @@ export default function Marketplace() {
       </motion.div>
 
       {/* Install Dialog - Premium Design with Dark Mode */}
-      <Dialog open={!!installTemplate} onOpenChange={(o) => !o && setInstallTemplate(null)}>
+      <Dialog
+        open={!!installTemplate}
+        onOpenChange={(o) => !o && setInstallTemplate(null)}
+      >
         <DialogContent className="max-w-md rounded-2xl">
           {/* Header with accent line */}
           <div className="space-y-1 pb-4 border-b border-border/20 dark:border-border/40">
@@ -492,7 +548,11 @@ export default function Marketplace() {
                 <Alert className="bg-primary/8 dark:bg-primary/15 border-primary/30 dark:border-primary/40 rounded-xl">
                   <TrendingUp className="h-5 w-5 text-primary dark:text-primary/90" />
                   <AlertDescription className="text-content dark:text-white font-medium">
-                    Premium template • <span className="font-bold text-primary dark:text-primary/90 text-lg">${installTemplate.price}</span> one-time
+                    Premium template •{" "}
+                    <span className="font-bold text-primary dark:text-primary/90 text-lg">
+                      ${installTemplate.price}
+                    </span>{" "}
+                    one-time
                   </AlertDescription>
                 </Alert>
               </motion.div>
@@ -517,7 +577,10 @@ export default function Marketplace() {
                 Select Destination App
               </Label>
               {userApps.length === 0 ? (
-                <Alert variant="destructive" className="rounded-xl dark:bg-red-500/15 dark:border-red-500/40">
+                <Alert
+                  variant="destructive"
+                  className="rounded-xl dark:bg-red-500/15 dark:border-red-500/40"
+                >
                   <AlertCircle className="h-4 w-4 dark:text-red-400" />
                   <AlertDescription className="text-sm dark:text-red-300">
                     Create an app first, then install templates to it.
@@ -530,11 +593,17 @@ export default function Marketplace() {
                   </SelectTrigger>
                   <SelectContent className="rounded-xl dark:bg-slate-800 dark:border-border/50">
                     {userApps.map((app) => (
-                      <SelectItem key={app.id} value={app.id} className="py-2 dark:text-white dark:focus:bg-slate-700">
+                      <SelectItem
+                        key={app.id}
+                        value={app.id}
+                        className="py-2 dark:text-white dark:focus:bg-slate-700"
+                      >
                         <div className="flex items-center gap-2">
                           <div className="h-2 w-2 rounded-full bg-primary" />
                           <span className="font-medium">{app.name}</span>
-                          <span className="text-xs text-muted-foreground dark:text-foreground/60">({app.environment})</span>
+                          <span className="text-xs text-muted-foreground dark:text-foreground/60">
+                            ({app.environment})
+                          </span>
                         </div>
                       </SelectItem>
                     ))}
@@ -553,7 +622,9 @@ export default function Marketplace() {
                   {installTemplate.features.slice(0, 3).map((feature, idx) => (
                     <div key={idx} className="flex items-start gap-2.5">
                       <div className="h-2 w-2 rounded-full bg-primary dark:bg-primary/90 mt-1.5 flex-shrink-0" />
-                      <p className="text-sm text-content-secondary dark:text-foreground/75 font-medium">{feature}</p>
+                      <p className="text-sm text-content-secondary dark:text-foreground/75 font-medium">
+                        {feature}
+                      </p>
                     </div>
                   ))}
                   {installTemplate.features.length > 3 && (
@@ -579,7 +650,11 @@ export default function Marketplace() {
                 variant="premium-action"
                 size="default"
                 onClick={handleInstall}
-                disabled={!selectedAppId || installMutation.isPending || userApps.length === 0}
+                disabled={
+                  !selectedAppId ||
+                  installMutation.isPending ||
+                  userApps.length === 0
+                }
                 className="flex-1"
               >
                 {installMutation.isPending ? (

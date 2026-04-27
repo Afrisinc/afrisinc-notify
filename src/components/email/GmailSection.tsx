@@ -1,24 +1,30 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   useEmailProvider,
   useGmailOAuthUrl,
   useSaveGmailOAuthCallback,
   useSetGmailAppPassword,
   useResetEmailProvider,
-} from '@/hooks/useAppSettings';
-import { useToast } from '@/hooks/use-toast';
-import { getErrorMessage } from '@/lib/utils';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Skeleton } from '@/components/ui/skeleton';
+} from "@/hooks/useAppSettings";
+import { useToast } from "@/hooks/use-toast";
+import { getErrorMessage } from "@/lib/utils";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,48 +35,67 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { Mail, Trash2, Loader, LogIn, ExternalLink, AlertCircle } from 'lucide-react';
+} from "@/components/ui/alert-dialog";
+import {
+  Mail,
+  Trash2,
+  Loader,
+  LogIn,
+  ExternalLink,
+  AlertCircle,
+} from "lucide-react";
 
 interface EmailSectionProps {
   appId: string;
 }
 
-type Step = 'list' | 'connect' | 'connected';
+type Step = "list" | "connect" | "connected";
 
 export function GmailSection({ appId }: EmailSectionProps) {
   const { toast } = useToast();
-  const [step, setStep] = useState<Step>('list');
-  const [authMethod, setAuthMethod] = useState<'oauth2' | 'app_password'>('oauth2');
-  const [appPassword, setAppPassword] = useState('');
-  const [appPasswordEmail, setAppPasswordEmail] = useState('');
+  const [step, setStep] = useState<Step>("list");
+  const [authMethod, setAuthMethod] = useState<"oauth2" | "app_password">(
+    "oauth2",
+  );
+  const [appPassword, setAppPassword] = useState("");
+  const [appPasswordEmail, setAppPasswordEmail] = useState("");
   const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
 
   // Queries and mutations
-  const { data: emailProvider, isLoading: configLoading } = useEmailProvider(appId);
+  const { data: emailProvider, isLoading: configLoading } =
+    useEmailProvider(appId);
   const getOAuthUrlMutation = useGmailOAuthUrl();
   const saveOAuthCallbackMutation = useSaveGmailOAuthCallback();
   const saveAppPasswordMutation = useSetGmailAppPassword();
   const resetProviderMutation = useResetEmailProvider();
 
   // Check if Gmail is configured
-  const gmailConfig = emailProvider?.provider === 'gmail' ? emailProvider : null;
+  const gmailConfig =
+    emailProvider?.provider === "gmail" ? emailProvider : null;
 
   // Check for OAuth callback parameters on mount
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const code = params.get('code');
-    const state = params.get('state');
+    const code = params.get("code");
+    const state = params.get("state");
 
-    console.log('GmailSection - OAuth params check:', { code: !!code, state: !!state, url: window.location.search });
+    console.log("GmailSection - OAuth params check:", {
+      code: !!code,
+      state: !!state,
+      url: window.location.search,
+    });
 
     // Process callback if code and state exist and no other OAuth params in URL (to prevent re-triggering)
-    if (code && state && !window.location.search.includes('oauth_processed')) {
-      console.log('GmailSection - Processing OAuth callback');
+    if (code && state && !window.location.search.includes("oauth_processed")) {
+      console.log("GmailSection - Processing OAuth callback");
       // Mark as processed to prevent re-triggering
       const newParams = new URLSearchParams(window.location.search);
-      newParams.append('oauth_processed', 'true');
-      window.history.replaceState({}, document.title, `?${newParams.toString()}`);
+      newParams.append("oauth_processed", "true");
+      window.history.replaceState(
+        {},
+        document.title,
+        `?${newParams.toString()}`,
+      );
 
       handleOAuthCallback(code, state);
     }
@@ -79,9 +104,9 @@ export function GmailSection({ appId }: EmailSectionProps) {
   // Update step based on config status
   useEffect(() => {
     if (gmailConfig) {
-      setStep('connected');
-    } else if (step === 'connected') {
-      setStep('list');
+      setStep("connected");
+    } else if (step === "connected") {
+      setStep("list");
     }
   }, [gmailConfig]);
 
@@ -89,20 +114,20 @@ export function GmailSection({ appId }: EmailSectionProps) {
     try {
       const result = await getOAuthUrlMutation.mutateAsync({ appId });
       // Store state and referrer in sessionStorage for verification and redirect
-      sessionStorage.setItem('oauth_state', result.state);
+      sessionStorage.setItem("oauth_state", result.state);
       // Store clean referrer without OAuth params
       const url = new URL(window.location.href);
-      url.searchParams.delete('code');
-      url.searchParams.delete('state');
-      url.searchParams.delete('oauth_processed');
-      sessionStorage.setItem('oauth_referrer', url.pathname + url.search);
+      url.searchParams.delete("code");
+      url.searchParams.delete("state");
+      url.searchParams.delete("oauth_processed");
+      sessionStorage.setItem("oauth_referrer", url.pathname + url.search);
       // Redirect to Google's OAuth consent screen
       window.location.href = result.url;
     } catch (error) {
       toast({
-        title: 'Error',
-        description: getErrorMessage(error, 'Failed to initiate OAuth'),
-        variant: 'destructive',
+        title: "Error",
+        description: getErrorMessage(error, "Failed to initiate OAuth"),
+        variant: "destructive",
       });
     }
   };
@@ -110,28 +135,32 @@ export function GmailSection({ appId }: EmailSectionProps) {
   const handleOAuthCallback = async (code: string, state: string) => {
     try {
       // Verify state token for CSRF protection
-      const savedState = sessionStorage.getItem('oauth_state');
+      const savedState = sessionStorage.getItem("oauth_state");
       if (savedState !== state) {
-        throw new Error('Invalid state token - potential CSRF attack');
+        throw new Error("Invalid state token - potential CSRF attack");
       }
 
-      console.log('GmailSection - Calling OAuth callback with:', { appId, code: !!code, state: !!state });
+      console.log("GmailSection - Calling OAuth callback with:", {
+        appId,
+        code: !!code,
+        state: !!state,
+      });
       const result = await saveOAuthCallbackMutation.mutateAsync({
         appId,
         payload: { code, state },
       });
-      console.log('GmailSection - OAuth callback result:', result);
+      console.log("GmailSection - OAuth callback result:", result);
 
       // Get referrer page, default to home
-      const referrer = sessionStorage.getItem('oauth_referrer') || '/';
+      const referrer = sessionStorage.getItem("oauth_referrer") || "/";
 
       // Clear sessionStorage
-      sessionStorage.removeItem('oauth_state');
-      sessionStorage.removeItem('oauth_referrer');
+      sessionStorage.removeItem("oauth_state");
+      sessionStorage.removeItem("oauth_referrer");
 
       toast({
-        title: 'Success',
-        description: 'Gmail account connected successfully!',
+        title: "Success",
+        description: "Gmail account connected successfully!",
       });
 
       // Wait a moment for database to commit, then redirect
@@ -139,11 +168,11 @@ export function GmailSection({ appId }: EmailSectionProps) {
         window.location.href = referrer;
       }, 1000);
     } catch (error) {
-      console.error('OAuth callback error:', error);
+      console.error("OAuth callback error:", error);
       toast({
-        title: 'Error',
-        description: getErrorMessage(error, 'Failed to connect Gmail'),
-        variant: 'destructive',
+        title: "Error",
+        description: getErrorMessage(error, "Failed to connect Gmail"),
+        variant: "destructive",
       });
     }
   };
@@ -151,9 +180,9 @@ export function GmailSection({ appId }: EmailSectionProps) {
   const handleSaveAppPassword = async () => {
     if (!appPasswordEmail || !appPassword) {
       toast({
-        title: 'Error',
-        description: 'Email and app password are required',
-        variant: 'destructive',
+        title: "Error",
+        description: "Email and app password are required",
+        variant: "destructive",
       });
       return;
     }
@@ -167,19 +196,19 @@ export function GmailSection({ appId }: EmailSectionProps) {
         },
       });
 
-      setAppPassword('');
-      setAppPasswordEmail('');
+      setAppPassword("");
+      setAppPasswordEmail("");
 
       toast({
-        title: 'Success',
-        description: 'Gmail app password configured successfully!',
+        title: "Success",
+        description: "Gmail app password configured successfully!",
       });
     } catch (error) {
-      console.error('Error saving app password:', error);
+      console.error("Error saving app password:", error);
       toast({
-        title: 'Error',
-        description: getErrorMessage(error, 'Failed to save app password'),
-        variant: 'destructive',
+        title: "Error",
+        description: getErrorMessage(error, "Failed to save app password"),
+        variant: "destructive",
       });
     }
   };
@@ -189,14 +218,14 @@ export function GmailSection({ appId }: EmailSectionProps) {
       await resetProviderMutation.mutateAsync({ appId });
       setShowRemoveConfirm(false);
       toast({
-        title: 'Success',
-        description: 'Gmail configuration removed',
+        title: "Success",
+        description: "Gmail configuration removed",
       });
     } catch (error) {
       toast({
-        title: 'Error',
-        description: getErrorMessage(error, 'Failed to remove Gmail config'),
-        variant: 'destructive',
+        title: "Error",
+        description: getErrorMessage(error, "Failed to remove Gmail config"),
+        variant: "destructive",
       });
     }
   };
@@ -209,7 +238,9 @@ export function GmailSection({ appId }: EmailSectionProps) {
           <CardTitle className="text-base flex items-center gap-2">
             <Mail className="h-4 w-4" /> Gmail
           </CardTitle>
-          <CardDescription>Send emails through your Gmail account.</CardDescription>
+          <CardDescription>
+            Send emails through your Gmail account.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <Skeleton className="h-10 w-full" />
@@ -220,23 +251,29 @@ export function GmailSection({ appId }: EmailSectionProps) {
   }
 
   // Not connected - show empty state
-  if (step === 'list') {
+  if (step === "list") {
     return (
       <Card className="border-border/60">
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
             <Mail className="h-4 w-4" /> Gmail
           </CardTitle>
-          <CardDescription>Send emails through your Gmail account.</CardDescription>
+          <CardDescription>
+            Send emails through your Gmail account.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8 space-y-4">
             <Mail className="h-12 w-12 icon-muted mx-auto" />
             <div>
-              <h3 className="text-sm font-medium text-content mb-1">No Gmail account connected</h3>
-              <p className="text-sm text-content-secondary">Connect your Gmail account to send emails through it.</p>
+              <h3 className="text-sm font-medium text-content mb-1">
+                No Gmail account connected
+              </h3>
+              <p className="text-sm text-content-secondary">
+                Connect your Gmail account to send emails through it.
+              </p>
             </div>
-            <Button onClick={() => setStep('connect')}>
+            <Button onClick={() => setStep("connect")}>
               <LogIn className="h-4 w-4 mr-2" /> Connect Gmail
             </Button>
           </div>
@@ -246,15 +283,22 @@ export function GmailSection({ appId }: EmailSectionProps) {
   }
 
   // Connect - show authentication options
-  if (step === 'connect') {
+  if (step === "connect") {
     return (
       <Card className="border-border/60">
         <CardHeader>
           <CardTitle className="text-base">Connect Gmail Account</CardTitle>
-          <CardDescription>Choose how to authenticate with Gmail.</CardDescription>
+          <CardDescription>
+            Choose how to authenticate with Gmail.
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs value={authMethod} onValueChange={(value) => setAuthMethod(value as 'oauth2' | 'app_password')}>
+          <Tabs
+            value={authMethod}
+            onValueChange={(value) =>
+              setAuthMethod(value as "oauth2" | "app_password")
+            }
+          >
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="oauth2">OAuth2 (Recommended)</TabsTrigger>
               <TabsTrigger value="app_password">App Password</TabsTrigger>
@@ -265,13 +309,15 @@ export function GmailSection({ appId }: EmailSectionProps) {
               <Alert className="bg-blue-50 border-blue-200">
                 <AlertCircle className="h-4 w-4 text-blue-600" />
                 <AlertDescription className="text-blue-800">
-                  OAuth2 is the most secure method. Google will ask for your permission once.
+                  OAuth2 is the most secure method. Google will ask for your
+                  permission once.
                 </AlertDescription>
               </Alert>
 
               <div className="space-y-3">
                 <p className="text-sm text-gray-600">
-                  Click the button below to sign in with your Google account. You'll be redirected to Google's login page.
+                  Click the button below to sign in with your Google account.
+                  You'll be redirected to Google's login page.
                 </p>
                 <Button
                   onClick={handleOAuthConnect}
@@ -298,7 +344,8 @@ export function GmailSection({ appId }: EmailSectionProps) {
               <Alert className="bg-yellow-50 border-yellow-200">
                 <AlertCircle className="h-4 w-4 text-yellow-600" />
                 <AlertDescription className="text-yellow-800">
-                  Requires 2-factor authentication enabled on your Google Account.{' '}
+                  Requires 2-factor authentication enabled on your Google
+                  Account.{" "}
                   <a
                     href="https://support.google.com/accounts/answer/185833"
                     target="_blank"
@@ -325,23 +372,32 @@ export function GmailSection({ appId }: EmailSectionProps) {
                 </div>
 
                 <div>
-                  <Label htmlFor="app-password">16-Character App Password</Label>
+                  <Label htmlFor="app-password">
+                    16-Character App Password
+                  </Label>
                   <Input
                     id="app-password"
                     type="password"
                     placeholder="xxxx xxxx xxxx xxxx"
                     value={appPassword}
-                    onChange={(e) => setAppPassword(e.target.value.replace(/\s/g, ''))}
+                    onChange={(e) =>
+                      setAppPassword(e.target.value.replace(/\s/g, ""))
+                    }
                     disabled={saveAppPasswordMutation.isPending}
                   />
                   <p className="text-xs text-gray-500 mt-1">
-                    Find this in Google Account Settings → Security → App passwords
+                    Find this in Google Account Settings → Security → App
+                    passwords
                   </p>
                 </div>
 
                 <Button
                   onClick={handleSaveAppPassword}
-                  disabled={saveAppPasswordMutation.isPending || !appPasswordEmail || !appPassword}
+                  disabled={
+                    saveAppPasswordMutation.isPending ||
+                    !appPasswordEmail ||
+                    !appPassword
+                  }
                   className="w-full"
                 >
                   {saveAppPasswordMutation.isPending ? (
@@ -350,7 +406,7 @@ export function GmailSection({ appId }: EmailSectionProps) {
                       Saving...
                     </>
                   ) : (
-                    'Save App Password'
+                    "Save App Password"
                   )}
                 </Button>
               </div>
@@ -361,7 +417,7 @@ export function GmailSection({ appId }: EmailSectionProps) {
 
           <Button
             variant="outline"
-            onClick={() => setStep('list')}
+            onClick={() => setStep("list")}
             className="w-full"
           >
             Cancel
@@ -372,7 +428,7 @@ export function GmailSection({ appId }: EmailSectionProps) {
   }
 
   // Connected - show current config
-  if (step === 'connected' && gmailConfig) {
+  if (step === "connected" && gmailConfig) {
     const expiryDate = gmailConfig.oauthTokenExpiry
       ? new Date(gmailConfig.oauthTokenExpiry).toLocaleDateString()
       : null;
@@ -385,7 +441,9 @@ export function GmailSection({ appId }: EmailSectionProps) {
               <CardTitle className="text-base flex items-center gap-2">
                 <Mail className="h-4 w-4" /> Gmail
               </CardTitle>
-              <CardDescription className="mt-1">{gmailConfig.gmailEmail}</CardDescription>
+              <CardDescription className="mt-1">
+                {gmailConfig.gmailEmail}
+              </CardDescription>
             </div>
             <Badge variant="default">Connected</Badge>
           </div>
@@ -395,16 +453,19 @@ export function GmailSection({ appId }: EmailSectionProps) {
           <Alert className="bg-success/10 border-success/30">
             <Mail className="h-4 w-4 text-success" />
             <AlertDescription className="text-success">
-              Emails will be sent from <span className="font-medium">{gmailConfig.gmailEmail}</span>
+              Emails will be sent from{" "}
+              <span className="font-medium">{gmailConfig.gmailEmail}</span>
             </AlertDescription>
           </Alert>
 
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span className="text-gray-600">Authentication Method</span>
-              <Badge variant="secondary">{gmailConfig.method === 'oauth2' ? 'OAuth2' : 'App Password'}</Badge>
+              <Badge variant="secondary">
+                {gmailConfig.method === "oauth2" ? "OAuth2" : "App Password"}
+              </Badge>
             </div>
-            {expiryDate && gmailConfig.method === 'oauth2' && (
+            {expiryDate && gmailConfig.method === "oauth2" && (
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-600">Token Expires</span>
                 <span className="text-gray-900">{expiryDate}</span>
@@ -414,9 +475,15 @@ export function GmailSection({ appId }: EmailSectionProps) {
 
           <Separator />
 
-          <AlertDialog open={showRemoveConfirm} onOpenChange={setShowRemoveConfirm}>
+          <AlertDialog
+            open={showRemoveConfirm}
+            onOpenChange={setShowRemoveConfirm}
+          >
             <AlertDialogTrigger asChild>
-              <Button variant="outline" className="text-destructive hover:text-destructive w-full">
+              <Button
+                variant="outline"
+                className="text-destructive hover:text-destructive w-full"
+              >
                 <Trash2 className="h-4 w-4 mr-2" /> Disconnect Gmail
               </Button>
             </AlertDialogTrigger>
@@ -424,7 +491,8 @@ export function GmailSection({ appId }: EmailSectionProps) {
               <AlertDialogHeader>
                 <AlertDialogTitle>Disconnect Gmail?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This will remove Gmail as your email provider. Emails will use other configured providers.
+                  This will remove Gmail as your email provider. Emails will use
+                  other configured providers.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -434,7 +502,9 @@ export function GmailSection({ appId }: EmailSectionProps) {
                   disabled={resetProviderMutation.isPending}
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                 >
-                  {resetProviderMutation.isPending ? 'Removing...' : 'Disconnect'}
+                  {resetProviderMutation.isPending
+                    ? "Removing..."
+                    : "Disconnect"}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-import { IosShareOutlined } from '@mui/icons-material';
-import { IconButton, Snackbar, Tooltip } from '@mui/material';
+import { IosShareOutlined } from "@mui/icons-material";
+import { IconButton, Snackbar, Tooltip } from "@mui/material";
 
-import { useDocument } from '../../documents/editor/EditorContext';
+import { useDocument } from "../../documents/editor/EditorContext";
 
 export default function ShareButton() {
   const document = useDocument();
@@ -12,7 +12,7 @@ export default function ShareButton() {
   const onClick = async () => {
     const c = encodeURIComponent(JSON.stringify(document));
     location.hash = `#code/${btoa(c)}`;
-    setMessage('The URL was updated. Copy it to share your current template.');
+    setMessage("The URL was updated. Copy it to share your current template.");
   };
 
   const onClose = () => {
@@ -27,7 +27,7 @@ export default function ShareButton() {
         </Tooltip>
       </IconButton>
       <Snackbar
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
         open={message !== null}
         onClose={onClose}
         message={message}

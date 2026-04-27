@@ -16,11 +16,16 @@ import {
   getApiKeysService,
   getApiKeyService,
   deleteApiKeyService,
-  type CreateAppPayload,
-  type CreateAppTemplatePayload,
-  type CreateApiKeyPayload,
+  getAppsByOrganizationDetailsService,
 } from "@/services/apps";
+import type {
+  CreateAppPayload,
+  CreateAppTemplatePayload,
+  CreateApiKeyPayload,
+  OrganizationAppsDetailsResponse,
+} from "@/types/apps";
 import { useUser } from "@/contexts/UserContext";
+import { useOrg } from "@/contexts/OrgContext";
 import { useCurrentAccountId } from "@/hooks/useAuth";
 
 /**
@@ -59,35 +64,46 @@ export function useCreateApp() {
 
 /**
  * Get all apps
- * Automatically includes x-account-id header from current organization
+ * Uses organization ID to fetch apps for all organization members
+ * Requires organization to be selected
  */
 export function useApps(options?: { enabled?: boolean }) {
-  const accountId = useCurrentAccountId();
+  const { currentOrg } = useOrg();
 
   return useQuery({
-    queryKey: ["apps", accountId],
-    queryFn: () => getAppsService(accountId ?? undefined),
-    enabled: (options?.enabled ?? true) && !!accountId,
+    queryKey: ["apps", currentOrg?.id],
+    queryFn: () => {
+      if (!currentOrg?.id) {
+        throw new Error("Organization must be selected to fetch apps");
+      }
+      return getAppsService(currentOrg.id);
+    },
+    enabled: (options?.enabled ?? true) && !!currentOrg?.id,
   });
 }
 
 /**
  * Get single app by ID
- * Automatically includes x-account-id header from current organization
+ * Uses organization ID to fetch app
  */
 export function useApp(appId: string, options?: { enabled?: boolean }) {
-  const accountId = useCurrentAccountId();
+  const { currentOrg } = useOrg();
 
   return useQuery({
-    queryKey: ["app", appId, accountId],
-    queryFn: () => getAppService(appId, accountId ?? undefined),
-    enabled: (options?.enabled ?? true) && !!appId && !!accountId,
+    queryKey: ["app", appId, currentOrg?.id],
+    queryFn: () => {
+      if (!currentOrg?.id) {
+        throw new Error("Organization must be selected to fetch app");
+      }
+      return getAppService(appId, currentOrg.id);
+    },
+    enabled: (options?.enabled ?? true) && !!appId && !!currentOrg?.id,
   });
 }
 
 /**
  * Get app overview with statistics and chart data
- * Automatically includes x-account-id header from current organization
+ * Uses organization ID to fetch app overview
  * Supports filtering by date range and channels
  */
 export function useAppOverview(
@@ -97,24 +113,28 @@ export function useAppOverview(
     endDate?: string;
     channels?: string[];
   },
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean },
 ) {
-  const accountId = useCurrentAccountId();
+  const { currentOrg } = useOrg();
 
   return useQuery({
-    queryKey: ["appOverview", appId, accountId, params],
+    queryKey: ["appOverview", appId, currentOrg?.id, params],
     queryFn: () => {
+      if (!currentOrg?.id) {
+        throw new Error("Organization must be selected to fetch app overview");
+      }
+
       const queryParams = new URLSearchParams();
       if (params?.startDate) queryParams.append("startDate", params.startDate);
       if (params?.endDate) queryParams.append("endDate", params.endDate);
-      if (params?.channels?.length) queryParams.append("channels", params.channels.join(","));
+      if (params?.channels?.length)
+        queryParams.append("channels", params.channels.join(","));
 
-      const query = queryParams.toString();
-      const url = query ? `${appId}?${query}` : appId;
+      const query = queryParams.toString() ? `?${queryParams.toString()}` : "";
 
-      return getAppOverviewService(url, accountId ?? undefined);
+      return getAppOverviewService(`${appId}${query}`, currentOrg.id);
     },
-    enabled: (options?.enabled ?? true) && !!appId && !!accountId,
+    enabled: (options?.enabled ?? true) && !!appId && !!currentOrg?.id,
   });
 }
 
@@ -122,9 +142,21 @@ export function useAppOverview(
  * Update app
  */
 export function useUpdateApp() {
+  const { currentOrg } = useOrg();
+
   return useMutation({
-    mutationFn: ({ appId, payload }: { appId: string; payload: Partial<CreateAppPayload> }) =>
-      updateAppService(appId, payload),
+    mutationFn: ({
+      appId,
+      payload,
+    }: {
+      appId: string;
+      payload: Partial<CreateAppPayload>;
+    }) => {
+      if (!currentOrg?.id) {
+        throw new Error("Organization must be selected to update app");
+      }
+      return updateAppService(appId, currentOrg.id, payload);
+    },
   });
 }
 
@@ -132,8 +164,15 @@ export function useUpdateApp() {
  * Delete app
  */
 export function useDeleteApp() {
+  const { currentOrg } = useOrg();
+
   return useMutation({
-    mutationFn: (appId: string) => deleteAppService(appId),
+    mutationFn: (appId: string) => {
+      if (!currentOrg?.id) {
+        throw new Error("Organization must be selected to delete app");
+      }
+      return deleteAppService(appId, currentOrg.id);
+    },
   });
 }
 
@@ -143,29 +182,47 @@ export function useDeleteApp() {
 
 /**
  * Get all app templates
- * Automatically includes x-account-id header from current organization
+ * Uses organization ID to fetch templates
  */
-export function useAppTemplates(appId: string, options?: { enabled?: boolean }) {
-  const accountId = useCurrentAccountId();
+export function useAppTemplates(
+  appId: string,
+  options?: { enabled?: boolean },
+) {
+  const { currentOrg } = useOrg();
 
   return useQuery({
-    queryKey: ["appTemplates", appId, accountId],
-    queryFn: () => getAppTemplatesService(appId, accountId ?? undefined),
-    enabled: (options?.enabled ?? true) && !!appId && !!accountId,
+    queryKey: ["appTemplates", appId, currentOrg?.id],
+    queryFn: () => {
+      if (!currentOrg?.id) {
+        throw new Error("Organization must be selected to fetch templates");
+      }
+      return getAppTemplatesService(appId, currentOrg.id);
+    },
+    enabled: (options?.enabled ?? true) && !!appId && !!currentOrg?.id,
   });
 }
 
 /**
  * Get single app template by ID
- * Automatically includes x-account-id header from current organization
+ * Uses organization ID to fetch template
  */
-export function useAppTemplate(appId: string, templateId: string, options?: { enabled?: boolean }) {
-  const accountId = useCurrentAccountId();
+export function useAppTemplate(
+  appId: string,
+  templateId: string,
+  options?: { enabled?: boolean },
+) {
+  const { currentOrg } = useOrg();
 
   return useQuery({
-    queryKey: ["appTemplate", appId, templateId, accountId],
-    queryFn: () => getAppTemplateService(appId, templateId, accountId ?? undefined),
-    enabled: (options?.enabled ?? true) && !!appId && !!templateId && !!accountId,
+    queryKey: ["appTemplate", appId, templateId, currentOrg?.id],
+    queryFn: () => {
+      if (!currentOrg?.id) {
+        throw new Error("Organization must be selected to fetch template");
+      }
+      return getAppTemplateService(appId, templateId, currentOrg.id);
+    },
+    enabled:
+      (options?.enabled ?? true) && !!appId && !!templateId && !!currentOrg?.id,
   });
 }
 
@@ -173,12 +230,22 @@ export function useAppTemplate(appId: string, templateId: string, options?: { en
  * Create app template
  */
 export function useCreateAppTemplate() {
-  const accountId = useCurrentAccountId();
+  const { currentOrg } = useOrg();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ appId, payload }: { appId: string; payload: CreateAppTemplatePayload }) =>
-      createAppTemplateService(appId, payload, accountId ?? undefined),
+    mutationFn: ({
+      appId,
+      payload,
+    }: {
+      appId: string;
+      payload: CreateAppTemplatePayload;
+    }) => {
+      if (!currentOrg?.id) {
+        throw new Error("Organization must be selected to create template");
+      }
+      return createAppTemplateService(appId, payload, currentOrg.id);
+    },
     onSuccess: (_data, { appId }) => {
       // Invalidate app templates query to refetch
       queryClient.invalidateQueries({
@@ -192,7 +259,7 @@ export function useCreateAppTemplate() {
  * Update app template
  */
 export function useUpdateAppTemplate() {
-  const accountId = useCurrentAccountId();
+  const { currentOrg } = useOrg();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -204,7 +271,17 @@ export function useUpdateAppTemplate() {
       appId: string;
       templateId: string;
       payload: Partial<CreateAppTemplatePayload>;
-    }) => updateAppTemplateService(appId, templateId, payload, accountId ?? undefined),
+    }) => {
+      if (!currentOrg?.id) {
+        throw new Error("Organization must be selected to update template");
+      }
+      return updateAppTemplateService(
+        appId,
+        templateId,
+        payload,
+        currentOrg.id,
+      );
+    },
     onSuccess: (_data, { appId, templateId }) => {
       // Invalidate both specific template and templates list
       queryClient.invalidateQueries({
@@ -221,12 +298,22 @@ export function useUpdateAppTemplate() {
  * Delete app template
  */
 export function useDeleteAppTemplate() {
-  const accountId = useCurrentAccountId();
+  const { currentOrg } = useOrg();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ appId, templateId }: { appId: string; templateId: string }) =>
-      deleteAppTemplateService(appId, templateId, accountId ?? undefined),
+    mutationFn: ({
+      appId,
+      templateId,
+    }: {
+      appId: string;
+      templateId: string;
+    }) => {
+      if (!currentOrg?.id) {
+        throw new Error("Organization must be selected to delete template");
+      }
+      return deleteAppTemplateService(appId, templateId, currentOrg.id);
+    },
     onSuccess: (_data, { appId, templateId }) => {
       // Invalidate both specific template and templates list
       queryClient.invalidateQueries({
@@ -245,32 +332,34 @@ export function useDeleteAppTemplate() {
 
 /**
  * Get app notification logs
- * Automatically includes x-account-id header from current organization
+ * Uses organization ID to fetch notifications
  */
 export function useAppNotifications(
   appId: string,
   params?: {
     page?: number;
     limit?: number;
-    status?: "SENT" | "FAILED" | "PENDING" | "BOUNCED";
+    status?: "SENT" | "FAILED" | "PENDING" | "BOUNCED" | "QUEUED";
     channel?: "EMAIL" | "SMS" | "PUSH" | "IN_APP" | "WHATSAPP";
+    search?: string;
+    dateFrom?: string;
+    dateTo?: string;
+    templateId?: string;
+    provider?: string;
   },
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean },
 ) {
-  const accountId = useCurrentAccountId();
+  const { currentOrg } = useOrg();
 
   return useQuery({
-    queryKey: [
-      "appNotifications",
-      appId,
-      params?.page,
-      params?.limit,
-      params?.status,
-      params?.channel,
-      accountId,
-    ],
-    queryFn: () => getAppNotificationsService(appId, params, accountId ?? undefined),
-    enabled: (options?.enabled ?? true) && !!appId && !!accountId,
+    queryKey: ["appNotifications", appId, currentOrg?.id, params],
+    queryFn: () => {
+      if (!currentOrg?.id) {
+        throw new Error("Organization must be selected to fetch notifications");
+      }
+      return getAppNotificationsService(appId, params, currentOrg.id);
+    },
+    enabled: (options?.enabled ?? true) && !!appId && !!currentOrg?.id,
   });
 }
 
@@ -286,8 +375,13 @@ export function useCreateApiKey() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ appId, payload }: { appId: string; payload: CreateApiKeyPayload }) =>
-      createApiKeyService(appId, payload, accountId ?? undefined),
+    mutationFn: ({
+      appId,
+      payload,
+    }: {
+      appId: string;
+      payload: CreateApiKeyPayload;
+    }) => createApiKeyService(appId, payload, accountId ?? undefined),
     onSuccess: (_data, { appId }) => {
       // Invalidate API keys query to refetch
       queryClient.invalidateQueries({
@@ -315,7 +409,11 @@ export function useApiKeys(appId: string, options?: { enabled?: boolean }) {
  * Get single API key
  * Automatically includes x-account-id header from current organization
  */
-export function useApiKey(appId: string, keyId: string, options?: { enabled?: boolean }) {
+export function useApiKey(
+  appId: string,
+  keyId: string,
+  options?: { enabled?: boolean },
+) {
   const accountId = useCurrentAccountId();
 
   return useQuery({
@@ -341,5 +439,25 @@ export function useDeleteApiKey() {
         queryKey: ["apiKeys", appId, accountId],
       });
     },
+  });
+}
+
+// ──────────────────────────────────────────
+// ORGANIZATION APPS HOOKS
+// ──────────────────────────────────────────
+
+/**
+ * Get organization apps with basic details (optimized for listing)
+ * Supports search filtering
+ */
+export function useAppsByOrganizationDetails(
+  orgId: string,
+  search?: string,
+  options?: { enabled?: boolean },
+) {
+  return useQuery({
+    queryKey: ["organizationAppsDetails", orgId, search],
+    queryFn: () => getAppsByOrganizationDetailsService(orgId, search),
+    enabled: (options?.enabled ?? true) && !!orgId,
   });
 }

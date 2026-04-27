@@ -28,7 +28,7 @@ const FormTextarea = React.forwardRef<HTMLTextAreaElement, FormTextareaProps>(
       value,
       ...props
     },
-    ref
+    ref,
   ) => {
     const charCount = typeof value === "string" ? value.length : 0;
 
@@ -64,12 +64,14 @@ const FormTextarea = React.forwardRef<HTMLTextAreaElement, FormTextareaProps>(
               // Focus state
               "focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/50 transition-all",
               // Disabled state
-              disabled && "opacity-50 cursor-not-allowed bg-muted dark:bg-slate-800/50",
+              disabled &&
+                "opacity-50 cursor-not-allowed bg-muted dark:bg-slate-800/50",
               // Error state
-              error && "border-destructive/50 dark:border-destructive/50 focus:ring-destructive/40 focus:border-destructive/50",
+              error &&
+                "border-destructive/50 dark:border-destructive/50 focus:ring-destructive/40 focus:border-destructive/50",
               // Text styling
               "text-base resize-none",
-              className
+              className,
             )}
             {...props}
           />
@@ -90,12 +92,14 @@ const FormTextarea = React.forwardRef<HTMLTextAreaElement, FormTextareaProps>(
             </div>
 
             {showCharCount && maxLength && (
-              <p className={cn(
-                "text-xs font-medium",
-                charCount >= maxLength * 0.9
-                  ? "text-warning dark:text-warning/90"
-                  : "text-content-secondary dark:text-foreground/60"
-              )}>
+              <p
+                className={cn(
+                  "text-xs font-medium",
+                  charCount >= maxLength * 0.9
+                    ? "text-warning dark:text-warning/90"
+                    : "text-content-secondary dark:text-foreground/60",
+                )}
+              >
                 {charCount}/{maxLength}
               </p>
             )}
@@ -103,7 +107,7 @@ const FormTextarea = React.forwardRef<HTMLTextAreaElement, FormTextareaProps>(
         </div>
       </div>
     );
-  }
+  },
 );
 
 FormTextarea.displayName = "FormTextarea";

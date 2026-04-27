@@ -1,6 +1,6 @@
 export interface EmailProvider {
   id: string;
-  provider: 'gmail' | 'notify' | 'custom_domain';
+  provider: "gmail" | "notify" | "custom_domain";
   method: "oauth2" | "app_password" | null;
   isActive: boolean;
   // Simple

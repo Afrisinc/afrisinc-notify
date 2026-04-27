@@ -13,10 +13,10 @@ export async function loadRuntimeConfig(): Promise<RuntimeConfig> {
   }
 
   try {
-    const response = await fetch('/config.json', {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-      cache: 'no-store',
+    const response = await fetch("/config.json", {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      cache: "no-store",
     });
 
     if (!response.ok) {
@@ -26,15 +26,18 @@ export async function loadRuntimeConfig(): Promise<RuntimeConfig> {
     const runtimeConfig = await response.json();
 
     config = {
-      serverUrl: import.meta.env.VITE_API_URL || runtimeConfig.serverUrl || '',
+      serverUrl: import.meta.env.VITE_API_URL || runtimeConfig.serverUrl || "",
     };
 
     configLoaded = true;
     return config;
   } catch (error) {
-    console.warn('[Config] Could not load config.json, falling back to env vars', error);
+    console.warn(
+      "[Config] Could not load config.json, falling back to env vars",
+      error,
+    );
     config = {
-      serverUrl: import.meta.env.VITE_API_URL || ''
+      serverUrl: import.meta.env.VITE_API_URL || "",
     };
     configLoaded = true;
     return config;
@@ -43,14 +46,16 @@ export async function loadRuntimeConfig(): Promise<RuntimeConfig> {
 
 export function getRuntimeConfig(): RuntimeConfig {
   if (!configLoaded || !config) {
-    throw new Error('Configuration not loaded. Call loadRuntimeConfig() first.');
+    throw new Error(
+      "Configuration not loaded. Call loadRuntimeConfig() first.",
+    );
   }
   return config;
 }
 
 export function getConfigValue(key: keyof RuntimeConfig): string {
   const cfg = getRuntimeConfig();
-  return cfg[key] || '';
+  return cfg[key] || "";
 }
 
 export function isRuntimeConfigLoaded(): boolean {

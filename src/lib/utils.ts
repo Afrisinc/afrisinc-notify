@@ -20,7 +20,10 @@ export function getAuthUrls() {
  * @param key - localStorage key
  * @param defaultValue - value if key not found
  */
-export function getFormValue<T = string>(key: string, defaultValue?: T): T | string | null {
+export function getFormValue<T = string>(
+  key: string,
+  defaultValue?: T,
+): T | string | null {
   try {
     const value = localStorage.getItem(key);
     return value || defaultValue || null;
@@ -33,7 +36,9 @@ export function getFormValue<T = string>(key: string, defaultValue?: T): T | str
  * Get multiple form values from localStorage
  * @param keys - object with key mapping: { email: "form_email", password: "form_password" }
  */
-export function getFormValues<T extends Record<string, string>>(keys: T): Partial<Record<keyof T, string>> {
+export function getFormValues<T extends Record<string, string>>(
+  keys: T,
+): Partial<Record<keyof T, string>> {
   const values: Partial<Record<keyof T, string>> = {};
   Object.entries(keys).forEach(([field, storageKey]) => {
     try {
@@ -53,7 +58,10 @@ export function getFormValues<T extends Record<string, string>>(keys: T): Partia
  * @param values - object with key/value pairs to store
  * @param prefix - optional prefix for all keys (e.g., "form_email" for key "email")
  */
-export function saveFormValues(values: Record<string, string>, prefix = ""): void {
+export function saveFormValues(
+  values: Record<string, string>,
+  prefix = "",
+): void {
   try {
     Object.entries(values).forEach(([key, value]) => {
       const storageKey = prefix ? `${prefix}${key}` : key;
@@ -86,7 +94,10 @@ export function clearFormValues(keys: string[]): void {
  * @param error - error object from API call or thrown exception
  * @param defaultMessage - fallback message if extraction fails
  */
-export function getErrorMessage(error: unknown, defaultMessage = "An error occurred"): string {
+export function getErrorMessage(
+  error: unknown,
+  defaultMessage = "An error occurred",
+): string {
   // Axios error with response data
   if (error && typeof error === "object" && "response" in error) {
     const axiosError = error as any;

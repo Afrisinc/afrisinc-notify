@@ -1,20 +1,20 @@
-import React from 'react';
-import { useFeatureCheck } from '@/hooks/useSubscription';
-import { useOrg } from '@/contexts/OrgContext';
-import { useUser } from '@/contexts/UserContext';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Lock, ArrowRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { useFeatureCheck } from "@/hooks/useSubscription";
+import { useOrg } from "@/contexts/OrgContext";
+import { useUser } from "@/contexts/UserContext";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Lock, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export type FeatureName =
-  | 'custom_domain'
-  | 'advanced_analytics'
-  | 'webhooks'
-  | 'team_management'
-  | 'api_keys'
-  | 'sms_sending'
-  | 'email_scheduling';
+  | "custom_domain"
+  | "advanced_analytics"
+  | "webhooks"
+  | "team_management"
+  | "api_keys"
+  | "sms_sending"
+  | "email_scheduling";
 
 interface FeatureGuardProps {
   feature: FeatureName;
@@ -28,11 +28,19 @@ interface FeatureGuardProps {
  * Conditionally renders children based on plan feature availability
  * Shows upgrade prompt if feature is not available
  */
-export function FeatureGuard({ feature, children, fallback, showLock }: FeatureGuardProps) {
+export function FeatureGuard({
+  feature,
+  children,
+  fallback,
+  showLock,
+}: FeatureGuardProps) {
   const { currentOrg } = useOrg();
   const { getAccountIdForOrg } = useUser();
   const accountId = currentOrg ? getAccountIdForOrg(currentOrg.id) : undefined;
-  const { available, plan, isLoading } = useFeatureCheck(feature, accountId ?? undefined);
+  const { available, plan, isLoading } = useFeatureCheck(
+    feature,
+    accountId ?? undefined,
+  );
   const navigate = useNavigate();
 
   if (isLoading) {
@@ -49,7 +57,7 @@ export function FeatureGuard({ feature, children, fallback, showLock }: FeatureG
                 <Lock className="h-5 w-5 text-warning flex-shrink-0" />
                 <div>
                   <p className="text-sm font-medium text-content capitalize">
-                    {feature.replace(/_/g, ' ')} is not available
+                    {feature.replace(/_/g, " ")} is not available
                   </p>
                   <p className="text-xs text-content-secondary">
                     Upgrade your plan to unlock this feature
@@ -57,7 +65,7 @@ export function FeatureGuard({ feature, children, fallback, showLock }: FeatureG
                 </div>
               </div>
               <Button
-                onClick={() => navigate('/dashboard/billing')}
+                onClick={() => navigate("/dashboard/billing")}
                 variant="outline"
                 size="sm"
                 className="flex-shrink-0"
@@ -72,7 +80,7 @@ export function FeatureGuard({ feature, children, fallback, showLock }: FeatureG
     );
   }
 
-  if (showLock && plan !== 'ENTERPRISE') {
+  if (showLock && plan !== "ENTERPRISE") {
     return (
       <div className="relative">
         <div className="absolute top-0 right-0 inline-block px-2 py-1 bg-primary/10 text-primary rounded text-xs font-medium">

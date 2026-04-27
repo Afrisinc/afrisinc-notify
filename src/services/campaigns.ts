@@ -122,13 +122,16 @@ export interface CampaignsSummaryStats {
     totalFailed: number;
     averageDeliveryRate: number;
   };
-  byChannel: Record<string, {
-    count: number;
-    sent: number;
-    delivered: number;
-    failed: number;
-    deliveryRate: number;
-  }>;
+  byChannel: Record<
+    string,
+    {
+      count: number;
+      sent: number;
+      delivered: number;
+      failed: number;
+      deliveryRate: number;
+    }
+  >;
   topCampaigns: Array<{
     id: string;
     name: string;
@@ -154,7 +157,7 @@ export interface CampaignsSummaryParams {
 export const listCampaignsService = async (
   appId: string,
   params?: ListCampaignsParams,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const queryParams = new URLSearchParams();
@@ -170,7 +173,7 @@ export const listCampaignsService = async (
 
   const { data } = await getApiClient().get<any>(
     `/api/apps/${appId}/campaigns${query}`,
-    config
+    config,
   );
   return data.data as ListCampaignsResponse;
 };
@@ -182,13 +185,13 @@ export const listCampaignsService = async (
 export const createCampaignService = async (
   appId: string,
   payload: CreateCampaignPayload,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().post<any>(
     `/api/apps/${appId}/campaigns`,
     payload,
-    config
+    config,
   );
   return data.data as Campaign;
 };
@@ -200,12 +203,12 @@ export const createCampaignService = async (
 export const getCampaignService = async (
   appId: string,
   campaignId: string,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().get<any>(
     `/api/apps/${appId}/campaigns/${campaignId}`,
-    config
+    config,
   );
   return data.data as Campaign;
 };
@@ -218,13 +221,13 @@ export const updateCampaignService = async (
   appId: string,
   campaignId: string,
   payload: Partial<CreateCampaignPayload>,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().put<any>(
     `/api/apps/${appId}/campaigns/${campaignId}`,
     payload,
-    config
+    config,
   );
   return data.data as Campaign;
 };
@@ -236,12 +239,12 @@ export const updateCampaignService = async (
 export const deleteCampaignService = async (
   appId: string,
   campaignId: string,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().delete<any>(
     `/api/apps/${appId}/campaigns/${campaignId}`,
-    config
+    config,
   );
   return data.data;
 };
@@ -254,13 +257,13 @@ export const sendCampaignService = async (
   appId: string,
   campaignId: string,
   payload?: SendCampaignPayload,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().post<any>(
     `/api/apps/${appId}/campaigns/${campaignId}/send`,
     payload || {},
-    config
+    config,
   );
   return data.data as SendCampaignResponse;
 };
@@ -273,13 +276,13 @@ export const scheduleCampaignService = async (
   appId: string,
   campaignId: string,
   payload: ScheduleCampaignPayload,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().post<any>(
     `/api/apps/${appId}/campaigns/${campaignId}/schedule`,
     payload,
-    config
+    config,
   );
   return data.data as Campaign;
 };
@@ -292,13 +295,13 @@ export const duplicateCampaignService = async (
   appId: string,
   campaignId: string,
   payload: DuplicateCampaignPayload,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().post<any>(
     `/api/apps/${appId}/campaigns/${campaignId}/duplicate`,
     payload,
-    config
+    config,
   );
   return data.data as Campaign;
 };
@@ -310,12 +313,12 @@ export const duplicateCampaignService = async (
 export const getCampaignStatsService = async (
   appId: string,
   campaignId: string,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().get<any>(
     `/api/apps/${appId}/campaigns/${campaignId}/stats`,
-    config
+    config,
   );
   return data.data as CampaignStats;
 };
@@ -327,7 +330,7 @@ export const getCampaignStatsService = async (
 export const getCampaignsSummaryStatsService = async (
   appId: string,
   params?: CampaignsSummaryParams,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const queryParams = new URLSearchParams();
@@ -341,7 +344,7 @@ export const getCampaignsSummaryStatsService = async (
 
   const { data } = await getApiClient().get<any>(
     `/api/apps/${appId}/campaigns/stats/summary${query}`,
-    config
+    config,
   );
   return data.data as CampaignsSummaryStats;
 };

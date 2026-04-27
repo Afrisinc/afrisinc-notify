@@ -3,9 +3,11 @@ import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { accountDetailsSchema, type AccountDetailsValues, type AccountType } from "./schemas";
+import {
+  accountDetailsSchema,
+  type AccountDetailsValues,
+  type AccountType,
+} from "./schemas";
 import { Loader2 } from "lucide-react";
 import FormInput from "@/components/auth/FormInput";
 import FormCheckbox from "@/components/auth/FormCheckbox";
@@ -17,14 +19,6 @@ interface StepAccountDetailsProps {
   onBack: () => void;
   isSubmitting: boolean;
 }
-
-const companySizes = [
-  "1-10",
-  "11-50",
-  "51-200",
-  "201-500",
-  "500+",
-];
 
 const StepAccountDetails = ({
   accountType,
@@ -40,7 +34,6 @@ const StepAccountDetails = ({
     register,
     handleSubmit,
     watch,
-    setValue,
     formState: { errors },
   } = useForm<AccountDetailsValues>({
     resolver: zodResolver(accountDetailsSchema),
@@ -68,19 +61,20 @@ const StepAccountDetails = ({
 
   const orgName = watch("organizationName");
   const slug = orgName
-    ? orgName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
+    ? orgName
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "")
     : "";
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-5">
       {accountType === "personal" ? (
-        <FormInput
-          id="displayName"
-          label="Display Name (optional)"
-          placeholder="How you'd like to be known"
-          error={errors.displayName?.message}
-          {...register("displayName")}
-        />
+        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+          <p className="text-blue-700 dark:text-blue-400 text-sm">
+            Personal account setup complete! You're all set to start using Notify.
+          </p>
+        </div>
       ) : (
         <>
           <div className="space-y-2">
@@ -99,14 +93,6 @@ const StepAccountDetails = ({
           </div>
 
           <FormInput
-            id="jobTitle"
-            label="Your Job Title (optional)"
-            placeholder="e.g. CTO, Product Manager"
-            error={errors.jobTitle?.message}
-            {...register("jobTitle")}
-          />
-
-          <FormInput
             id="companyEmail"
             label="Company Email"
             type="email"
@@ -114,46 +100,14 @@ const StepAccountDetails = ({
             error={errors.companyEmail?.message}
             {...register("companyEmail")}
           />
-
-          <FormInput
-            id="industry"
-            label="Industry (optional)"
-            placeholder="e.g. Fintech, Healthcare"
-            error={errors.industry?.message}
-            {...register("industry")}
-          />
-
-          <div className="space-y-2">
-            <Label className="heading-label">
-              Company Size <span className="text-secondary font-normal text-sm">(optional)</span>
-            </Label>
-            <Select onValueChange={(val) => setValue("companySize", val)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select company size" />
-              </SelectTrigger>
-              <SelectContent>
-                {companySizes.map((size) => (
-                  <SelectItem key={size} value={size}>
-                    {size} employees
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <FormInput
-            id="website"
-            label="Website (optional)"
-            placeholder="https://yourcompany.com"
-            error={errors.website?.message}
-            {...register("website")}
-          />
         </>
       )}
 
       {validationError && (
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
-          <p className="text-red-700 dark:text-red-400 text-sm font-medium">{validationError}</p>
+          <p className="text-red-700 dark:text-red-400 text-sm font-medium">
+            {validationError}
+          </p>
         </div>
       )}
 
@@ -177,10 +131,21 @@ const StepAccountDetails = ({
       />
 
       <div className="flex gap-3">
-        <Button type="button" variant="primary-light" className="flex-1" onClick={onBack} disabled={isSubmitting}>
+        <Button
+          type="button"
+          variant="primary-light"
+          className="flex-1"
+          onClick={onBack}
+          disabled={isSubmitting}
+        >
           ← Back
         </Button>
-        <Button variant="default" type="submit" className="flex-1" disabled={isSubmitting || !termsAccepted}>
+        <Button
+          variant="default"
+          type="submit"
+          className="flex-1"
+          disabled={isSubmitting || !termsAccepted}
+        >
           {isSubmitting ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />

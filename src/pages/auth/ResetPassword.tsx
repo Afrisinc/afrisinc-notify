@@ -14,8 +14,12 @@ import { useState } from "react";
 
 const ResetPasswordSchema = z
   .object({
-    password: z.string().min(6, { message: "Password must be at least 6 characters" }),
-    confirmPassword: z.string().min(6, { message: "Please confirm your password" }),
+    password: z
+      .string()
+      .min(6, { message: "Password must be at least 6 characters" }),
+    confirmPassword: z
+      .string()
+      .min(6, { message: "Please confirm your password" }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
@@ -60,11 +64,14 @@ const ResetPassword = () => {
         onError: (error: any) => {
           toast({
             title: "Reset Failed",
-            description: error.response?.data?.resp_msg || error.message || "Password reset failed. Please try again.",
+            description:
+              error.response?.data?.resp_msg ||
+              error.message ||
+              "Password reset failed. Please try again.",
             variant: "destructive",
           });
         },
-      }
+      },
     );
   };
 
@@ -73,7 +80,7 @@ const ResetPassword = () => {
       <BackgroundDecorator />
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8">
-          <Logo/>
+          <Logo />
           <h1 className="heading-subsection">Set new password</h1>
           <p className="heading-description">
             Choose a strong password for your account
@@ -90,7 +97,11 @@ const ResetPassword = () => {
               <p className="text-secondary text-sm">
                 Your password has been reset successfully.
               </p>
-              <Button variant="default" className="w-full mt-4" onClick={() => navigate("/login")}>
+              <Button
+                variant="default"
+                className="w-full mt-4"
+                onClick={() => navigate("/login")}
+              >
                 Sign In
               </Button>
             </div>
@@ -112,7 +123,12 @@ const ResetPassword = () => {
                 {...register("confirmPassword")}
               />
 
-              <Button variant="default" className="w-full" type="submit" disabled={loading}>
+              <Button
+                variant="default"
+                className="w-full"
+                type="submit"
+                disabled={loading}
+              >
                 {loading ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />

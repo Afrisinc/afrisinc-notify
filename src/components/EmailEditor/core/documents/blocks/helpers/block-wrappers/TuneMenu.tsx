@@ -1,21 +1,30 @@
-import React from 'react';
+import React from "react";
 
-import { ArrowDownwardOutlined, ArrowUpwardOutlined, ContentCopyOutlined, DeleteOutlined } from '@mui/icons-material';
-import { IconButton, Paper, Stack, SxProps, Tooltip } from '@mui/material';
+import {
+  ArrowDownwardOutlined,
+  ArrowUpwardOutlined,
+  ContentCopyOutlined,
+  DeleteOutlined,
+} from "@mui/icons-material";
+import { IconButton, Paper, Stack, SxProps, Tooltip } from "@mui/material";
 
-import { TEditorBlock, TEditorConfiguration } from '../../../editor/core';
-import { resetDocument, setSelectedBlockId, useDocument } from '../../../editor/EditorContext';
-import { ColumnsContainerProps } from '../../ColumnsContainer/ColumnsContainerPropsSchema';
-import cloneDocumentBlock from '../cloneDocumentBlock';
+import { TEditorBlock, TEditorConfiguration } from "../../../editor/core";
+import {
+  resetDocument,
+  setSelectedBlockId,
+  useDocument,
+} from "../../../editor/EditorContext";
+import { ColumnsContainerProps } from "../../ColumnsContainer/ColumnsContainerPropsSchema";
+import cloneDocumentBlock from "../cloneDocumentBlock";
 
 const sx: SxProps = {
-  position: 'absolute',
+  position: "absolute",
   top: 0,
   left: -56,
   borderRadius: 64,
   paddingX: 0.5,
   paddingY: 1,
-  zIndex: 'fab',
+  zIndex: "fab",
 };
 
 function findParentBlockId(blockId: string, document: TEditorConfiguration) {
@@ -25,18 +34,22 @@ function findParentBlockId(blockId: string, document: TEditorConfiguration) {
     }
     const block = b as TEditorBlock;
     switch (block.type) {
-      case 'EmailLayout':
+      case "EmailLayout":
         if (block.data.childrenIds?.includes(blockId)) {
           return id;
         }
         break;
-      case 'Container':
+      case "Container":
         if (block.data.props?.childrenIds?.includes(blockId)) {
           return id;
         }
         break;
-      case 'ColumnsContainer':
-        if (block.data.props?.columns?.some((col) => col.childrenIds?.includes(blockId))) {
+      case "ColumnsContainer":
+        if (
+          block.data.props?.columns?.some((col) =>
+            col.childrenIds?.includes(blockId),
+          )
+        ) {
           return id;
         }
         break;
@@ -54,12 +67,15 @@ export default function TuneMenu({ blockId }: Props) {
   const handleDuplicateClick = () => {
     const parentBlockId = findParentBlockId(blockId, document);
 
-    const { document: newDocument, blockId: newBlockId } = cloneDocumentBlock(document, blockId);
+    const { document: newDocument, blockId: newBlockId } = cloneDocumentBlock(
+      document,
+      blockId,
+    );
 
     if (parentBlockId) {
       const parentBlock = newDocument[parentBlockId];
       switch (parentBlock.type) {
-        case 'EmailLayout': {
+        case "EmailLayout": {
           if (!parentBlock.data.childrenIds) {
             parentBlock.data.childrenIds = [];
           }
@@ -67,7 +83,7 @@ export default function TuneMenu({ blockId }: Props) {
           parentBlock.data.childrenIds.splice(index + 1, 0, newBlockId);
           break;
         }
-        case 'Container': {
+        case "Container": {
           if (!parentBlock.data.props) {
             parentBlock.data.props = {};
           }
@@ -78,9 +94,15 @@ export default function TuneMenu({ blockId }: Props) {
           parentBlock.data.props.childrenIds.splice(index + 1, 0, newBlockId);
           break;
         }
-        case 'ColumnsContainer':
+        case "ColumnsContainer":
           if (!parentBlock.data.props) {
-            parentBlock.data.props = { columns: [{ childrenIds: [] }, { childrenIds: [] }, { childrenIds: [] }] };
+            parentBlock.data.props = {
+              columns: [
+                { childrenIds: [] },
+                { childrenIds: [] },
+                { childrenIds: [] },
+              ],
+            };
           }
 
           for (const column of parentBlock.data.props.columns) {
@@ -112,7 +134,7 @@ export default function TuneMenu({ blockId }: Props) {
       }
 
       switch (block.type) {
-        case 'EmailLayout':
+        case "EmailLayout":
           nDocument[id] = {
             ...block,
             data: {
@@ -121,7 +143,7 @@ export default function TuneMenu({ blockId }: Props) {
             },
           };
           break;
-        case 'Container':
+        case "Container":
           nDocument[id] = {
             ...block,
             data: {
@@ -133,9 +155,9 @@ export default function TuneMenu({ blockId }: Props) {
             },
           };
           break;
-        case 'ColumnsContainer':
+        case "ColumnsContainer":
           nDocument[id] = {
-            type: 'ColumnsContainer',
+            type: "ColumnsContainer",
             data: {
               style: block.data.style,
               props: {
@@ -155,7 +177,7 @@ export default function TuneMenu({ blockId }: Props) {
     resetDocument(nDocument);
   };
 
-  const handleMoveClick = (direction: 'up' | 'down') => {
+  const handleMoveClick = (direction: "up" | "down") => {
     const moveChildrenIds = (ids: string[] | null | undefined) => {
       if (!ids) {
         return ids;
@@ -166,10 +188,16 @@ export default function TuneMenu({ blockId }: Props) {
       }
 
       const childrenIds = [...ids];
-      if (direction === 'up' && index > 0) {
-        [childrenIds[index], childrenIds[index - 1]] = [childrenIds[index - 1], childrenIds[index]];
-      } else if (direction === 'down' && index < childrenIds.length - 1) {
-        [childrenIds[index], childrenIds[index + 1]] = [childrenIds[index + 1], childrenIds[index]];
+      if (direction === "up" && index > 0) {
+        [childrenIds[index], childrenIds[index - 1]] = [
+          childrenIds[index - 1],
+          childrenIds[index],
+        ];
+      } else if (direction === "down" && index < childrenIds.length - 1) {
+        [childrenIds[index], childrenIds[index + 1]] = [
+          childrenIds[index + 1],
+          childrenIds[index],
+        ];
       }
       return childrenIds;
     };
@@ -182,7 +210,7 @@ export default function TuneMenu({ blockId }: Props) {
       }
 
       switch (block.type) {
-        case 'EmailLayout':
+        case "EmailLayout":
           nDocument[id] = {
             ...block,
             data: {
@@ -191,7 +219,7 @@ export default function TuneMenu({ blockId }: Props) {
             },
           };
           break;
-        case 'Container':
+        case "Container":
           nDocument[id] = {
             ...block,
             data: {
@@ -203,9 +231,9 @@ export default function TuneMenu({ blockId }: Props) {
             },
           };
           break;
-        case 'ColumnsContainer':
+        case "ColumnsContainer":
           nDocument[id] = {
-            type: 'ColumnsContainer',
+            type: "ColumnsContainer",
             data: {
               style: block.data.style,
               props: {
@@ -230,22 +258,34 @@ export default function TuneMenu({ blockId }: Props) {
     <Paper sx={sx} onClick={(ev) => ev.stopPropagation()}>
       <Stack>
         <Tooltip title="Move up" placement="left-start">
-          <IconButton onClick={() => handleMoveClick('up')} sx={{ color: 'text.primary' }}>
+          <IconButton
+            onClick={() => handleMoveClick("up")}
+            sx={{ color: "text.primary" }}
+          >
             <ArrowUpwardOutlined fontSize="small" />
           </IconButton>
         </Tooltip>
         <Tooltip title="Move down" placement="left-start">
-          <IconButton onClick={() => handleMoveClick('down')} sx={{ color: 'text.primary' }}>
+          <IconButton
+            onClick={() => handleMoveClick("down")}
+            sx={{ color: "text.primary" }}
+          >
             <ArrowDownwardOutlined fontSize="small" />
           </IconButton>
         </Tooltip>
         <Tooltip title="Duplicate" placement="left-start">
-          <IconButton onClick={handleDuplicateClick} sx={{ color: 'text.primary' }}>
+          <IconButton
+            onClick={handleDuplicateClick}
+            sx={{ color: "text.primary" }}
+          >
             <ContentCopyOutlined fontSize="small" />
           </IconButton>
         </Tooltip>
         <Tooltip title="Delete" placement="left-start">
-          <IconButton onClick={handleDeleteClick} sx={{ color: 'text.primary' }}>
+          <IconButton
+            onClick={handleDeleteClick}
+            sx={{ color: "text.primary" }}
+          >
             <DeleteOutlined fontSize="small" />
           </IconButton>
         </Tooltip>

@@ -17,13 +17,14 @@ import { useCurrentAccountId } from "@/hooks/useAuth";
 export function useNotificationLogs(
   appId: string,
   params?: ListNotificationLogsParams,
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean },
 ) {
   const accountId = useCurrentAccountId();
 
   return useQuery({
     queryKey: ["notificationLogs", appId, accountId, params],
-    queryFn: () => listNotificationLogsService(appId, params, accountId ?? undefined),
+    queryFn: () =>
+      listNotificationLogsService(appId, params, accountId ?? undefined),
     enabled: (options?.enabled ?? true) && !!appId && !!accountId,
   });
 }
@@ -35,7 +36,7 @@ export function useNotificationLogs(
 export function useNotificationLog(
   appId: string,
   notificationId: string,
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean },
 ) {
   const accountId = useCurrentAccountId();
 
@@ -43,7 +44,8 @@ export function useNotificationLog(
     queryKey: ["notificationLog", appId, notificationId, accountId],
     queryFn: () =>
       getNotificationLogService(appId, notificationId, accountId ?? undefined),
-    enabled: (options?.enabled ?? true) && !!appId && !!notificationId && !!accountId,
+    enabled:
+      (options?.enabled ?? true) && !!appId && !!notificationId && !!accountId,
   });
 }
 
@@ -53,13 +55,14 @@ export function useNotificationLog(
 
 export function useNotificationStatus(
   notificationId: string,
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean },
 ) {
   const accountId = useCurrentAccountId();
 
   return useQuery({
     queryKey: ["notificationStatus", notificationId, accountId],
-    queryFn: () => getNotificationStatusService(notificationId, accountId ?? undefined),
+    queryFn: () =>
+      getNotificationStatusService(notificationId, accountId ?? undefined),
     enabled: (options?.enabled ?? true) && !!notificationId,
   });
 }
@@ -88,7 +91,7 @@ export function useExportNotificationLogs() {
 
 export function useGeneralNotificationLogs(
   params?: ListNotificationLogsParams,
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean },
 ) {
   const accountId = useCurrentAccountId();
 
@@ -108,7 +111,7 @@ export function useNotificationStatusPoling(
   appId: string,
   notificationId: string,
   pollInterval?: number,
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean },
 ) {
   const accountId = useCurrentAccountId();
 
@@ -116,7 +119,8 @@ export function useNotificationStatusPoling(
     queryKey: ["notificationLogPolling", appId, notificationId, accountId],
     queryFn: () =>
       getNotificationLogService(appId, notificationId, accountId ?? undefined),
-    enabled: (options?.enabled ?? true) && !!appId && !!notificationId && !!accountId,
+    enabled:
+      (options?.enabled ?? true) && !!appId && !!notificationId && !!accountId,
     refetchInterval: pollInterval || 5000, // Poll every 5 seconds by default
     refetchOnWindowFocus: false,
   });

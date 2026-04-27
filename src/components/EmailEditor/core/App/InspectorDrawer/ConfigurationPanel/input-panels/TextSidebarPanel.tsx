@@ -1,18 +1,21 @@
-import React, { useState } from 'react';
-import { ZodError } from 'zod';
+import React, { useState } from "react";
+import { ZodError } from "zod";
 
-import { TextProps, TextPropsSchema } from '@usewaypoint/block-text';
+import { TextProps, TextPropsSchema } from "@usewaypoint/block-text";
 
-import BaseSidebarPanel from './helpers/BaseSidebarPanel';
-import BooleanInput from './helpers/inputs/BooleanInput';
-import TextInput from './helpers/inputs/TextInput';
-import MultiStylePropertyPanel from './helpers/style-inputs/MultiStylePropertyPanel';
+import BaseSidebarPanel from "./helpers/BaseSidebarPanel";
+import BooleanInput from "./helpers/inputs/BooleanInput";
+import TextInput from "./helpers/inputs/TextInput";
+import MultiStylePropertyPanel from "./helpers/style-inputs/MultiStylePropertyPanel";
 
 type TextSidebarPanelProps = {
   data: TextProps;
   setData: (v: TextProps) => void;
 };
-export default function TextSidebarPanel({ data, setData }: TextSidebarPanelProps) {
+export default function TextSidebarPanel({
+  data,
+  setData,
+}: TextSidebarPanelProps) {
   const [, setErrors] = useState<ZodError | null>(null);
 
   const updateData = (d: unknown) => {
@@ -30,17 +33,29 @@ export default function TextSidebarPanel({ data, setData }: TextSidebarPanelProp
       <TextInput
         label="Content"
         rows={5}
-        defaultValue={data.props?.text ?? ''}
-        onChange={(text) => updateData({ ...data, props: { ...data.props, text } })}
+        defaultValue={data.props?.text ?? ""}
+        onChange={(text) =>
+          updateData({ ...data, props: { ...data.props, text } })
+        }
       />
       <BooleanInput
         label="Markdown (GitHub flavored)"
         defaultValue={data.props?.markdown ?? false}
-        onChange={(markdown) => updateData({ ...data, props: { ...data.props, markdown } })}
+        onChange={(markdown) =>
+          updateData({ ...data, props: { ...data.props, markdown } })
+        }
       />
 
       <MultiStylePropertyPanel
-        names={['color', 'backgroundColor', 'fontFamily', 'fontSize', 'fontWeight', 'textAlign', 'padding']}
+        names={[
+          "color",
+          "backgroundColor",
+          "fontFamily",
+          "fontSize",
+          "fontWeight",
+          "textAlign",
+          "padding",
+        ]}
         value={data.style}
         onChange={(style) => updateData({ ...data, style })}
       />

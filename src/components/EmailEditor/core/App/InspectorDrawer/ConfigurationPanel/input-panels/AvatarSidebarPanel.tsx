@@ -1,21 +1,28 @@
-import React, { useState } from 'react';
-import { ZodError } from 'zod';
+import React, { useState } from "react";
+import { ZodError } from "zod";
 
-import { AspectRatioOutlined } from '@mui/icons-material';
-import { ToggleButton } from '@mui/material';
-import { AvatarProps, AvatarPropsDefaults, AvatarPropsSchema } from '@usewaypoint/block-avatar';
+import { AspectRatioOutlined } from "@mui/icons-material";
+import { ToggleButton } from "@mui/material";
+import {
+  AvatarProps,
+  AvatarPropsDefaults,
+  AvatarPropsSchema,
+} from "@usewaypoint/block-avatar";
 
-import BaseSidebarPanel from './helpers/BaseSidebarPanel';
-import RadioGroupInput from './helpers/inputs/RadioGroupInput';
-import SliderInput from './helpers/inputs/SliderInput';
-import TextInput from './helpers/inputs/TextInput';
-import MultiStylePropertyPanel from './helpers/style-inputs/MultiStylePropertyPanel';
+import BaseSidebarPanel from "./helpers/BaseSidebarPanel";
+import RadioGroupInput from "./helpers/inputs/RadioGroupInput";
+import SliderInput from "./helpers/inputs/SliderInput";
+import TextInput from "./helpers/inputs/TextInput";
+import MultiStylePropertyPanel from "./helpers/style-inputs/MultiStylePropertyPanel";
 
 type AvatarSidebarPanelProps = {
   data: AvatarProps;
   setData: (v: AvatarProps) => void;
 };
-export default function AvatarSidebarPanel({ data, setData }: AvatarSidebarPanelProps) {
+export default function AvatarSidebarPanel({
+  data,
+  setData,
+}: AvatarSidebarPanelProps) {
   const [, setErrors] = useState<ZodError | null>(null);
   const updateData = (d: unknown) => {
     const res = AvatarPropsSchema.safeParse(d);
@@ -36,7 +43,7 @@ export default function AvatarSidebarPanel({ data, setData }: AvatarSidebarPanel
     <BaseSidebarPanel title="Avatar block">
       <SliderInput
         label="Size"
-        iconLabel={<AspectRatioOutlined sx={{ color: 'text.secondary' }} />}
+        iconLabel={<AspectRatioOutlined sx={{ color: "text.secondary" }} />}
         units="px"
         step={3}
         min={32}
@@ -73,7 +80,7 @@ export default function AvatarSidebarPanel({ data, setData }: AvatarSidebarPanel
       />
 
       <MultiStylePropertyPanel
-        names={['textAlign', 'padding']}
+        names={["textAlign", "padding"]}
         value={data.style}
         onChange={(style) => updateData({ ...data, style })}
       />

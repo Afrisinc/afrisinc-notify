@@ -1,7 +1,12 @@
 import { Copy, Check, CheckCircle2, AlertTriangle, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface DnsRecordRowProps {
   id: string;
@@ -25,10 +30,26 @@ export function DnsRecordRow({
   isCopied,
 }: DnsRecordRowProps) {
   const statusConfig = {
-    verified: { icon: CheckCircle2, variant: "default" as const, color: "text-success" },
-    pending: { icon: Clock, variant: "secondary" as const, color: "text-warning" },
-    error: { icon: AlertTriangle, variant: "destructive" as const, color: "text-destructive" },
-    optional: { icon: Clock, variant: "secondary" as const, color: "text-muted-foreground" },
+    verified: {
+      icon: CheckCircle2,
+      variant: "default" as const,
+      color: "text-success",
+    },
+    pending: {
+      icon: Clock,
+      variant: "secondary" as const,
+      color: "text-warning",
+    },
+    error: {
+      icon: AlertTriangle,
+      variant: "destructive" as const,
+      color: "text-destructive",
+    },
+    optional: {
+      icon: Clock,
+      variant: "secondary" as const,
+      color: "text-muted-foreground",
+    },
   };
 
   const config = statusConfig[status];
@@ -43,7 +64,13 @@ export function DnsRecordRow({
           <span className="text-sm font-medium text-content">{label}</span>
         </div>
         <Badge variant={config.variant}>
-          {status === "verified" ? "Verified" : status === "pending" ? "Pending" : status === "error" ? "Error" : "Optional"}
+          {status === "verified"
+            ? "Verified"
+            : status === "pending"
+              ? "Pending"
+              : status === "error"
+                ? "Error"
+                : "Optional"}
         </Badge>
       </div>
 
@@ -51,16 +78,22 @@ export function DnsRecordRow({
       <div className="space-y-2 text-sm">
         <div>
           <p className="text-content-secondary text-xs mb-1">Type</p>
-          <p className="font-mono text-xs bg-content/5 px-2 py-1 rounded text-content">{type}</p>
+          <p className="font-mono text-xs bg-content/5 px-2 py-1 rounded text-content">
+            {type}
+          </p>
         </div>
         <div>
           <p className="text-content-secondary text-xs mb-1">Name</p>
-          <p className="font-mono text-xs bg-content/5 px-2 py-1 rounded text-content">{name}</p>
+          <p className="font-mono text-xs bg-content/5 px-2 py-1 rounded text-content">
+            {name}
+          </p>
         </div>
         <div>
           <p className="text-content-secondary text-xs mb-1">Value</p>
           <div className="flex items-start gap-2">
-            <p className="font-mono text-xs bg-content/5 px-2 py-1 rounded text-content flex-1 break-all">{value}</p>
+            <p className="font-mono text-xs bg-content/5 px-2 py-1 rounded text-content flex-1 break-all">
+              {value}
+            </p>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>

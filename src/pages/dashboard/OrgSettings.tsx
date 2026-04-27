@@ -6,7 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Building2, Trash2 } from "lucide-react";
-import { useGetOrganization, useUpdateOrganization, useDeleteOrganization } from "@/hooks/useOrganization";
+import {
+  useGetOrganization,
+  useUpdateOrganization,
+  useDeleteOrganization,
+} from "@/hooks/useOrganization";
 import { useToast } from "@/hooks/use-toast";
 import {
   AlertDialog,
@@ -68,7 +72,9 @@ export default function OrgSettings() {
       return (
         <div className="space-y-6">
           <div className="text-center py-12">
-            <p className="text-content-secondary">Loading organization settings...</p>
+            <p className="text-content-secondary">
+              Loading organization settings...
+            </p>
           </div>
         </div>
       );
@@ -79,7 +85,9 @@ export default function OrgSettings() {
         <Card className="border-destructive/30">
           <CardContent className="py-8 text-center">
             <p className="text-destructive mb-4">No organization selected</p>
-            <Button onClick={() => navigate("/dashboard/apps")}>Go to Dashboard</Button>
+            <Button onClick={() => navigate("/dashboard/apps")}>
+              Go to Dashboard
+            </Button>
           </CardContent>
         </Card>
       </div>
@@ -98,14 +106,16 @@ export default function OrgSettings() {
     const changed: Record<string, string> = {};
 
     Object.keys(formData).forEach((key) => {
-      if (formData[key as keyof typeof formData] !== originalData[key as keyof typeof originalData]) {
+      if (
+        formData[key as keyof typeof formData] !==
+        originalData[key as keyof typeof originalData]
+      ) {
         changed[key] = formData[key as keyof typeof formData];
       }
     });
 
     return changed;
   };
-
 
   console.log("Original Data:", originalData);
   console.log("Form Data:", formData);
@@ -150,7 +160,10 @@ export default function OrgSettings() {
     } catch (error) {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update organization",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to update organization",
         variant: "destructive",
       });
     }
@@ -179,8 +192,12 @@ export default function OrgSettings() {
   return (
     <div className="space-y-6 max-w-2xl">
       <div>
-        <h1 className="text-2xl font-semibold text-content">Organization Settings</h1>
-        <p className="text-sm text-content-secondary mt-1">Manage {currentOrg.name}</p>
+        <h1 className="text-2xl font-semibold text-content">
+          Organization Settings
+        </h1>
+        <p className="text-sm text-content-secondary mt-1">
+          Manage {currentOrg.name}
+        </p>
       </div>
 
       <Card className="border-border/60">
@@ -191,7 +208,9 @@ export default function OrgSettings() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label className="text-xs font-medium mb-1 block">Organization Name</Label>
+            <Label className="text-xs font-medium mb-1 block">
+              Organization Name
+            </Label>
             <Input
               value={formData.name}
               onChange={(e) => handleInputChange("name", e.target.value)}
@@ -265,18 +284,26 @@ export default function OrgSettings() {
         </CardHeader>
         <CardContent>
           <p className="text-sm text-content-secondary mb-4">
-            Deleting your organization will permanently remove all apps, templates, and data. This action cannot be undone.
+            Deleting your organization will permanently remove all apps,
+            templates, and data. This action cannot be undone.
           </p>
-          <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-            <Button variant="destructive" onClick={() => setShowDeleteDialog(true)}>
+          <AlertDialog
+            open={showDeleteDialog}
+            onOpenChange={setShowDeleteDialog}
+          >
+            <Button
+              variant="destructive"
+              onClick={() => setShowDeleteDialog(true)}
+            >
               Delete Organization
             </Button>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Delete Organization</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Are you sure you want to delete "{currentOrg.name}"? This action is permanent and will delete all apps,
-                  templates, and data associated with this organization.
+                  Are you sure you want to delete "{currentOrg.name}"? This
+                  action is permanent and will delete all apps, templates, and
+                  data associated with this organization.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <div className="bg-destructive/10 p-3 rounded text-sm text-destructive my-4">
@@ -289,7 +316,9 @@ export default function OrgSettings() {
                   className="bg-destructive hover:bg-destructive/90"
                   disabled={deleteMutation.isPending}
                 >
-                  {deleteMutation.isPending ? "Deleting..." : "Delete Organization"}
+                  {deleteMutation.isPending
+                    ? "Deleting..."
+                    : "Delete Organization"}
                 </AlertDialogAction>
               </div>
             </AlertDialogContent>

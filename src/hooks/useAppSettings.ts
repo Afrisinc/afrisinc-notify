@@ -55,8 +55,13 @@ export function useUpdateAppSettings() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ appId, payload }: { appId: string; payload: UpdateAppSettingsPayload }) =>
-      updateAppSettingsService(appId, payload, accountId ?? undefined),
+    mutationFn: ({
+      appId,
+      payload,
+    }: {
+      appId: string;
+      payload: UpdateAppSettingsPayload;
+    }) => updateAppSettingsService(appId, payload, accountId ?? undefined),
     onSuccess: (_data, { appId }) => {
       queryClient.invalidateQueries({
         queryKey: ["appSettings", appId],
@@ -112,8 +117,13 @@ export function useCreateWebhook() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ appId, payload }: { appId: string; payload: CreateWebhookPayload }) =>
-      createWebhookService(appId, payload, accountId ?? undefined),
+    mutationFn: ({
+      appId,
+      payload,
+    }: {
+      appId: string;
+      payload: CreateWebhookPayload;
+    }) => createWebhookService(appId, payload, accountId ?? undefined),
     onSuccess: (_data, { appId }) => {
       queryClient.invalidateQueries({
         queryKey: ["webhooks", appId],
@@ -139,7 +149,8 @@ export function useUpdateWebhook() {
       appId: string;
       webhookId: string;
       payload: UpdateWebhookPayload;
-    }) => updateWebhookService(appId, webhookId, payload, accountId ?? undefined),
+    }) =>
+      updateWebhookService(appId, webhookId, payload, accountId ?? undefined),
     onSuccess: (_data, { appId }) => {
       queryClient.invalidateQueries({
         queryKey: ["webhooks", appId],
@@ -199,7 +210,7 @@ export function useWebhookLogs(
     limit?: number;
     status?: "success" | "failed" | "pending";
   },
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean },
 ) {
   const accountId = useCurrentAccountId();
 
@@ -207,7 +218,8 @@ export function useWebhookLogs(
     queryKey: ["webhookLogs", appId, webhookId, accountId, params],
     queryFn: () =>
       getWebhookLogsService(appId, webhookId, params, accountId ?? undefined),
-    enabled: (options?.enabled ?? true) && !!appId && !!webhookId && !!accountId,
+    enabled:
+      (options?.enabled ?? true) && !!appId && !!webhookId && !!accountId,
   });
 }
 
@@ -219,7 +231,8 @@ export function useDeleteApp() {
   const accountId = useCurrentAccountId();
 
   return useMutation({
-    mutationFn: (appId: string) => deleteAppService(appId, accountId ?? undefined),
+    mutationFn: (appId: string) =>
+      deleteAppService(appId, accountId ?? undefined),
   });
 }
 
@@ -243,8 +256,13 @@ export function useSetEmailConfig() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ appId, payload }: { appId: string; payload: SetEmailConfigPayload }) =>
-      setEmailConfigService(appId, payload, accountId ?? undefined),
+    mutationFn: ({
+      appId,
+      payload,
+    }: {
+      appId: string;
+      payload: SetEmailConfigPayload;
+    }) => setEmailConfigService(appId, payload, accountId ?? undefined),
     onSuccess: (_data, { appId }) => {
       queryClient.invalidateQueries({
         queryKey: ["emailConfig", appId],
@@ -286,8 +304,13 @@ export function useCreateDomain() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ appId, payload }: { appId: string; payload: CreateDomainPayload }) =>
-      createDomainService(appId, payload, accountId ?? undefined),
+    mutationFn: ({
+      appId,
+      payload,
+    }: {
+      appId: string;
+      payload: CreateDomainPayload;
+    }) => createDomainService(appId, payload, accountId ?? undefined),
     onSuccess: (_data, { appId }) => {
       queryClient.invalidateQueries({
         queryKey: ["domains", appId],

@@ -1,4 +1,11 @@
-import { Star, Download, TrendingUp, BadgeCheck, Zap, Sparkles } from "lucide-react";
+import {
+  Star,
+  Download,
+  TrendingUp,
+  BadgeCheck,
+  Zap,
+  Sparkles,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MarketplaceTemplate } from "@/data/marketplaceTemplates";
@@ -9,9 +16,9 @@ interface MarketplaceTemplateCardProps {
   onInstall?: (template: MarketplaceTemplate) => void;
   onPreview?: (template: MarketplaceTemplate) => void;
   // Customizable labels for different contexts
-  previewLabel?: string;  // "Preview" by default
-  installLabel?: string;  // "Use It" or "Get $X" by default
-  hoverButtonLabel?: string;  // "See Full Details" by default
+  previewLabel?: string; // "Preview" by default
+  installLabel?: string; // "Use It" or "Get $X" by default
+  hoverButtonLabel?: string; // "See Full Details" by default
 }
 
 export function MarketplaceTemplateCard({
@@ -30,7 +37,6 @@ export function MarketplaceTemplateCard({
     "in-app": "bg-cyan-500/15 text-cyan-600 dark:text-cyan-400",
   };
 
-  
   const channelLabels: Record<string, string> = {
     email: "Email",
     sms: "SMS",
@@ -64,9 +70,17 @@ export function MarketplaceTemplateCard({
         )}
 
         {/* Animated Template Image - Priority: previewUrl > previewImage > thumbnail > image > placeholder */}
-        {template.previewImage || template.previewUrl || template.thumbnail || template.image ? (
+        {template.previewImage ||
+        template.previewUrl ||
+        template.thumbnail ||
+        template.image ? (
           <img
-            src={template.previewImage || template.previewUrl || template.thumbnail || template.image}
+            src={
+              template.previewImage ||
+              template.previewUrl ||
+              template.thumbnail ||
+              template.image
+            }
             alt={template.name}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
@@ -80,7 +94,9 @@ export function MarketplaceTemplateCard({
             >
               <Sparkles className="h-10 w-10 text-primary/40 dark:text-primary/50" />
             </motion.div>
-            <p className="text-xs text-content-secondary/60 font-medium">Template preview</p>
+            <p className="text-xs text-content-secondary/60 font-medium">
+              Template preview
+            </p>
           </div>
         )}
 
@@ -121,7 +137,13 @@ export function MarketplaceTemplateCard({
         {/* Channel & Category */}
         <div className="mb-2 flex items-center gap-2">
           {template.channel && (
-            <Badge variant="secondary" className={channelColors[template.channel] || "bg-slate-500/20 text-slate-600"}>
+            <Badge
+              variant="secondary"
+              className={
+                channelColors[template.channel] ||
+                "bg-slate-500/20 text-slate-600"
+              }
+            >
               {channelLabels[template.channel] || template.channel}
             </Badge>
           )}
@@ -165,7 +187,9 @@ export function MarketplaceTemplateCard({
         {template.creator ? (
           <div className="mb-4 flex items-center gap-2 border-t border-border/30 pt-3">
             <img
-              src={template.creator.avatar || "https://placehold.net/avatar-5.png"} 
+              src={
+                template.creator.avatar || "https://placehold.net/avatar-5.png"
+              }
               alt={template.creator.name}
               className="h-8 w-8 rounded-full ring-2 ring-border/50"
             />
@@ -187,7 +211,9 @@ export function MarketplaceTemplateCard({
           <div className="text-center">
             <div className="flex items-center justify-center gap-1 text-warning mb-0.5">
               <Star className="h-3.5 w-3.5 fill-current" />
-              <span className="text-xs font-semibold">{(template.rating ?? 0).toFixed(1)}</span>
+              <span className="text-xs font-semibold">
+                {(template.rating ?? 0).toFixed(1)}
+              </span>
             </div>
             <p className="text-[10px] text-content-secondary">Rating</p>
           </div>
@@ -246,7 +272,8 @@ export function MarketplaceTemplateCard({
             className="flex-1 text-xs font-semibold bg-primary hover:bg-primary/90 text-white shadow-sm group-hover:shadow-primary/30 transition-all"
             onClick={() => onInstall?.(template)}
           >
-            {installLabel || ((template.price ?? 0) > 0 ? `Get $${template.price}` : "Use It")}
+            {installLabel ||
+              ((template.price ?? 0) > 0 ? `Get $${template.price}` : "Use It")}
           </Button>
         </div>
 

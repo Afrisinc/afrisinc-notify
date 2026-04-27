@@ -1,17 +1,20 @@
-import React, { useState } from 'react';
-import { ZodError } from 'zod';
+import React, { useState } from "react";
+import { ZodError } from "zod";
 
-import { HtmlProps, HtmlPropsSchema } from '@usewaypoint/block-html';
+import { HtmlProps, HtmlPropsSchema } from "@usewaypoint/block-html";
 
-import BaseSidebarPanel from './helpers/BaseSidebarPanel';
-import TextInput from './helpers/inputs/TextInput';
-import MultiStylePropertyPanel from './helpers/style-inputs/MultiStylePropertyPanel';
+import BaseSidebarPanel from "./helpers/BaseSidebarPanel";
+import TextInput from "./helpers/inputs/TextInput";
+import MultiStylePropertyPanel from "./helpers/style-inputs/MultiStylePropertyPanel";
 
 type HtmlSidebarPanelProps = {
   data: HtmlProps;
   setData: (v: HtmlProps) => void;
 };
-export default function HtmlSidebarPanel({ data, setData }: HtmlSidebarPanelProps) {
+export default function HtmlSidebarPanel({
+  data,
+  setData,
+}: HtmlSidebarPanelProps) {
   const [, setErrors] = useState<ZodError | null>(null);
 
   const updateData = (d: unknown) => {
@@ -29,11 +32,20 @@ export default function HtmlSidebarPanel({ data, setData }: HtmlSidebarPanelProp
       <TextInput
         label="Content"
         rows={5}
-        defaultValue={data.props?.contents ?? ''}
-        onChange={(contents) => updateData({ ...data, props: { ...data.props, contents } })}
+        defaultValue={data.props?.contents ?? ""}
+        onChange={(contents) =>
+          updateData({ ...data, props: { ...data.props, contents } })
+        }
       />
       <MultiStylePropertyPanel
-        names={['color', 'backgroundColor', 'fontFamily', 'fontSize', 'textAlign', 'padding']}
+        names={[
+          "color",
+          "backgroundColor",
+          "fontFamily",
+          "fontSize",
+          "textAlign",
+          "padding",
+        ]}
         value={data.style}
         onChange={(style) => updateData({ ...data, style })}
       />

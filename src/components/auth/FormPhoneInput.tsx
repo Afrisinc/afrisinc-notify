@@ -12,7 +12,11 @@ const FormPhoneInput = forwardRef<HTMLInputElement, FormPhoneInputProps>(
   ({ label, error, id, ...props }, ref) => {
     return (
       <div className="space-y-2">
-        {label && <Label htmlFor={id} className="heading-label">{label}</Label>}
+        {label && (
+          <Label htmlFor={id} className="heading-label">
+            {label}
+          </Label>
+        )}
         <div className="relative">
           <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -27,7 +31,7 @@ const FormPhoneInput = forwardRef<HTMLInputElement, FormPhoneInputProps>(
         {error && <p className="text-sm text-destructive">{error}</p>}
       </div>
     );
-  }
+  },
 );
 
 FormPhoneInput.displayName = "FormPhoneInput";

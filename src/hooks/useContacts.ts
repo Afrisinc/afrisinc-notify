@@ -23,7 +23,7 @@ import { useCurrentAccountId } from "@/hooks/useAuth";
 export function useContacts(
   appId: string,
   params?: ListContactsParams,
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean },
 ) {
   const accountId = useCurrentAccountId();
 
@@ -41,14 +41,15 @@ export function useContacts(
 export function useContact(
   appId: string,
   contactId: string,
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean },
 ) {
   const accountId = useCurrentAccountId();
 
   return useQuery({
     queryKey: ["contact", appId, contactId, accountId],
     queryFn: () => getContactService(appId, contactId, accountId ?? undefined),
-    enabled: (options?.enabled ?? true) && !!appId && !!contactId && !!accountId,
+    enabled:
+      (options?.enabled ?? true) && !!appId && !!contactId && !!accountId,
   });
 }
 
@@ -61,8 +62,13 @@ export function useCreateContact() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ appId, payload }: { appId: string; payload: CreateContactPayload }) =>
-      createContactService(appId, payload, accountId ?? undefined),
+    mutationFn: ({
+      appId,
+      payload,
+    }: {
+      appId: string;
+      payload: CreateContactPayload;
+    }) => createContactService(appId, payload, accountId ?? undefined),
     onSuccess: (_data, { appId }) => {
       // Invalidate contacts list to refetch
       queryClient.invalidateQueries({
@@ -89,7 +95,8 @@ export function useUpdateContact() {
       appId: string;
       contactId: string;
       payload: Partial<CreateContactPayload>;
-    }) => updateContactService(appId, contactId, payload, accountId ?? undefined),
+    }) =>
+      updateContactService(appId, contactId, payload, accountId ?? undefined),
     onSuccess: (_data, { appId, contactId }) => {
       // Invalidate both specific contact and contacts list
       queryClient.invalidateQueries({
@@ -131,8 +138,13 @@ export function useImportContacts() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ appId, payload }: { appId: string; payload: BulkImportPayload }) =>
-      bulkImportContactsService(appId, payload, accountId ?? undefined),
+    mutationFn: ({
+      appId,
+      payload,
+    }: {
+      appId: string;
+      payload: BulkImportPayload;
+    }) => bulkImportContactsService(appId, payload, accountId ?? undefined),
     onSuccess: (_data, { appId }) => {
       // Invalidate contacts list to refetch
       queryClient.invalidateQueries({
@@ -150,8 +162,13 @@ export function useExportContacts() {
   const accountId = useCurrentAccountId();
 
   return useMutation({
-    mutationFn: ({ appId, params }: { appId: string; params?: ExportContactsParams }) =>
-      exportContactsService(appId, params, accountId ?? undefined),
+    mutationFn: ({
+      appId,
+      params,
+    }: {
+      appId: string;
+      params?: ExportContactsParams;
+    }) => exportContactsService(appId, params, accountId ?? undefined),
   });
 }
 
@@ -162,13 +179,15 @@ export function useExportContacts() {
 export function useSearchContacts(
   appId: string,
   params?: SearchContactsParams,
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean },
 ) {
   const accountId = useCurrentAccountId();
 
   return useQuery({
     queryKey: ["contactsSearch", appId, accountId, params],
-    queryFn: () => searchContactsService(appId, params!, accountId ?? undefined),
-    enabled: (options?.enabled ?? true) && !!appId && !!accountId && !!params?.q,
+    queryFn: () =>
+      searchContactsService(appId, params!, accountId ?? undefined),
+    enabled:
+      (options?.enabled ?? true) && !!appId && !!accountId && !!params?.q,
   });
 }

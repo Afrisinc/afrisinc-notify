@@ -40,7 +40,7 @@ export interface SendNotificationResponse {
  */
 export const sendNotificationService = async (
   payload: SendNotificationPayload,
-  accountId?: string
+  accountId?: string,
 ): Promise<SendNotificationResponse["data"]> => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
 
@@ -53,7 +53,7 @@ export const sendNotificationService = async (
       app_id: payload.appId,
       payload: payload.payload || {},
     },
-    config
+    config,
   );
 
   return data.data;
@@ -75,7 +75,7 @@ export const sendBulkNotificationsService = async (
   templateId: string,
   recipients: string[],
   payload?: Record<string, any>,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
 
@@ -87,7 +87,7 @@ export const sendBulkNotificationsService = async (
       recipients,
       payload: payload || {},
     },
-    config
+    config,
   );
 
   return data.data;
@@ -103,13 +103,13 @@ export const sendBulkNotificationsService = async (
  */
 export const getNotificationStatusService = async (
   notificationId: string,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
 
   const { data } = await getApiClient().get(
     `/api/notify/${notificationId}`,
-    config
+    config,
   );
 
   return data.data;
@@ -131,7 +131,7 @@ export const getNotificationHistoryService = async (
   channel?: string,
   limit?: number,
   offset?: number,
-  accountId?: string
+  accountId?: string,
 ) => {
   const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const params = new URLSearchParams({
@@ -143,7 +143,7 @@ export const getNotificationHistoryService = async (
 
   const { data } = await getApiClient().get(
     `/api/notify/history?${params.toString()}`,
-    config
+    config,
   );
 
   return data.data;
