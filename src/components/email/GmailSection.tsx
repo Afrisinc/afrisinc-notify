@@ -140,16 +140,10 @@ export function GmailSection({ appId }: EmailSectionProps) {
         throw new Error("Invalid state token - potential CSRF attack");
       }
 
-      console.log("GmailSection - Calling OAuth callback with:", {
-        appId,
-        code: !!code,
-        state: !!state,
-      });
       const result = await saveOAuthCallbackMutation.mutateAsync({
         appId,
         payload: { code, state },
       });
-      console.log("GmailSection - OAuth callback result:", result);
 
       // Get referrer page, default to home
       const referrer = sessionStorage.getItem("oauth_referrer") || "/";

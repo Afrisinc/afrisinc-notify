@@ -105,9 +105,6 @@ export default function OrgMembers() {
     );
   }
 
-  // Log API response for debugging
-  console.log("Members API Response:", { membersData, error: membersError });
-
   const members = membersData?.members || [];
   const invites = invitesData?.invites || [];
 
