@@ -174,12 +174,6 @@ export const publishTemplateService = async (
     },
   };
 
-  console.log("🚀 Publishing template with payload:", {
-    templateId,
-    accountId,
-    payload,
-  });
-
   let requestPayload: any;
 
   // Check if payload is FormData (multipart file upload)
@@ -211,13 +205,6 @@ export const publishTemplateService = async (
 
     // Set JSON content type for non-multipart
     config.headers["Content-Type"] = "application/json";
-
-    console.log("📤 Publishing template (JSON):", {
-      templateId,
-      payloadKeys: Object.keys(requestPayload),
-      pricing: requestPayload.pricing,
-      price: requestPayload.price,
-    });
   }
 
   const { data } = await getApiClient().post<any>(
