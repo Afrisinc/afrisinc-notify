@@ -68,9 +68,9 @@ export default function AppContacts() {
   const [tagFilter, setTagFilter] = useState("all");
   const [showImport, setShowImport] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
-  const [importStep, setImportStep] = useState<"select" | "preview" | "progress" | "done">(
-    "select",
-  );
+  const [importStep, setImportStep] = useState<
+    "select" | "preview" | "progress" | "done"
+  >("select");
   const [parsedContacts, setParsedContacts] = useState<LocalContact[]>([]);
   const [importResults, setImportResults] = useState<{
     imported: number;
@@ -157,12 +157,12 @@ export default function AppContacts() {
         } else {
           inQuotes = !inQuotes;
         }
-      } else if (ch === ',' && !inQuotes) {
+      } else if (ch === "," && !inQuotes) {
         row.push(cur);
         cur = "";
-      } else if ((ch === '\n' || ch === '\r') && !inQuotes) {
+      } else if ((ch === "\n" || ch === "\r") && !inQuotes) {
         // handle CRLF or LF
-        if (ch === '\r' && text[i + 1] === '\n') {
+        if (ch === "\r" && text[i + 1] === "\n") {
           // skip, will be handled by \n
         }
         row.push(cur);
@@ -222,15 +222,16 @@ export default function AppContacts() {
 
           return {
             email,
-            firstName: (r[idx.firstName] || "") || undefined,
-            lastName: (r[idx.lastName] || "") || undefined,
-            phone: (r[idx.phone] || "") || undefined,
+            firstName: r[idx.firstName] || "" || undefined,
+            lastName: r[idx.lastName] || "" || undefined,
+            phone: r[idx.phone] || "" || undefined,
             tags,
           } as LocalContact;
         })
         .filter((c): c is LocalContact => c !== null);
 
-      if (contactsPayload.length === 0) throw new Error("No valid contacts found in CSV");
+      if (contactsPayload.length === 0)
+        throw new Error("No valid contacts found in CSV");
 
       setParsedContacts(contactsPayload);
       setImportStep("preview");
@@ -301,7 +302,10 @@ export default function AppContacts() {
           phone: editingContact.phone || undefined,
           tags: Array.isArray(editingContact.tags)
             ? editingContact.tags
-            : (editingContact.tags as string).split(",").map((t) => t.trim()).filter(Boolean),
+            : (editingContact.tags as string)
+                .split(",")
+                .map((t) => t.trim())
+                .filter(Boolean),
         },
       });
       setEditingContact(null);
@@ -313,7 +317,10 @@ export default function AppContacts() {
   const handleDeleteContact = async () => {
     if (!appId || !contactToDelete) return;
     try {
-      await deleteContactMutation.mutateAsync({ appId, contactId: contactToDelete });
+      await deleteContactMutation.mutateAsync({
+        appId,
+        contactId: contactToDelete,
+      });
       setContactToDelete(null);
     } catch (err) {
       setImportError((err as Error).message);
@@ -324,8 +331,8 @@ export default function AppContacts() {
     if (!appId) return;
     setImportError(null);
     const emails = pasteContent
-      .split('\n')
-      .map(e => e.trim())
+      .split("\n")
+      .map((e) => e.trim())
       .filter(Boolean);
 
     if (emails.length === 0) {
@@ -333,7 +340,7 @@ export default function AppContacts() {
       return;
     }
 
-    const payload: LocalContact[] = emails.map(email => ({ email }));
+    const payload: LocalContact[] = emails.map((email) => ({ email }));
     setParsedContacts(payload);
     setImportStep("preview");
   };
@@ -348,16 +355,18 @@ export default function AppContacts() {
 
     const tags = manualContactData.tags
       .split(",")
-      .map(t => t.trim())
+      .map((t) => t.trim())
       .filter(Boolean);
 
-    const payload: LocalContact[] = [{
-      email: manualContactData.email.trim(),
-      firstName: manualContactData.firstName.trim() || undefined,
-      lastName: manualContactData.lastName.trim() || undefined,
-      phone: manualContactData.phone.trim() || undefined,
-      tags: tags.length > 0 ? tags : undefined,
-    }];
+    const payload: LocalContact[] = [
+      {
+        email: manualContactData.email.trim(),
+        firstName: manualContactData.firstName.trim() || undefined,
+        lastName: manualContactData.lastName.trim() || undefined,
+        phone: manualContactData.phone.trim() || undefined,
+        tags: tags.length > 0 ? tags : undefined,
+      },
+    ];
     setParsedContacts(payload);
     setImportStep("preview");
   };
@@ -522,21 +531,23 @@ export default function AppContacts() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-8 w-8" 
-                        onClick={() => setEditingContact({
-                          ...c,
-                          tags: c.tags?.join(", ") || ""
-                        })}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() =>
+                          setEditingContact({
+                            ...c,
+                            tags: c.tags?.join(", ") || "",
+                          })
+                        }
                       >
                         <Pencil className="h-4 w-4 text-muted-foreground" />
                       </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-8 w-8 text-destructive hover:bg-destructive/10" 
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-destructive hover:bg-destructive/10"
                         onClick={() => setContactToDelete(c.id)}
                       >
                         <Trash2 className="h-4 w-4" />
@@ -571,7 +582,13 @@ export default function AppContacts() {
           }
         }}
       >
-        <DialogContent className={importStep === "preview" ? "sm:max-w-3xl w-[95vw] max-h-[90vh] overflow-y-auto" : "sm:max-w-lg"}>
+        <DialogContent
+          className={
+            importStep === "preview"
+              ? "sm:max-w-3xl w-[95vw] max-h-[90vh] overflow-y-auto"
+              : "sm:max-w-lg"
+          }
+        >
           <DialogHeader>
             <DialogTitle>Import Contacts</DialogTitle>
             <DialogDescription>
@@ -614,7 +631,7 @@ export default function AppContacts() {
                   Upload a CSV file with columns: firstName, lastName, email,
                   phone, tags
                 </p>
-                
+
                 <div
                   id="csv-drop-area"
                   onClick={() => document.getElementById("csv-input")?.click()}
@@ -670,43 +687,68 @@ export default function AppContacts() {
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <Label>First Name</Label>
-                    <Input 
-                      placeholder="Alice" 
+                    <Input
+                      placeholder="Alice"
                       value={manualContactData.firstName}
-                      onChange={(e) => setManualContactData({ ...manualContactData, firstName: e.target.value })}
+                      onChange={(e) =>
+                        setManualContactData({
+                          ...manualContactData,
+                          firstName: e.target.value,
+                        })
+                      }
                     />
                   </div>
                   <div>
                     <Label>Last Name</Label>
-                    <Input 
-                      placeholder="Williams" 
+                    <Input
+                      placeholder="Williams"
                       value={manualContactData.lastName}
-                      onChange={(e) => setManualContactData({ ...manualContactData, lastName: e.target.value })}
+                      onChange={(e) =>
+                        setManualContactData({
+                          ...manualContactData,
+                          lastName: e.target.value,
+                        })
+                      }
                     />
                   </div>
                 </div>
                 <div>
                   <Label>Email *</Label>
-                  <Input 
-                    placeholder="alice@example.com" 
+                  <Input
+                    placeholder="alice@example.com"
                     value={manualContactData.email}
-                    onChange={(e) => setManualContactData({ ...manualContactData, email: e.target.value })}
+                    onChange={(e) =>
+                      setManualContactData({
+                        ...manualContactData,
+                        email: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <div>
                   <Label>Phone</Label>
-                  <Input 
-                    placeholder="+1234567890" 
+                  <Input
+                    placeholder="+1234567890"
                     value={manualContactData.phone}
-                    onChange={(e) => setManualContactData({ ...manualContactData, phone: e.target.value })}
+                    onChange={(e) =>
+                      setManualContactData({
+                        ...manualContactData,
+                        phone: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <div>
                   <Label>Tags (comma-separated)</Label>
-                  <Input 
-                    placeholder="vip, newsletter" 
+                  <Input
+                    placeholder="vip, newsletter"
                     value={manualContactData.tags}
-                    onChange={(e) => setManualContactData({ ...manualContactData, tags: e.target.value })}
+                    onChange={(e) =>
+                      setManualContactData({
+                        ...manualContactData,
+                        tags: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <Button className="w-full" onClick={handleManualImport}>
@@ -736,27 +778,47 @@ export default function AppContacts() {
                   <TableBody>
                     {parsedContacts.slice(0, 100).map((c, i) => (
                       <TableRow key={i}>
-                        <TableCell className="max-w-[200px] truncate" title={c.email}>{c.email}</TableCell>
-                        <TableCell className="max-w-[150px] truncate" title={`${c.firstName || ''} ${c.lastName || ''}`.trim()}>
+                        <TableCell
+                          className="max-w-[200px] truncate"
+                          title={c.email}
+                        >
+                          {c.email}
+                        </TableCell>
+                        <TableCell
+                          className="max-w-[150px] truncate"
+                          title={`${c.firstName || ""} ${c.lastName || ""}`.trim()}
+                        >
                           {c.firstName} {c.lastName}
                         </TableCell>
                         <TableCell>{c.phone}</TableCell>
-                        <TableCell className="max-w-[200px] truncate w-full" title={c.tags?.join(", ")}>
+                        <TableCell
+                          className="max-w-[200px] truncate w-full"
+                          title={c.tags?.join(", ")}
+                        >
                           {c.tags?.length ? (
                             <div className="flex gap-1 flex-wrap">
                               {c.tags.map((t) => (
-                                <Badge key={`${i}-${t}`} variant="outline" className="text-[10px]">
+                                <Badge
+                                  key={`${i}-${t}`}
+                                  variant="outline"
+                                  className="text-[10px]"
+                                >
                                   {t}
                                 </Badge>
                               ))}
                             </div>
-                          ) : "—"}
+                          ) : (
+                            "—"
+                          )}
                         </TableCell>
                       </TableRow>
                     ))}
                     {parsedContacts.length > 100 && (
                       <TableRow>
-                        <TableCell colSpan={4} className="text-center text-muted-foreground p-4">
+                        <TableCell
+                          colSpan={4}
+                          className="text-center text-muted-foreground p-4"
+                        >
                           And {parsedContacts.length - 100} more...
                         </TableCell>
                       </TableRow>
@@ -765,11 +827,19 @@ export default function AppContacts() {
                 </Table>
               </div>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setImportStep("select")}>
+                <Button
+                  variant="outline"
+                  onClick={() => setImportStep("select")}
+                >
                   Back
                 </Button>
-                <Button onClick={confirmImport} disabled={importContactsMutation.isPending}>
-                  {importContactsMutation.isPending ? "Importing..." : "Confirm Import"}
+                <Button
+                  onClick={confirmImport}
+                  disabled={importContactsMutation.isPending}
+                >
+                  {importContactsMutation.isPending
+                    ? "Importing..."
+                    : "Confirm Import"}
                 </Button>
               </DialogFooter>
             </div>
@@ -785,16 +855,37 @@ export default function AppContacts() {
           {importStep === "done" && (
             <div className="py-8 space-y-6">
               <div className="text-center">
-                <div className={`h-12 w-12 rounded-full ${importResults?.failed > 0 ? "bg-warning/15" : "bg-success/15"} flex items-center justify-center mx-auto mb-4`}>
-                  {importResults?.failed > 0 ? <AlertCircle className="h-6 w-6 text-warning" /> : <Check className="h-6 w-6 text-success" />}
+                <div
+                  className={`h-12 w-12 rounded-full ${importResults?.failed > 0 ? "bg-warning/15" : "bg-success/15"} flex items-center justify-center mx-auto mb-4`}
+                >
+                  {importResults?.failed > 0 ? (
+                    <AlertCircle className="h-6 w-6 text-warning" />
+                  ) : (
+                    <Check className="h-6 w-6 text-success" />
+                  )}
                 </div>
                 <p className="text-lg font-medium text-foreground">
                   Import Complete
                 </p>
                 <div className="flex justify-center gap-4 mt-4 text-sm">
-                  <div className="flex flex-col items-center"><span className="font-bold text-success">{importResults?.imported || 0}</span><span className="text-muted-foreground">Imported</span></div>
-                  <div className="flex flex-col items-center"><span className="font-bold text-primary">{importResults?.updated || 0}</span><span className="text-muted-foreground">Updated</span></div>
-                  <div className="flex flex-col items-center"><span className="font-bold text-warning">{importResults?.failed || 0}</span><span className="text-muted-foreground">Failed</span></div>
+                  <div className="flex flex-col items-center">
+                    <span className="font-bold text-success">
+                      {importResults?.imported || 0}
+                    </span>
+                    <span className="text-muted-foreground">Imported</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <span className="font-bold text-primary">
+                      {importResults?.updated || 0}
+                    </span>
+                    <span className="text-muted-foreground">Updated</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <span className="font-bold text-warning">
+                      {importResults?.failed || 0}
+                    </span>
+                    <span className="text-muted-foreground">Failed</span>
+                  </div>
                 </div>
               </div>
 
@@ -811,13 +902,23 @@ export default function AppContacts() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {importResults.errors.map((err: { row: number; email: string; reason: string }, i: number) => (
-                          <TableRow key={i} className="hover:bg-warning/10 border-warning/20">
-                            <TableCell>{err.row}</TableCell>
-                            <TableCell>{err.email}</TableCell>
-                            <TableCell className="text-warning font-medium">{err.reason}</TableCell>
-                          </TableRow>
-                        ))}
+                        {importResults.errors.map(
+                          (
+                            err: { row: number; email: string; reason: string },
+                            i: number,
+                          ) => (
+                            <TableRow
+                              key={i}
+                              className="hover:bg-warning/10 border-warning/20"
+                            >
+                              <TableCell>{err.row}</TableCell>
+                              <TableCell>{err.email}</TableCell>
+                              <TableCell className="text-warning font-medium">
+                                {err.reason}
+                              </TableCell>
+                            </TableRow>
+                          ),
+                        )}
                       </TableBody>
                     </Table>
                   </div>
@@ -930,7 +1031,10 @@ export default function AppContacts() {
       </Dialog>
 
       {/* Edit Contact Dialog */}
-      <Dialog open={!!editingContact} onOpenChange={(open) => !open && setEditingContact(null)}>
+      <Dialog
+        open={!!editingContact}
+        onOpenChange={(open) => !open && setEditingContact(null)}
+      >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Edit Contact</DialogTitle>
@@ -998,7 +1102,10 @@ export default function AppContacts() {
                   placeholder="vip, newsletter"
                   value={editingContact.tags || ""}
                   onChange={(e) =>
-                    setEditingContact({ ...editingContact, tags: e.target.value })
+                    setEditingContact({
+                      ...editingContact,
+                      tags: e.target.value,
+                    })
                   }
                 />
               </div>
@@ -1021,12 +1128,16 @@ export default function AppContacts() {
       </Dialog>
 
       {/* Delete Confirmation Dialog */}
-      <Dialog open={!!contactToDelete} onOpenChange={(open) => !open && setContactToDelete(null)}>
+      <Dialog
+        open={!!contactToDelete}
+        onOpenChange={(open) => !open && setContactToDelete(null)}
+      >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Delete Contact</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete this contact? This action cannot be undone.
+              Are you sure you want to delete this contact? This action cannot
+              be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
