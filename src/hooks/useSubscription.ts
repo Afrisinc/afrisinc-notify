@@ -66,7 +66,7 @@ export function useUpgradeRecommendations(accountId?: string) {
 }
 
 /**
- * Hook to get available plans
+ * Hook to get available plans (authenticated)
  */
 export function usePlans(accountId?: string) {
   return useQuery({
@@ -75,6 +75,42 @@ export function usePlans(accountId?: string) {
     staleTime: 60 * 60 * 1000, // 1 hour
     retry: 1,
     enabled: !!accountId,
+  });
+}
+
+/**
+ * Hook to get public plans (no auth required) - for pricing/landing pages
+ */
+export function usePublicPlans() {
+  return useQuery({
+    queryKey: ["public-plans"],
+    queryFn: () => subscriptionService.getPublicPlans(),
+    staleTime: 60 * 60 * 1000, // 1 hour
+    retry: 2,
+  });
+}
+
+/**
+ * Hook to get PAYG rates (public)
+ */
+export function usePaygRates() {
+  return useQuery({
+    queryKey: ["payg-rates"],
+    queryFn: () => subscriptionService.getPaygRates(),
+    staleTime: 60 * 60 * 1000, // 1 hour
+    retry: 2,
+  });
+}
+
+/**
+ * Hook to get top-up blocks (public)
+ */
+export function useTopUpBlocks() {
+  return useQuery({
+    queryKey: ["topup-blocks"],
+    queryFn: () => subscriptionService.getTopUpBlocks(),
+    staleTime: 60 * 60 * 1000, // 1 hour
+    retry: 2,
   });
 }
 

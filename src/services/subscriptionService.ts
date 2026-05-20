@@ -56,6 +56,35 @@ export interface UpgradeRecommendation {
   };
 }
 
+export interface PlanLimitDef {
+  metric: string;
+  limit: number | string; // Can be number or "Unlimited"
+  period: string;
+}
+
+export interface Plan {
+  id: string;
+  name: string;
+  priceMonthly: number;
+  priceYearly: number;
+  limits: PlanLimitDef[];
+}
+
+export interface PaygRates {
+  email: { rate: number; unit: string };
+  sms: { rate: number; unit: string };
+  push: { rate: number; unit: string };
+  inApp: { rate: number; unit: string };
+  whatsapp?: { rate: number; unit: string; comingSoon?: boolean };
+}
+
+export interface TopUpBlock {
+  amount: number;
+  credits: string;
+  popular?: boolean;
+  bonus?: string;
+}
+
 const getClient = () => getApiClient();
 
 export const subscriptionService = {
@@ -122,11 +151,36 @@ export const subscriptionService = {
   },
 
   /**
-   * Get all available plans
+   * Get all available plans (includes id, name, limits)
    */
-  async getPlans(accountId?: string) {
+  async getPlans(accountId?: string): Promise<Plan[]> {
     const config = accountId ? { headers: { "x-account-id": accountId } } : {};
-    const response = await getClient().get("/api/plans", config);
+    const response = await getClient().get("/api/subscriptions/plans", config);
+    return response.data.data;
+  },
+
+  /**
+   * Get public plans - uses same endpoint as authenticated plans
+   * For pricing/landing pages
+   */
+  async getPublicPlans(): Promise<Plan[]> {
+    const response = await getClient().get("/api/subscriptions/plans");
+    return response.data.data;
+  },
+
+  /**
+   * Get PAYG rates (public endpoint)
+   */
+  async getPaygRates(): Promise<PaygRates> {
+    const response = await getClient().get("/api/public/payg-rates");
+    return response.data.data;
+  },
+
+  /**
+   * Get top-up blocks (public endpoint)
+   */
+  async getTopUpBlocks(): Promise<TopUpBlock[]> {
+    const response = await getClient().get("/api/public/topup-blocks");
     return response.data.data;
   },
 
@@ -143,7 +197,9 @@ export const subscriptionService = {
   },
 
   /**
-   * Upgrade to a new plan
+   * Upgrade to a new plan.
+   * Resolves plan name → UUID via GET /subscriptions/plans, then calls
+   * PUT /subscriptions/plan with the planId the backend already expects.
    */
   async upgradePlan(
     planName: string,
@@ -151,12 +207,21 @@ export const subscriptionService = {
     accountId?: string,
   ) {
     const config = accountId ? { headers: { "x-account-id": accountId } } : {};
-    const response = await getClient().post(
-      "/api/subscriptions/upgrade",
-      {
-        plan: planName,
-        billing_cycle: billingCycle,
-      },
+
+    // Resolve name → id so we use the existing planId-based route
+    const plans = await this.getPlans(accountId);
+    const match = plans.find(
+      (p) => p.name.toUpperCase() === planName.toUpperCase(),
+    );
+    if (!match) {
+      throw new Error(
+        `Plan '${planName}' not found. Available: ${plans.map((p) => p.name).join(", ")}`,
+      );
+    }
+
+    const response = await getClient().put(
+      "/api/subscriptions/plan",
+      { planId: match.id },
       config,
     );
     return response.data.data;

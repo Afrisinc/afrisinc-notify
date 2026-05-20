@@ -15,6 +15,7 @@ import {
 import { motion } from "framer-motion";
 import { getAuthUrls } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import BackgroundDecorator from "@/components/auth/BackgroundDecorator";
 import { Testimonials } from "@/components/public/landing/Testimonials";
 import { TrustBadges } from "@/components/public/landing/TrustBadges";
@@ -22,6 +23,7 @@ import { HowItWorks } from "@/components/public/landing/HowItWorks";
 import { FAQ } from "@/components/public/landing/FAQ";
 import { CodeSnippet } from "@/components/public/landing/CodeSnippet";
 import { ChannelStrip } from "@/components/public/landing/ChannelStrip";
+import { usePublicPlans } from "@/hooks/useSubscription";
 
 // ── Feature cards ─────────────────────────────────────────────────────────────
 const FEATURES = [
@@ -67,55 +69,33 @@ const FEATURES = [
   },
 ];
 
-// ── Pricing tiers ─────────────────────────────────────────────────────────────
-const TIERS = [
-  {
-    name: "Free",
-    price: "$0",
-    desc: "Perfect for side projects and exploration.",
-    cta: "Start for free",
-    highlighted: false,
-    features: [
-      "3,000 emails / mo",
-      "100 SMS / mo",
-      "1 app",
-      "2 team members",
-      "Community support",
-    ],
-  },
-  {
-    name: "Pro",
-    price: "$49",
-    priceNote: "/ month",
-    desc: "For growing teams shipping at scale.",
-    cta: "Get started",
-    highlighted: true,
-    features: [
-      "50,000 emails / mo",
-      "2,000 SMS / mo",
-      "Unlimited apps",
-      "Unlimited team members",
-      "Custom domain (DKIM/SPF)",
-      "Priority support",
-      "Analytics & webhooks",
-    ],
-  },
-  {
-    name: "Enterprise",
-    price: "Custom",
-    desc: "Custom volume, SLAs, and dedicated support.",
-    cta: "Contact sales",
-    highlighted: false,
-    features: [
-      "Unlimited volume",
-      "Dedicated IP",
-      "SLA guarantee",
-      "SSO / SAML",
-      "Custom onboarding",
-      "Dedicated account manager",
-    ],
-  },
-];
+// CTA mapping based on plan name
+const planCtas: Record<string, string> = {
+  FREE: "Start for free",
+  STARTER: "Start 14-day free trial",
+  SCALE: "Get Scale",
+  ENTERPRISE: "Talk to sales",
+};
+
+function PricingSkeleton() {
+  return (
+    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
+      {[0, 1, 2, 3].map((i) => (
+        <div key={i} className="rounded-2xl border border-border bg-card p-6">
+          <Skeleton className="h-6 w-20 mb-3" />
+          <Skeleton className="h-12 w-28 mb-2" />
+          <Skeleton className="h-4 w-full mb-4" />
+          <Skeleton className="h-12 w-full rounded-xl mb-4" />
+          <div className="space-y-3">
+            {[0, 1, 2, 3].map((j) => (
+              <Skeleton key={j} className="h-4 w-full" />
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 function SectionBadge({ children }: { children: React.ReactNode }) {
   return (
@@ -127,8 +107,91 @@ function SectionBadge({ children }: { children: React.ReactNode }) {
   );
 }
 
+// Plan descriptions for landing page
+const planDescriptions: Record<string, string> = {
+  FREE: "Email only — test before you commit.",
+  STARTER: "All channels unlocked — best entry point.",
+  SCALE: "For fast-growing businesses.",
+  ENTERPRISE: "Large operations — negotiated volume.",
+};
+
+// Generate features from plan limits for landing page
+const generateLandingFeatures = (
+  limits: Array<{ metric: string; limit: number | string; period: string }>,
+  planName: string,
+): string[] => {
+  const features: string[] = [];
+  const formatVal = (v: number | string) =>
+    v === "Unlimited"
+      ? "Unlimited"
+      : typeof v === "number"
+        ? v.toLocaleString()
+        : v;
+
+  const metricMap: Record<string, string> = {
+    emails_per_month: "emails / mo",
+    sms_per_month: "SMS / mo",
+    push_subscribers: "push subscribers",
+    in_app_per_month: "in-app / mo",
+    apps: "apps",
+    contacts: "contacts",
+    custom_domain: "custom domain (DKIM/SPF)",
+    webhooks: "webhooks",
+  };
+
+  for (const [metric, label] of Object.entries(metricMap)) {
+    const l = limits.find((x) => x.metric === metric);
+    if (
+      l &&
+      (l.limit === "Unlimited" || (typeof l.limit === "number" && l.limit > 0))
+    ) {
+      features.push(`${formatVal(l.limit)} ${label}`);
+    }
+  }
+
+  // Plan-specific extras
+  if (planName === "STARTER") features.push("API access + 3 webhooks");
+  if (planName === "SCALE") {
+    features.push(
+      "A/B testing + advanced analytics",
+      "Priority support (12h SLA)",
+      "Dedicated email IP",
+    );
+  }
+  if (planName === "ENTERPRISE") {
+    features.push(
+      "Dedicated IP + account manager",
+      "99.9% uptime SLA",
+      "SSO / SAML / LDAP",
+      "Africa-region data residency",
+    );
+  }
+  if (planName === "FREE") features.push("Community support");
+
+  return features.slice(0, 8);
+};
+
 const Landing = () => {
   const { signupUrl } = getAuthUrls();
+  const { data: plansData, isLoading: plansLoading } = usePublicPlans();
+
+  // Transform plans data for display (filter out PAYG and PRO plans)
+  const tiers = (plansData ?? [])
+    .filter((p) => p.name !== "PAYG" && p.name !== "PRO")
+    .map((plan) => {
+      const displayName =
+        plan.name.charAt(0) + plan.name.slice(1).toLowerCase();
+      return {
+        name: displayName,
+        price: plan.priceMonthly === 0 ? "$0" : `$${plan.priceMonthly}`,
+        priceNote: plan.priceMonthly > 0 ? "/ month" : undefined,
+        desc: planDescriptions[plan.name] || "",
+        cta: planCtas[plan.name] ?? `Get ${displayName}`,
+        highlighted: plan.name === "STARTER",
+        badge: plan.name === "STARTER" ? "Best Value" : undefined,
+        features: generateLandingFeatures(plan.limits, plan.name),
+      };
+    });
 
   return (
     <div className="overflow-hidden">
@@ -197,7 +260,7 @@ const Landing = () => {
                 {[
                   "10,000+ developers",
                   "99.9% uptime SLA",
-                  "Free up to 3K/mo",
+                  "Free up to 500 emails/mo",
                 ].map((t) => (
                   <div key={t} className="flex items-center gap-1.5">
                     <Check
@@ -288,82 +351,86 @@ const Landing = () => {
           >
             <SectionBadge>Pricing</SectionBadge>
             <h2 className="heading-section mb-4">
-              Simple, transparent pricing
+              Built for Africa. Priced for Africa.
             </h2>
             <p className="text-lg text-muted-foreground">
-              Start for free. Scale as you grow. No surprise fees.
+              Start for free. Scale as you grow. No surprise fees. All prices in
+              USD.
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-5 max-w-4xl mx-auto">
-            {TIERS.map((tier, i) => (
-              <motion.div
-                key={tier.name}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08, duration: 0.45 }}
-                className={[
-                  "relative rounded-2xl p-8 flex flex-col gap-5 border transition-all",
-                  tier.highlighted
-                    ? "bg-card border-primary/40 shadow-[0_0_40px_rgba(2,147,228,0.1)]"
-                    : "bg-card border-border hover:border-primary/20",
-                ].join(" ")}
-              >
-                {tier.highlighted && (
-                  <div className="absolute -top-px left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[11px] font-bold px-4 py-1 rounded-b-lg uppercase tracking-wider">
-                    Most popular
-                  </div>
-                )}
-
-                <div>
-                  <p className="font-bold text-lg text-foreground mb-1">
-                    {tier.name}
-                  </p>
-                  <div className="flex items-baseline gap-1 mb-2">
-                    <span className="text-4xl font-extrabold tracking-tight text-foreground">
-                      {tier.price}
-                    </span>
-                    {"priceNote" in tier && tier.priceNote && (
-                      <span className="text-sm text-muted-foreground">
-                        {tier.priceNote}
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {tier.desc}
-                  </p>
-                </div>
-
-                <a
-                  href={tier.name === "Enterprise" ? "/contact" : signupUrl}
+          {plansLoading && <PricingSkeleton />}
+          {!plansLoading && (
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
+              {tiers.map((tier, i) => (
+                <motion.div
+                  key={tier.name}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.08, duration: 0.45 }}
                   className={[
-                    "w-full py-3 rounded-xl font-semibold text-sm text-center transition-all border",
+                    "relative rounded-2xl p-6 flex flex-col gap-4 border transition-all",
                     tier.highlighted
-                      ? "bg-primary text-primary-foreground border-primary shadow-[0_4px_14px_rgba(2,147,228,0.3)] hover:bg-primary/90"
-                      : "bg-transparent text-foreground border-border hover:border-primary/40 hover:text-primary",
+                      ? "bg-card border-primary/40 shadow-[0_0_40px_rgba(2,147,228,0.1)]"
+                      : "bg-card border-border hover:border-primary/20",
                   ].join(" ")}
                 >
-                  {tier.cta}
-                </a>
+                  {tier.highlighted && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wider whitespace-nowrap">
+                      Best Value
+                    </div>
+                  )}
 
-                <ul className="space-y-3">
-                  {tier.features.map((f) => (
-                    <li
-                      key={f}
-                      className="flex items-start gap-2.5 text-sm text-muted-foreground"
-                    >
-                      <Check
-                        className="h-4 w-4 text-success shrink-0 mt-0.5"
-                        strokeWidth={2.5}
-                      />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            ))}
-          </div>
+                  <div>
+                    <p className="font-bold text-lg text-foreground mb-1">
+                      {tier.name}
+                    </p>
+                    <div className="flex items-baseline gap-1 mb-2">
+                      <span className="text-4xl font-extrabold tracking-tight text-foreground">
+                        {tier.price}
+                      </span>
+                      {"priceNote" in tier && tier.priceNote && (
+                        <span className="text-sm text-muted-foreground">
+                          {tier.priceNote}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {tier.desc}
+                    </p>
+                  </div>
+
+                  <a
+                    href={tier.name === "Enterprise" ? "/contact" : signupUrl}
+                    className={[
+                      "w-full py-3 rounded-xl font-semibold text-sm text-center transition-all border",
+                      tier.highlighted
+                        ? "bg-primary text-primary-foreground border-primary shadow-[0_4px_14px_rgba(2,147,228,0.3)] hover:bg-primary/90"
+                        : "bg-transparent text-foreground border-border hover:border-primary/40 hover:text-primary",
+                    ].join(" ")}
+                  >
+                    {tier.cta}
+                  </a>
+
+                  <ul className="space-y-3">
+                    {tier.features.map((f) => (
+                      <li
+                        key={f}
+                        className="flex items-start gap-2.5 text-sm text-muted-foreground"
+                      >
+                        <Check
+                          className="h-4 w-4 text-success shrink-0 mt-0.5"
+                          strokeWidth={2.5}
+                        />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              ))}
+            </div>
+          )}
 
           <motion.div
             initial={{ opacity: 0 }}
