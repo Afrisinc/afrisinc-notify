@@ -112,7 +112,7 @@ export interface CreateUserTemplateResponse {
 // ──────────────────────────────────────────
 
 export const listUserTemplatesService = async (
-  accountId: string,
+  orgId: string,
   params?: ListUserTemplatesParams,
 ) => {
   const queryParams = new URLSearchParams();
@@ -122,10 +122,8 @@ export const listUserTemplatesService = async (
 
   const query = queryParams.toString() ? `?${queryParams.toString()}` : "";
 
-  const config = { headers: { "x-account-id": accountId } };
   const { data } = await getApiClient().get<any>(
-    `/api/templates/my-templates${query}`,
-    config,
+    `/api/organizations/${orgId}/templates/my-templates${query}`,
   );
   return {
     data: data.data,
@@ -138,13 +136,11 @@ export const listUserTemplatesService = async (
 // ──────────────────────────────────────────
 
 export const getUserTemplateForEditingService = async (
+  orgId: string,
   templateId: string,
-  accountId: string,
 ) => {
-  const config = { headers: { "x-account-id": accountId } };
   const { data } = await getApiClient().get<any>(
-    `/api/templates/${templateId}/edit`,
-    config,
+    `/api/organizations/${orgId}/templates/${templateId}/edit`,
   );
   return data.data as UserTemplate;
 };
@@ -164,14 +160,12 @@ const categoryMap: Record<string, string> = {
 };
 
 export const publishTemplateService = async (
+  orgId: string,
   templateId: string,
-  accountId: string,
   payload?: PublishTemplatePayload | FormData,
 ) => {
-  const config = {
-    headers: {
-      "x-account-id": accountId,
-    },
+  const config: { headers: Record<string, string> } = {
+    headers: {},
   };
 
   let requestPayload: any;
@@ -208,7 +202,7 @@ export const publishTemplateService = async (
   }
 
   const { data } = await getApiClient().post<any>(
-    `/api/templates/${templateId}/publish`,
+    `/api/organizations/${orgId}/templates/${templateId}/publish`,
     requestPayload,
     config,
   );
@@ -220,14 +214,12 @@ export const publishTemplateService = async (
 // ──────────────────────────────────────────
 
 export const createUserTemplateService = async (
-  accountId: string,
+  orgId: string,
   payload: CreateUserTemplatePayload,
 ) => {
-  const config = { headers: { "x-account-id": accountId } };
   const { data } = await getApiClient().post<any>(
-    `/api/templates`,
+    `/api/organizations/${orgId}/templates`,
     payload,
-    config,
   );
   return data.data as CreateUserTemplateResponse;
 };
@@ -237,15 +229,13 @@ export const createUserTemplateService = async (
 // ──────────────────────────────────────────
 
 export const updateUserTemplateService = async (
+  orgId: string,
   templateId: string,
-  accountId: string,
   payload: CreateUserTemplatePayload,
 ) => {
-  const config = { headers: { "x-account-id": accountId } };
   const { data } = await getApiClient().put<any>(
-    `/api/templates/${templateId}`,
+    `/api/organizations/${orgId}/templates/${templateId}`,
     payload,
-    config,
   );
   return data.data as CreateUserTemplateResponse;
 };
@@ -255,14 +245,12 @@ export const updateUserTemplateService = async (
 // ──────────────────────────────────────────
 
 export const unpublishTemplateService = async (
+  orgId: string,
   templateId: string,
-  accountId: string,
 ) => {
-  const config = { headers: { "x-account-id": accountId } };
   const { data } = await getApiClient().put<any>(
-    `/api/templates/${templateId}/unpublish`,
+    `/api/organizations/${orgId}/templates/${templateId}/unpublish`,
     {},
-    config,
   );
   return data.data as UnpublishTemplateResponse;
 };

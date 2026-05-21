@@ -10,6 +10,7 @@ import {
   useUnpublishTemplate,
 } from "@/hooks/useUserTemplatePublishing";
 import { useCurrentAccountId } from "@/hooks/useAuth";
+import { useOrg } from "@/contexts/OrgContext";
 import { useDeleteTemplate, useDuplicateTemplate } from "@/hooks/useTemplates";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,7 @@ type VisibilityFilter = "all" | "published" | "private";
 export default function MyTemplates() {
   const navigate = useNavigate();
   const accountId = useCurrentAccountId();
+  const { currentOrg } = useOrg();
   const { toast } = useToast();
 
   const [search, setSearch] = useState("");
@@ -90,6 +92,16 @@ export default function MyTemplates() {
 
   const selectedTemplate = templates.find((t) => t.id === publishDialogId);
 
+  // Category mapping: Frontend -> Backend
+  const categoryMap: Record<string, string> = {
+    Transactional: "TRANSACTIONAL",
+    Marketing: "MARKETING",
+    Authentication: "AUTH",
+    Security: "AUTH",
+    "E-Commerce": "TRANSACTIONAL",
+    Alerts: "NOTIFICATION",
+  };
+
   const handlePublish = async (data: PublishTemplateData) => {
     if (!publishDialogId) return;
     try {
@@ -107,11 +119,16 @@ export default function MyTemplates() {
         previewImageFile = new File([u8arr], "preview.png", { type: mime });
       }
 
+      // Map category to backend format
+      const backendCategory = data.category
+        ? categoryMap[data.category] || data.category.toUpperCase()
+        : "";
+
       // Build FormData for multipart upload
       const formData = new FormData();
       formData.append("title", data.title || "");
       formData.append("description", data.description || "");
-      formData.append("category", data.category || "");
+      formData.append("category", backendCategory);
       if (data.tags && data.tags.length > 0) {
         formData.append("tags", JSON.stringify(data.tags));
       }
@@ -173,7 +190,10 @@ export default function MyTemplates() {
 
   const handleDelete = async (templateId: string) => {
     try {
-      await deleteMutation.mutateAsync(templateId);
+      await deleteMutation.mutateAsync({
+        orgId: currentOrg?.id || "",
+        templateId,
+      });
 
       toast({
         title: "Success",
@@ -194,7 +214,8 @@ export default function MyTemplates() {
 
   const handleDuplicate = async (templateId: string) => {
     try {
-      const result = await duplicateMutation.mutateAsync({ templateId });
+      const orgId = currentOrg?.id ?? "";
+      const result = await duplicateMutation.mutateAsync({ orgId, templateId });
 
       toast({
         title: "Success",

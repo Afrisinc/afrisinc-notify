@@ -9,7 +9,6 @@ import {
   UseQueryResult,
   UseMutationResult,
 } from "@tanstack/react-query";
-import { useCurrentAccountId } from "@/hooks/useAuth";
 import { Template } from "@/types/templates";
 import {
   fetchTemplates,
@@ -263,21 +262,25 @@ export function useCreateTemplate(): UseMutationResult<
 export function useUpdateTemplate(): UseMutationResult<
   any,
   Error,
-  { id: string; payload: Partial<CreateTemplatePayload> }
+  { orgId: string; id: string; payload: Partial<CreateTemplatePayload> }
 > {
   return useMutation({
-    mutationFn: ({ id, payload }) => updateTemplateService(id, payload),
+    mutationFn: ({ orgId, id, payload }) =>
+      updateTemplateService(orgId, id, payload),
   });
 }
 
 /**
  * Hook to delete a template
  */
-export function useDeleteTemplate(): UseMutationResult<any, Error, string> {
-  const accountId = useCurrentAccountId();
-
+export function useDeleteTemplate(): UseMutationResult<
+  any,
+  Error,
+  { orgId: string; templateId: string }
+> {
   return useMutation({
-    mutationFn: (templateId) => deleteTemplateService(templateId, accountId),
+    mutationFn: ({ orgId, templateId }) =>
+      deleteTemplateService(orgId, templateId),
   });
 }
 
@@ -287,10 +290,10 @@ export function useDeleteTemplate(): UseMutationResult<any, Error, string> {
 export function useDuplicateTemplate(): UseMutationResult<
   any,
   Error,
-  { templateId: string; newName?: string }
+  { orgId: string; templateId: string; newCode?: string }
 > {
   return useMutation({
-    mutationFn: ({ templateId, newName }) =>
-      duplicateTemplateService(templateId, newName),
+    mutationFn: ({ orgId, templateId, newCode }) =>
+      duplicateTemplateService(orgId, templateId, newCode),
   });
 }

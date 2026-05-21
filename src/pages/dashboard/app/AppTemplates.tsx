@@ -6,7 +6,9 @@ import {
 } from "@/components/editors/ChannelSelectorDialog";
 import { appTemplates } from "@/data/mockData";
 import { useAppTemplates, useDeleteAppTemplate } from "@/hooks/useApps";
+import { useDuplicateTemplate } from "@/hooks/useTemplates";
 import { useSendNotification } from "@/hooks/useNotifications";
+import { useOrg } from "@/contexts/OrgContext";
 import { extractVariableNames } from "@/lib/templateUtils";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
@@ -96,7 +98,9 @@ export default function AppTemplates() {
   const { appId } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { currentOrg } = useOrg();
   const deleteTemplateMutation = useDeleteAppTemplate();
+  const duplicateMutation = useDuplicateTemplate();
   const sendNotificationMutation = useSendNotification();
 
   // Fetch templates from app endpoint
@@ -123,6 +127,7 @@ export default function AppTemplates() {
     templateName: string;
   } | null>(null);
   const [channelSelectorOpen, setChannelSelectorOpen] = useState(false);
+  const [duplicateConfirm, setDuplicateConfirm] = useState<string | null>(null);
 
   const handleCreateTemplate = (channel: TemplateChannel) => {
     setChannelSelectorOpen(false);
@@ -194,6 +199,40 @@ export default function AppTemplates() {
       toast({
         title: "Error",
         description: "Failed to send notification",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDuplicate = async (templateId: string) => {
+    try {
+      const orgId = currentOrg?.id ?? "";
+      const result = await duplicateMutation.mutateAsync({ orgId, templateId });
+
+      toast({
+        title: "Success",
+        description: "Template duplicated successfully",
+      });
+
+      setDuplicateConfirm(null);
+
+      // Navigate to the duplicated template using the regular template editor
+      if (result?.id) {
+        const channel = result.channel?.toLowerCase() || "email";
+        const channelNormalized = channel === "in_app" ? "in-app" : channel;
+        if (channelNormalized === "email") {
+          navigate(`/dashboard/templates/${result.id}`);
+        } else {
+          navigate(`/dashboard/templates/${channelNormalized}/${result.id}`);
+        }
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to duplicate template",
         variant: "destructive",
       });
     }
@@ -390,6 +429,8 @@ export default function AppTemplates() {
                         size="icon"
                         className="h-7 w-7"
                         title="Duplicate template"
+                        onClick={() => setDuplicateConfirm(templateId)}
+                        disabled={duplicateMutation.isPending}
                       >
                         <Copy className="h-3 w-3" />
                       </Button>
@@ -453,6 +494,32 @@ export default function AppTemplates() {
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               {deleteTemplateMutation.isPending ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Duplicate Confirmation Dialog */}
+      <AlertDialog
+        open={!!duplicateConfirm}
+        onOpenChange={(open) => !open && setDuplicateConfirm(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogTitle>Duplicate Template</AlertDialogTitle>
+          <AlertDialogDescription>
+            This will create a copy of the template that you can customize.
+          </AlertDialogDescription>
+          <div className="flex justify-end gap-2">
+            <AlertDialogCancel disabled={duplicateMutation.isPending}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() =>
+                duplicateConfirm && handleDuplicate(duplicateConfirm)
+              }
+              disabled={duplicateMutation.isPending}
+            >
+              {duplicateMutation.isPending ? "Duplicating..." : "Duplicate"}
             </AlertDialogAction>
           </div>
         </AlertDialogContent>

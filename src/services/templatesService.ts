@@ -450,12 +450,14 @@ export async function installTemplate(options: {
 
 /**
  * Get template installation status (protected)
- * GET /api/templates/{slug}/status
+ * GET /api/organizations/{orgId}/templates/{id}/status
  */
-export async function getTemplateStatus(slug: string) {
+export async function getTemplateStatus(orgId: string, templateId: string) {
   try {
     const client = getApiClient();
-    const response = await client.get<any>(`/api/templates/${slug}/status`);
+    const response = await client.get<any>(
+      `/api/organizations/${orgId}/templates/${templateId}/status`,
+    );
     return response.data.data;
   } catch (error) {
     console.error("Failed to get template status:", error);
@@ -465,12 +467,14 @@ export async function getTemplateStatus(slug: string) {
 
 /**
  * Get template analytics (protected)
- * GET /api/templates/{slug}/analytics
+ * GET /api/organizations/{orgId}/templates/{id}/analytics
  */
-export async function getTemplateAnalytics(slug: string) {
+export async function getTemplateAnalytics(orgId: string, templateId: string) {
   try {
     const client = getApiClient();
-    const response = await client.get<any>(`/api/templates/${slug}/analytics`);
+    const response = await client.get<any>(
+      `/api/organizations/${orgId}/templates/${templateId}/analytics`,
+    );
     return response.data.data;
   } catch (error) {
     console.error("Failed to get template analytics:", error);
@@ -517,6 +521,7 @@ export interface CreateTemplatePayload {
   visibility?: "private" | "public";
   is_public?: boolean;
   accountId?: string;
+  orgId: string;
 }
 
 export async function createTemplateService(payload: CreateTemplatePayload) {
@@ -545,9 +550,13 @@ export async function createTemplateService(payload: CreateTemplatePayload) {
       is_public: payload.is_public ?? false,
     };
 
-    const response = await client.post<any>("/api/templates", requestBody, {
-      headers,
-    });
+    const response = await client.post<any>(
+      `/api/organizations/${payload.orgId}/templates`,
+      requestBody,
+      {
+        headers,
+      },
+    );
 
     return response.data.data || response.data;
   } catch (error) {
@@ -558,23 +567,15 @@ export async function createTemplateService(payload: CreateTemplatePayload) {
 
 /**
  * Update template
- * PUT /api/templates/{id}
+ * PUT /api/organizations/{orgId}/templates/{id}
  */
 export async function updateTemplateService(
+  orgId: string,
   templateId: string,
   payload: Partial<CreateTemplatePayload>,
 ) {
   try {
     const client = getApiClient();
-    const headers: Record<string, string> = {};
-
-    if (payload.accountId) {
-      headers["x-account-id"] = payload.accountId;
-    } else {
-      console.warn(
-        "⚠ No accountId provided - x-account-id header will NOT be sent",
-      );
-    }
 
     const requestBody = {
       slug: payload.code || templateId,
@@ -591,9 +592,8 @@ export async function updateTemplateService(
     };
 
     const response = await client.put<any>(
-      `/api/templates/${templateId}`,
+      `/api/organizations/${orgId}/templates/${templateId}`,
       requestBody,
-      { headers },
     );
 
     return response.data.data || response.data;
@@ -605,18 +605,13 @@ export async function updateTemplateService(
 
 /**
  * Delete template
- * DELETE /api/templates/{id}
+ * DELETE /api/organizations/{orgId}/templates/{id}
  */
-export async function deleteTemplateService(
-  templateId: string,
-  accountId?: string,
-) {
+export async function deleteTemplateService(orgId: string, templateId: string) {
   try {
     const client = getApiClient();
-    const config = accountId ? { headers: { "x-account-id": accountId } } : {};
     const response = await client.delete<any>(
-      `/api/templates/${templateId}`,
-      config,
+      `/api/organizations/${orgId}/templates/${templateId}`,
     );
 
     return response.data.data || response.data;
@@ -627,18 +622,114 @@ export async function deleteTemplateService(
 }
 
 /**
- * Duplicate template
- * POST /api/templates/{id}/duplicate
+ * Create template version
+ * POST /api/organizations/{orgId}/templates/{id}/versions
  */
-export async function duplicateTemplateService(
+export async function createTemplateVersionService(
+  orgId: string,
   templateId: string,
-  newName?: string,
+  payload?: { content?: string; subject?: string; description?: string },
 ) {
   try {
     const client = getApiClient();
     const response = await client.post<any>(
-      `/api/templates/${templateId}/duplicate`,
-      { name: newName },
+      `/api/organizations/${orgId}/templates/${templateId}/versions`,
+      payload || {},
+    );
+
+    return response.data.data || response.data;
+  } catch (error) {
+    console.error("Failed to create template version:", error);
+    throw error;
+  }
+}
+
+/**
+ * Activate template version
+ * POST /api/organizations/{orgId}/templates/{id}/versions/{versionId}/activate
+ */
+export async function activateTemplateVersionService(
+  orgId: string,
+  templateId: string,
+  versionId: string,
+) {
+  try {
+    const client = getApiClient();
+    const response = await client.post<any>(
+      `/api/organizations/${orgId}/templates/${templateId}/versions/${versionId}/activate`,
+      {},
+    );
+
+    return response.data.data || response.data;
+  } catch (error) {
+    console.error("Failed to activate template version:", error);
+    throw error;
+  }
+}
+
+/**
+ * Preview template
+ * POST /api/organizations/{orgId}/templates/preview
+ */
+export async function previewTemplateService(
+  orgId: string,
+  payload: {
+    content: string;
+    variables?: Record<string, string>;
+    channel?: string;
+  },
+) {
+  try {
+    const client = getApiClient();
+    const response = await client.post<any>(
+      `/api/organizations/${orgId}/templates/preview`,
+      payload,
+    );
+
+    return response.data.data || response.data;
+  } catch (error) {
+    console.error("Failed to preview template:", error);
+    throw error;
+  }
+}
+
+/**
+ * Install template to organization
+ * POST /api/organizations/{orgId}/templates/{id}/install
+ */
+export async function installTemplateToOrgService(
+  orgId: string,
+  templateId: string,
+  payload?: { name?: string; customizations?: Record<string, unknown> },
+) {
+  try {
+    const client = getApiClient();
+    const response = await client.post<any>(
+      `/api/organizations/${orgId}/templates/${templateId}/install`,
+      payload || {},
+    );
+
+    return response.data.data || response.data;
+  } catch (error) {
+    console.error("Failed to install template:", error);
+    throw error;
+  }
+}
+
+/**
+ * Duplicate template
+ * POST /api/organizations/{orgId}/templates/{id}/duplicate
+ */
+export async function duplicateTemplateService(
+  orgId: string,
+  templateId: string,
+  newCode?: string,
+) {
+  try {
+    const client = getApiClient();
+    const response = await client.post<any>(
+      `/api/organizations/${orgId}/templates/${templateId}/duplicate`,
+      newCode ? { newCode } : {},
     );
 
     return response.data.data || response.data;

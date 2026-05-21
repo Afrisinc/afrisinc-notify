@@ -31,6 +31,7 @@ import {
 } from "@/components/editors/WhatsAppEditor";
 import { useToast } from "@/hooks/use-toast";
 import { useCurrentAccountId } from "@/hooks/useAuth";
+import { useOrg } from "@/contexts/OrgContext";
 import {
   createTemplateService,
   updateTemplateService,
@@ -75,6 +76,7 @@ export default function UserTemplateEditor() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const accountId = useCurrentAccountId();
+  const { currentOrg } = useOrg();
 
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -82,6 +84,7 @@ export default function UserTemplateEditor() {
     null,
   );
   const [existingCode, setExistingCode] = useState<string>("");
+  const [existingName, setExistingName] = useState<string>("");
   const [existingLanguage, setExistingLanguage] = useState<string>("en");
 
   const isNew = templateId === "new";
@@ -98,19 +101,50 @@ export default function UserTemplateEditor() {
         const dj = tpl.design_json;
         if (dj && typeof dj === "object" && Object.keys(dj).length > 0) {
           setDesignJson(dj);
-        } else if (
-          typeof tpl.content === "string" &&
-          tpl.content.trim().startsWith("{")
-        ) {
-          try {
-            setDesignJson(JSON.parse(tpl.content));
-          } catch {
+        } else if (typeof tpl.content === "string") {
+          // Content is already a string
+          if (tpl.content.trim().startsWith("{")) {
+            try {
+              setDesignJson(JSON.parse(tpl.content));
+            } catch {
+              setDesignJson({ body: tpl.content });
+            }
+          } else {
             setDesignJson({ body: tpl.content });
           }
+        } else if (typeof tpl.content === "object" && tpl.content !== null) {
+          // Content is an object like { sms: { body: "..." } } or { push: { body: "..." } }
+          const channelKey = safeChannel === "in-app" ? "in-app" : safeChannel;
+          const channelContent =
+            tpl.content[channelKey] ||
+            tpl.content.sms ||
+            tpl.content.push ||
+            tpl.content["in-app"] ||
+            tpl.content.whatsapp;
+          if (channelContent && typeof channelContent.body === "string") {
+            // Extract variables from body text
+            const bodyText = channelContent.body;
+            const varMatches = bodyText.match(/\{\{([^}]+)\}\}/g) || [];
+            const extractedVars = [
+              ...new Set(varMatches.map((m: string) => m.slice(2, -2).trim())),
+            ];
+            const variables = extractedVars.map((name: string) => ({
+              name,
+              example: "",
+            }));
+            setDesignJson({
+              body: bodyText,
+              subject: channelContent.subject || channelContent.title,
+              variables,
+            });
+          } else {
+            setDesignJson({ body: "", variables: [] });
+          }
         } else {
-          setDesignJson({ body: tpl.content ?? "" });
+          setDesignJson({ body: "", variables: [] });
         }
         setExistingCode(tpl.code ?? "");
+        setExistingName(tpl.name ?? tpl.subject ?? "");
         setExistingLanguage(tpl.language ?? "en");
       } catch {
         // template not found — proceed as new
@@ -169,12 +203,13 @@ export default function UserTemplateEditor() {
         design_json: opts.design_json,
         editor_type: "code",
         accountId,
+        orgId: currentOrg?.id || "",
       };
 
       if (isNew) {
         await createTemplateService(base);
       } else {
-        await updateTemplateService(templateId, base);
+        await updateTemplateService(currentOrg?.id || "", templateId, base);
       }
 
       toast({
@@ -195,12 +230,14 @@ export default function UserTemplateEditor() {
   };
 
   const dj = designJson ?? {};
-  const displayName = existingCode
-    ? existingCode
-        .replace(/_/g, " ")
-        .toLowerCase()
-        .replace(/\b\w/g, (c) => c.toUpperCase())
-    : "";
+  const displayName =
+    existingName ||
+    (existingCode
+      ? existingCode
+          .replace(/_/g, " ")
+          .toLowerCase()
+          .replace(/\b\w/g, (c) => c.toUpperCase())
+      : "");
 
   switch (safeChannel) {
     case "sms":
