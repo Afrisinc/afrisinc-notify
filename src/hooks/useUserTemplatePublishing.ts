@@ -9,7 +9,7 @@ import {
   type PublishTemplatePayload,
   type CreateUserTemplatePayload,
 } from "@/services/userTemplatePublishing";
-import { useCurrentAccountId } from "./useAuth";
+import { useOrg } from "@/contexts/OrgContext";
 
 // ──────────────────────────────────────────
 // LIST USER TEMPLATES
@@ -19,12 +19,13 @@ export function useUserTemplates(
   params?: ListUserTemplatesParams,
   options?: { enabled?: boolean },
 ) {
-  const accountId = useCurrentAccountId();
+  const { currentOrg } = useOrg();
+  const orgId = currentOrg?.id ?? "";
 
   return useQuery({
-    queryKey: ["userTemplates", accountId, params],
-    queryFn: () => listUserTemplatesService(accountId ?? "", params),
-    enabled: (options?.enabled ?? true) && !!accountId,
+    queryKey: ["userTemplates", orgId, params],
+    queryFn: () => listUserTemplatesService(orgId, params),
+    enabled: (options?.enabled ?? true) && !!orgId,
   });
 }
 
@@ -33,12 +34,13 @@ export function useUserTemplates(
 // ──────────────────────────────────────────
 
 export function useCreateUserTemplate() {
-  const accountId = useCurrentAccountId();
+  const { currentOrg } = useOrg();
+  const orgId = currentOrg?.id ?? "";
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (payload: CreateUserTemplatePayload) =>
-      createUserTemplateService(accountId ?? "", payload),
+      createUserTemplateService(orgId, payload),
     onSuccess: () => {
       // Invalidate user templates list to refresh with new template
       queryClient.invalidateQueries({
@@ -53,7 +55,8 @@ export function useCreateUserTemplate() {
 // ──────────────────────────────────────────
 
 export function useUpdateUserTemplate() {
-  const accountId = useCurrentAccountId();
+  const { currentOrg } = useOrg();
+  const orgId = currentOrg?.id ?? "";
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -63,7 +66,7 @@ export function useUpdateUserTemplate() {
     }: {
       templateId: string;
       payload: CreateUserTemplatePayload;
-    }) => updateUserTemplateService(templateId, accountId ?? "", payload),
+    }) => updateUserTemplateService(orgId, templateId, payload),
     onSuccess: () => {
       // Invalidate user templates list to refresh with updated template
       queryClient.invalidateQueries({
@@ -78,7 +81,8 @@ export function useUpdateUserTemplate() {
 // ──────────────────────────────────────────
 
 export function usePublishTemplate() {
-  const accountId = useCurrentAccountId();
+  const { currentOrg } = useOrg();
+  const orgId = currentOrg?.id ?? "";
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -88,7 +92,7 @@ export function usePublishTemplate() {
     }: {
       templateId: string;
       payload?: PublishTemplatePayload;
-    }) => publishTemplateService(templateId, accountId ?? "", payload),
+    }) => publishTemplateService(orgId, templateId, payload),
     onSuccess: () => {
       // Invalidate user templates list to refresh status
       queryClient.invalidateQueries({
@@ -107,12 +111,13 @@ export function usePublishTemplate() {
 // ──────────────────────────────────────────
 
 export function useUnpublishTemplate() {
-  const accountId = useCurrentAccountId();
+  const { currentOrg } = useOrg();
+  const orgId = currentOrg?.id ?? "";
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (templateId: string) =>
-      unpublishTemplateService(templateId, accountId ?? ""),
+      unpublishTemplateService(orgId, templateId),
     onSuccess: () => {
       // Invalidate user templates list to refresh status
       queryClient.invalidateQueries({
