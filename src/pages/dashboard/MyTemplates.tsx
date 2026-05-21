@@ -14,7 +14,6 @@ import { useOrg } from "@/contexts/OrgContext";
 import { useDeleteTemplate, useDuplicateTemplate } from "@/hooks/useTemplates";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { SelectFilter } from "@/components/ui/select-filter";
@@ -26,6 +25,7 @@ import {
 } from "@/components/PublishTemplateDialog";
 import { Plus, AlertCircle, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { getErrorMessage } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { SearchInput } from "@/components/ui/search-input";
 
@@ -158,8 +158,7 @@ export default function MyTemplates() {
     } catch (error) {
       toast({
         title: "Error",
-        description:
-          error instanceof Error ? error.message : "Failed to publish template",
+        description: getErrorMessage(error, "Failed to publish template"),
         variant: "destructive",
       });
     }
@@ -179,10 +178,7 @@ export default function MyTemplates() {
     } catch (error) {
       toast({
         title: "Error",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Failed to unpublish template",
+        description: getErrorMessage(error, "Failed to unpublish template"),
         variant: "destructive",
       });
     }
@@ -205,8 +201,7 @@ export default function MyTemplates() {
     } catch (error) {
       toast({
         title: "Error",
-        description:
-          error instanceof Error ? error.message : "Failed to delete template",
+        description: getErrorMessage(error, "Failed to delete template"),
         variant: "destructive",
       });
     }
@@ -231,10 +226,7 @@ export default function MyTemplates() {
     } catch (error) {
       toast({
         title: "Error",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Failed to duplicate template",
+        description: getErrorMessage(error, "Failed to duplicate template"),
         variant: "destructive",
       });
     }

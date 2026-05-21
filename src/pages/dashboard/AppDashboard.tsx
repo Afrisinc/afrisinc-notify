@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useAppData } from "@/hooks/useAppData";
+import { getErrorMessage } from "@/lib/utils";
 
 export default function AppDashboard() {
   const { appId } = useParams();
@@ -36,7 +37,7 @@ export default function AppDashboard() {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center">
         <h2 className="text-lg font-medium text-foreground">
-          {error instanceof Error ? error.message : "App not found"}
+          {getErrorMessage(error, "App not found")}
         </h2>
         <Button
           variant="outline"

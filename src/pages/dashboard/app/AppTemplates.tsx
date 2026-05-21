@@ -10,6 +10,7 @@ import { useDuplicateTemplate } from "@/hooks/useTemplates";
 import { useSendNotification } from "@/hooks/useNotifications";
 import { useOrg } from "@/contexts/OrgContext";
 import { extractVariableNames } from "@/lib/templateUtils";
+import { getErrorMessage } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -173,7 +174,7 @@ export default function AppTemplates() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete template",
+        description: getErrorMessage(error, "Failed to delete template"),
         variant: "destructive",
       });
     }
@@ -198,7 +199,7 @@ export default function AppTemplates() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to send notification",
+        description: getErrorMessage(error, "Failed to send notification"),
         variant: "destructive",
       });
     }
@@ -229,10 +230,7 @@ export default function AppTemplates() {
     } catch (error) {
       toast({
         title: "Error",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Failed to duplicate template",
+        description: getErrorMessage(error, "Failed to duplicate template"),
         variant: "destructive",
       });
     }
