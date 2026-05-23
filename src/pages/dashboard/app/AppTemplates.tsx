@@ -61,7 +61,10 @@ import {
   Eye,
   Variable,
   Loader2,
+  Check,
+  Hash,
 } from "lucide-react";
+import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import {
   Tooltip,
   TooltipContent,
@@ -100,6 +103,7 @@ export default function AppTemplates() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { currentOrg } = useOrg();
+  const { copy, isCopied } = useCopyToClipboard();
   const deleteTemplateMutation = useDeleteAppTemplate();
   const duplicateMutation = useDuplicateTemplate();
   const sendNotificationMutation = useSendNotification();
@@ -338,9 +342,41 @@ export default function AppTemplates() {
                       <span className="text-sm font-medium text-foreground truncate">
                         {templateName}
                       </span>
-                      <span className="text-xs text-muted-foreground">
-                        v{version} · {createdBy} · {updatedAt}
-                      </span>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <span>
+                          v{version} · {createdBy} · {updatedAt}
+                        </span>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  copy(templateId, `tpl-${templateId}`);
+                                }}
+                                className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-muted/50 hover:bg-muted transition-colors cursor-pointer"
+                              >
+                                <Hash className="h-3 w-3" />
+                                <span className="font-mono text-[10px] max-w-[80px] truncate">
+                                  {templateId}
+                                </span>
+                                {isCopied(`tpl-${templateId}`) ? (
+                                  <Check className="h-3 w-3 text-success" />
+                                ) : (
+                                  <Copy className="h-3 w-3" />
+                                )}
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p className="text-xs">
+                                {isCopied(`tpl-${templateId}`)
+                                  ? "Copied!"
+                                  : "Click to copy template ID"}
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 flex-wrap">

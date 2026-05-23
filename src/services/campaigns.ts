@@ -9,16 +9,42 @@ export interface Campaign {
   appId: string;
   name: string;
   channel: "email" | "sms" | "push" | "in_app";
-  templateId: string;
+  // Template mode
+  templateId?: string;
+  // EMAIL direct content
+  subject?: string;
+  htmlContent?: string;
+  // SMS direct content
+  textContent?: string;
+  // PUSH direct content
+  pushTitle?: string;
+  pushBody?: string;
+  pushImageUrl?: string;
+  pushActionUrl?: string;
+  pushData?: Record<string, any>;
+  // IN_APP direct content
+  inappTitle?: string;
+  inappBody?: string;
+  inappImageUrl?: string;
+  inappActionUrl?: string;
+  inappActionText?: string;
+  // Recipient targeting
   recipientType: "all" | "tags" | "segment" | "custom";
   recipientCount: number;
   recipientTags?: string[];
   recipientSegment?: string;
-  status: "draft" | "scheduled" | "completed" | "cancelled";
+  status:
+    | "draft"
+    | "scheduled"
+    | "sending"
+    | "completed"
+    | "failed"
+    | "cancelled";
   sentCount: number;
   deliveredCount: number;
   failedCount: number;
   scheduledAt?: string;
+  sentAt?: string;
   metadata?: Record<string, any>;
   createdAt: string;
   updatedAt: string;
@@ -26,8 +52,27 @@ export interface Campaign {
 
 export interface CreateCampaignPayload {
   name: string;
-  channel: "email" | "sms" | "push" | "in_app";
-  templateId: string;
+  channel: "EMAIL" | "SMS" | "PUSH" | "IN_APP";
+  // Content mode: templateId OR direct channel content
+  templateId?: string;
+  // EMAIL direct content
+  subject?: string;
+  html_content?: string;
+  // SMS direct content
+  text_content?: string;
+  // PUSH direct content
+  push_title?: string;
+  push_body?: string;
+  push_image_url?: string;
+  push_action_url?: string;
+  push_data?: Record<string, any>;
+  // IN_APP direct content
+  inapp_title?: string;
+  inapp_body?: string;
+  inapp_image_url?: string;
+  inapp_action_url?: string;
+  inapp_action_text?: string;
+  // Recipient targeting
   recipientType?: "all" | "tags" | "segment" | "custom";
   recipientCount?: number;
   recipientTags?: string[];
