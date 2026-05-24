@@ -13,7 +13,6 @@ import {
   Layers,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { getAuthUrls } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import BackgroundDecorator from "@/components/auth/BackgroundDecorator";
@@ -172,7 +171,6 @@ const generateLandingFeatures = (
 };
 
 const Landing = () => {
-  const { signupUrl } = getAuthUrls();
   const { data: plansData, isLoading: plansLoading } = usePublicPlans();
 
   // Transform plans data for display (filter out PAYG and PRO plans)
@@ -242,9 +240,12 @@ const Landing = () => {
                 className="flex items-center gap-3 flex-wrap"
               >
                 <Button asChild variant="default" size="md">
-                  <a href={signupUrl} className="flex items-center gap-2">
+                  <Link
+                    to="/signup?plan=FREE"
+                    className="flex items-center gap-2"
+                  >
                     Create free account <ArrowRight className="h-4 w-4" />
-                  </a>
+                  </Link>
                 </Button>
                 <Button asChild variant="secondary-outline" size="md">
                   <Link to="/docs">View docs</Link>
@@ -402,7 +403,11 @@ const Landing = () => {
                   </div>
 
                   <a
-                    href={tier.name === "Enterprise" ? "/contact" : signupUrl}
+                    href={
+                      tier.name === "Enterprise"
+                        ? "/contact"
+                        : `/signup?plan=${tier.name.toUpperCase()}`
+                    }
                     className={[
                       "w-full py-3 rounded-xl font-semibold text-sm text-center transition-all border",
                       tier.highlighted
@@ -479,9 +484,12 @@ const Landing = () => {
               </p>
               <div className="flex items-center justify-center gap-4 flex-wrap">
                 <Button asChild variant="default" size="md">
-                  <a href={signupUrl} className="flex items-center gap-2">
+                  <Link
+                    to="/signup?plan=FREE"
+                    className="flex items-center gap-2"
+                  >
                     Create free account <ArrowRight className="h-4 w-4" />
-                  </a>
+                  </Link>
                 </Button>
                 <Button asChild variant="secondary-outline" size="md">
                   <Link to="/pricing">View pricing</Link>

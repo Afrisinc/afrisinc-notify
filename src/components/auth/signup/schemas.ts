@@ -65,4 +65,22 @@ export interface SignupPayload {
   location?: string;
   organizationName?: string; // Required for company accounts (validated during submission)
   companyEmail?: string; // Required for company accounts (validated during submission)
+
+  // From Plan Confirmation Step - optional (defaults to FREE if not provided)
+  planId?: string;
+  billingCycle?: "monthly" | "annual";
+
+  // From Payment Step - required for paid plans
+  paymentMethodId?: string;
+}
+
+// Plan data structure for signup flow
+export interface PlanInfo {
+  id: string;
+  name: string;
+  priceMonthly: number;
+  priceYearly: number;
+  description: string;
+  features: string[];
+  trialDays?: number;
 }

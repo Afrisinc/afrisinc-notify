@@ -5,6 +5,7 @@ import {
   ReactNode,
   useEffect,
 } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserOrganizations } from "@/hooks/useAuth";
 
@@ -28,6 +29,7 @@ interface OrgContextType {
 const OrgContext = createContext<OrgContextType | undefined>(undefined);
 
 export function OrgProvider({ children }: { children: ReactNode }) {
+  const queryClient = useQueryClient();
   const { user, loading: authLoading } = useAuth();
   const {
     data: orgsData,
@@ -79,11 +81,17 @@ export function OrgProvider({ children }: { children: ReactNode }) {
     }
   }, [orgsData, initialized]);
 
-  // Persist organization selection
+  // Persist organization selection and invalidate org-specific queries
   const handleSetCurrentOrg = (org: Organization | null): void => {
     if (org) {
       setCurrentOrg(org);
       localStorage.setItem("selected_org_id", org.id);
+
+      // Invalidate org-specific queries to force refetch with new org context
+      queryClient.invalidateQueries({ queryKey: ["subscription"] });
+      queryClient.invalidateQueries({ queryKey: ["plans"] });
+      queryClient.invalidateQueries({ queryKey: ["payg"] });
+      queryClient.invalidateQueries({ queryKey: ["apps"] });
     }
   };
 

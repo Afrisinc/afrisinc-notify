@@ -21,16 +21,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import { useOrg } from "@/contexts/OrgContext";
 import { useSidebar } from "@/components/ui/sidebar";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useCreateOrganization } from "@/hooks/useOrganization";
+import CreateOrganizationForm from "@/components/organization/CreateOrganizationForm";
 
 export function OrgSwitcher() {
   const { currentOrg, setCurrentOrg, allOrgs, loading } = useOrg();
@@ -41,30 +38,36 @@ export function OrgSwitcher() {
   const collapsed = state === "collapsed";
 
   const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [orgName, setOrgName] = useState("");
 
-  const handleCreateOrg = async () => {
-    if (!orgName.trim()) {
-      toast({
-        title: "Error",
-        description: "Organization name is required",
-        variant: "destructive",
-      });
-      return;
-    }
-
+  const handleCreateOrg = async (data: {
+    name: string;
+    planId: string;
+    billingCycle: "monthly" | "annual";
+    paymentMethodId?: string;
+  }) => {
     try {
-      await createOrgMutation.mutateAsync({
-        name: orgName.trim(),
-      });
+      // Create organization and get the response
+      const newOrg = await createOrgMutation.mutateAsync(data);
+
+      // Set the newly created organization as active
+      if (newOrg && newOrg.id) {
+        setCurrentOrg({
+          id: newOrg.id,
+          name: newOrg.name || data.name,
+          plan: newOrg.plan,
+          createdAt: newOrg.createdAt,
+        });
+      }
 
       toast({
         title: "Success",
-        description: `Organization "${orgName}" created successfully`,
+        description: `Organization "${data.name}" created and activated`,
       });
 
-      setOrgName("");
       setShowCreateDialog(false);
+
+      // Navigate to dashboard to see the new org context
+      navigate("/dashboard");
     } catch (error) {
       toast({
         title: "Error",
@@ -151,43 +154,18 @@ export function OrgSwitcher() {
       </DropdownMenu>
 
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Create Organization</DialogTitle>
             <DialogDescription>
-              Create a new organization to manage your apps and collaborators
+              Create a new organization with its own plan and billing
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="org-name" className="text-sm font-medium">
-                Organization Name
-              </Label>
-              <Input
-                id="org-name"
-                placeholder="e.g., My Company Inc."
-                value={orgName}
-                onChange={(e) => setOrgName(e.target.value)}
-                className="mt-2"
-                disabled={createOrgMutation.isPending}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setShowCreateDialog(false)}
-              disabled={createOrgMutation.isPending}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleCreateOrg}
-              disabled={createOrgMutation.isPending || !orgName.trim()}
-            >
-              {createOrgMutation.isPending ? "Creating..." : "Create"}
-            </Button>
-          </DialogFooter>
+          <CreateOrganizationForm
+            onSubmit={handleCreateOrg}
+            onCancel={() => setShowCreateDialog(false)}
+            isSubmitting={createOrgMutation.isPending}
+          />
         </DialogContent>
       </Dialog>
     </>

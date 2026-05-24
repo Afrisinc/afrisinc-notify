@@ -308,7 +308,11 @@ const Pricing = () => {
                     ))}
                   </ul>
                   <Link
-                    to={tier.name === "Enterprise" ? "/contact" : "/signup"}
+                    to={
+                      tier.name === "Enterprise"
+                        ? "/contact"
+                        : `/signup?plan=${tier.name.toUpperCase()}`
+                    }
                     className={`text-center text-sm font-medium py-2.5 rounded-lg transition-colors ${
                       tier.highlighted
                         ? "bg-primary text-primary-foreground hover:opacity-90"
@@ -409,7 +413,7 @@ const Pricing = () => {
                 </div>
 
                 <Link
-                  to="/signup"
+                  to="/signup?plan=PAYG"
                   className="block w-full text-center py-2.5 rounded-lg border border-border text-sm font-medium text-foreground hover:border-primary/40 hover:text-primary transition-colors"
                 >
                   Get started with Pay-as-you-go
