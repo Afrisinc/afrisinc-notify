@@ -117,9 +117,6 @@ export default function OrgSettings() {
     return changed;
   };
 
-  console.log("Original Data:", originalData);
-  console.log("Form Data:", formData);
-  console.log("Changed Fields:", getChangedFields());
   const hasChanges = Object.keys(getChangedFields()).length > 0;
 
   const handleSaveChanges = async () => {
@@ -143,8 +140,6 @@ export default function OrgSettings() {
 
     try {
       const changedFields = getChangedFields();
-      console.log("Sending only changed fields:", changedFields);
-
       await updateMutation.mutateAsync({
         orgId: currentOrg.id,
         payload: changedFields,

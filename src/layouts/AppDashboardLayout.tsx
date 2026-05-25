@@ -19,7 +19,7 @@ import {
   Upload,
   Plus,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, getErrorMessage } from "@/lib/utils";
 
 const appNav = [
   { title: "Overview", path: "", icon: LayoutDashboard },
@@ -116,7 +116,7 @@ export default function AppDashboardLayout() {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center">
         <h2 className="text-lg font-medium text-foreground">
-          {error instanceof Error ? error.message : "App not found"}
+          {getErrorMessage(error, "App not found")}
         </h2>
         <Button
           variant="outline"

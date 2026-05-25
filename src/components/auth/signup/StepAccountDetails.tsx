@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -8,9 +7,7 @@ import {
   type AccountDetailsValues,
   type AccountType,
 } from "./schemas";
-import { Loader2 } from "lucide-react";
 import FormInput from "@/components/auth/FormInput";
-import FormCheckbox from "@/components/auth/FormCheckbox";
 
 interface StepAccountDetailsProps {
   accountType: AccountType;
@@ -27,7 +24,6 @@ const StepAccountDetails = ({
   onBack,
   isSubmitting,
 }: StepAccountDetailsProps) => {
-  const [termsAccepted, setTermsAccepted] = useState(false);
   const [validationError, setValidationError] = useState<string>("");
 
   const {
@@ -72,8 +68,7 @@ const StepAccountDetails = ({
       {accountType === "personal" ? (
         <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
           <p className="text-blue-700 dark:text-blue-400 text-sm">
-            Personal account setup complete! You're all set to start using
-            Notify.
+            Personal account setup complete! Click continue to select your plan.
           </p>
         </div>
       ) : (
@@ -112,25 +107,6 @@ const StepAccountDetails = ({
         </div>
       )}
 
-      <FormCheckbox
-        checked={termsAccepted}
-        onChange={(e) => setTermsAccepted(e.target.checked)}
-        label={
-          <span className="text-secondary text-sm">
-            I agree to the{" "}
-            <Link to="/terms" className="form-link">
-              Terms of Service
-            </Link>{" "}
-            and{" "}
-            <Link to="/privacy" className="form-link">
-              Privacy Policy
-            </Link>
-          </span>
-        }
-        containerClassName="flex items-start gap-2"
-        labelClassName="text-secondary text-sm"
-      />
-
       <div className="flex gap-3">
         <Button
           type="button"
@@ -139,22 +115,15 @@ const StepAccountDetails = ({
           onClick={onBack}
           disabled={isSubmitting}
         >
-          ← Back
+          Back
         </Button>
         <Button
           variant="default"
           type="submit"
           className="flex-1"
-          disabled={isSubmitting || !termsAccepted}
+          disabled={isSubmitting}
         >
-          {isSubmitting ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Creating…
-            </>
-          ) : (
-            "Create Account"
-          )}
+          Continue
         </Button>
       </div>
     </form>

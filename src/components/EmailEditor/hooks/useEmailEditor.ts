@@ -194,8 +194,8 @@ export function useEmailEditor({
         } else {
           // Load user template using dedicated edit endpoint
           template = (await getUserTemplateForEditingService(
+            currentOrg?.id || "",
             templateId,
-            accountId,
           )) as unknown as Record<string, unknown>;
         }
 

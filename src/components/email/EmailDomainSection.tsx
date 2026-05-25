@@ -6,6 +6,7 @@ import {
 } from "@/hooks/useAppSettings";
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import { useToast } from "@/hooks/use-toast";
+import { getErrorMessage } from "@/lib/utils";
 import {
   Card,
   CardContent,
@@ -86,8 +87,7 @@ export function EmailDomainSection({ appId }: EmailDomainSectionProps) {
     } catch (error) {
       toast({
         title: "Error",
-        description:
-          error instanceof Error ? error.message : "Failed to create domain",
+        description: getErrorMessage(error, "Failed to create domain"),
         variant: "destructive",
       });
     }
@@ -115,8 +115,7 @@ export function EmailDomainSection({ appId }: EmailDomainSectionProps) {
     } catch (error) {
       toast({
         title: "Error",
-        description:
-          error instanceof Error ? error.message : "Failed to verify domain",
+        description: getErrorMessage(error, "Failed to verify domain"),
         variant: "destructive",
       });
     }

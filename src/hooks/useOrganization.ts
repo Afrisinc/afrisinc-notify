@@ -20,7 +20,7 @@ import {
 
 /**
  * Create a new organization
- * Automatically refetches organizations list after creation
+ * Automatically refetches organizations list and user profile after creation
  */
 export function useCreateOrganization() {
   const queryClient = useQueryClient();
@@ -29,13 +29,31 @@ export function useCreateOrganization() {
     mutationFn: (payload: CreateOrganizationPayload) =>
       createOrganizationService(payload),
     onSuccess: () => {
-      // Invalidate and immediately refetch user organizations
+      // Invalidate and refetch user organizations
       queryClient.invalidateQueries({
         queryKey: ["userOrganizations"],
       });
-      // Also refetch to ensure we get fresh data
       queryClient.refetchQueries({
         queryKey: ["userOrganizations"],
+      });
+
+      // Invalidate user profile to refresh accounts list (needed for getAccountIdForOrg)
+      queryClient.invalidateQueries({
+        queryKey: ["userProfile"],
+      });
+      queryClient.refetchQueries({
+        queryKey: ["userProfile"],
+      });
+
+      // Invalidate subscription/billing queries so they refetch for new org
+      queryClient.invalidateQueries({
+        queryKey: ["subscription"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["plans"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["public-plans"],
       });
     },
   });

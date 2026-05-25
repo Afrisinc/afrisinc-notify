@@ -1,11 +1,16 @@
 interface SignupStepperProps {
   currentStep: number;
   totalSteps: number;
+  labels?: string[];
 }
 
-const labels = ["Identity", "Account Type", "Details"];
+const defaultLabels = ["Identity", "Account Type", "Details", "Plan"];
 
-const SignupStepper = ({ currentStep, totalSteps }: SignupStepperProps) => {
+const SignupStepper = ({
+  currentStep,
+  totalSteps,
+  labels = defaultLabels,
+}: SignupStepperProps) => {
   return (
     <div className="flex items-center justify-center gap-2">
       {Array.from({ length: totalSteps }, (_, i) => (

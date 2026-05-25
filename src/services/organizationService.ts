@@ -7,6 +7,11 @@ import getApiClient from "./apiClient";
 export interface CreateOrganizationPayload {
   name: string;
   description?: string;
+  // Plan selection (required)
+  planId: string;
+  billingCycle: "monthly" | "annual";
+  // Payment method (required for paid plans)
+  paymentMethodId?: string;
 }
 
 export interface UpdateOrganizationPayload {
