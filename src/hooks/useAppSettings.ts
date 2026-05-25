@@ -52,7 +52,7 @@ export function useAppSettings(appId: string, options?: { enabled?: boolean }) {
 // ──────────────────────────────────────────
 
 export function useUpdateAppSettings() {
-  const accountId = useCurrentAccountId();
+  const { currentOrg } = useOrg();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -62,11 +62,23 @@ export function useUpdateAppSettings() {
     }: {
       appId: string;
       payload: UpdateAppSettingsPayload;
-    }) => updateAppSettingsService(appId, payload, accountId ?? undefined),
+    }) => updateAppSettingsService(appId, currentOrg?.id ?? "", payload),
     onSuccess: (_data, { appId }) => {
+      const orgId = currentOrg?.id;
+      // Invalidate app settings
       queryClient.invalidateQueries({
         queryKey: ["appSettings", appId],
       });
+      // Invalidate app detail query (used in layout/header)
+      queryClient.invalidateQueries({
+        queryKey: ["app", appId, orgId],
+      });
+      // Invalidate apps list to update name in sidebar/lists
+      if (orgId) {
+        queryClient.invalidateQueries({
+          queryKey: ["apps", orgId],
+        });
+      }
     },
   });
 }

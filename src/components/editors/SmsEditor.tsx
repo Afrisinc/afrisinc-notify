@@ -35,14 +35,15 @@ const GSM7_CHARS =
 const GSM7_EXTENDED = "^{}\\[~]|€";
 
 function isGSM7(text: string): boolean {
+  if (typeof text !== "string") return true;
   for (const ch of text) {
     if (!GSM7_CHARS.includes(ch) && !GSM7_EXTENDED.includes(ch)) return false;
   }
   return true;
 }
 
-function getSmsStats(body: string | undefined) {
-  const bodyStr = body ?? "";
+function getSmsStats(body: string | undefined | unknown) {
+  const bodyStr = typeof body === "string" ? body : "";
   const unicode = !isGSM7(bodyStr);
   const len = bodyStr.length;
   const singleLimit = unicode ? 70 : 160;
@@ -116,12 +117,15 @@ export function SmsEditor({
   const bodyValue = form.watch("body");
   const stats = getSmsStats(bodyValue);
 
-  const previewBody = variables.reduce((text, v) => {
-    return text.replace(
-      new RegExp(`\\{\\{${v.name}\\}\\}`, "g"),
-      v.example || `[${v.name}]`,
-    );
-  }, bodyValue);
+  const previewBody = variables.reduce(
+    (text, v) => {
+      return text.replace(
+        new RegExp(`\\{\\{${v.name}\\}\\}`, "g"),
+        v.example || `[${v.name}]`,
+      );
+    },
+    typeof bodyValue === "string" ? bodyValue : "",
+  );
 
   const handleInsertVariable = (name: string) => {
     const current = form.getValues("body");

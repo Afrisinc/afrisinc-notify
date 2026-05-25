@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/select";
 import { Plus, Boxes, ArrowRight, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { getErrorMessage } from "@/lib/utils";
 import { SearchInput } from "@/components/ui/search-input";
 
 export default function AppsList() {
@@ -82,10 +83,10 @@ export default function AppsList() {
           setNewEnv("development");
           setNewDesc("");
         },
-        onError: (error: any) => {
+        onError: (error: unknown) => {
           toast({
             title: "Error",
-            description: error?.message || "Failed to create app",
+            description: getErrorMessage(error, "Failed to create app"),
             variant: "destructive",
           });
         },

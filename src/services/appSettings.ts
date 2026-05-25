@@ -134,14 +134,12 @@ export const getAppSettingsService = async (
 
 export const updateAppSettingsService = async (
   appId: string,
+  orgId: string,
   payload: UpdateAppSettingsPayload,
-  accountId?: string,
 ) => {
-  const config = accountId ? { headers: { "x-account-id": accountId } } : {};
   const { data } = await getApiClient().patch<any>(
-    `/api/apps/${appId}`,
+    `/api/organizations/${orgId}/apps/${appId}`,
     payload,
-    config,
   );
   return data.data;
 };

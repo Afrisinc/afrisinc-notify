@@ -1,66 +1,53 @@
-import { TrendingUp, Users, Shield, Award } from "lucide-react";
 import { motion } from "framer-motion";
 
-interface TrustBadge {
-  icon: React.ReactNode;
-  number: string;
-  label: string;
-}
-
-const DEFAULT_BADGES: TrustBadge[] = [
-  {
-    icon: <TrendingUp className="h-8 w-8" />,
-    number: "99.9%",
-    label: "API Uptime",
-  },
-  {
-    icon: <Users className="h-8 w-8" />,
-    number: "10K+",
-    label: "Active Users",
-  },
-  { icon: <Shield className="h-8 w-8" />, number: "SOC 2", label: "Certified" },
-  {
-    icon: <Award className="h-8 w-8" />,
-    number: "4.8/5",
-    label: "Average Rating",
-  },
+const STATS = [
+  { value: "10K+", label: "Developers" },
+  { value: "2B+", label: "Messages delivered" },
+  { value: "99.9%", label: "Uptime SLA" },
+  { value: "<40ms", label: "Median latency" },
 ];
 
-export function TrustBadges({
-  badges = DEFAULT_BADGES,
-}: {
-  badges?: TrustBadge[];
-}) {
+export function TrustBadges() {
   return (
-    <section className="py-16 border-t border-border/50">
+    <div className="border-y border-border/60">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto"
+          className="grid grid-cols-2 md:grid-cols-4"
         >
-          {badges.map((b, i) => (
+          {STATS.map((s, i) => (
             <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
+              key={s.label}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.4 }}
-              className="flex flex-col items-center text-center gap-2 p-4"
+              transition={{ delay: i * 0.08, duration: 0.4 }}
+              className={[
+                "py-10 px-6 text-center bg-card",
+                i < STATS.length - 1 ? "border-r border-border/60" : "",
+              ].join(" ")}
             >
-              <div className="text-primary">{b.icon}</div>
-              <span className="text-2xl font-bold text-foreground dark:text-white">
-                {b.number}
-              </span>
-              <span className="text-sm text-foreground/70 dark:text-foreground/75">
-                {b.label}
-              </span>
+              <p
+                className="text-3xl md:text-4xl font-extrabold tracking-tight mb-1"
+                style={{
+                  background:
+                    "linear-gradient(135deg,hsl(210,20%,95%) 0%,hsl(215,15%,60%) 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                }}
+              >
+                {s.value}
+              </p>
+              <p className="text-sm text-muted-foreground font-medium">
+                {s.label}
+              </p>
             </motion.div>
           ))}
         </motion.div>
       </div>
-    </section>
+    </div>
   );
 }

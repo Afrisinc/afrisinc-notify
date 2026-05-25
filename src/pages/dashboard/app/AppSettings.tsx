@@ -48,7 +48,10 @@ import {
   Webhook,
   AlertCircle,
   Check,
+  Copy,
+  Hash,
 } from "lucide-react";
+import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -56,6 +59,7 @@ import { Badge } from "@/components/ui/badge";
 export default function AppSettings() {
   const { appId } = useParams<{ appId: string }>();
   const navigate = useNavigate();
+  const { copy, isCopied } = useCopyToClipboard();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -63,7 +67,7 @@ export default function AppSettings() {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    environment: "development" as const,
+    environment: "development" as "development" | "staging" | "production",
   });
   const [domainsText, setDomainsText] = useState("");
   const [webhookForm, setWebhookForm] = useState({
@@ -251,6 +255,41 @@ export default function AppSettings() {
           <CardDescription>Manage your app's basic settings.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          {/* App ID */}
+          <div>
+            <Label className="flex items-center gap-1.5 mb-1.5">
+              <Hash className="h-3 w-3" /> App ID
+            </Label>
+            <div className="flex items-center gap-2">
+              <code className="flex-1 px-3 py-2 bg-muted/50 border border-border/60 rounded-md text-sm font-mono text-muted-foreground select-all">
+                {appId}
+              </code>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-9 px-3"
+                onClick={() => copy(appId || "", "appId")}
+              >
+                {isCopied("appId") ? (
+                  <>
+                    <Check className="h-3.5 w-3.5 mr-1.5 text-success" />
+                    Copied
+                  </>
+                ) : (
+                  <>
+                    <Copy className="h-3.5 w-3.5 mr-1.5" />
+                    Copy
+                  </>
+                )}
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1.5">
+              Use this ID to identify your app in API calls.
+            </p>
+          </div>
+
+          <Separator />
+
           <div>
             <Label>App Name</Label>
             <Input

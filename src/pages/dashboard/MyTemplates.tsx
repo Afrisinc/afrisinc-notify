@@ -10,10 +10,10 @@ import {
   useUnpublishTemplate,
 } from "@/hooks/useUserTemplatePublishing";
 import { useCurrentAccountId } from "@/hooks/useAuth";
+import { useOrg } from "@/contexts/OrgContext";
 import { useDeleteTemplate, useDuplicateTemplate } from "@/hooks/useTemplates";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { SelectFilter } from "@/components/ui/select-filter";
@@ -25,6 +25,7 @@ import {
 } from "@/components/PublishTemplateDialog";
 import { Plus, AlertCircle, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { getErrorMessage } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { SearchInput } from "@/components/ui/search-input";
 
@@ -33,6 +34,7 @@ type VisibilityFilter = "all" | "published" | "private";
 export default function MyTemplates() {
   const navigate = useNavigate();
   const accountId = useCurrentAccountId();
+  const { currentOrg } = useOrg();
   const { toast } = useToast();
 
   const [search, setSearch] = useState("");
@@ -90,6 +92,16 @@ export default function MyTemplates() {
 
   const selectedTemplate = templates.find((t) => t.id === publishDialogId);
 
+  // Category mapping: Frontend -> Backend
+  const categoryMap: Record<string, string> = {
+    Transactional: "TRANSACTIONAL",
+    Marketing: "MARKETING",
+    Authentication: "AUTH",
+    Security: "AUTH",
+    "E-Commerce": "TRANSACTIONAL",
+    Alerts: "NOTIFICATION",
+  };
+
   const handlePublish = async (data: PublishTemplateData) => {
     if (!publishDialogId) return;
     try {
@@ -107,11 +119,16 @@ export default function MyTemplates() {
         previewImageFile = new File([u8arr], "preview.png", { type: mime });
       }
 
+      // Map category to backend format
+      const backendCategory = data.category
+        ? categoryMap[data.category] || data.category.toUpperCase()
+        : "";
+
       // Build FormData for multipart upload
       const formData = new FormData();
       formData.append("title", data.title || "");
       formData.append("description", data.description || "");
-      formData.append("category", data.category || "");
+      formData.append("category", backendCategory);
       if (data.tags && data.tags.length > 0) {
         formData.append("tags", JSON.stringify(data.tags));
       }
@@ -141,8 +158,7 @@ export default function MyTemplates() {
     } catch (error) {
       toast({
         title: "Error",
-        description:
-          error instanceof Error ? error.message : "Failed to publish template",
+        description: getErrorMessage(error, "Failed to publish template"),
         variant: "destructive",
       });
     }
@@ -162,10 +178,7 @@ export default function MyTemplates() {
     } catch (error) {
       toast({
         title: "Error",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Failed to unpublish template",
+        description: getErrorMessage(error, "Failed to unpublish template"),
         variant: "destructive",
       });
     }
@@ -173,7 +186,10 @@ export default function MyTemplates() {
 
   const handleDelete = async (templateId: string) => {
     try {
-      await deleteMutation.mutateAsync(templateId);
+      await deleteMutation.mutateAsync({
+        orgId: currentOrg?.id || "",
+        templateId,
+      });
 
       toast({
         title: "Success",
@@ -185,8 +201,7 @@ export default function MyTemplates() {
     } catch (error) {
       toast({
         title: "Error",
-        description:
-          error instanceof Error ? error.message : "Failed to delete template",
+        description: getErrorMessage(error, "Failed to delete template"),
         variant: "destructive",
       });
     }
@@ -194,7 +209,8 @@ export default function MyTemplates() {
 
   const handleDuplicate = async (templateId: string) => {
     try {
-      const result = await duplicateMutation.mutateAsync({ templateId });
+      const orgId = currentOrg?.id ?? "";
+      const result = await duplicateMutation.mutateAsync({ orgId, templateId });
 
       toast({
         title: "Success",
@@ -210,10 +226,7 @@ export default function MyTemplates() {
     } catch (error) {
       toast({
         title: "Error",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Failed to duplicate template",
+        description: getErrorMessage(error, "Failed to duplicate template"),
         variant: "destructive",
       });
     }

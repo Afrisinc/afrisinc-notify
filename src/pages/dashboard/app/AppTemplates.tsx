@@ -6,8 +6,11 @@ import {
 } from "@/components/editors/ChannelSelectorDialog";
 import { appTemplates } from "@/data/mockData";
 import { useAppTemplates, useDeleteAppTemplate } from "@/hooks/useApps";
+import { useDuplicateTemplate } from "@/hooks/useTemplates";
 import { useSendNotification } from "@/hooks/useNotifications";
+import { useOrg } from "@/contexts/OrgContext";
 import { extractVariableNames } from "@/lib/templateUtils";
+import { getErrorMessage } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -58,7 +61,10 @@ import {
   Eye,
   Variable,
   Loader2,
+  Check,
+  Hash,
 } from "lucide-react";
+import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import {
   Tooltip,
   TooltipContent,
@@ -96,7 +102,10 @@ export default function AppTemplates() {
   const { appId } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { currentOrg } = useOrg();
+  const { copy, isCopied } = useCopyToClipboard();
   const deleteTemplateMutation = useDeleteAppTemplate();
+  const duplicateMutation = useDuplicateTemplate();
   const sendNotificationMutation = useSendNotification();
 
   // Fetch templates from app endpoint
@@ -123,6 +132,7 @@ export default function AppTemplates() {
     templateName: string;
   } | null>(null);
   const [channelSelectorOpen, setChannelSelectorOpen] = useState(false);
+  const [duplicateConfirm, setDuplicateConfirm] = useState<string | null>(null);
 
   const handleCreateTemplate = (channel: TemplateChannel) => {
     setChannelSelectorOpen(false);
@@ -168,7 +178,7 @@ export default function AppTemplates() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete template",
+        description: getErrorMessage(error, "Failed to delete template"),
         variant: "destructive",
       });
     }
@@ -193,7 +203,38 @@ export default function AppTemplates() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to send notification",
+        description: getErrorMessage(error, "Failed to send notification"),
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDuplicate = async (templateId: string) => {
+    try {
+      const orgId = currentOrg?.id ?? "";
+      const result = await duplicateMutation.mutateAsync({ orgId, templateId });
+
+      toast({
+        title: "Success",
+        description: "Template duplicated successfully",
+      });
+
+      setDuplicateConfirm(null);
+
+      // Navigate to the duplicated template using the regular template editor
+      if (result?.id) {
+        const channel = result.channel?.toLowerCase() || "email";
+        const channelNormalized = channel === "in_app" ? "in-app" : channel;
+        if (channelNormalized === "email") {
+          navigate(`/dashboard/templates/${result.id}`);
+        } else {
+          navigate(`/dashboard/templates/${channelNormalized}/${result.id}`);
+        }
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: getErrorMessage(error, "Failed to duplicate template"),
         variant: "destructive",
       });
     }
@@ -301,9 +342,41 @@ export default function AppTemplates() {
                       <span className="text-sm font-medium text-foreground truncate">
                         {templateName}
                       </span>
-                      <span className="text-xs text-muted-foreground">
-                        v{version} · {createdBy} · {updatedAt}
-                      </span>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <span>
+                          v{version} · {createdBy} · {updatedAt}
+                        </span>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  copy(templateId, `tpl-${templateId}`);
+                                }}
+                                className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-muted/50 hover:bg-muted transition-colors cursor-pointer"
+                              >
+                                <Hash className="h-3 w-3" />
+                                <span className="font-mono text-[10px] max-w-[80px] truncate">
+                                  {templateId}
+                                </span>
+                                {isCopied(`tpl-${templateId}`) ? (
+                                  <Check className="h-3 w-3 text-success" />
+                                ) : (
+                                  <Copy className="h-3 w-3" />
+                                )}
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p className="text-xs">
+                                {isCopied(`tpl-${templateId}`)
+                                  ? "Copied!"
+                                  : "Click to copy template ID"}
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 flex-wrap">
@@ -390,6 +463,8 @@ export default function AppTemplates() {
                         size="icon"
                         className="h-7 w-7"
                         title="Duplicate template"
+                        onClick={() => setDuplicateConfirm(templateId)}
+                        disabled={duplicateMutation.isPending}
                       >
                         <Copy className="h-3 w-3" />
                       </Button>
@@ -453,6 +528,32 @@ export default function AppTemplates() {
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               {deleteTemplateMutation.isPending ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Duplicate Confirmation Dialog */}
+      <AlertDialog
+        open={!!duplicateConfirm}
+        onOpenChange={(open) => !open && setDuplicateConfirm(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogTitle>Duplicate Template</AlertDialogTitle>
+          <AlertDialogDescription>
+            This will create a copy of the template that you can customize.
+          </AlertDialogDescription>
+          <div className="flex justify-end gap-2">
+            <AlertDialogCancel disabled={duplicateMutation.isPending}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() =>
+                duplicateConfirm && handleDuplicate(duplicateConfirm)
+              }
+              disabled={duplicateMutation.isPending}
+            >
+              {duplicateMutation.isPending ? "Duplicating..." : "Duplicate"}
             </AlertDialogAction>
           </div>
         </AlertDialogContent>

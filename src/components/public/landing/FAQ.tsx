@@ -19,49 +19,49 @@ const DEFAULT_FAQS: FAQItem[] = [
     id: "1",
     question: "What is Notify?",
     answer:
-      "Notify is a multi-channel notification platform that lets you send email, SMS, push, and in-app notifications through a single API. It's designed for developers and teams who need reliable, scalable notification delivery.",
+      "Notify is a multi-channel notification platform that lets you send email, SMS, push, and in-app notifications through a single API. It's designed for developers and teams who need reliable, scalable notification delivery at any volume.",
   },
   {
     id: "2",
     question: "Which channels are supported?",
     answer:
-      "We support Email, SMS, Push Notifications, and In-App messaging. All channels are accessible through our unified REST API and dashboard.",
+      "We support Email, SMS, Push Notifications, and In-App messaging — all accessible through one unified REST API and dashboard. WhatsApp is coming soon.",
   },
   {
     id: "3",
     question: "How is billing calculated?",
     answer:
-      "Billing is based on the number of notifications sent per month. Each channel counts as one notification. You can view usage in real-time on your dashboard.",
+      "Subscription plans include a fixed monthly allowance per channel (e.g. Starter includes 50,000 emails and 300 SMS). If you prefer no commitment, our Pay-as-you-go option lets you top up credits and pay per message — credits never expire.",
   },
   {
     id: "4",
     question: "What about security and compliance?",
     answer:
-      "We're SOC 2 compliant with enterprise-grade encryption at rest and in transit. We support role-based access control, audit logs, and data processing agreements (DPA).",
+      "We're SOC 2 Type II certified with enterprise-grade encryption at rest and in transit. We support role-based access control, audit logs, and data processing agreements (DPA).",
   },
   {
     id: "5",
     question: "Is there a free plan?",
     answer:
-      "Yes! Our free plan includes 100 notifications per month, 1 template, and email channel access. No credit card required to get started.",
+      "Yes! Our free plan includes 500 emails per month, 3 templates, and 1 app — no credit card required. When you're ready to scale, Starter starts at $19/mo and unlocks all channels.",
   },
   {
     id: "6",
     question: "Can I use custom templates?",
     answer:
-      "Absolutely. Create templates with our visual editor or import them from the marketplace. Templates support dynamic variables like {{name}} and {{code}}.",
+      "Absolutely. Create templates with our visual drag-and-drop editor or write your own HTML. Templates support dynamic variables like {{name}} and {{code}} and are versioned automatically.",
   },
   {
     id: "7",
     question: "What support options are available?",
     answer:
-      "Free plans get community support. Pro plans include priority email support with 24-hour response times. Enterprise plans come with a dedicated account manager and SLA guarantee.",
+      "Free and PAYG accounts get community support. Starter includes email support with a 48-hour response time. Scale includes priority support with a 12-hour SLA. Enterprise plans come with a dedicated account manager.",
   },
   {
     id: "8",
     question: "How do I migrate from another service?",
     answer:
-      "We provide migration guides and our support team can help you transition. Most teams are fully migrated within a day thanks to our compatible API design.",
+      "We provide migration guides and our support team can help you transition. Most teams are fully migrated within a day thanks to our compatible API design and CSV contact import.",
   },
 ];
 

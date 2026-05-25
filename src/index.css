@@ -232,6 +232,16 @@ body {
     @apply text-sm text-muted-foreground dark:text-muted-foreground/80 mt-2;
   }
 
+  /* Form Input Labels - Design System: 11px, font-weight 600, muted color */
+  .form-label {
+    @apply block text-[11px] font-semibold text-muted-foreground mb-1;
+  }
+
+  /* Form Error Message - Design System: 11px, destructive color */
+  .form-error {
+    @apply text-[11px] text-destructive mt-0.5;
+  }
+
   /* Form Links & CTA */
   .form-link {
     @apply text-primary hover:underline transition-colors;

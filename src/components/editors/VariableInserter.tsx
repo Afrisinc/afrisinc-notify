@@ -91,11 +91,13 @@ export function VariableInserter({
           ) : (
             <div className="space-y-1">
               {variables.map((v) => (
-                <button
+                <div
                   key={v.name}
-                  type="button"
+                  role="button"
+                  tabIndex={0}
                   onClick={() => handleInsert(v.name)}
-                  className="w-full flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg hover:bg-muted transition-colors text-left group"
+                  onKeyDown={(e) => e.key === "Enter" && handleInsert(v.name)}
+                  className="w-full flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg hover:bg-muted transition-colors text-left group cursor-pointer"
                 >
                   <div className="min-w-0">
                     <code className="text-xs font-mono text-primary font-semibold">{`{{${v.name}}}`}</code>
@@ -112,7 +114,7 @@ export function VariableInserter({
                   >
                     <X className="h-3 w-3" />
                   </button>
-                </button>
+                </div>
               ))}
             </div>
           )}
