@@ -26,6 +26,7 @@ const planDescriptions: Record<string, string> = {
   STARTER: "All channels unlocked — best entry point.",
   SCALE: "For fast-growing businesses.",
   ENTERPRISE: "Large operations — negotiated volume.",
+  PAYG: "Pay only for what you use.",
 };
 
 // Helper to format limit value for display
@@ -90,6 +91,9 @@ const generatePlanFeatures = (
     features.push("Priority support (12h SLA)");
   } else if (planName === "ENTERPRISE") {
     features.push("Dedicated account manager");
+  } else if (planName === "PAYG") {
+    features.push("No subscription required");
+    features.push("Credits never expire");
   }
 
   return features.slice(0, 6);
@@ -117,7 +121,7 @@ const SignupForm = () => {
   const plans: PlanInfo[] = useMemo(() => {
     if (!plansData) return [];
     return plansData
-      .filter((p) => p.name !== "PAYG" && p.name !== "PRO")
+      .filter((p) => p.name !== "PRO")
       .map((plan) => ({
         id: plan.id,
         name: plan.name.charAt(0) + plan.name.slice(1).toLowerCase(),
@@ -255,7 +259,11 @@ const SignupForm = () => {
   );
 
   return (
-    <div className="w-full max-w-md mx-auto space-y-6">
+    <div
+      className={`w-full mx-auto space-y-6 transition-all duration-300 ${
+        step === 3 ? "max-w-6xl" : "max-w-md"
+      }`}
+    >
       {/* Logo */}
       <div className="text-center mb-8">
         <Logo />
