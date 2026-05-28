@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   useAppSettings,
@@ -88,7 +88,7 @@ export default function AppSettings() {
   const deleteAppMutation = useDeleteApp();
 
   // Initialize form when settings load
-  React.useEffect(() => {
+  useEffect(() => {
     if (settings) {
       setFormData({
         name: settings.name,
@@ -200,17 +200,29 @@ export default function AppSettings() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6 max-w-2xl">
-        <Card>
-          <CardHeader>
-            <Skeleton className="h-6 w-32" />
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-20 w-full" />
-            <Skeleton className="h-10 w-24" />
-          </CardContent>
-        </Card>
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-6 w-32" />
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-20 w-full" />
+              <Skeleton className="h-10 w-24" />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-6 w-32" />
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-20 w-full" />
+              <Skeleton className="h-10 w-24" />
+            </CardContent>
+          </Card>
+        </div>
       </div>
     );
   }
@@ -229,7 +241,7 @@ export default function AppSettings() {
   const webhooks = webhooksResponse?.webhooks || [];
 
   return (
-    <div className="space-y-6 max-w-2xl">
+    <div className="space-y-6">
       {/* Alerts */}
       {successMessage && (
         <Alert className="bg-success/10 border-success/30">
@@ -246,7 +258,9 @@ export default function AppSettings() {
         </Alert>
       )}
 
-      {/* General */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        <div className="space-y-6">
+          {/* General */}
       <Card className="border-border/60">
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
@@ -363,7 +377,10 @@ export default function AppSettings() {
           </Button>
         </CardContent>
       </Card>
+      
+      </div>
 
+      <div className="space-y-6">
       {/* Webhooks */}
       <Card className="border-border/60">
         <CardHeader>
@@ -499,7 +516,9 @@ export default function AppSettings() {
       {/* Email Provider Configuration */}
       <EmailProviderSection appId={appId!} />
 
-      {/* Danger Zone */}
+      
+        </div>
+        {/* Danger Zone */}
       <Card className="border-destructive/30">
         <CardHeader>
           <CardTitle className="text-base text-destructive flex items-center gap-2">
@@ -539,9 +558,7 @@ export default function AppSettings() {
           </AlertDialog>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 }
-
-// Add React import
-import React from "react";
