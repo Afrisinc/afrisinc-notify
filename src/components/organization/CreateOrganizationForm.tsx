@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Building2, Loader2, Shield, Lock } from "lucide-react";
 import {
   Elements,
@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePublicPlans } from "@/hooks/useSubscription";
+import { subscriptionService } from "@/services/subscriptionService";
 import { computePlanPrice } from "@/lib/pricing";
 import type { PlanInfo } from "@/components/auth/signup/schemas";
 import { PlanCards } from "@/components/pricing/PlanCards";
@@ -72,11 +73,15 @@ const generatePlanFeatures = (
 // ── Types ──────────────────────────────────────────────────────────────────────
 
 interface CreateOrganizationFormProps {
+  accountId: string;
+  email: string;
+  name?: string;
   onSubmit: (data: {
     name: string;
     planId: string;
     billingCycle: "monthly" | "annual";
     paymentMethodId?: string;
+    customerId?: string;
   }) => void;
   onCancel: () => void;
   isSubmitting: boolean;
@@ -85,16 +90,22 @@ interface CreateOrganizationFormProps {
 // ── Inner paid-card step (must be inside <Elements>) ──────────────────────────
 
 interface PaidCardStepProps {
+  accountId: string;
+  email: string;
+  name?: string;
   orgName: string;
   selectedPlan: PlanInfo;
   billingCycle: "monthly" | "annual";
   trialDays: number;
   isSubmitting: boolean;
   onBack: () => void;
-  onSubmit: (paymentMethodId: string) => void;
+  onSubmit: (paymentMethodId: string, customerId: string) => void;
 }
 
 function PaidCardStep({
+  accountId,
+  email,
+  name,
   orgName,
   selectedPlan,
   billingCycle,
@@ -107,6 +118,42 @@ function PaidCardStep({
   const elements = useElements();
   const [cardError, setCardError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [setupIntentState, setSetupIntentState] = useState<{
+    clientSecret: string;
+    customerId: string;
+  } | null>(null);
+  const [setupIntentLoading, setSetupIntentLoading] = useState(true);
+  const [setupIntentError, setSetupIntentError] = useState("");
+
+  // Create SetupIntent on mount — accountId is known here (authenticated org creation)
+  useEffect(() => {
+    let cancelled = false;
+    setSetupIntentLoading(true);
+    setSetupIntentError("");
+    subscriptionService
+      .createSetupIntent(accountId, email, name)
+      .then((result) => {
+        if (!cancelled)
+          setSetupIntentState({
+            clientSecret: result.clientSecret,
+            customerId: result.customerId,
+          });
+      })
+      .catch((err) => {
+        if (!cancelled)
+          setSetupIntentError(
+            err?.response?.data?.message ??
+              err?.message ??
+              "Failed to initialise payment. Please try again.",
+          );
+      })
+      .finally(() => {
+        if (!cancelled) setSetupIntentLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [accountId, email, name]);
 
   // Compute correct price for summary
   const priceInfo = computePlanPrice(
@@ -118,17 +165,17 @@ function PaidCardStep({
   );
 
   const handleSubmit = async () => {
-    if (!stripe || !elements) return;
+    if (!stripe || !elements || !setupIntentState) return;
     const card = elements.getElement(CardElement);
     if (!card) return;
 
     setBusy(true);
     setCardError(null);
 
-    const { paymentMethod, error } = await stripe.createPaymentMethod({
-      type: "card",
-      card,
-    });
+    const { setupIntent, error } = await stripe.confirmCardSetup(
+      setupIntentState.clientSecret,
+      { payment_method: { card } },
+    );
 
     if (error) {
       setCardError(error.message ?? "Card error");
@@ -136,10 +183,37 @@ function PaidCardStep({
       return;
     }
 
-    onSubmit(paymentMethod!.id);
+    const paymentMethodId =
+      typeof setupIntent.payment_method === "string"
+        ? setupIntent.payment_method
+        : (setupIntent.payment_method?.id ?? "");
+
+    if (!paymentMethodId) {
+      setCardError("Card setup completed but no payment method was returned.");
+      setBusy(false);
+      return;
+    }
+
+    onSubmit(paymentMethodId, setupIntentState.customerId);
   };
 
   const loading = busy || isSubmitting;
+
+  if (setupIntentLoading) {
+    return (
+      <div className="flex items-center justify-center py-6 text-sm text-muted-foreground gap-2">
+        <Loader2 className="h-4 w-4 animate-spin" />
+        Initialising secure payment…
+      </div>
+    );
+  }
+  if (setupIntentError) {
+    return (
+      <p className="text-sm text-destructive py-4 text-center">
+        {setupIntentError}
+      </p>
+    );
+  }
 
   return (
     <>
@@ -229,7 +303,7 @@ function PaidCardStep({
           type="button"
           className="flex-1"
           onClick={handleSubmit}
-          disabled={!stripe || loading}
+          disabled={!stripe || loading || !setupIntentState}
         >
           {loading ? (
             <>
@@ -250,6 +324,9 @@ function PaidCardStep({
 // ── Main form ─────────────────────────────────────────────────────────────────
 
 const CreateOrganizationForm = ({
+  accountId,
+  email,
+  name,
   onSubmit,
   onCancel,
   isSubmitting,
@@ -297,12 +374,13 @@ const CreateOrganizationForm = ({
     onSubmit({ name: orgName.trim(), planId: selectedPlan.id, billingCycle });
   };
 
-  const handlePaidSubmit = (paymentMethodId: string) => {
+  const handlePaidSubmit = (paymentMethodId: string, customerId: string) => {
     onSubmit({
       name: orgName.trim(),
       planId: selectedPlan!.id,
       billingCycle,
       paymentMethodId,
+      customerId,
     });
   };
 
@@ -441,6 +519,9 @@ const CreateOrganizationForm = ({
       {step === 2 && isPaidPlan && selectedPlan && (
         <Elements stripe={stripePromise}>
           <PaidCardStep
+            accountId={accountId}
+            email={email}
+            name={name}
             orgName={orgName}
             selectedPlan={selectedPlan}
             billingCycle={billingCycle}

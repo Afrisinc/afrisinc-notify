@@ -201,8 +201,9 @@ const SignupForm = () => {
     (paymentData?: PaymentData) => {
       if (!accountType) return;
 
-      // Real Stripe payment method ID (pm_xxx) from StepPlanConfirmation
+      // Stripe pm_xxx and cus_xxx from SetupIntent flow in StepPlanConfirmation
       const paymentMethodId = paymentData?.paymentMethodId;
+      const customerId = paymentData?.customerId;
 
       const payload: SignupPayload = {
         firstName: identityData.firstName,
@@ -224,6 +225,7 @@ const SignupForm = () => {
         billingCycle,
         // Payment info (required for paid plans)
         ...(paymentMethodId && { paymentMethodId }),
+        ...(customerId && { customerId }),
       };
 
       mutate(payload, {
@@ -299,6 +301,8 @@ const SignupForm = () => {
         )}
         {step === 3 && (
           <StepPlanConfirmation
+            email={identityData.email ?? ""}
+            name={`${identityData.firstName ?? ""} ${identityData.lastName ?? ""}`.trim()}
             selectedPlan={selectedPlan}
             plans={plans}
             billingCycle={billingCycle}

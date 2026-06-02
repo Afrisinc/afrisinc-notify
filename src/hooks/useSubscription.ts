@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { subscriptionService } from "@/services/subscriptionService";
 
 /**
@@ -124,5 +124,53 @@ export function useCurrentSubscription(accountId?: string) {
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 2,
     enabled: !!accountId,
+  });
+}
+
+/**
+ * Mutation: Step 1 — create a Stripe Customer + SetupIntent.
+ * Returns { customerId, clientSecret, setupIntentId }.
+ * The frontend passes clientSecret to stripe.confirmCardSetup().
+ */
+export function useCreateSetupIntent() {
+  return useMutation({
+    mutationFn: ({
+      accountId,
+      email,
+      name,
+    }: {
+      accountId: string;
+      email: string;
+      name?: string;
+    }) => subscriptionService.createSetupIntent(accountId, email, name),
+  });
+}
+
+/**
+ * Mutation: Step 2 — create Stripe Subscription after card confirmed.
+ * Stripe owns auto-charge and trial lifecycle from this point.
+ */
+export function useActivateTrialSubscription() {
+  return useMutation({
+    mutationFn: ({
+      accountId,
+      planId,
+      billingCycle,
+      paymentMethodId,
+      customerId,
+    }: {
+      accountId: string;
+      planId: string;
+      billingCycle: "monthly" | "annual";
+      paymentMethodId: string;
+      customerId: string;
+    }) =>
+      subscriptionService.activateTrialSubscription(
+        accountId,
+        planId,
+        billingCycle,
+        paymentMethodId,
+        customerId,
+      ),
   });
 }
