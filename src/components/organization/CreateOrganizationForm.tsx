@@ -1,12 +1,5 @@
 import { useState, useMemo } from "react";
-import {
-  Check,
-  Sparkles,
-  Building2,
-  Loader2,
-  Shield,
-  Lock,
-} from "lucide-react";
+import { Building2, Loader2, Shield, Lock } from "lucide-react";
 import {
   Elements,
   CardElement,
@@ -21,6 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { usePublicPlans } from "@/hooks/useSubscription";
 import { computePlanPrice } from "@/lib/pricing";
 import type { PlanInfo } from "@/components/auth/signup/schemas";
+import { PlanCards } from "@/components/pricing/PlanCards";
 
 // ── Constants ──────────────────────────────────────────────────────────────────
 
@@ -354,71 +348,12 @@ const CreateOrganizationForm = ({
             )}
 
             {!plansLoading && (
-              <div className="grid gap-2">
-                {plans.map((plan) => {
-                  const isSelected = selectedPlan?.id === plan.id;
-                  const isPaid = plan.priceMonthly > 0;
-                  return (
-                    <button
-                      key={plan.id}
-                      type="button"
-                      onClick={() => setSelectedPlan(plan)}
-                      disabled={isSubmitting}
-                      className={`flex items-center justify-between p-4 rounded-xl border-2 transition-all text-left ${
-                        isSelected
-                          ? "border-primary bg-primary/5"
-                          : "border-border hover:border-primary/40 bg-card"
-                      }`}
-                    >
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold text-foreground">
-                            {plan.name}
-                          </span>
-                          {isPaid && plan.trialDays && plan.trialDays > 0 && (
-                            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-success bg-success/10 px-1.5 py-0.5 rounded-full uppercase">
-                              <Sparkles className="h-2.5 w-2.5" />
-                              {plan.trialDays}-day trial
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-sm text-muted-foreground mt-0.5">
-                          {plan.description}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <div className="text-right">
-                          {isPaid ? (
-                            <>
-                              <span className="text-lg font-bold text-foreground">
-                                ${plan.priceMonthly}
-                              </span>
-                              <span className="text-sm text-muted-foreground">
-                                /mo
-                              </span>
-                              {plan.priceYearly > 0 &&
-                                plan.priceYearly < plan.priceMonthly && (
-                                  <p className="text-[11px] text-success">
-                                    or ${plan.priceYearly}/mo billed annually
-                                  </p>
-                                )}
-                            </>
-                          ) : (
-                            <span className="text-lg font-bold text-foreground">
-                              Free
-                            </span>
-                          )}
-                        </div>
-                        {isSelected && (
-                          <div className="h-5 w-5 rounded-full bg-primary flex items-center justify-center">
-                            <Check className="h-3 w-3 text-primary-foreground" />
-                          </div>
-                        )}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
+              <PlanCards
+                plans={plans}
+                selectedPlan={selectedPlan}
+                onPlanChange={setSelectedPlan}
+                billingCycle={billingCycle}
+              />
             )}
           </div>
 
