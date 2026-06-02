@@ -197,6 +197,30 @@ export const subscriptionService = {
   },
 
   /**
+   * Initiate a Stripe Payment Intent for a plan upgrade.
+   * Returns clientSecret for Stripe.js to confirm on the client.
+   */
+  async initSubscriptionPayment(
+    planId: string,
+    billingCycle: "monthly" | "yearly",
+    accountId: string,
+    customerEmail: string,
+  ): Promise<{
+    clientSecret: string;
+    paymentIntentId: string;
+    orderId: string;
+    amountCents: number;
+    planName: string;
+  }> {
+    const response = await getClient().post(
+      "/api/subscriptions/payment/init",
+      { planId, billingCycle, customerEmail },
+      { headers: { "x-account-id": accountId } },
+    );
+    return response.data.data;
+  },
+
+  /**
    * Upgrade to a new plan.
    * Resolves plan name → UUID via GET /subscriptions/plans, then calls
    * PUT /subscriptions/plan with the planId the backend already expects.

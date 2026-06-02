@@ -111,7 +111,7 @@ const STATUS_CONFIG: Record<
   },
   scheduled: {
     icon: Clock,
-    color: "text-amber-600",
+    color: "text-amber-600 dark:text-amber-400",
     bg: "bg-amber-500/10",
     label: "Scheduled",
   },
@@ -123,7 +123,7 @@ const STATUS_CONFIG: Record<
   },
   completed: {
     icon: CheckCircle2,
-    color: "text-emerald-600",
+    color: "text-emerald-600 dark:text-emerald-400",
     bg: "bg-emerald-500/10",
     label: "Completed",
   },

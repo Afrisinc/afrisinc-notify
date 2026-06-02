@@ -86,7 +86,9 @@
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.9",
     "zod": "^3.25.76",
-    "zustand": "^4.5.1"
+    "zustand": "^4.5.1",
+    "@stripe/stripe-js": "^4.0.0",
+    "@stripe/react-stripe-js": "^2.7.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",

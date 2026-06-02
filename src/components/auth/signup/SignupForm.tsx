@@ -15,7 +15,7 @@ import type {
   SignupPayload,
   PlanInfo,
 } from "./schemas";
-import type { PaymentData } from "./PaymentMethodForm";
+import type { PaymentData } from "./StepPlanConfirmation";
 import Logo from "@/components/Logo";
 
 const TOTAL_STEPS = 4;
@@ -201,11 +201,8 @@ const SignupForm = () => {
     (paymentData?: PaymentData) => {
       if (!accountType) return;
 
-      // Generate a temporary payment method ID for the backend
-      // In production, this would be created via Stripe's createPaymentMethod API
-      const paymentMethodId = paymentData
-        ? `pm_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`
-        : undefined;
+      // Real Stripe payment method ID (pm_xxx) from StepPlanConfirmation
+      const paymentMethodId = paymentData?.paymentMethodId;
 
       const payload: SignupPayload = {
         firstName: identityData.firstName,

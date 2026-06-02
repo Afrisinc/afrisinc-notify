@@ -52,11 +52,30 @@ export interface TransactionPage {
 
 const client = () => getApiClient();
 
+export interface TopUpInitResult {
+  clientSecret: string;
+  orderId: string;
+  paymentIntentId: string;
+}
+
 export const paygService = {
   async getBalance(accountId: string): Promise<CreditBalance> {
     const res = await client().get("/api/payg/balance", {
       headers: { "x-account-id": accountId },
     });
+    return res.data.data;
+  },
+
+  async initTopUp(
+    accountId: string,
+    amount: number,
+    customerEmail: string,
+  ): Promise<TopUpInitResult> {
+    const res = await client().post(
+      "/api/payg/topup/init",
+      { amount, customerEmail },
+      { headers: { "x-account-id": accountId } },
+    );
     return res.data.data;
   },
 
