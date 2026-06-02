@@ -38,7 +38,7 @@ const StepAccountType = ({
 }: StepAccountTypeProps) => {
   return (
     <div className="space-y-5">
-      <p className="heading-label text-center">How will you use Nofiyr?</p>
+      <p className="heading-label text-center">How will you use Notify?</p>
       <div className="grid gap-3">
         {options.map(({ type, title, description, icon: Icon }) => (
           <Card

@@ -196,6 +196,94 @@ export const subscriptionService = {
     return response.data.data;
   },
 
+  // ── Trial Subscription Flow (SetupIntent) ────────────────────────────────────
+
+  /**
+   * Step 1 of the trial subscription flow.
+   * Creates / retrieves a Stripe Customer for this account and returns a
+   * SetupIntent clientSecret for stripe.confirmCardSetup() on the frontend.
+   */
+  async createSetupIntent(
+    accountId: string,
+    email: string,
+    name?: string,
+  ): Promise<{
+    customerId: string;
+    clientSecret: string;
+    setupIntentId: string;
+  }> {
+    const response = await getClient().post(
+      "/api/subscriptions/setup-intent",
+      { email, name },
+      { headers: { "x-account-id": accountId } },
+    );
+    return response.data.data;
+  },
+
+  /**
+   * Step 1 (anonymous/public): Creates a Stripe Customer + SetupIntent
+   * during signup — before the account exists.
+   * No auth header required.
+   */
+  async createAnonymousSetupIntent(
+    email: string,
+    name?: string,
+  ): Promise<{
+    customerId: string;
+    clientSecret: string;
+    setupIntentId: string;
+  }> {
+    const response = await getClient().post(
+      "/api/subscriptions/setup-intent/anonymous",
+      { email, name },
+    );
+    return response.data.data;
+  },
+
+  /**
+   * Step 2 of the trial subscription flow.
+   * Called after stripe.confirmCardSetup() succeeds.
+   * Creates the Stripe Subscription with a 14-day free trial.
+   * Stripe owns auto-charge and lifecycle from this point.
+   */
+  async activateTrialSubscription(
+    accountId: string,
+    planId: string,
+    billingCycle: "monthly" | "annual",
+    paymentMethodId: string,
+    customerId: string,
+  ): Promise<void> {
+    await getClient().post(
+      "/api/subscriptions/activate",
+      { planId, billingCycle, paymentMethodId, customerId },
+      { headers: { "x-account-id": accountId } },
+    );
+  },
+
+  /**
+   * Initiate a Stripe Payment Intent for a plan upgrade.
+   * Returns clientSecret for Stripe.js to confirm on the client.
+   */
+  async initSubscriptionPayment(
+    planId: string,
+    billingCycle: "monthly" | "yearly",
+    accountId: string,
+    customerEmail: string,
+  ): Promise<{
+    clientSecret: string;
+    paymentIntentId: string;
+    orderId: string;
+    amountCents: number;
+    planName: string;
+  }> {
+    const response = await getClient().post(
+      "/api/subscriptions/payment/init",
+      { planId, billingCycle, customerEmail },
+      { headers: { "x-account-id": accountId } },
+    );
+    return response.data.data;
+  },
+
   /**
    * Upgrade to a new plan.
    * Resolves plan name → UUID via GET /subscriptions/plans, then calls

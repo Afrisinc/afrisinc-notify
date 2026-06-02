@@ -34,8 +34,12 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useMarketplaceTemplates } from "@/hooks/useMarketplace";
-import { useInstallMarketplaceTemplate } from "@/hooks/useMarketplace";
+import {
+  useMarketplaceTemplates,
+  useInstallMarketplaceTemplate,
+} from "@/hooks/useMarketplace";
+import { TemplatePurchaseDialog } from "@/components/marketplace/TemplatePurchaseDialog";
+import { useUser } from "@/contexts/UserContext";
 import { useApps } from "@/hooks/useApps";
 import { useOrg } from "@/contexts/OrgContext";
 import { useCurrentAccountId } from "@/hooks/useAuth";
@@ -97,7 +101,12 @@ const ITEMS_PER_PAGE = 12;
 export default function Marketplace() {
   const { currentOrg } = useOrg();
   const accountId = useCurrentAccountId();
+  const { profile } = useUser();
+  const customerEmail = profile?.email ?? "";
   const { toast } = useToast();
+
+  const [purchaseTemplate, setPurchaseTemplate] =
+    useState<MarketplaceTemplate | null>(null);
 
   const [search, setSearch] = useState("");
   const [channelFilter, setChannelFilter] = useState<ChannelFilter>("all");
@@ -221,6 +230,15 @@ export default function Marketplace() {
   );
 
   const hasMoreTemplates = currentPage * ITEMS_PER_PAGE < totalCount;
+
+  /** Route template action: paid → TemplatePurchaseDialog, free → install dialog */
+  const handleTemplateAction = (template: MarketplaceTemplate) => {
+    if ((template.price ?? 0) > 0) {
+      setPurchaseTemplate(template);
+    } else {
+      setInstallTemplate(template);
+    }
+  };
 
   const handleInstall = async () => {
     if (!selectedAppId || !installTemplate) return;
@@ -476,7 +494,7 @@ export default function Marketplace() {
                         });
                         return;
                       }
-                      setInstallTemplate(tpl);
+                      handleTemplateAction(tpl);
                     }}
                     onPreview={() => setPreviewTemplate(tpl)}
                   />
@@ -675,8 +693,25 @@ export default function Marketplace() {
         open={!!previewTemplate}
         onOpenChange={(open) => !open && setPreviewTemplate(null)}
         template={previewTemplate}
-        onAction={(template) => setInstallTemplate(template)}
+        onAction={handleTemplateAction}
         variant="dashboard"
+      />
+
+      {/* Paid Template Purchase Dialog */}
+      <TemplatePurchaseDialog
+        open={!!purchaseTemplate}
+        onClose={() => setPurchaseTemplate(null)}
+        onSuccess={() => {
+          toast({
+            title: "Purchase complete",
+            description: `"${purchaseTemplate?.subject || purchaseTemplate?.name}" is being installed to your app.`,
+          });
+          setPurchaseTemplate(null);
+        }}
+        template={purchaseTemplate}
+        apps={userApps}
+        accountId={accountId ?? ""}
+        customerEmail={customerEmail}
       />
     </div>
   );

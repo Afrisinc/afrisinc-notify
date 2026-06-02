@@ -261,303 +261,313 @@ export default function AppSettings() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         <div className="space-y-6">
           {/* General */}
-      <Card className="border-border/60">
-        <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
-            <Settings className="h-4 w-4" /> General
-          </CardTitle>
-          <CardDescription>Manage your app's basic settings.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* App ID */}
-          <div>
-            <Label className="flex items-center gap-1.5 mb-1.5">
-              <Hash className="h-3 w-3" /> App ID
-            </Label>
-            <div className="flex items-center gap-2">
-              <code className="flex-1 px-3 py-2 bg-muted/50 border border-border/60 rounded-md text-sm font-mono text-muted-foreground select-all">
-                {appId}
-              </code>
+          <Card className="border-border/60">
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                <Settings className="h-4 w-4" /> General
+              </CardTitle>
+              <CardDescription>
+                Manage your app's basic settings.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* App ID */}
+              <div>
+                <Label className="flex items-center gap-1.5 mb-1.5">
+                  <Hash className="h-3 w-3" /> App ID
+                </Label>
+                <div className="flex items-center gap-2">
+                  <code className="flex-1 px-3 py-2 bg-muted/50 border border-border/60 rounded-md text-sm font-mono text-muted-foreground select-all">
+                    {appId}
+                  </code>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-9 px-3"
+                    onClick={() => copy(appId || "", "appId")}
+                  >
+                    {isCopied("appId") ? (
+                      <>
+                        <Check className="h-3.5 w-3.5 mr-1.5 text-success" />
+                        Copied
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-3.5 w-3.5 mr-1.5" />
+                        Copy
+                      </>
+                    )}
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1.5">
+                  Use this ID to identify your app in API calls.
+                </p>
+              </div>
+
+              <Separator />
+
+              <div>
+                <Label>App Name</Label>
+                <Input
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                />
+              </div>
+              <div>
+                <Label>Description</Label>
+                <Textarea
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                  rows={3}
+                />
+              </div>
+              <div>
+                <Label>Environment</Label>
+                <Select
+                  value={formData.environment}
+                  onValueChange={(v) =>
+                    setFormData({ ...formData, environment: v as any })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="development">Development</SelectItem>
+                    <SelectItem value="staging">Staging</SelectItem>
+                    <SelectItem value="production">Production</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button
+                onClick={handleUpdateSettings}
+                disabled={updateSettingsMutation.isPending}
+              >
+                {updateSettingsMutation.isPending
+                  ? "Saving..."
+                  : "Save Changes"}
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Allowed Domains */}
+          <Card className="border-border/60">
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                <Globe className="h-4 w-4" /> Allowed Domains
+              </CardTitle>
+              <CardDescription>
+                Restrict API access to specific domains.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Textarea
+                placeholder="https://example.com&#10;https://app.example.com"
+                rows={3}
+                value={domainsText}
+                onChange={(e) => setDomainsText(e.target.value)}
+              />
               <Button
                 variant="outline"
                 size="sm"
-                className="h-9 px-3"
-                onClick={() => copy(appId || "", "appId")}
+                onClick={handleUpdateDomains}
+                disabled={updateDomainsMutation.isPending}
               >
-                {isCopied("appId") ? (
-                  <>
-                    <Check className="h-3.5 w-3.5 mr-1.5 text-success" />
-                    Copied
-                  </>
-                ) : (
-                  <>
-                    <Copy className="h-3.5 w-3.5 mr-1.5" />
-                    Copy
-                  </>
-                )}
+                {updateDomainsMutation.isPending ? "Saving..." : "Save Domains"}
               </Button>
-            </div>
-            <p className="text-xs text-muted-foreground mt-1.5">
-              Use this ID to identify your app in API calls.
-            </p>
-          </div>
+            </CardContent>
+          </Card>
+        </div>
 
-          <Separator />
-
-          <div>
-            <Label>App Name</Label>
-            <Input
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-            />
-          </div>
-          <div>
-            <Label>Description</Label>
-            <Textarea
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-              rows={3}
-            />
-          </div>
-          <div>
-            <Label>Environment</Label>
-            <Select
-              value={formData.environment}
-              onValueChange={(v) =>
-                setFormData({ ...formData, environment: v as any })
-              }
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="development">Development</SelectItem>
-                <SelectItem value="staging">Staging</SelectItem>
-                <SelectItem value="production">Production</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <Button
-            onClick={handleUpdateSettings}
-            disabled={updateSettingsMutation.isPending}
-          >
-            {updateSettingsMutation.isPending ? "Saving..." : "Save Changes"}
-          </Button>
-        </CardContent>
-      </Card>
-
-      {/* Allowed Domains */}
-      <Card className="border-border/60">
-        <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
-            <Globe className="h-4 w-4" /> Allowed Domains
-          </CardTitle>
-          <CardDescription>
-            Restrict API access to specific domains.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <Textarea
-            placeholder="https://example.com&#10;https://app.example.com"
-            rows={3}
-            value={domainsText}
-            onChange={(e) => setDomainsText(e.target.value)}
-          />
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleUpdateDomains}
-            disabled={updateDomainsMutation.isPending}
-          >
-            {updateDomainsMutation.isPending ? "Saving..." : "Save Domains"}
-          </Button>
-        </CardContent>
-      </Card>
-      
-      </div>
-
-      <div className="space-y-6">
-      {/* Webhooks */}
-      <Card className="border-border/60">
-        <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
-            <Webhook className="h-4 w-4" /> Webhooks
-          </CardTitle>
-          <CardDescription>
-            Configure webhook endpoints for delivery events and contact form
-            submissions (e.g., Slack/Teams alerts).
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Existing Webhooks */}
-          {webhooks.length > 0 && (
-            <div className="space-y-3 mb-6">
-              <p className="text-sm font-semibold">Configured Webhooks:</p>
-              {webhooks.map((webhook) => (
-                <div
-                  key={webhook.id}
-                  className="p-3 border border-border/60 rounded-lg space-y-2"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">
-                        {webhook.url}
-                      </p>
-                      <p className="text-xs text-content-secondary">
-                        {webhook.events.length} events •{" "}
-                        {webhook.isActive ? "Active" : "Inactive"}
-                      </p>
+        <div className="space-y-6">
+          {/* Webhooks */}
+          <Card className="border-border/60">
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                <Webhook className="h-4 w-4" /> Webhooks
+              </CardTitle>
+              <CardDescription>
+                Configure webhook endpoints for delivery events and contact form
+                submissions (e.g., Slack/Teams alerts).
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Existing Webhooks */}
+              {webhooks.length > 0 && (
+                <div className="space-y-3 mb-6">
+                  <p className="text-sm font-semibold">Configured Webhooks:</p>
+                  {webhooks.map((webhook) => (
+                    <div
+                      key={webhook.id}
+                      className="p-3 border border-border/60 rounded-lg space-y-2"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium truncate">
+                            {webhook.url}
+                          </p>
+                          <p className="text-xs text-content-secondary">
+                            {webhook.events.length} events •{" "}
+                            {webhook.isActive ? "Active" : "Inactive"}
+                          </p>
+                        </div>
+                        <Badge
+                          variant={webhook.isActive ? "default" : "secondary"}
+                        >
+                          {webhook.isActive ? "Active" : "Inactive"}
+                        </Badge>
+                      </div>
+                      <div className="flex gap-2 text-xs">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleTestWebhook(webhook.id)}
+                          disabled={testWebhookMutation.isPending}
+                        >
+                          {testWebhookMutation.isPending
+                            ? "Testing..."
+                            : "Test"}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleDeleteWebhook(webhook.id)}
+                          disabled={deleteWebhookMutation.isPending}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
                     </div>
-                    <Badge variant={webhook.isActive ? "default" : "secondary"}>
-                      {webhook.isActive ? "Active" : "Inactive"}
-                    </Badge>
-                  </div>
-                  <div className="flex gap-2 text-xs">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleTestWebhook(webhook.id)}
-                      disabled={testWebhookMutation.isPending}
-                    >
-                      {testWebhookMutation.isPending ? "Testing..." : "Test"}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleDeleteWebhook(webhook.id)}
-                      disabled={deleteWebhookMutation.isPending}
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </Button>
+                  ))}
+                </div>
+              )}
+
+              <Separator />
+
+              {/* New Webhook Form */}
+              <div className="space-y-3 pt-3">
+                <p className="text-sm font-semibold">Add New Webhook:</p>
+                <div>
+                  <Label>Webhook URL</Label>
+                  <Input
+                    placeholder="https://your-app.com/webhooks/notify"
+                    value={webhookForm.url}
+                    onChange={(e) =>
+                      setWebhookForm({ ...webhookForm, url: e.target.value })
+                    }
+                  />
+                </div>
+                <div>
+                  <Label>Events</Label>
+                  <div className="grid grid-cols-2 gap-2 mt-2">
+                    {[
+                      {
+                        name: "contact.created",
+                        label: "New Contact (Contact Form)",
+                      },
+                      {
+                        name: "notification.delivered",
+                        label: "Email Delivered",
+                      },
+                      { name: "notification.failed", label: "Email Failed" },
+                      { name: "notification.bounced", label: "Email Bounced" },
+                      { name: "notification.opened", label: "Email Opened" },
+                      { name: "notification.clicked", label: "Link Clicked" },
+                      { name: "campaign.sent", label: "Campaign Sent" },
+                    ].map((event) => (
+                      <label
+                        key={event.name}
+                        className="flex items-center gap-2 text-sm"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={webhookForm.events.includes(event.name)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setWebhookForm({
+                                ...webhookForm,
+                                events: [...webhookForm.events, event.name],
+                              });
+                            } else {
+                              setWebhookForm({
+                                ...webhookForm,
+                                events: webhookForm.events.filter(
+                                  (ev) => ev !== event.name,
+                                ),
+                              });
+                            }
+                          }}
+                          className="rounded"
+                        />
+                        {event.label}
+                      </label>
+                    ))}
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
-
-          <Separator />
-
-          {/* New Webhook Form */}
-          <div className="space-y-3 pt-3">
-            <p className="text-sm font-semibold">Add New Webhook:</p>
-            <div>
-              <Label>Webhook URL</Label>
-              <Input
-                placeholder="https://your-app.com/webhooks/notify"
-                value={webhookForm.url}
-                onChange={(e) =>
-                  setWebhookForm({ ...webhookForm, url: e.target.value })
-                }
-              />
-            </div>
-            <div>
-              <Label>Events</Label>
-              <div className="grid grid-cols-2 gap-2 mt-2">
-                {[
-                  {
-                    name: "contact.created",
-                    label: "New Contact (Contact Form)",
-                  },
-                  { name: "notification.delivered", label: "Email Delivered" },
-                  { name: "notification.failed", label: "Email Failed" },
-                  { name: "notification.bounced", label: "Email Bounced" },
-                  { name: "notification.opened", label: "Email Opened" },
-                  { name: "notification.clicked", label: "Link Clicked" },
-                  { name: "campaign.sent", label: "Campaign Sent" },
-                ].map((event) => (
-                  <label
-                    key={event.name}
-                    className="flex items-center gap-2 text-sm"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={webhookForm.events.includes(event.name)}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setWebhookForm({
-                            ...webhookForm,
-                            events: [...webhookForm.events, event.name],
-                          });
-                        } else {
-                          setWebhookForm({
-                            ...webhookForm,
-                            events: webhookForm.events.filter(
-                              (ev) => ev !== event.name,
-                            ),
-                          });
-                        }
-                      }}
-                      className="rounded"
-                    />
-                    {event.label}
-                  </label>
-                ))}
+                <Button
+                  size="sm"
+                  onClick={handleCreateWebhook}
+                  disabled={
+                    createWebhookMutation.isPending ||
+                    !webhookForm.url ||
+                    webhookForm.events.length === 0
+                  }
+                >
+                  {createWebhookMutation.isPending
+                    ? "Creating..."
+                    : "Add Webhook"}
+                </Button>
               </div>
-            </div>
-            <Button
-              size="sm"
-              onClick={handleCreateWebhook}
-              disabled={
-                createWebhookMutation.isPending ||
-                !webhookForm.url ||
-                webhookForm.events.length === 0
-              }
-            >
-              {createWebhookMutation.isPending ? "Creating..." : "Add Webhook"}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
 
-      {/* Email Provider Configuration */}
-      <EmailProviderSection appId={appId!} />
-
-      
+          {/* Email Provider Configuration */}
+          <EmailProviderSection appId={appId!} />
         </div>
         {/* Danger Zone */}
-      <Card className="border-destructive/30">
-        <CardHeader>
-          <CardTitle className="text-base text-destructive flex items-center gap-2">
-            <Trash2 className="h-4 w-4" /> Danger Zone
-          </CardTitle>
-          <CardDescription>
-            Permanently delete this app and all associated data.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="destructive" size="sm">
-                Delete App
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Delete "{settings.name}"?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This will permanently delete the app and all its templates,
-                  contacts, campaigns, API keys, and logs. This action cannot be
-                  undone.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                  onClick={handleDeleteApp}
-                  disabled={deleteAppMutation.isPending}
-                >
-                  {deleteAppMutation.isPending ? "Deleting..." : "Delete App"}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </CardContent>
-      </Card>
+        <Card className="border-destructive/30">
+          <CardHeader>
+            <CardTitle className="text-base text-destructive flex items-center gap-2">
+              <Trash2 className="h-4 w-4" /> Danger Zone
+            </CardTitle>
+            <CardDescription>
+              Permanently delete this app and all associated data.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" size="sm">
+                  Delete App
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete "{settings.name}"?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This will permanently delete the app and all its templates,
+                    contacts, campaigns, API keys, and logs. This action cannot
+                    be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    onClick={handleDeleteApp}
+                    disabled={deleteAppMutation.isPending}
+                  >
+                    {deleteAppMutation.isPending ? "Deleting..." : "Delete App"}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

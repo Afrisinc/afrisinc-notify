@@ -1,16 +1,24 @@
-import { useState, useRef, useMemo } from "react";
-import { Check, Sparkles, Building2, Loader2, Shield } from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
+import { Building2, Loader2, Shield, Lock } from "lucide-react";
+import {
+  Elements,
+  CardElement,
+  useStripe,
+  useElements,
+} from "@stripe/react-stripe-js";
+import { stripePromise } from "@/lib/stripe";
+import { StripeCardInput } from "@/components/payment/StripeCardInput";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import PaymentMethodForm, {
-  type PaymentMethodFormRef,
-} from "@/components/auth/signup/PaymentMethodForm";
 import { usePublicPlans } from "@/hooks/useSubscription";
+import { subscriptionService } from "@/services/subscriptionService";
+import { computePlanPrice } from "@/lib/pricing";
 import type { PlanInfo } from "@/components/auth/signup/schemas";
 import { PlanCards } from "@/components/pricing/PlanCards";
 
-// Plan descriptions mapping
+// ── Constants ──────────────────────────────────────────────────────────────────
+
 const planDescriptions: Record<string, string> = {
   FREE: "Email only — test before you commit.",
   STARTER: "All channels unlocked — best entry point.",
@@ -19,16 +27,12 @@ const planDescriptions: Record<string, string> = {
   PAYG: "Pay only for what you use.",
 };
 
-// Helper to format limit value for display
 const formatLimitValue = (limit: number | string): string => {
   if (limit === "Unlimited" || limit === -1) return "Unlimited";
-  if (typeof limit === "number") {
-    return limit.toLocaleString();
-  }
+  if (typeof limit === "number") return limit.toLocaleString();
   return String(limit);
 };
 
-// Helper to get human-readable metric name
 const getMetricLabel = (metric: string): string => {
   const labels: Record<string, string> = {
     emails_per_month: "emails / mo",
@@ -41,61 +45,288 @@ const getMetricLabel = (metric: string): string => {
   return labels[metric] || metric.split("_").join(" ");
 };
 
-// Generate features from plan limits
 const generatePlanFeatures = (
   limits: Array<{ metric: string; limit: number | string; period: string }>,
-  planName: string,
 ): string[] => {
-  const features: string[] = [];
   const keyMetrics = [
     "emails_per_month",
     "sms_per_month",
     "push_subscribers",
     "in_app_per_month",
   ];
-
-  for (const metric of keyMetrics) {
-    const limit = limits.find((l) => l.metric === metric);
-    if (limit) {
-      const value = formatLimitValue(limit.limit);
+  return keyMetrics
+    .map((metric) => {
+      const l = limits.find((x) => x.metric === metric);
+      if (!l) return null;
+      const value = formatLimitValue(l.limit);
       const label = getMetricLabel(metric);
-      if (value === "Unlimited") {
-        features.push(`Unlimited ${label.split(" / mo").join("")}`);
-      } else if (typeof limit.limit === "number" && limit.limit > 0) {
-        features.push(`${value} ${label}`);
-      }
-    }
-  }
-
-  // Add support level based on plan
-  if (planName === "FREE") {
-    features.push("Community support");
-  } else if (planName === "STARTER") {
-    features.push("Email support (48h)");
-  } else if (planName === "SCALE") {
-    features.push("Priority support (12h SLA)");
-  } else if (planName === "ENTERPRISE") {
-    features.push("Dedicated account manager");
-  } else if (planName === "PAYG") {
-    features.push("No subscription required");
-    features.push("Credits never expire");
-  }
-
-  return features.slice(0, 4);
+      if (value === "Unlimited")
+        return `Unlimited ${label.split(" / mo").join("")}`;
+      if (typeof l.limit === "number" && l.limit > 0)
+        return `${value} ${label}`;
+      return null;
+    })
+    .filter(Boolean)
+    .slice(0, 4) as string[];
 };
 
+// ── Types ──────────────────────────────────────────────────────────────────────
+
 interface CreateOrganizationFormProps {
+  accountId: string;
+  email: string;
+  name?: string;
   onSubmit: (data: {
     name: string;
     planId: string;
     billingCycle: "monthly" | "annual";
     paymentMethodId?: string;
+    customerId?: string;
   }) => void;
   onCancel: () => void;
   isSubmitting: boolean;
 }
 
+// ── Inner paid-card step (must be inside <Elements>) ──────────────────────────
+
+interface PaidCardStepProps {
+  accountId: string;
+  email: string;
+  name?: string;
+  orgName: string;
+  selectedPlan: PlanInfo;
+  billingCycle: "monthly" | "annual";
+  trialDays: number;
+  isSubmitting: boolean;
+  onBack: () => void;
+  onSubmit: (paymentMethodId: string, customerId: string) => void;
+}
+
+function PaidCardStep({
+  accountId,
+  email,
+  name,
+  orgName,
+  selectedPlan,
+  billingCycle,
+  trialDays,
+  isSubmitting,
+  onBack,
+  onSubmit,
+}: PaidCardStepProps) {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [cardError, setCardError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [setupIntentState, setSetupIntentState] = useState<{
+    clientSecret: string;
+    customerId: string;
+  } | null>(null);
+  const [setupIntentLoading, setSetupIntentLoading] = useState(true);
+  const [setupIntentError, setSetupIntentError] = useState("");
+
+  // Create SetupIntent on mount — accountId is known here (authenticated org creation)
+  useEffect(() => {
+    let cancelled = false;
+    setSetupIntentLoading(true);
+    setSetupIntentError("");
+    subscriptionService
+      .createSetupIntent(accountId, email, name)
+      .then((result) => {
+        if (!cancelled)
+          setSetupIntentState({
+            clientSecret: result.clientSecret,
+            customerId: result.customerId,
+          });
+      })
+      .catch((err) => {
+        if (!cancelled)
+          setSetupIntentError(
+            err?.response?.data?.message ??
+              err?.message ??
+              "Failed to initialise payment. Please try again.",
+          );
+      })
+      .finally(() => {
+        if (!cancelled) setSetupIntentLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [accountId, email, name]);
+
+  // Compute correct price for summary
+  const priceInfo = computePlanPrice(
+    {
+      monthlyPrice: selectedPlan.priceMonthly,
+      yearlyPrice: selectedPlan.priceYearly,
+    },
+    billingCycle === "annual" ? "yearly" : "monthly",
+  );
+
+  const handleSubmit = async () => {
+    if (!stripe || !elements || !setupIntentState) return;
+    const card = elements.getElement(CardElement);
+    if (!card) return;
+
+    setBusy(true);
+    setCardError(null);
+
+    const { setupIntent, error } = await stripe.confirmCardSetup(
+      setupIntentState.clientSecret,
+      { payment_method: { card } },
+    );
+
+    if (error) {
+      setCardError(error.message ?? "Card error");
+      setBusy(false);
+      return;
+    }
+
+    const paymentMethodId =
+      typeof setupIntent.payment_method === "string"
+        ? setupIntent.payment_method
+        : (setupIntent.payment_method?.id ?? "");
+
+    if (!paymentMethodId) {
+      setCardError("Card setup completed but no payment method was returned.");
+      setBusy(false);
+      return;
+    }
+
+    onSubmit(paymentMethodId, setupIntentState.customerId);
+  };
+
+  const loading = busy || isSubmitting;
+
+  if (setupIntentLoading) {
+    return (
+      <div className="flex items-center justify-center py-6 text-sm text-muted-foreground gap-2">
+        <Loader2 className="h-4 w-4 animate-spin" />
+        Initialising secure payment…
+      </div>
+    );
+  }
+  if (setupIntentError) {
+    return (
+      <p className="text-sm text-destructive py-4 text-center">
+        {setupIntentError}
+      </p>
+    );
+  }
+
+  return (
+    <>
+      {/* Summary card */}
+      <div className="rounded-xl border border-border bg-card p-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm text-muted-foreground">Organization</p>
+            <p className="font-semibold text-foreground">{orgName}</p>
+          </div>
+          <div className="text-right">
+            <p className="text-sm text-muted-foreground">
+              {selectedPlan.name} Plan
+            </p>
+            <p className="font-semibold text-foreground">
+              {priceInfo.display}
+              <span className="text-sm font-normal text-muted-foreground">
+                {priceInfo.periodLabel}
+              </span>
+              {trialDays > 0 && (
+                <span className="ml-1 text-sm font-normal text-success">
+                  (Free for {trialDays} days)
+                </span>
+              )}
+            </p>
+            {priceInfo.note && priceInfo.cycle === "yearly" && (
+              <p className="text-[11px] text-success">{priceInfo.note}</p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Stripe card input */}
+      <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-foreground">
+              Payment method
+            </span>
+          </div>
+          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+            <Lock className="h-3 w-3" />
+            <span>Secure · Powered by Stripe</span>
+          </div>
+        </div>
+
+        <StripeCardInput
+          error={cardError}
+          onChange={() => setCardError(null)}
+          disabled={loading}
+        />
+
+        {/* Trial notice */}
+        {trialDays > 0 && (
+          <div className="pt-3 border-t border-border">
+            <div className="flex items-start gap-3 text-sm">
+              <div className="h-8 w-8 rounded-lg bg-success/10 flex items-center justify-center shrink-0">
+                <Shield className="h-4 w-4 text-success" />
+              </div>
+              <div>
+                <p className="font-medium text-foreground">
+                  You won't be charged today
+                </p>
+                <p className="text-muted-foreground text-xs mt-0.5">
+                  Your {trialDays}-day free trial starts now. You'll be charged{" "}
+                  {priceInfo.display}
+                  {priceInfo.periodLabel} after the trial ends. Cancel anytime.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Actions */}
+      <div className="flex gap-3 pt-2">
+        <Button
+          type="button"
+          variant="outline"
+          className="flex-1"
+          onClick={onBack}
+          disabled={loading}
+        >
+          Back
+        </Button>
+        <Button
+          type="button"
+          className="flex-1"
+          onClick={handleSubmit}
+          disabled={!stripe || loading || !setupIntentState}
+        >
+          {loading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Creating...
+            </>
+          ) : trialDays > 0 ? (
+            `Start ${trialDays}-day trial`
+          ) : (
+            "Create Organization"
+          )}
+        </Button>
+      </div>
+    </>
+  );
+}
+
+// ── Main form ─────────────────────────────────────────────────────────────────
+
 const CreateOrganizationForm = ({
+  accountId,
+  email,
+  name,
   onSubmit,
   onCancel,
   isSubmitting,
@@ -107,12 +338,9 @@ const CreateOrganizationForm = ({
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">(
     "monthly",
   );
-  const [paymentValid, setPaymentValid] = useState(false);
-  const paymentFormRef = useRef<PaymentMethodFormRef>(null);
 
   const { data: plansData, isLoading: plansLoading } = usePublicPlans();
 
-  // Transform plans data to PlanInfo format
   const plans: PlanInfo[] = useMemo(() => {
     if (!plansData) return [];
     return plansData
@@ -123,58 +351,44 @@ const CreateOrganizationForm = ({
         priceMonthly: plan.priceMonthly,
         priceYearly: plan.priceYearly,
         description: planDescriptions[plan.name] || "",
-        features: generatePlanFeatures(plan.limits, plan.name),
+        features: generatePlanFeatures(plan.limits),
         trialDays: plan.priceMonthly > 0 ? 14 : 0,
       }));
   }, [plansData]);
 
   const isPaidPlan = (selectedPlan?.priceMonthly ?? 0) > 0;
   const trialDays = selectedPlan?.trialDays ?? (isPaidPlan ? 14 : 0);
-  const price =
-    billingCycle === "monthly"
-      ? selectedPlan?.priceMonthly
-      : selectedPlan?.priceYearly;
 
   const handleNext = () => {
     if (!orgName.trim()) {
       setOrgNameError("Organization name is required");
       return;
     }
-    if (!selectedPlan) {
-      return;
-    }
+    if (!selectedPlan) return;
     setOrgNameError("");
     setStep(2);
   };
 
-  const handleSubmit = () => {
-    if (isPaidPlan) {
-      const paymentData = paymentFormRef.current?.getPaymentData();
-      if (!paymentData) {
-        return;
-      }
-      // Generate payment method ID (in production, this comes from Stripe)
-      const paymentMethodId = `pm_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
-      onSubmit({
-        name: orgName.trim(),
-        planId: selectedPlan!.id,
-        billingCycle,
-        paymentMethodId,
-      });
-    } else {
-      onSubmit({
-        name: orgName.trim(),
-        planId: selectedPlan!.id,
-        billingCycle,
-      });
-    }
+  const handleFreeSubmit = () => {
+    if (!orgName.trim() || !selectedPlan) return;
+    onSubmit({ name: orgName.trim(), planId: selectedPlan.id, billingCycle });
+  };
+
+  const handlePaidSubmit = (paymentMethodId: string, customerId: string) => {
+    onSubmit({
+      name: orgName.trim(),
+      planId: selectedPlan!.id,
+      billingCycle,
+      paymentMethodId,
+      customerId,
+    });
   };
 
   const canProceedStep1 = orgName.trim() && selectedPlan;
-  const canSubmit = !isPaidPlan || paymentValid;
 
   return (
     <div className="space-y-5">
+      {/* ── Step 1: name + plan ──────────────────────────────────────────────── */}
       {step === 1 && (
         <>
           {/* Organization Name */}
@@ -203,7 +417,6 @@ const CreateOrganizationForm = ({
           <div className="space-y-3">
             <span className="form-label">Select a plan</span>
 
-            {/* Loading skeleton */}
             {plansLoading && (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                 {[1, 2, 3, 4, 5].map((i) => (
@@ -222,7 +435,7 @@ const CreateOrganizationForm = ({
             )}
           </div>
 
-          {/* Billing Cycle Toggle (for paid plans) */}
+          {/* Billing Cycle Toggle */}
           {selectedPlan && isPaidPlan && (
             <div className="space-y-2">
               <span className="form-label">Billing cycle</span>
@@ -253,7 +466,7 @@ const CreateOrganizationForm = ({
                       (Save $
                       {(selectedPlan.priceMonthly - selectedPlan.priceYearly) *
                         12}
-                      )
+                      /yr)
                     </span>
                   )}
                 </button>
@@ -261,7 +474,7 @@ const CreateOrganizationForm = ({
             </div>
           )}
 
-          {/* Action Buttons */}
+          {/* Actions */}
           <div className="flex gap-3 pt-2">
             <Button
               type="button"
@@ -285,7 +498,7 @@ const CreateOrganizationForm = ({
               <Button
                 type="button"
                 className="flex-1"
-                onClick={handleSubmit}
+                onClick={handleFreeSubmit}
                 disabled={!canProceedStep1 || isSubmitting}
               >
                 {isSubmitting ? (
@@ -302,89 +515,22 @@ const CreateOrganizationForm = ({
         </>
       )}
 
-      {step === 2 && isPaidPlan && (
-        <>
-          {/* Summary */}
-          <div className="rounded-xl border border-border bg-card p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Organization</p>
-                <p className="font-semibold text-foreground">{orgName}</p>
-              </div>
-              <div className="text-right">
-                <p className="text-sm text-muted-foreground">
-                  {selectedPlan?.name} Plan
-                </p>
-                <p className="font-semibold text-foreground">
-                  ${price}/mo
-                  {trialDays > 0 && (
-                    <span className="ml-1 text-sm font-normal text-success">
-                      (Free for {trialDays} days)
-                    </span>
-                  )}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Payment Form */}
-          <div className="rounded-xl border border-border bg-card p-5">
-            <PaymentMethodForm
-              ref={paymentFormRef}
-              onValidChange={setPaymentValid}
-              disabled={isSubmitting}
-            />
-
-            {/* Trial notice */}
-            {trialDays > 0 && (
-              <div className="mt-4 pt-4 border-t border-border">
-                <div className="flex items-start gap-3 text-sm">
-                  <div className="h-8 w-8 rounded-lg bg-success/10 flex items-center justify-center shrink-0">
-                    <Shield className="h-4 w-4 text-success" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-foreground">
-                      You won't be charged today
-                    </p>
-                    <p className="text-muted-foreground text-xs mt-0.5">
-                      Your {trialDays}-day free trial starts now. You'll be
-                      charged ${price}/month after the trial ends. Cancel
-                      anytime.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex gap-3 pt-2">
-            <Button
-              type="button"
-              variant="outline"
-              className="flex-1"
-              onClick={() => setStep(1)}
-              disabled={isSubmitting}
-            >
-              Back
-            </Button>
-            <Button
-              type="button"
-              className="flex-1"
-              onClick={handleSubmit}
-              disabled={!canSubmit || isSubmitting}
-            >
-              {isSubmitting && (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Creating...
-                </>
-              )}
-              {!isSubmitting && trialDays > 0 && `Start ${trialDays}-day trial`}
-              {!isSubmitting && trialDays === 0 && "Create Organization"}
-            </Button>
-          </div>
-        </>
+      {/* ── Step 2: payment (paid plans only) ───────────────────────────────── */}
+      {step === 2 && isPaidPlan && selectedPlan && (
+        <Elements stripe={stripePromise}>
+          <PaidCardStep
+            accountId={accountId}
+            email={email}
+            name={name}
+            orgName={orgName}
+            selectedPlan={selectedPlan}
+            billingCycle={billingCycle}
+            trialDays={trialDays}
+            isSubmitting={isSubmitting}
+            onBack={() => setStep(1)}
+            onSubmit={handlePaidSubmit}
+          />
+        </Elements>
       )}
     </div>
   );
