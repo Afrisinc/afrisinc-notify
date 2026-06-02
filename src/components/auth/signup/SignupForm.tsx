@@ -265,7 +265,7 @@ const SignupForm = () => {
       <div className="text-center mb-8">
         <Logo />
         <h1 className="heading-subsection">Create your account</h1>
-        <p className="heading-description">Join Nofiyr today</p>
+        <p className="heading-description">Join Notify today</p>
         {planBadge && <div className="mt-3">{planBadge}</div>}
       </div>
 

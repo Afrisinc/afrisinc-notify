@@ -227,7 +227,7 @@ body {
     @apply text-base font-semibold text-foreground dark:text-white leading-[1.3] mb-2;
   }
 
-  /* Page description subtitle (e.g. "Sign in to your account", "Join Nofiyr today") */
+  /* Page description subtitle (e.g. "Sign in to your account", "Join Notify today") */
   .heading-description {
     @apply text-sm text-muted-foreground dark:text-muted-foreground/80 mt-2;
   }
@@ -373,9 +373,5 @@ body {
 
   body {
     @apply bg-background text-foreground;
-  }
-
-  html {
-    @apply dark;
   }
 }

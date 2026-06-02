@@ -16,17 +16,17 @@ import type { StripeCardElementChangeEvent } from "@stripe/stripe-js";
 import { cn } from "@/lib/utils";
 
 // Stripe Elements can't access CSS variables, so we use actual color values
-// These match the design system colors from index.css
+// These match the design system colors from .claude/notify-design-system
 const STRIPE_COLORS = {
   light: {
-    text: "#1a1d24", // --foreground: 220 20% 10%
-    placeholder: "#6b7280", // --muted-foreground: 220 10% 46%
-    invalid: "#ef4444", // --destructive: 0 72% 51%
+    text: "#151a21", // hsl(220, 20%, 10%) - --foreground
+    placeholder: "#6b717d", // hsl(220, 10%, 46%) - --muted-foreground
+    invalid: "#df3131", // hsl(0, 72%, 51%)   - --destructive
   },
   dark: {
-    text: "#e8eaed", // --foreground: 210 20% 95%
-    placeholder: "#7c8491", // --muted-foreground: 215 15% 55%
-    invalid: "#ef4444", // --destructive: 0 62% 50%
+    text: "#eef1f4", // hsl(210, 20%, 95%) - --foreground
+    placeholder: "#7c8a97", // hsl(215, 15%, 55%) - --muted-foreground
+    invalid: "#cf3333", // hsl(0, 62%, 50%)   - --destructive
   },
 };
 
