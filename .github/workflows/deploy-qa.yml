@@ -38,6 +38,7 @@ jobs:
         run: |
           docker build \
             --build-arg VITE_API_URL=${{ secrets.VITE_API_QA_URL }} \
+            --build-arg VITE_STRIPE_PUBLISHABLE_KEY=${{ secrets.VITE_STRIPE_QA_KEY }} \
             -t ghcr.io/${{ secrets.GHCR_OWNER }}/afrisinc-notify:${{ steps.meta.outputs.short_sha }} \
             -t ghcr.io/${{ secrets.GHCR_OWNER }}/afrisinc-notify:${{ steps.meta.outputs.qa_tag }} .
 
