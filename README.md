@@ -1,1 +1,1 @@
-# Welcome to Notify project
+# Welcome to Afrisinc Notify
