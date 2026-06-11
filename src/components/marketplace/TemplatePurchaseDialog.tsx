@@ -145,14 +145,16 @@ function CardStep({
     <div className="space-y-4">
       {/* Order summary */}
       <div className="rounded-lg border border-border/60 divide-y divide-border/40 overflow-hidden text-sm">
-        <div className="flex justify-between px-3 py-2 bg-muted/30">
-          <span className="text-content-secondary">Template purchase</span>
-          <span className="font-semibold text-content">
+        <div className="flex justify-between px-3 py-2 bg-muted/30 dark:bg-muted/20">
+          <span className="text-content-secondary dark:text-foreground/70">
+            Template purchase
+          </span>
+          <span className="font-semibold text-content dark:text-foreground">
             ${amountUSD.toFixed(2)}
           </span>
         </div>
-        <div className="flex justify-between px-3 py-2.5 bg-primary/5">
-          <span className="font-semibold text-content">
+        <div className="flex justify-between px-3 py-2.5 bg-primary/5 dark:bg-primary/10">
+          <span className="font-semibold text-content dark:text-foreground">
             Charged today (one-time)
           </span>
           <span className="font-bold text-primary">
@@ -224,12 +226,12 @@ export function TemplatePurchaseDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto rounded-xl">
         <DialogHeader>
           <div className="flex items-start gap-3">
             <div className="w-1 h-8 bg-gradient-to-b from-primary to-primary/50 rounded-full mt-0.5" />
             <div className="flex-1">
-              <DialogTitle className="text-xl font-bold text-content">
+              <DialogTitle className="text-xl font-bold text-content dark:text-white">
                 {step === "confirm" && `Purchase "${templateName}"`}
                 {step === "card" && "Payment Details"}
                 {step === "success" && "Purchase Complete!"}
@@ -283,7 +285,7 @@ export function TemplatePurchaseDialog({
                           <div className="h-2 w-2 rounded-full bg-primary" />
                           <span className="font-medium">{app.name}</span>
                           {app.environment && (
-                            <span className="text-xs text-muted-foreground">
+                            <span className="text-xs text-content-secondary dark:text-foreground/70">
                               ({app.environment})
                             </span>
                           )}
@@ -298,14 +300,16 @@ export function TemplatePurchaseDialog({
             {/* Features */}
             {template?.features && template.features.length > 0 && (
               <div className="space-y-2">
-                <p className="text-xs font-bold text-content-secondary uppercase tracking-wider">
+                <p className="text-xs font-bold text-content-secondary dark:text-foreground/70 uppercase tracking-wider">
                   What's included
                 </p>
-                <div className="bg-muted/30 rounded-xl p-4 space-y-2">
+                <div className="bg-muted/30 dark:bg-muted/20 rounded-xl p-4 space-y-2">
                   {template.features.slice(0, 4).map((f, i) => (
                     <div key={i} className="flex items-start gap-2.5">
                       <div className="h-1.5 w-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
-                      <p className="text-sm text-content-secondary">{f}</p>
+                      <p className="text-sm text-content-secondary dark:text-foreground/70">
+                        {f}
+                      </p>
                     </div>
                   ))}
                 </div>

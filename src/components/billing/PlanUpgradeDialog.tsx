@@ -124,24 +124,24 @@ function CardStep({
     <div className="space-y-4">
       {/* Order summary */}
       <div className="rounded-lg border border-border/60 divide-y divide-border/40 overflow-hidden text-sm">
-        <div className="flex justify-between px-3 py-2 bg-muted/30">
-          <span className="text-content-secondary">
+        <div className="flex justify-between px-3 py-2 bg-muted/30 dark:bg-muted/20">
+          <span className="text-content-secondary dark:text-foreground/70">
             {plan.displayName} · {billing === "monthly" ? "monthly" : "annual"}
           </span>
-          <span className="text-content-secondary">
+          <span className="text-content-secondary dark:text-foreground/70">
             ${displayMonthly.toFixed(2)}/mo
           </span>
         </div>
         {billing === "yearly" && annualSavings > 0 && (
-          <div className="flex justify-between px-3 py-2 bg-muted/30">
+          <div className="flex justify-between px-3 py-2 bg-muted/30 dark:bg-muted/20">
             <span className="text-success">Annual discount</span>
             <span className="font-medium text-success">
               Save ${annualSavings.toFixed(0)}/yr
             </span>
           </div>
         )}
-        <div className="flex justify-between px-3 py-2.5 bg-primary/5">
-          <span className="font-semibold text-content">
+        <div className="flex justify-between px-3 py-2.5 bg-primary/5 dark:bg-primary/10">
+          <span className="font-semibold text-content dark:text-foreground">
             Charged today ({billing === "yearly" ? "12 months" : "1 month"})
           </span>
           <span className="font-bold text-primary">
@@ -303,9 +303,9 @@ export function PlanUpgradeDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto rounded-xl">
         <DialogHeader>
-          <DialogTitle className="text-content">
+          <DialogTitle className="text-content dark:text-white">
             {step === "confirm" && `Upgrade to ${plan.displayName}`}
             {step === "card" && "Payment Details"}
             {step === "activating" && "Activating Plan"}
@@ -317,8 +317,8 @@ export function PlanUpgradeDialog({
         {step === "confirm" && (
           <div className="space-y-5">
             {!plan.isPayg && plan.monthlyPrice > 0 && (
-              <div className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/30 p-3">
-                <span className="text-sm text-content-secondary">
+              <div className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/30 dark:bg-muted/20 p-3">
+                <span className="text-sm text-content-secondary dark:text-foreground/70">
                   Billing cycle
                 </span>
                 <div className="flex items-center gap-2">

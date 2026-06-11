@@ -300,16 +300,16 @@ export function GmailSection({ appId }: EmailSectionProps) {
 
             {/* OAuth2 Tab */}
             <TabsContent value="oauth2" className="space-y-4">
-              <Alert className="bg-blue-50 border-blue-200">
-                <AlertCircle className="h-4 w-4 text-blue-600" />
-                <AlertDescription className="text-blue-800">
+              <Alert className="bg-primary/8 border-primary/30 dark:bg-primary/10 dark:border-primary/40">
+                <AlertCircle className="h-4 w-4 text-primary" />
+                <AlertDescription className="text-content dark:text-foreground/90">
                   OAuth2 is the most secure method. Google will ask for your
                   permission once.
                 </AlertDescription>
               </Alert>
 
               <div className="space-y-3">
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-content-secondary dark:text-foreground/70">
                   Click the button below to sign in with your Google account.
                   You'll be redirected to Google's login page.
                 </p>
@@ -335,16 +335,16 @@ export function GmailSection({ appId }: EmailSectionProps) {
 
             {/* App Password Tab */}
             <TabsContent value="app_password" className="space-y-4">
-              <Alert className="bg-yellow-50 border-yellow-200">
-                <AlertCircle className="h-4 w-4 text-yellow-600" />
-                <AlertDescription className="text-yellow-800">
+              <Alert className="bg-warning/8 border-warning/30 dark:bg-warning/10 dark:border-warning/40">
+                <AlertCircle className="h-4 w-4 text-warning" />
+                <AlertDescription className="text-content dark:text-foreground/90">
                   Requires 2-factor authentication enabled on your Google
                   Account.{" "}
                   <a
                     href="https://support.google.com/accounts/answer/185833"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="underline font-medium"
+                    className="underline font-medium text-primary hover:text-primary/90"
                   >
                     Learn how to create an app password
                     <ExternalLink className="h-3 w-3 inline ml-1" />
@@ -379,7 +379,7 @@ export function GmailSection({ appId }: EmailSectionProps) {
                     }
                     disabled={saveAppPasswordMutation.isPending}
                   />
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-content-secondary dark:text-foreground/60 mt-1">
                     Find this in Google Account Settings → Security → App
                     passwords
                   </p>
@@ -454,15 +454,21 @@ export function GmailSection({ appId }: EmailSectionProps) {
 
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600">Authentication Method</span>
+              <span className="text-content-secondary dark:text-foreground/70">
+                Authentication Method
+              </span>
               <Badge variant="secondary">
                 {gmailConfig.method === "oauth2" ? "OAuth2" : "App Password"}
               </Badge>
             </div>
             {expiryDate && gmailConfig.method === "oauth2" && (
               <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-600">Token Expires</span>
-                <span className="text-gray-900">{expiryDate}</span>
+                <span className="text-content-secondary dark:text-foreground/70">
+                  Token Expires
+                </span>
+                <span className="text-content dark:text-foreground">
+                  {expiryDate}
+                </span>
               </div>
             )}
           </div>

@@ -119,22 +119,26 @@ function CardStep({
     <div className="space-y-4">
       {/* Order summary */}
       <div className="rounded-lg border border-border/60 divide-y divide-border/40 overflow-hidden text-sm">
-        <div className="flex justify-between px-3 py-2 bg-muted/30">
-          <span className="text-content-secondary">Paying</span>
-          <span className="font-semibold text-content">
+        <div className="flex justify-between px-3 py-2 bg-muted/30 dark:bg-muted/20">
+          <span className="text-content-secondary dark:text-foreground/70">
+            Paying
+          </span>
+          <span className="font-semibold text-content dark:text-foreground">
             ${amount.toFixed(2)}
           </span>
         </div>
         {bonusPct > 0 && (
-          <div className="flex justify-between px-3 py-2 bg-muted/30">
+          <div className="flex justify-between px-3 py-2 bg-muted/30 dark:bg-muted/20">
             <span className="text-success">Bonus ({bonusPct}%)</span>
             <span className="font-medium text-success">
               +${bonusAmt.toFixed(2)}
             </span>
           </div>
         )}
-        <div className="flex justify-between px-3 py-2.5 bg-primary/5">
-          <span className="font-semibold text-content">Balance after</span>
+        <div className="flex justify-between px-3 py-2.5 bg-primary/5 dark:bg-primary/10">
+          <span className="font-semibold text-content dark:text-foreground">
+            Balance after
+          </span>
           <span className="font-bold text-primary">
             ${balanceAfter.toFixed(2)}
           </span>
@@ -204,9 +208,9 @@ export function TopUpDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto rounded-xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="flex items-center gap-2 text-content dark:text-white">
             <Zap className="h-4 w-4 text-primary" />
             {step === "amount" && "Top Up Credits"}
             {step === "card" && "Payment Details"}
@@ -217,8 +221,8 @@ export function TopUpDialog({
         {/* ── Step 1: Amount ──────────────────────────────────────────────── */}
         {step === "amount" && (
           <div className="space-y-5">
-            <div className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/40 px-3 py-2.5">
-              <span className="text-xs text-muted-foreground">
+            <div className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/40 dark:bg-muted/20 px-3 py-2.5">
+              <span className="text-xs text-content-secondary dark:text-foreground/70">
                 Current balance
               </span>
               <span
@@ -248,7 +252,9 @@ export function TopUpDialog({
                       : "border-border hover:bg-muted/40"
                   }`}
                 >
-                  <p className="font-semibold text-sm">${value}</p>
+                  <p className="font-semibold text-sm text-content dark:text-white">
+                    ${value}
+                  </p>
                   {bonus > 0 && (
                     <span className="absolute top-1.5 right-1.5 text-[10px] font-bold text-success bg-success/10 px-1.5 py-0.5 rounded-full">
                       +{bonus}%
@@ -259,11 +265,11 @@ export function TopUpDialog({
             </div>
 
             <div>
-              <label className="text-xs text-muted-foreground mb-1.5 block">
+              <label className="text-xs text-content-secondary dark:text-foreground/70 mb-1.5 block">
                 Custom amount (min $5)
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-content-secondary dark:text-foreground/70 text-sm">
                   $
                 </span>
                 <input
@@ -279,24 +285,34 @@ export function TopUpDialog({
 
             {isAmountValid && (
               <div className="rounded-lg border border-border/60 divide-y divide-border/40 overflow-hidden text-sm">
-                <div className="flex justify-between px-3 py-2 bg-muted/30">
-                  <span className="text-muted-foreground">Adding</span>
-                  <span className="font-medium">${amount.toFixed(2)}</span>
+                <div className="flex justify-between px-3 py-2 bg-muted/30 dark:bg-muted/20">
+                  <span className="text-content-secondary dark:text-foreground/70">
+                    Adding
+                  </span>
+                  <span className="font-medium text-content dark:text-foreground">
+                    ${amount.toFixed(2)}
+                  </span>
                 </div>
                 {bonusPct > 0 && (
-                  <div className="flex justify-between px-3 py-2 bg-muted/30">
+                  <div className="flex justify-between px-3 py-2 bg-muted/30 dark:bg-muted/20">
                     <span className="text-success">Bonus ({bonusPct}%)</span>
                     <span className="font-medium text-success">
                       +${bonusAmt.toFixed(2)}
                     </span>
                   </div>
                 )}
-                <div className="flex justify-between px-3 py-2 bg-muted/30">
-                  <span className="text-muted-foreground">Current balance</span>
-                  <span>${currentBalance.toFixed(2)}</span>
+                <div className="flex justify-between px-3 py-2 bg-muted/30 dark:bg-muted/20">
+                  <span className="text-content-secondary dark:text-foreground/70">
+                    Current balance
+                  </span>
+                  <span className="text-content dark:text-foreground">
+                    ${currentBalance.toFixed(2)}
+                  </span>
                 </div>
-                <div className="flex justify-between px-3 py-2.5 bg-primary/5">
-                  <span className="font-semibold">Balance after top-up</span>
+                <div className="flex justify-between px-3 py-2.5 bg-primary/5 dark:bg-primary/10">
+                  <span className="font-semibold text-content dark:text-foreground">
+                    Balance after top-up
+                  </span>
                   <span className="font-bold text-primary">
                     ${balanceAfter.toFixed(2)}
                   </span>
@@ -363,18 +379,22 @@ export function TopUpDialog({
             </div>
 
             <div className="rounded-lg border border-border/60 overflow-hidden text-sm text-left">
-              <div className="flex justify-between px-3 py-2 bg-muted/30">
-                <span className="text-muted-foreground">Amount paid</span>
-                <span>${amount.toFixed(2)}</span>
+              <div className="flex justify-between px-3 py-2 bg-muted/30 dark:bg-muted/20">
+                <span className="text-content-secondary dark:text-foreground/70">
+                  Amount paid
+                </span>
+                <span className="text-content dark:text-foreground">
+                  ${amount.toFixed(2)}
+                </span>
               </div>
               {bonusPct > 0 && (
-                <div className="flex justify-between px-3 py-2 bg-muted/30">
+                <div className="flex justify-between px-3 py-2 bg-muted/30 dark:bg-muted/20">
                   <span className="text-success">Bonus ({bonusPct}%)</span>
                   <span className="text-success">+${bonusAmt.toFixed(2)}</span>
                 </div>
               )}
-              <div className="flex justify-between px-3 py-2.5 bg-primary/5">
-                <span className="font-semibold">
+              <div className="flex justify-between px-3 py-2.5 bg-primary/5 dark:bg-primary/10">
+                <span className="font-semibold text-content dark:text-foreground">
                   {confirmed ? "Credits added" : "Credits being added"}
                 </span>
                 <span className="font-bold text-primary">
