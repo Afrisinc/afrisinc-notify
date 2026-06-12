@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ZodError } from "zod";
 
-import { HeightOutlined } from "@mui/icons-material";
+import { Maximize } from "lucide-react";
 import {
   SpacerProps,
   SpacerPropsDefaults,
@@ -35,7 +35,7 @@ export default function SpacerSidebarPanel({
     <BaseSidebarPanel title="Spacer block">
       <SliderInput
         label="Height"
-        iconLabel={<HeightOutlined sx={{ color: "text.secondary" }} />}
+        iconLabel={<Maximize size={16} style={{ color: "inherit" }} />}
         units="px"
         step={4}
         min={4}

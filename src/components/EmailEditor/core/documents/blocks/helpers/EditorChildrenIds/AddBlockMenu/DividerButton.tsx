@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { AddOutlined } from "@mui/icons-material";
+import { Plus } from "lucide-react";
 import { Fade, IconButton } from "@mui/material";
 
 type Props = {
@@ -57,7 +57,7 @@ export default function DividerButton({ buttonElement, onClick }: Props) {
           onClick();
         }}
       >
-        <AddOutlined fontSize="small" />
+        <Plus size={20} />
       </IconButton>
     </Fade>
   );

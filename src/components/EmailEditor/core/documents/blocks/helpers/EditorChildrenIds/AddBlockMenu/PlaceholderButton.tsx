@@ -1,12 +1,13 @@
 import React from "react";
 
-import { AddOutlined } from "@mui/icons-material";
-import { ButtonBase } from "@mui/material";
+import { Plus } from "lucide-react";
+import { ButtonBase, useTheme } from "@mui/material";
 
 type Props = {
   onClick: () => void;
 };
 export default function PlaceholderButton({ onClick }: Props) {
+  const theme = useTheme();
   return (
     <ButtonBase
       onClick={(ev) => {
@@ -19,17 +20,17 @@ export default function PlaceholderButton({ onClick }: Props) {
         justifyContent: "center",
         height: 48,
         width: "100%",
-        bgcolor: "rgba(0,0,0, 0.05)",
+        bgcolor: theme.palette.action.hover,
       }}
     >
-      <AddOutlined
-        sx={{
-          p: 0.12,
-          bgcolor: "brand.blue",
+      <Plus
+        size={20}
+        style={{
+          padding: 2,
+          backgroundColor: theme.palette.primary.main,
           borderRadius: 24,
-          color: "primary.contrastText",
+          color: theme.palette.primary.contrastText,
         }}
-        fontSize="small"
       />
     </ButtonBase>
   );
