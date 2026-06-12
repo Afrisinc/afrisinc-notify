@@ -1,11 +1,6 @@
 import React, { useState } from "react";
 
-import {
-  AlignHorizontalLeftOutlined,
-  AlignHorizontalRightOutlined,
-  AlignVerticalBottomOutlined,
-  AlignVerticalTopOutlined,
-} from "@mui/icons-material";
+import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from "lucide-react";
 import { InputLabel, Stack } from "@mui/material";
 
 import RawSliderInput from "./raw/RawSliderInput";
@@ -48,7 +43,7 @@ export default function PaddingInput({ label, defaultValue, onChange }: Props) {
       <InputLabel shrink>{label}</InputLabel>
 
       <RawSliderInput
-        iconLabel={<AlignVerticalTopOutlined sx={{ fontSize: 16 }} />}
+        iconLabel={<ArrowUp size={16} />}
         value={value.top}
         setValue={(num) => handleChange("top", num)}
         units="px"
@@ -59,7 +54,7 @@ export default function PaddingInput({ label, defaultValue, onChange }: Props) {
       />
 
       <RawSliderInput
-        iconLabel={<AlignVerticalBottomOutlined sx={{ fontSize: 16 }} />}
+        iconLabel={<ArrowDown size={16} />}
         value={value.bottom}
         setValue={(num) => handleChange("bottom", num)}
         units="px"
@@ -70,7 +65,7 @@ export default function PaddingInput({ label, defaultValue, onChange }: Props) {
       />
 
       <RawSliderInput
-        iconLabel={<AlignHorizontalLeftOutlined sx={{ fontSize: 16 }} />}
+        iconLabel={<ArrowLeft size={16} />}
         value={value.left}
         setValue={(num) => handleChange("left", num)}
         units="px"
@@ -81,7 +76,7 @@ export default function PaddingInput({ label, defaultValue, onChange }: Props) {
       />
 
       <RawSliderInput
-        iconLabel={<AlignHorizontalRightOutlined sx={{ fontSize: 16 }} />}
+        iconLabel={<ArrowRight size={16} />}
         value={value.right}
         setValue={(num) => handleChange("right", num)}
         units="px"

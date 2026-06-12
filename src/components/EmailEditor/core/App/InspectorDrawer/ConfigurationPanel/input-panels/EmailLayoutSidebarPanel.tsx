@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { ZodError } from "zod";
 
-import { RoundedCornerOutlined } from "@mui/icons-material";
+import { Circle } from "lucide-react";
+import { useTheme } from "@mui/material";
 
 import EmailLayoutPropsSchema, {
   EmailLayoutProps,
@@ -20,7 +21,25 @@ export default function EmailLayoutSidebarFields({
   data,
   setData,
 }: EmailLayoutSidebarFieldsProps) {
+  const theme = useTheme();
   const [, setErrors] = useState<ZodError | null>(null);
+
+  const defaults = useMemo(
+    () => ({
+      backdrop:
+        theme.palette.mode === "dark"
+          ? theme.palette.grey[900]
+          : theme.palette.grey[100],
+      canvas: theme.palette.background.paper,
+      text: theme.palette.text.primary,
+    }),
+    [
+      theme.palette.mode,
+      theme.palette.grey,
+      theme.palette.background.paper,
+      theme.palette.text.primary,
+    ],
+  );
 
   const updateData = (d: unknown) => {
     const res = EmailLayoutPropsSchema.safeParse(d);
@@ -36,12 +55,12 @@ export default function EmailLayoutSidebarFields({
     <BaseSidebarPanel title="Global">
       <ColorInput
         label="Backdrop color"
-        defaultValue={data.backdropColor ?? "#F5F5F5"}
+        defaultValue={data.backdropColor ?? defaults.backdrop}
         onChange={(backdropColor) => updateData({ ...data, backdropColor })}
       />
       <ColorInput
         label="Canvas color"
-        defaultValue={data.canvasColor ?? "#FFFFFF"}
+        defaultValue={data.canvasColor ?? defaults.canvas}
         onChange={(canvasColor) => updateData({ ...data, canvasColor })}
       />
       <NullableColorInput
@@ -50,7 +69,7 @@ export default function EmailLayoutSidebarFields({
         onChange={(borderColor) => updateData({ ...data, borderColor })}
       />
       <SliderInput
-        iconLabel={<RoundedCornerOutlined />}
+        iconLabel={<Circle size={16} style={{ color: "inherit" }} />}
         units="px"
         step={4}
         marks
@@ -67,7 +86,7 @@ export default function EmailLayoutSidebarFields({
       />
       <ColorInput
         label="Text color"
-        defaultValue={data.textColor ?? "#262626"}
+        defaultValue={data.textColor ?? defaults.text}
         onChange={(textColor) => updateData({ ...data, textColor })}
       />
     </BaseSidebarPanel>

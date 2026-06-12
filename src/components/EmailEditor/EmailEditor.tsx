@@ -36,12 +36,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import theme from "./core/theme";
 import App from "./core/App";
 import { useEmailEditor } from "./hooks/useEmailEditor";
 import { useToast } from "@/hooks/use-toast";
 import { useInspectorDrawerOpen } from "./core/documents/editor/EditorContext";
 import { INSPECTOR_DRAWER_WIDTH } from "./core/App/InspectorDrawer";
+import { useSystemTheme } from "./core/useSystemTheme";
 
 // Validation schema
 const templateHeaderSchema = z.object({
@@ -69,6 +69,7 @@ export const EmailEditor: React.FC<EmailEditorProps> = ({
   onCancel,
 }) => {
   const { toast } = useToast();
+  const theme = useSystemTheme();
   const inspectorDrawerOpen = useInspectorDrawerOpen();
   const {
     isLoading,

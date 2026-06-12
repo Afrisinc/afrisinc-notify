@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { ZodError } from "zod";
 
 import {
-  VerticalAlignBottomOutlined,
-  VerticalAlignCenterOutlined,
-  VerticalAlignTopOutlined,
-} from "@mui/icons-material";
+  AlignEndVertical,
+  AlignCenterVertical,
+  AlignStartVertical,
+} from "lucide-react";
 import { Stack, ToggleButton } from "@mui/material";
 import { ImageProps, ImagePropsSchema } from "@usewaypoint/block-image";
 
@@ -86,13 +86,13 @@ export default function ImageSidebarPanel({
         }
       >
         <ToggleButton value="top">
-          <VerticalAlignTopOutlined fontSize="small" />
+          <AlignStartVertical size={16} />
         </ToggleButton>
         <ToggleButton value="middle">
-          <VerticalAlignCenterOutlined fontSize="small" />
+          <AlignCenterVertical size={16} />
         </ToggleButton>
         <ToggleButton value="bottom">
-          <VerticalAlignBottomOutlined fontSize="small" />
+          <AlignEndVertical size={16} />
         </ToggleButton>
       </RadioGroupInput>
 

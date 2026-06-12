@@ -1,6 +1,6 @@
 import React from "react";
 
-import { AppRegistrationOutlined, LastPageOutlined } from "@mui/icons-material";
+import { FileText, ChevronLast } from "lucide-react";
 import { IconButton } from "@mui/material";
 
 import {
@@ -17,13 +17,13 @@ export default function ToggleInspectorPanelButton() {
   if (inspectorDrawerOpen) {
     return (
       <IconButton onClick={handleClick}>
-        <LastPageOutlined fontSize="small" />
+        <ChevronLast size={20} />
       </IconButton>
     );
   }
   return (
     <IconButton onClick={handleClick}>
-      <AppRegistrationOutlined fontSize="small" />
+      <FileText size={20} />
     </IconButton>
   );
 }
