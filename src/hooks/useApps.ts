@@ -22,7 +22,6 @@ import type {
   CreateAppPayload,
   CreateAppTemplatePayload,
   CreateApiKeyPayload,
-  OrganizationAppsDetailsResponse,
 } from "@/types/apps";
 import { useUser } from "@/contexts/UserContext";
 import { useOrg } from "@/contexts/OrgContext";
@@ -420,9 +419,8 @@ export function useCreateApiKey() {
       );
     },
     onSuccess: (_data, { appId }) => {
-      // Invalidate API keys query to refetch
       queryClient.invalidateQueries({
-        queryKey: ["apiKeys", appId, accountId],
+        queryKey: ["apiKeys", appId],
       });
     },
   });
@@ -478,9 +476,8 @@ export function useDeleteApiKey() {
     mutationFn: ({ appId, keyId }: { appId: string; keyId: string }) =>
       deleteApiKeyService(appId, keyId, accountId ?? undefined),
     onSuccess: (_data, { appId }) => {
-      // Invalidate API keys query to refetch
       queryClient.invalidateQueries({
-        queryKey: ["apiKeys", appId, accountId],
+        queryKey: ["apiKeys", appId],
       });
     },
   });
