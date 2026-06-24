@@ -54,7 +54,7 @@ export default function AppApiKeys() {
   const createMutation = useCreateApiKey();
   const deleteMutation = useDeleteApiKey();
 
-  const keys = apiKeysData?.apiKeys || [];
+  const keys = apiKeysData?.keys || [];
 
   const handleCopy = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
