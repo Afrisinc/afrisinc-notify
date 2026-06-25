@@ -229,3 +229,117 @@ export function useUpgradePlan(accountId?: string) {
     },
   });
 }
+
+// ─── Mobile Money Hooks ─────────────────────────────────────────────────────────
+
+export function useInitMobileTopUp(accountId?: string) {
+  return useMutation({
+    mutationFn: ({
+      amount,
+      phoneNumber,
+      customerName,
+      paymentType,
+      planId,
+      billingCycle,
+    }: {
+      amount: number;
+      phoneNumber: string;
+      customerName?: string;
+      paymentType?: "payg_topup" | "subscription";
+      planId?: string;
+      billingCycle?: "monthly" | "yearly";
+    }) =>
+      paygService.initMobileTopUp(
+        accountId!,
+        amount,
+        phoneNumber,
+        customerName,
+        {
+          paymentType,
+          planId,
+          billingCycle,
+        },
+      ),
+  });
+}
+
+export function useMobilePayment(
+  accountId: string | undefined,
+  paymentId: string | null,
+) {
+  return useQuery({
+    queryKey: ["payg", "mobile", paymentId],
+    queryFn: () => paygService.getMobilePayment(accountId!, paymentId!),
+    enabled: !!accountId && !!paymentId,
+    refetchInterval: (query) => {
+      const data = query.state.data;
+      // Stop polling when payment is complete or failed
+      if (data?.status === "SUCCESSFUL" || data?.status === "FAILED") {
+        return false;
+      }
+      return 3000; // Poll every 3 seconds while pending
+    },
+  });
+}
+
+export function useMobilePaymentConfirmation(
+  accountId: string | undefined,
+  paymentId: string | null,
+  expectedBalance: number | null,
+) {
+  const qc = useQueryClient();
+  const [confirmed, setConfirmed] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (!accountId || !paymentId || expectedBalance === null) return;
+
+    setConfirmed(false);
+    setFailed(false);
+
+    function stop() {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    }
+
+    intervalRef.current = setInterval(async () => {
+      try {
+        const payment = await paygService.getMobilePayment(
+          accountId,
+          paymentId,
+        );
+
+        if (payment.status === "SUCCESSFUL") {
+          stop();
+          setConfirmed(true);
+          // Optimistically update balance
+          qc.setQueryData(["payg", "balance", accountId], (old: unknown) => {
+            if (!old || typeof old !== "object") return old;
+            return { ...(old as object), balance: expectedBalance };
+          });
+          qc.invalidateQueries({ queryKey: ["payg", "balance", accountId] });
+          qc.invalidateQueries({
+            queryKey: ["payg", "transactions", accountId],
+          });
+        } else if (payment.status === "FAILED") {
+          stop();
+          setFailed(true);
+        }
+      } catch {
+        // Keep polling
+      }
+    }, 3000);
+
+    timeoutRef.current = setTimeout(() => {
+      stop();
+      // Don't mark as failed on timeout, just stop polling
+    }, 120_000); // 2 minute timeout for mobile money
+
+    return stop;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accountId, paymentId, expectedBalance]);
+
+  return { confirmed, failed };
+}

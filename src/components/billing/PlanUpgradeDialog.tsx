@@ -14,11 +14,24 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Check, CheckCircle, ArrowLeft, Zap, Loader2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Check,
+  CheckCircle,
+  ArrowLeft,
+  Zap,
+  Loader2,
+  CreditCard,
+  Smartphone,
+  AlertCircle,
+} from "lucide-react";
 import {
   useUpgradePlan,
   useInitSubscriptionPayment,
   useSubscriptionConfirmation,
+  useInitMobileTopUp,
+  useMobilePaymentConfirmation,
 } from "@/hooks/usePayg";
 
 export interface PlanOption {
@@ -44,7 +57,15 @@ interface Props {
   currentPlan?: string;
 }
 
-type Step = "confirm" | "card" | "success" | "activating";
+type PaymentMethod = "card" | "mobile";
+type Step =
+  | "confirm"
+  | "method"
+  | "card"
+  | "mobile"
+  | "pending"
+  | "success"
+  | "activating";
 
 // ─── Card Step (inside <Elements>) ────────────────────────────────────────────
 
@@ -184,6 +205,179 @@ function CardStep({
   );
 }
 
+// ─── Mobile Money Step ──────────────────────────────────────────────────────────
+
+interface MobileStepProps {
+  plan: PlanOption;
+  billing: "monthly" | "yearly";
+  chargeAmount: number;
+  accountId: string;
+  customerName: string;
+  onBack: () => void;
+  onSuccess: (paymentId: string, planName: string) => void;
+}
+
+function MobileStep({
+  plan,
+  billing,
+  chargeAmount,
+  accountId,
+  customerName,
+  onBack,
+  onSuccess,
+}: MobileStepProps) {
+  const { mutateAsync: initMobileTopUp } = useInitMobileTopUp(accountId);
+
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [processing, setProcessing] = useState(false);
+  const [error, setError] = useState("");
+
+  // Convert USD to RWF (approximate rate)
+  const rwfAmount = Math.round(chargeAmount * 1300);
+
+  const displayMonthly =
+    billing === "yearly" ? plan.yearlyPrice : plan.monthlyPrice;
+  const annualSavings = (plan.monthlyPrice - plan.yearlyPrice) * 12;
+
+  async function handlePay() {
+    if (!phoneNumber.trim()) {
+      setError("Phone number is required");
+      return;
+    }
+
+    // Validate Rwandan phone number (9 digits starting with 7)
+    const cleanPhone = phoneNumber.replace(/\D/g, "");
+    if (cleanPhone.length !== 9 || !cleanPhone.startsWith("7")) {
+      setError("Enter a valid 9-digit number starting with 7");
+      return;
+    }
+
+    setProcessing(true);
+    setError("");
+
+    try {
+      const result = await initMobileTopUp({
+        amount: rwfAmount,
+        phoneNumber: `250${cleanPhone}`,
+        customerName,
+        paymentType: "subscription",
+        planId: plan.id,
+        billingCycle: billing,
+      });
+
+      onSuccess(result.payment.id, plan.name);
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Failed to initiate payment";
+      setError(msg);
+    } finally {
+      setProcessing(false);
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Order summary */}
+      <div className="rounded-lg border border-border/60 divide-y divide-border/40 overflow-hidden text-sm">
+        <div className="flex justify-between px-3 py-2 bg-muted/30 dark:bg-muted/20">
+          <span className="text-content-secondary dark:text-foreground/70">
+            {plan.displayName} · {billing === "monthly" ? "monthly" : "annual"}
+          </span>
+          <span className="text-content-secondary dark:text-foreground/70">
+            ${displayMonthly.toFixed(2)}/mo
+          </span>
+        </div>
+        {billing === "yearly" && annualSavings > 0 && (
+          <div className="flex justify-between px-3 py-2 bg-muted/30 dark:bg-muted/20">
+            <span className="text-success">Annual discount</span>
+            <span className="font-medium text-success">
+              Save ${annualSavings.toFixed(0)}/yr
+            </span>
+          </div>
+        )}
+        <div className="flex justify-between px-3 py-2 bg-muted/30 dark:bg-muted/20">
+          <span className="text-content-secondary dark:text-foreground/70">
+            Amount (RWF)
+          </span>
+          <span className="font-semibold text-content dark:text-foreground">
+            {rwfAmount.toLocaleString()} RWF
+          </span>
+        </div>
+        <div className="flex justify-between px-3 py-2.5 bg-primary/5 dark:bg-primary/10">
+          <span className="font-semibold text-content dark:text-foreground">
+            Charged today ({billing === "yearly" ? "12 months" : "1 month"})
+          </span>
+          <span className="font-bold text-primary">
+            ${chargeAmount.toFixed(2)}
+          </span>
+        </div>
+      </div>
+
+      {/* Phone number input */}
+      <div>
+        <Label htmlFor="phone" className="text-sm font-medium">
+          Mobile Money Number
+        </Label>
+        <div className="mt-1.5 flex">
+          <div className="flex items-center gap-1.5 px-3 border border-r-0 border-input rounded-l-md bg-muted/50 text-sm text-muted-foreground">
+            <span className="text-base">🇷🇼</span>
+            <span>+250</span>
+          </div>
+          <Input
+            id="phone"
+            type="tel"
+            placeholder="78 123 4567"
+            className="rounded-l-none"
+            value={phoneNumber}
+            onChange={(e) => {
+              const value = e.target.value.replace(/\D/g, "");
+              setPhoneNumber(value);
+              setError("");
+            }}
+            disabled={processing}
+            maxLength={9}
+          />
+        </div>
+        <p className="text-xs text-muted-foreground mt-1.5">
+          MTN MoMo or Airtel Money
+        </p>
+      </div>
+
+      {error && (
+        <div className="flex items-center gap-2 text-sm text-destructive bg-destructive/10 px-3 py-2 rounded-md">
+          <AlertCircle className="h-4 w-4 shrink-0" />
+          {error}
+        </div>
+      )}
+
+      <div className="flex gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onBack}
+          disabled={processing}
+          className="gap-1.5"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" /> Back
+        </Button>
+        <Button
+          className="flex-1"
+          disabled={processing || !phoneNumber.trim()}
+          onClick={handlePay}
+        >
+          {processing ? (
+            <>
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              Initiating...
+            </>
+          ) : (
+            `Pay ${rwfAmount.toLocaleString()} RWF`
+          )}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 // ─── Activating Step — polls until plan confirmed ──────────────────────────────
 
 function ActivatingStep({
@@ -248,15 +442,24 @@ export function PlanUpgradeDialog({
   customerEmail,
 }: Props) {
   const [step, setStep] = useState<Step>("confirm");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
   const [billing, setBilling] = useState<"monthly" | "yearly">("monthly");
   const [error, setError] = useState("");
   const [activatingPlan, setActivatingPlan] = useState<string | null>(null);
+  const [mobilePaymentId, setMobilePaymentId] = useState<string | null>(null);
 
   const { mutateAsync: upgrade, isPending } = useUpgradePlan(accountId);
   const { confirmed, timedOut } = useSubscriptionConfirmation(
     activatingPlan,
     accountId,
   );
+
+  const { confirmed: mobileConfirmed, failed: mobileFailed } =
+    useMobilePaymentConfirmation(
+      accountId,
+      step === "pending" ? mobilePaymentId : null,
+      null, // No expected balance for subscriptions
+    );
 
   // Yearly: charge price_yearly * 12; Monthly: charge price_monthly
   const chargeAmount =
@@ -281,15 +484,26 @@ export function PlanUpgradeDialog({
     setStep("activating");
   }
 
+  function handleMobileSuccess(paymentId: string, planName: string) {
+    setMobilePaymentId(paymentId);
+    setActivatingPlan(planName);
+    setStep("pending");
+  }
+
   function reset() {
     setStep("confirm");
+    setPaymentMethod("card");
     setBilling("monthly");
     setError("");
     setActivatingPlan(null);
+    setMobilePaymentId(null);
   }
 
   function handleClose() {
-    const succeeded = step === "success" || step === "activating";
+    const succeeded =
+      step === "success" ||
+      step === "activating" ||
+      (step === "pending" && mobileConfirmed);
     reset();
     onClose();
     if (succeeded) onSuccess?.(!!plan.isPayg);
@@ -307,7 +521,10 @@ export function PlanUpgradeDialog({
         <DialogHeader>
           <DialogTitle className="text-content dark:text-white">
             {step === "confirm" && `Upgrade to ${plan.displayName}`}
-            {step === "card" && "Payment Details"}
+            {step === "method" && "Choose Payment Method"}
+            {step === "card" && "Card Payment"}
+            {step === "mobile" && "Mobile Money"}
+            {step === "pending" && "Waiting for Payment"}
             {step === "activating" && "Activating Plan"}
             {step === "success" && "You're all set!"}
           </DialogTitle>
@@ -398,7 +615,7 @@ export function PlanUpgradeDialog({
             <Button
               className="w-full"
               onClick={() =>
-                plan.isPayg ? handlePaygSwitch() : setStep("card")
+                plan.isPayg ? handlePaygSwitch() : setStep("method")
               }
               disabled={isPending}
             >
@@ -411,7 +628,85 @@ export function PlanUpgradeDialog({
           </div>
         )}
 
-        {/* ── Step 2: Card ─────────────────────────────────────────────────── */}
+        {/* ── Step 2: Payment Method Selection ─────────────────────────────── */}
+        {step === "method" && (
+          <div className="space-y-4">
+            {/* Summary */}
+            <div className="rounded-lg border border-border/60 divide-y divide-border/40 overflow-hidden text-sm">
+              <div className="flex justify-between px-3 py-2 bg-muted/30 dark:bg-muted/20">
+                <span className="text-content-secondary dark:text-foreground/70">
+                  {plan.displayName} ·{" "}
+                  {billing === "monthly" ? "monthly" : "annual"}
+                </span>
+                <span className="font-semibold text-content dark:text-foreground">
+                  ${chargeAmount.toFixed(2)}
+                </span>
+              </div>
+            </div>
+
+            {/* Payment method buttons */}
+            <div className="space-y-2">
+              <button
+                onClick={() => {
+                  setPaymentMethod("card");
+                  setStep("card");
+                }}
+                className={`w-full flex items-center gap-3 p-4 rounded-lg border transition-colors text-left ${
+                  paymentMethod === "card"
+                    ? "border-primary bg-primary/5"
+                    : "border-border hover:bg-muted/40"
+                }`}
+              >
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                  <CreditCard className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="font-medium text-content dark:text-foreground">
+                    Credit/Debit Card
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Visa, Mastercard, American Express
+                  </p>
+                </div>
+              </button>
+
+              <button
+                onClick={() => {
+                  setPaymentMethod("mobile");
+                  setStep("mobile");
+                }}
+                className={`w-full flex items-center gap-3 p-4 rounded-lg border transition-colors text-left ${
+                  paymentMethod === "mobile"
+                    ? "border-primary bg-primary/5"
+                    : "border-border hover:bg-muted/40"
+                }`}
+              >
+                <div className="h-10 w-10 rounded-full bg-yellow-500/10 flex items-center justify-center shrink-0">
+                  <Smartphone className="h-5 w-5 text-yellow-600" />
+                </div>
+                <div>
+                  <p className="font-medium text-content dark:text-foreground">
+                    Mobile Money
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    MTN MoMo, Airtel Money
+                  </p>
+                </div>
+              </button>
+            </div>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setStep("confirm")}
+              className="gap-1.5"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" /> Back
+            </Button>
+          </div>
+        )}
+
+        {/* ── Step 3a: Card ────────────────────────────────────────────────── */}
         {step === "card" && (
           <Elements stripe={stripePromise}>
             <CardStep
@@ -420,13 +715,86 @@ export function PlanUpgradeDialog({
               chargeAmount={chargeAmount}
               accountId={accountId}
               customerEmail={customerEmail}
-              onBack={() => setStep("confirm")}
+              onBack={() => setStep("method")}
               onSuccess={handleCardSuccess}
             />
           </Elements>
         )}
 
-        {/* ── Step 3: Activating (polling) ─────────────────────────────────── */}
+        {/* ── Step 3b: Mobile Money ────────────────────────────────────────── */}
+        {step === "mobile" && (
+          <MobileStep
+            plan={plan}
+            billing={billing}
+            chargeAmount={chargeAmount}
+            accountId={accountId}
+            customerName={customerEmail.split("@")[0]}
+            onBack={() => setStep("method")}
+            onSuccess={handleMobileSuccess}
+          />
+        )}
+
+        {/* ── Step 4: Pending (Mobile Money) ───────────────────────────────── */}
+        {step === "pending" && (
+          <div className="space-y-5 text-center">
+            <div className="flex justify-center">
+              {mobileConfirmed ? (
+                <div className="h-14 w-14 rounded-full bg-success/10 flex items-center justify-center">
+                  <CheckCircle className="h-7 w-7 text-success" />
+                </div>
+              ) : mobileFailed ? (
+                <div className="h-14 w-14 rounded-full bg-destructive/10 flex items-center justify-center">
+                  <AlertCircle className="h-7 w-7 text-destructive" />
+                </div>
+              ) : (
+                <div className="h-14 w-14 rounded-full bg-yellow-500/10 flex items-center justify-center">
+                  <Loader2 className="h-7 w-7 text-yellow-600 animate-spin" />
+                </div>
+              )}
+            </div>
+
+            <div>
+              {mobileConfirmed ? (
+                <>
+                  <p className="font-semibold text-lg">Payment Successful!</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Your {plan.displayName} plan is now being activated.
+                  </p>
+                </>
+              ) : mobileFailed ? (
+                <>
+                  <p className="font-semibold text-lg text-destructive">
+                    Payment Failed
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    The payment was not completed. Please try again.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="font-semibold text-lg">Check your phone</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    A payment prompt has been sent to your phone. Please enter
+                    your PIN to confirm the payment.
+                  </p>
+                  <div className="mt-3 flex justify-center">
+                    <div className="h-1.5 w-24 rounded-full bg-muted overflow-hidden">
+                      <div className="h-full bg-yellow-500 rounded-full animate-pulse w-full" />
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {(mobileConfirmed || mobileFailed) && (
+              <Button className="w-full" onClick={handleClose}>
+                {mobileConfirmed ? "Done" : "Try Again"}
+              </Button>
+            )}
+          </div>
+        )}
+
+        {/* ── Step 5: Activating (polling) ─────────────────────────────────── */}
         {step === "activating" && activatingPlan && (
           <ActivatingStep
             planName={activatingPlan}
