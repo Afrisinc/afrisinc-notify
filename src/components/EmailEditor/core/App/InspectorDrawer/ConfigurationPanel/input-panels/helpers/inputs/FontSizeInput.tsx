@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { TextFieldsOutlined } from "@mui/icons-material";
+import { Type } from "lucide-react";
 import { InputLabel, Stack } from "@mui/material";
 
 import RawSliderInput from "./raw/RawSliderInput";
@@ -24,7 +24,7 @@ export default function FontSizeInput({
     <Stack spacing={1} alignItems="flex-start">
       <InputLabel shrink>{label}</InputLabel>
       <RawSliderInput
-        iconLabel={<TextFieldsOutlined sx={{ fontSize: 16 }} />}
+        iconLabel={<Type size={16} />}
         value={value}
         setValue={handleChange}
         units="px"

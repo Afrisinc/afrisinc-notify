@@ -27,6 +27,8 @@ import { useSidebar } from "@/components/ui/sidebar";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useCreateOrganization } from "@/hooks/useOrganization";
+import { useCurrentAccountId } from "@/hooks/useAuth";
+import { useAuth } from "@/contexts/AuthContext";
 import CreateOrganizationForm from "@/components/organization/CreateOrganizationForm";
 
 export function OrgSwitcher() {
@@ -35,6 +37,8 @@ export function OrgSwitcher() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const createOrgMutation = useCreateOrganization();
+  const accountId = useCurrentAccountId();
+  const { user } = useAuth();
   const collapsed = state === "collapsed";
 
   const [showCreateDialog, setShowCreateDialog] = useState(false);
@@ -44,6 +48,7 @@ export function OrgSwitcher() {
     planId: string;
     billingCycle: "monthly" | "annual";
     paymentMethodId?: string;
+    customerId?: string;
   }) => {
     try {
       // Create organization and get the response
@@ -154,7 +159,7 @@ export function OrgSwitcher() {
       </DropdownMenu>
 
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent className="sm:max-w-[1200px] w-[95vw] max-h-[90vh] overflow-y-auto rounded-2xl">
           <DialogHeader>
             <DialogTitle>Create Organization</DialogTitle>
             <DialogDescription>
@@ -162,6 +167,9 @@ export function OrgSwitcher() {
             </DialogDescription>
           </DialogHeader>
           <CreateOrganizationForm
+            accountId={accountId ?? ""}
+            email={user?.email ?? ""}
+            name={user?.firstName}
             onSubmit={handleCreateOrg}
             onCancel={() => setShowCreateDialog(false)}
             isSubmitting={createOrgMutation.isPending}

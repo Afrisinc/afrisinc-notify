@@ -15,7 +15,7 @@ import type {
   SignupPayload,
   PlanInfo,
 } from "./schemas";
-import type { PaymentData } from "./PaymentMethodForm";
+import type { PaymentData } from "./StepPlanConfirmation";
 import Logo from "@/components/Logo";
 
 const TOTAL_STEPS = 4;
@@ -26,6 +26,7 @@ const planDescriptions: Record<string, string> = {
   STARTER: "All channels unlocked — best entry point.",
   SCALE: "For fast-growing businesses.",
   ENTERPRISE: "Large operations — negotiated volume.",
+  PAYG: "Pay only for what you use.",
 };
 
 // Helper to format limit value for display
@@ -90,6 +91,9 @@ const generatePlanFeatures = (
     features.push("Priority support (12h SLA)");
   } else if (planName === "ENTERPRISE") {
     features.push("Dedicated account manager");
+  } else if (planName === "PAYG") {
+    features.push("No subscription required");
+    features.push("Credits never expire");
   }
 
   return features.slice(0, 6);
@@ -117,7 +121,7 @@ const SignupForm = () => {
   const plans: PlanInfo[] = useMemo(() => {
     if (!plansData) return [];
     return plansData
-      .filter((p) => p.name !== "PAYG" && p.name !== "PRO")
+      .filter((p) => p.name !== "PRO")
       .map((plan) => ({
         id: plan.id,
         name: plan.name.charAt(0) + plan.name.slice(1).toLowerCase(),
@@ -197,11 +201,9 @@ const SignupForm = () => {
     (paymentData?: PaymentData) => {
       if (!accountType) return;
 
-      // Generate a temporary payment method ID for the backend
-      // In production, this would be created via Stripe's createPaymentMethod API
-      const paymentMethodId = paymentData
-        ? `pm_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`
-        : undefined;
+      // Stripe pm_xxx and cus_xxx from SetupIntent flow in StepPlanConfirmation
+      const paymentMethodId = paymentData?.paymentMethodId;
+      const customerId = paymentData?.customerId;
 
       const payload: SignupPayload = {
         firstName: identityData.firstName,
@@ -223,6 +225,7 @@ const SignupForm = () => {
         billingCycle,
         // Payment info (required for paid plans)
         ...(paymentMethodId && { paymentMethodId }),
+        ...(customerId && { customerId }),
       };
 
       mutate(payload, {
@@ -255,12 +258,16 @@ const SignupForm = () => {
   );
 
   return (
-    <div className="w-full max-w-md mx-auto space-y-6">
+    <div
+      className={`w-full mx-auto space-y-6 transition-all duration-300 ${
+        step === 3 ? "max-w-6xl" : "max-w-md"
+      }`}
+    >
       {/* Logo */}
       <div className="text-center mb-8">
         <Logo />
         <h1 className="heading-subsection">Create your account</h1>
-        <p className="heading-description">Join Nofiyr today</p>
+        <p className="heading-description">Join Notify today</p>
         {planBadge && <div className="mt-3">{planBadge}</div>}
       </div>
 
@@ -294,6 +301,8 @@ const SignupForm = () => {
         )}
         {step === 3 && (
           <StepPlanConfirmation
+            email={identityData.email ?? ""}
+            name={`${identityData.firstName ?? ""} ${identityData.lastName ?? ""}`.trim()}
             selectedPlan={selectedPlan}
             plans={plans}
             billingCycle={billingCycle}

@@ -1,4 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
+import {
+  Elements,
+  CardElement,
+  useStripe,
+  useElements,
+} from "@stripe/react-stripe-js";
+import { stripePromise } from "@/lib/stripe";
+import { StripeCardInput } from "@/components/payment/StripeCardInput";
 import {
   Dialog,
   DialogContent,
@@ -8,40 +16,21 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CheckCircle, CreditCard, ArrowLeft, Zap, Trash2 } from "lucide-react";
-import { useTopUp } from "@/hooks/usePayg";
-import type { TopUpResult } from "@/services/paygService";
-
-// ─── Saved-card helpers (mock — replace with real vault when processor added) ──
-
-const CARD_KEY = "notify_saved_card";
-
-interface SavedCard {
-  last4: string;
-  expiry: string;
-  name: string;
-}
-
-function loadSavedCard(): SavedCard | null {
-  try {
-    const raw = localStorage.getItem(CARD_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
-
-function saveCard(card: { number: string; expiry: string; name: string }) {
-  const last4 = card.number.replace(/\s/g, "").slice(-4);
-  localStorage.setItem(
-    CARD_KEY,
-    JSON.stringify({ last4, expiry: card.expiry, name: card.name }),
-  );
-}
-
-function removeSavedCard() {
-  localStorage.removeItem(CARD_KEY);
-}
+import {
+  CheckCircle,
+  ArrowLeft,
+  Zap,
+  CreditCard,
+  Smartphone,
+  Loader2,
+  AlertCircle,
+} from "lucide-react";
+import {
+  useInitTopUp,
+  useBalanceConfirmation,
+  useInitMobileTopUp,
+  useMobilePaymentConfirmation,
+} from "@/hooks/usePayg";
 
 // ─── Amount helpers ────────────────────────────────────────────────────────────
 
@@ -61,19 +50,6 @@ function getBonusPercent(amount: number) {
   return 0;
 }
 
-function formatCard(val: string) {
-  return val
-    .replace(/\D/g, "")
-    .slice(0, 16)
-    .replace(/(.{4})/g, "$1 ")
-    .trim();
-}
-
-function formatExpiry(val: string) {
-  const d = val.replace(/\D/g, "").slice(0, 4);
-  return d.length >= 3 ? `${d.slice(0, 2)}/${d.slice(2)}` : d;
-}
-
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
 interface Props {
@@ -81,121 +57,389 @@ interface Props {
   onClose: () => void;
   accountId: string;
   currentBalance: number;
+  customerEmail: string;
 }
 
-type Step = "amount" | "card" | "success";
+type PaymentMethod = "card" | "mobile";
+type Step = "amount" | "method" | "card" | "mobile" | "pending" | "success";
 
-// ─── Component ─────────────────────────────────────────────────────────────────
+// ─── Card step — must live inside <Elements> ───────────────────────────────────
+
+interface CardStepProps {
+  amount: number;
+  bonusPct: number;
+  bonusAmt: number;
+  balanceAfter: number;
+  accountId: string;
+  customerEmail: string;
+  onBack: () => void;
+  onSuccess: (expectedBalance: number) => void;
+}
+
+function CardStep({
+  amount,
+  bonusPct,
+  bonusAmt,
+  balanceAfter,
+  accountId,
+  customerEmail,
+  onBack,
+  onSuccess,
+}: CardStepProps) {
+  const stripe = useStripe();
+  const elements = useElements();
+  const { mutateAsync: initTopUp } = useInitTopUp(accountId);
+
+  const [processing, setProcessing] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handlePay() {
+    if (!stripe || !elements) return;
+    const cardElement = elements.getElement(CardElement);
+    if (!cardElement) return;
+
+    setProcessing(true);
+    setError("");
+
+    try {
+      const { clientSecret } = await initTopUp({ amount, customerEmail });
+
+      const { error: stripeError, paymentIntent } =
+        await stripe.confirmCardPayment(clientSecret, {
+          payment_method: {
+            card: cardElement,
+            billing_details: { email: customerEmail },
+          },
+        });
+
+      if (stripeError) {
+        setError(stripeError.message ?? "Payment failed. Please try again.");
+        return;
+      }
+
+      if (paymentIntent?.status === "succeeded") {
+        onSuccess(balanceAfter);
+      } else {
+        setError("Payment was not completed. Please try again.");
+      }
+    } catch (e: unknown) {
+      const msg =
+        e instanceof Error ? e.message : "Payment failed. Please try again.";
+      setError(msg);
+    } finally {
+      setProcessing(false);
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Order summary */}
+      <div className="rounded-lg border border-border/60 divide-y divide-border/40 overflow-hidden text-sm">
+        <div className="flex justify-between px-3 py-2 bg-muted/30 dark:bg-muted/20">
+          <span className="text-content-secondary dark:text-foreground/70">
+            Paying
+          </span>
+          <span className="font-semibold text-content dark:text-foreground">
+            ${amount.toFixed(2)}
+          </span>
+        </div>
+        {bonusPct > 0 && (
+          <div className="flex justify-between px-3 py-2 bg-muted/30 dark:bg-muted/20">
+            <span className="text-success">Bonus ({bonusPct}%)</span>
+            <span className="font-medium text-success">
+              +${bonusAmt.toFixed(2)}
+            </span>
+          </div>
+        )}
+        <div className="flex justify-between px-3 py-2.5 bg-primary/5 dark:bg-primary/10">
+          <span className="font-semibold text-content dark:text-foreground">
+            Balance after
+          </span>
+          <span className="font-bold text-primary">
+            ${balanceAfter.toFixed(2)}
+          </span>
+        </div>
+      </div>
+
+      <StripeCardInput
+        error={error}
+        onChange={() => setError("")}
+        disabled={processing}
+      />
+
+      <div className="flex gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onBack}
+          disabled={processing}
+          className="gap-1.5"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" /> Back
+        </Button>
+        <Button
+          className="flex-1"
+          disabled={!stripe || processing}
+          onClick={handlePay}
+        >
+          {processing ? "Processing…" : `Pay $${amount.toFixed(2)}`}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Mobile Money Step ──────────────────────────────────────────────────────────
+
+interface MobileStepProps {
+  amount: number;
+  bonusPct: number;
+  bonusAmt: number;
+  balanceAfter: number;
+  accountId: string;
+  customerName: string;
+  onBack: () => void;
+  onSuccess: (paymentId: string, expectedBalance: number) => void;
+}
+
+function MobileStep({
+  amount,
+  bonusPct,
+  bonusAmt,
+  balanceAfter,
+  accountId,
+  customerName,
+  onBack,
+  onSuccess,
+}: MobileStepProps) {
+  const { mutateAsync: initMobileTopUp } = useInitMobileTopUp(accountId);
+
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [processing, setProcessing] = useState(false);
+  const [error, setError] = useState("");
+
+  // Convert USD to RWF (approximate rate)
+  const rwfAmount = Math.round(amount * 1300);
+
+  async function handlePay() {
+    if (!phoneNumber.trim()) {
+      setError("Phone number is required");
+      return;
+    }
+
+    // Validate Rwandan phone number (9 digits starting with 7)
+    const cleanPhone = phoneNumber.replace(/\D/g, "");
+    if (cleanPhone.length !== 9 || !cleanPhone.startsWith("7")) {
+      setError("Enter a valid 9-digit number starting with 7");
+      return;
+    }
+
+    setProcessing(true);
+    setError("");
+
+    try {
+      const result = await initMobileTopUp({
+        amount: rwfAmount,
+        phoneNumber: `250${cleanPhone}`, // Prepend country code
+        customerName,
+      });
+
+      onSuccess(result.payment.id, balanceAfter);
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Failed to initiate payment";
+      setError(msg);
+    } finally {
+      setProcessing(false);
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Order summary */}
+      <div className="rounded-lg border border-border/60 divide-y divide-border/40 overflow-hidden text-sm">
+        <div className="flex justify-between px-3 py-2 bg-muted/30 dark:bg-muted/20">
+          <span className="text-content-secondary dark:text-foreground/70">
+            Amount (USD)
+          </span>
+          <span className="font-semibold text-content dark:text-foreground">
+            ${amount.toFixed(2)}
+          </span>
+        </div>
+        <div className="flex justify-between px-3 py-2 bg-muted/30 dark:bg-muted/20">
+          <span className="text-content-secondary dark:text-foreground/70">
+            Amount (RWF)
+          </span>
+          <span className="font-semibold text-content dark:text-foreground">
+            {rwfAmount.toLocaleString()} RWF
+          </span>
+        </div>
+        {bonusPct > 0 && (
+          <div className="flex justify-between px-3 py-2 bg-muted/30 dark:bg-muted/20">
+            <span className="text-success">Bonus ({bonusPct}%)</span>
+            <span className="font-medium text-success">
+              +${bonusAmt.toFixed(2)}
+            </span>
+          </div>
+        )}
+        <div className="flex justify-between px-3 py-2.5 bg-primary/5 dark:bg-primary/10">
+          <span className="font-semibold text-content dark:text-foreground">
+            Balance after
+          </span>
+          <span className="font-bold text-primary">
+            ${balanceAfter.toFixed(2)}
+          </span>
+        </div>
+      </div>
+
+      {/* Phone number input */}
+      <div>
+        <Label htmlFor="phone" className="text-sm font-medium">
+          Mobile Money Number
+        </Label>
+        <div className="mt-1.5 flex">
+          <div className="flex items-center gap-1.5 px-3 border border-r-0 border-input rounded-l-md bg-muted/50 text-sm text-muted-foreground">
+            <span className="text-base">🇷🇼</span>
+            <span>+250</span>
+          </div>
+          <Input
+            id="phone"
+            type="tel"
+            placeholder="78 123 4567"
+            className="rounded-l-none"
+            value={phoneNumber}
+            onChange={(e) => {
+              // Only allow digits
+              const value = e.target.value.replace(/\D/g, "");
+              setPhoneNumber(value);
+              setError("");
+            }}
+            disabled={processing}
+            maxLength={9}
+          />
+        </div>
+        <p className="text-xs text-muted-foreground mt-1.5">
+          MTN MoMo or Airtel Money
+        </p>
+      </div>
+
+      {error && (
+        <div className="flex items-center gap-2 text-sm text-destructive bg-destructive/10 px-3 py-2 rounded-md">
+          <AlertCircle className="h-4 w-4 shrink-0" />
+          {error}
+        </div>
+      )}
+
+      <div className="flex gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onBack}
+          disabled={processing}
+          className="gap-1.5"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" /> Back
+        </Button>
+        <Button
+          className="flex-1"
+          disabled={processing || !phoneNumber.trim()}
+          onClick={handlePay}
+        >
+          {processing ? (
+            <>
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              Initiating...
+            </>
+          ) : (
+            `Pay ${rwfAmount.toLocaleString()} RWF`
+          )}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Main Dialog ───────────────────────────────────────────────────────────────
 
 export function TopUpDialog({
   open,
   onClose,
   accountId,
   currentBalance,
+  customerEmail,
 }: Props) {
   const [step, setStep] = useState<Step>("amount");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
   const [selectedAmount, setSelectedAmount] = useState(25);
   const [customAmount, setCustomAmount] = useState("");
-  const [card, setCard] = useState({
-    number: "",
-    expiry: "",
-    cvc: "",
-    name: "",
-  });
-  const [saveCardChecked, setSaveCardChecked] = useState(false);
-  const [useSaved, setUseSaved] = useState(true);
-  const [savedCard, setSavedCard] = useState<SavedCard | null>(null);
-  const [result, setResult] = useState<TopUpResult | null>(null);
-  const [error, setError] = useState("");
+  const [expectedBalance, setExpectedBalance] = useState<number | null>(null);
+  const [mobilePaymentId, setMobilePaymentId] = useState<string | null>(null);
 
-  const { mutateAsync: topUp, isPending } = useTopUp(accountId);
+  const { confirmed, timedOut } = useBalanceConfirmation(
+    accountId,
+    step === "success" && paymentMethod === "card" ? expectedBalance : null,
+  );
 
-  // Load saved card when dialog opens
-  useEffect(() => {
-    if (open) {
-      const sc = loadSavedCard();
-      setSavedCard(sc);
-      setUseSaved(!!sc);
-    }
-  }, [open]);
+  const { confirmed: mobileConfirmed, failed: mobileFailed } =
+    useMobilePaymentConfirmation(
+      accountId,
+      step === "pending" ? mobilePaymentId : null,
+      expectedBalance,
+    );
 
-  const amount = customAmount ? parseFloat(customAmount) || 0 : selectedAmount;
+  const amount = customAmount
+    ? Number.parseFloat(customAmount) || 0
+    : selectedAmount;
   const bonusPct = getBonusPercent(amount);
-  const bonusAmt = parseFloat(((amount * bonusPct) / 100).toFixed(2));
+  const bonusAmt = Number.parseFloat(((amount * bonusPct) / 100).toFixed(2));
   const totalCredits = amount + bonusAmt;
   const balanceAfter = currentBalance + totalCredits;
-
   const isAmountValid = amount >= 5;
-  const isCardValid =
-    useSaved && savedCard
-      ? card.cvc.length >= 3 // only CVC needed when using saved card
-      : card.number.replace(/\s/g, "").length === 16 &&
-        card.expiry.length === 5 &&
-        card.cvc.length >= 3 &&
-        card.name.trim().length > 1;
 
-  async function handlePay() {
-    setError("");
-    try {
-      if (!useSaved && saveCardChecked) {
-        saveCard(card);
-        setSavedCard(loadSavedCard());
-      }
-      const res = await topUp({ amount });
-      setResult(res);
-      setStep("success");
-    } catch (e: any) {
-      setError(
-        e?.response?.data?.message ?? "Payment failed. Please try again.",
-      );
-    }
-  }
-
-  function handleRemoveSavedCard() {
-    removeSavedCard();
-    setSavedCard(null);
-    setUseSaved(false);
-  }
-
-  function handleClose() {
+  const handleClose = useCallback(() => {
     setStep("amount");
+    setPaymentMethod("card");
     setSelectedAmount(25);
     setCustomAmount("");
-    setCard({ number: "", expiry: "", cvc: "", name: "" });
-    setSaveCardChecked(false);
-    setResult(null);
-    setError("");
+    setExpectedBalance(null);
+    setMobilePaymentId(null);
     onClose();
-  }
+  }, [onClose]);
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto rounded-xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-content">
+          <DialogTitle className="flex items-center gap-2 text-content dark:text-white">
             <Zap className="h-4 w-4 text-primary" />
             {step === "amount" && "Top Up Credits"}
-            {step === "card" && "Payment Details"}
-            {step === "success" && "Payment Successful"}
+            {step === "method" && "Choose Payment Method"}
+            {step === "card" && "Card Payment"}
+            {step === "mobile" && "Mobile Money"}
+            {step === "pending" && "Waiting for Payment"}
+            {step === "success" && "Payment Submitted"}
           </DialogTitle>
         </DialogHeader>
 
         {/* ── Step 1: Amount ──────────────────────────────────────────────── */}
         {step === "amount" && (
           <div className="space-y-5">
-            {/* Current balance pill */}
-            <div className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/40 px-3 py-2.5">
-              <span className="text-xs text-content-secondary">
+            <div className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/40 dark:bg-muted/20 px-3 py-2.5">
+              <span className="text-xs text-content-secondary dark:text-foreground/70">
                 Current balance
               </span>
               <span
-                className={`text-sm font-semibold ${currentBalance === 0 ? "text-danger" : currentBalance < 5 ? "text-warning" : "text-content"}`}
+                className={`text-sm font-semibold ${
+                  currentBalance === 0
+                    ? "text-destructive"
+                    : currentBalance < 5
+                      ? "text-warning"
+                      : "text-foreground"
+                }`}
               >
                 ${currentBalance.toFixed(2)}
               </span>
             </div>
 
-            {/* Preset grid */}
             <div className="grid grid-cols-3 gap-2">
               {PRESET_AMOUNTS.map(({ value, bonus }) => (
                 <button
@@ -207,10 +451,12 @@ export function TopUpDialog({
                   className={`relative rounded-lg border p-3 text-left transition-colors ${
                     !customAmount && selectedAmount === value
                       ? "border-primary bg-primary/5"
-                      : "border-border hover:border-border/70 hover:bg-muted/40"
+                      : "border-border hover:bg-muted/40"
                   }`}
                 >
-                  <p className="font-semibold text-sm text-content">${value}</p>
+                  <p className="font-semibold text-sm text-content dark:text-white">
+                    ${value}
+                  </p>
                   {bonus > 0 && (
                     <span className="absolute top-1.5 right-1.5 text-[10px] font-bold text-success bg-success/10 px-1.5 py-0.5 rounded-full">
                       +{bonus}%
@@ -220,53 +466,53 @@ export function TopUpDialog({
               ))}
             </div>
 
-            {/* Custom amount */}
             <div>
-              <Label className="text-xs text-content-secondary mb-1.5 block">
+              <label className="text-xs text-content-secondary dark:text-foreground/70 mb-1.5 block">
                 Custom amount (min $5)
-              </Label>
+              </label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-content-secondary text-sm">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-content-secondary dark:text-foreground/70 text-sm">
                   $
                 </span>
-                <Input
+                <input
                   type="number"
                   min={5}
                   placeholder="0.00"
-                  className="pl-7"
+                  className="w-full rounded-md border border-input bg-background pl-7 pr-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
                   value={customAmount}
                   onChange={(e) => setCustomAmount(e.target.value)}
                 />
               </div>
             </div>
 
-            {/* Live summary — always visible once amount ≥ 5 */}
             {isAmountValid && (
               <div className="rounded-lg border border-border/60 divide-y divide-border/40 overflow-hidden text-sm">
-                <div className="flex justify-between px-3 py-2 bg-muted/30">
-                  <span className="text-content-secondary">Adding</span>
-                  <span className="font-medium text-content">
+                <div className="flex justify-between px-3 py-2 bg-muted/30 dark:bg-muted/20">
+                  <span className="text-content-secondary dark:text-foreground/70">
+                    Adding
+                  </span>
+                  <span className="font-medium text-content dark:text-foreground">
                     ${amount.toFixed(2)}
                   </span>
                 </div>
                 {bonusPct > 0 && (
-                  <div className="flex justify-between px-3 py-2 bg-muted/30">
+                  <div className="flex justify-between px-3 py-2 bg-muted/30 dark:bg-muted/20">
                     <span className="text-success">Bonus ({bonusPct}%)</span>
                     <span className="font-medium text-success">
                       +${bonusAmt.toFixed(2)}
                     </span>
                   </div>
                 )}
-                <div className="flex justify-between px-3 py-2 bg-muted/30">
-                  <span className="text-content-secondary">
+                <div className="flex justify-between px-3 py-2 bg-muted/30 dark:bg-muted/20">
+                  <span className="text-content-secondary dark:text-foreground/70">
                     Current balance
                   </span>
-                  <span className="text-content">
+                  <span className="text-content dark:text-foreground">
                     ${currentBalance.toFixed(2)}
                   </span>
                 </div>
-                <div className="flex justify-between px-3 py-2.5 bg-primary/5">
-                  <span className="font-semibold text-content">
+                <div className="flex justify-between px-3 py-2.5 bg-primary/5 dark:bg-primary/10">
+                  <span className="font-semibold text-content dark:text-foreground">
                     Balance after top-up
                   </span>
                   <span className="font-bold text-primary">
@@ -279,211 +525,197 @@ export function TopUpDialog({
             <Button
               className="w-full"
               disabled={!isAmountValid}
-              onClick={() => setStep("card")}
+              onClick={() => setStep("method")}
             >
               Continue
             </Button>
           </div>
         )}
 
-        {/* ── Step 2: Card ─────────────────────────────────────────────────── */}
-        {step === "card" && (
+        {/* ── Step 2: Payment Method Selection ─────────────────────────────── */}
+        {step === "method" && (
           <div className="space-y-4">
-            {/* Order summary */}
+            {/* Summary */}
             <div className="rounded-lg border border-border/60 divide-y divide-border/40 overflow-hidden text-sm">
-              <div className="flex justify-between px-3 py-2 bg-muted/30">
-                <span className="text-content-secondary">Paying</span>
-                <span className="font-semibold text-content">
+              <div className="flex justify-between px-3 py-2 bg-muted/30 dark:bg-muted/20">
+                <span className="text-content-secondary dark:text-foreground/70">
+                  Amount
+                </span>
+                <span className="font-semibold text-content dark:text-foreground">
                   ${amount.toFixed(2)}
                 </span>
               </div>
-              <div className="flex justify-between px-3 py-2.5 bg-primary/5">
-                <span className="font-semibold text-content">
-                  Balance after
-                </span>
-                <span className="font-bold text-primary">
-                  ${balanceAfter.toFixed(2)}
-                </span>
-              </div>
-            </div>
-
-            {/* Saved card toggle */}
-            {savedCard && (
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <p className="text-xs font-medium text-content-secondary">
-                    Saved card
-                  </p>
-                  <button
-                    onClick={handleRemoveSavedCard}
-                    className="flex items-center gap-1 text-[11px] text-content-secondary hover:text-danger transition-colors"
-                  >
-                    <Trash2 className="h-3 w-3" /> Remove
-                  </button>
-                </div>
-                <div className="flex rounded-lg border border-border/60 overflow-hidden">
-                  <button
-                    onClick={() => setUseSaved(true)}
-                    className={`flex-1 flex items-center gap-2 px-3 py-2.5 text-sm transition-colors ${
-                      useSaved
-                        ? "bg-primary/5 border-r border-primary/20 text-content"
-                        : "bg-card text-content-secondary hover:bg-muted/30 border-r border-border/40"
-                    }`}
-                  >
-                    <CreditCard className="h-3.5 w-3.5 shrink-0" />
-                    <span>●●●● {savedCard.last4}</span>
-                    <span className="text-xs text-content-secondary ml-auto">
-                      {savedCard.expiry}
-                    </span>
-                  </button>
-                  <button
-                    onClick={() => setUseSaved(false)}
-                    className={`flex-1 px-3 py-2.5 text-sm transition-colors ${
-                      !useSaved
-                        ? "bg-primary/5 text-content"
-                        : "bg-card text-content-secondary hover:bg-muted/30"
-                    }`}
-                  >
-                    New card
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Card fields */}
-            {useSaved && savedCard ? (
-              /* CVC only for saved card */
-              <div>
-                <p className="text-xs text-content-secondary mb-2">
-                  Charging {savedCard.name} · ●●●● {savedCard.last4}
-                </p>
-                <div>
-                  <Label className="text-xs text-content-secondary mb-1.5 block">
-                    CVC
-                  </Label>
-                  <Input
-                    placeholder="123"
-                    type="password"
-                    className="max-w-[120px]"
-                    value={card.cvc}
-                    onChange={(e) =>
-                      setCard({
-                        ...card,
-                        cvc: e.target.value.replace(/\D/g, "").slice(0, 4),
-                      })
-                    }
-                    maxLength={4}
-                  />
-                </div>
-              </div>
-            ) : (
-              /* Full card form for new card */
-              <div className="space-y-3">
-                <div>
-                  <Label className="text-xs text-content-secondary mb-1.5 block">
-                    Name on card
-                  </Label>
-                  <Input
-                    placeholder="Jane Doe"
-                    value={card.name}
-                    onChange={(e) => setCard({ ...card, name: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <Label className="text-xs text-content-secondary mb-1.5 block">
-                    Card number
-                  </Label>
-                  <div className="relative">
-                    <Input
-                      placeholder="4242 4242 4242 4242"
-                      value={card.number}
-                      onChange={(e) =>
-                        setCard({ ...card, number: formatCard(e.target.value) })
-                      }
-                      maxLength={19}
-                    />
-                    <CreditCard className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <Label className="text-xs text-content-secondary mb-1.5 block">
-                      Expiry
-                    </Label>
-                    <Input
-                      placeholder="MM/YY"
-                      value={card.expiry}
-                      onChange={(e) =>
-                        setCard({
-                          ...card,
-                          expiry: formatExpiry(e.target.value),
-                        })
-                      }
-                      maxLength={5}
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-xs text-content-secondary mb-1.5 block">
-                      CVC
-                    </Label>
-                    <Input
-                      placeholder="123"
-                      type="password"
-                      value={card.cvc}
-                      onChange={(e) =>
-                        setCard({
-                          ...card,
-                          cvc: e.target.value.replace(/\D/g, "").slice(0, 4),
-                        })
-                      }
-                      maxLength={4}
-                    />
-                  </div>
-                </div>
-
-                {/* Save card checkbox */}
-                <label className="flex items-center gap-2.5 cursor-pointer select-none pt-0.5">
-                  <input
-                    type="checkbox"
-                    className="h-3.5 w-3.5 rounded border-border accent-primary"
-                    checked={saveCardChecked}
-                    onChange={(e) => setSaveCardChecked(e.target.checked)}
-                  />
-                  <span className="text-xs text-content-secondary">
-                    Save card for future top-ups
+              {bonusPct > 0 && (
+                <div className="flex justify-between px-3 py-2 bg-muted/30 dark:bg-muted/20">
+                  <span className="text-success">Bonus ({bonusPct}%)</span>
+                  <span className="font-medium text-success">
+                    +${bonusAmt.toFixed(2)}
                   </span>
-                </label>
-              </div>
-            )}
-
-            {error && <p className="text-xs text-danger">{error}</p>}
-
-            <p className="text-[11px] text-content-tertiary">
-              🔒 Mock payment — no real charge will be made
-            </p>
-
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setStep("amount")}
-                className="gap-1.5"
-              >
-                <ArrowLeft className="h-3.5 w-3.5" /> Back
-              </Button>
-              <Button
-                className="flex-1"
-                disabled={!isCardValid || isPending}
-                onClick={handlePay}
-              >
-                {isPending ? "Processing…" : `Pay $${amount.toFixed(2)}`}
-              </Button>
+                </div>
+              )}
             </div>
+
+            {/* Payment method buttons */}
+            <div className="space-y-2">
+              <button
+                onClick={() => {
+                  setPaymentMethod("card");
+                  setStep("card");
+                }}
+                className={`w-full flex items-center gap-3 p-4 rounded-lg border transition-colors text-left ${
+                  paymentMethod === "card"
+                    ? "border-primary bg-primary/5"
+                    : "border-border hover:bg-muted/40"
+                }`}
+              >
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                  <CreditCard className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="font-medium text-content dark:text-foreground">
+                    Credit/Debit Card
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Visa, Mastercard, American Express
+                  </p>
+                </div>
+              </button>
+
+              <button
+                onClick={() => {
+                  setPaymentMethod("mobile");
+                  setStep("mobile");
+                }}
+                className={`w-full flex items-center gap-3 p-4 rounded-lg border transition-colors text-left ${
+                  paymentMethod === "mobile"
+                    ? "border-primary bg-primary/5"
+                    : "border-border hover:bg-muted/40"
+                }`}
+              >
+                <div className="h-10 w-10 rounded-full bg-yellow-500/10 flex items-center justify-center shrink-0">
+                  <Smartphone className="h-5 w-5 text-yellow-600" />
+                </div>
+                <div>
+                  <p className="font-medium text-content dark:text-foreground">
+                    Mobile Money
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    MTN MoMo, Airtel Money
+                  </p>
+                </div>
+              </button>
+            </div>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setStep("amount")}
+              className="gap-1.5"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" /> Back
+            </Button>
           </div>
         )}
 
-        {/* ── Step 3: Success ──────────────────────────────────────────────── */}
-        {step === "success" && result && (
+        {/* ── Step 3a: Card (Stripe Elements) ──────────────────────────────── */}
+        {step === "card" && (
+          <Elements stripe={stripePromise}>
+            <CardStep
+              amount={amount}
+              bonusPct={bonusPct}
+              bonusAmt={bonusAmt}
+              balanceAfter={balanceAfter}
+              accountId={accountId}
+              customerEmail={customerEmail}
+              onBack={() => setStep("method")}
+              onSuccess={(eb) => {
+                setExpectedBalance(eb);
+                setStep("success");
+              }}
+            />
+          </Elements>
+        )}
+
+        {/* ── Step 3b: Mobile Money ────────────────────────────────────────── */}
+        {step === "mobile" && (
+          <MobileStep
+            amount={amount}
+            bonusPct={bonusPct}
+            bonusAmt={bonusAmt}
+            balanceAfter={balanceAfter}
+            accountId={accountId}
+            customerName={customerEmail.split("@")[0]}
+            onBack={() => setStep("method")}
+            onSuccess={(paymentId, eb) => {
+              setMobilePaymentId(paymentId);
+              setExpectedBalance(eb);
+              setStep("pending");
+            }}
+          />
+        )}
+
+        {/* ── Step 4: Pending (Mobile Money) ───────────────────────────────── */}
+        {step === "pending" && (
+          <div className="space-y-5 text-center">
+            <div className="flex justify-center">
+              {mobileConfirmed ? (
+                <div className="h-14 w-14 rounded-full bg-success/10 flex items-center justify-center">
+                  <CheckCircle className="h-7 w-7 text-success" />
+                </div>
+              ) : mobileFailed ? (
+                <div className="h-14 w-14 rounded-full bg-destructive/10 flex items-center justify-center">
+                  <AlertCircle className="h-7 w-7 text-destructive" />
+                </div>
+              ) : (
+                <div className="h-14 w-14 rounded-full bg-yellow-500/10 flex items-center justify-center">
+                  <Loader2 className="h-7 w-7 text-yellow-600 animate-spin" />
+                </div>
+              )}
+            </div>
+
+            <div>
+              {mobileConfirmed ? (
+                <>
+                  <p className="font-semibold text-lg">Payment Successful!</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    ${totalCredits.toFixed(2)} has been added to your balance.
+                  </p>
+                </>
+              ) : mobileFailed ? (
+                <>
+                  <p className="font-semibold text-lg text-destructive">
+                    Payment Failed
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    The payment was not completed. Please try again.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="font-semibold text-lg">Check your phone</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    A payment prompt has been sent to your phone. Please enter
+                    your PIN to confirm the payment.
+                  </p>
+                  <div className="mt-3 flex justify-center">
+                    <div className="h-1.5 w-24 rounded-full bg-muted overflow-hidden">
+                      <div className="h-full bg-yellow-500 rounded-full animate-pulse w-full" />
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {(mobileConfirmed || mobileFailed) && (
+              <Button className="w-full" onClick={handleClose}>
+                {mobileConfirmed ? "Done" : "Try Again"}
+              </Button>
+            )}
+          </div>
+        )}
+
+        {/* ── Step 5: Success (Card) ─────────────────────────────────────── */}
+        {step === "success" && (
           <div className="space-y-5 text-center">
             <div className="flex justify-center">
               <div className="h-14 w-14 rounded-full bg-success/10 flex items-center justify-center">
@@ -492,34 +724,46 @@ export function TopUpDialog({
             </div>
 
             <div>
-              <p className="font-semibold text-content text-lg">
-                +${totalCredits.toFixed(2)} added
+              <p className="font-semibold text-lg">
+                {confirmed ? "Balance updated!" : "Payment confirmed"}
               </p>
-              {result.bonusAmount > 0 && (
-                <p className="text-sm text-success mt-0.5">
-                  Includes ${result.bonusAmount.toFixed(2)} bonus (
-                  {result.bonusPercent}%)
-                </p>
+              <p className="text-sm text-muted-foreground mt-1">
+                {confirmed
+                  ? `$${totalCredits.toFixed(2)} has been added to your balance.`
+                  : timedOut
+                    ? "Credits may take a moment to reflect — refresh if needed."
+                    : "Adding credits to your balance…"}
+              </p>
+              {!confirmed && !timedOut && (
+                <div className="mt-2 flex justify-center">
+                  <div className="h-1.5 w-24 rounded-full bg-muted overflow-hidden">
+                    <div className="h-full bg-primary rounded-full animate-pulse w-full" />
+                  </div>
+                </div>
               )}
             </div>
 
-            <div className="rounded-lg border border-border/60 divide-y divide-border/40 overflow-hidden text-sm text-left">
-              <div className="flex justify-between px-3 py-2 bg-muted/30">
-                <span className="text-content-secondary">Previous balance</span>
-                <span className="text-content">
-                  ${currentBalance.toFixed(2)}
+            <div className="rounded-lg border border-border/60 overflow-hidden text-sm text-left">
+              <div className="flex justify-between px-3 py-2 bg-muted/30 dark:bg-muted/20">
+                <span className="text-content-secondary dark:text-foreground/70">
+                  Amount paid
+                </span>
+                <span className="text-content dark:text-foreground">
+                  ${amount.toFixed(2)}
                 </span>
               </div>
-              <div className="flex justify-between px-3 py-2.5 bg-primary/5">
-                <span className="font-semibold text-content">New balance</span>
+              {bonusPct > 0 && (
+                <div className="flex justify-between px-3 py-2 bg-muted/30 dark:bg-muted/20">
+                  <span className="text-success">Bonus ({bonusPct}%)</span>
+                  <span className="text-success">+${bonusAmt.toFixed(2)}</span>
+                </div>
+              )}
+              <div className="flex justify-between px-3 py-2.5 bg-primary/5 dark:bg-primary/10">
+                <span className="font-semibold text-content dark:text-foreground">
+                  {confirmed ? "Credits added" : "Credits being added"}
+                </span>
                 <span className="font-bold text-primary">
-                  ${result.newBalance.toFixed(2)}
-                </span>
-              </div>
-              <div className="flex justify-between px-3 py-2 bg-muted/30">
-                <span className="text-content-secondary">Reference</span>
-                <span className="font-mono text-xs text-content-secondary">
-                  {result.transaction.paymentRef}
+                  +${totalCredits.toFixed(2)}
                 </span>
               </div>
             </div>

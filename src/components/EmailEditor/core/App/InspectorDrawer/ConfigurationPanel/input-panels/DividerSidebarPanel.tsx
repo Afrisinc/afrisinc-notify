@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ZodError } from "zod";
 
-import { HeightOutlined } from "@mui/icons-material";
+import { Maximize } from "lucide-react";
 import {
   DividerProps,
   DividerPropsDefaults,
@@ -46,7 +46,7 @@ export default function DividerSidebarPanel({
       />
       <SliderInput
         label="Height"
-        iconLabel={<HeightOutlined sx={{ color: "text.secondary" }} />}
+        iconLabel={<Maximize size={16} style={{ color: "inherit" }} />}
         units="px"
         step={1}
         min={1}

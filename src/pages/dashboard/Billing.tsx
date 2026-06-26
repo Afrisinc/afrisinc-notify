@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useOrg } from "@/contexts/OrgContext";
 import { useUser } from "@/contexts/UserContext";
+import { computePlanPrice, planCardPrice } from "@/lib/pricing";
 import {
   useCurrentSubscription,
   useUsageDashboard,
@@ -75,10 +76,11 @@ function PageSkeleton() {
 
 export default function Billing() {
   const { currentOrg } = useOrg();
-  const { getAccountIdForOrg } = useUser();
+  const { getAccountIdForOrg, profile } = useUser();
   const accountId = currentOrg
     ? (getAccountIdForOrg(currentOrg.id) ?? undefined)
     : undefined;
+  const customerEmail = profile?.email ?? "";
 
   const { data: sub, isLoading: subLoading } =
     useCurrentSubscription(accountId);
@@ -160,6 +162,7 @@ export default function Billing() {
 
   // Transform API plans to PlanOption format
   const plans: PlanOption[] = (plansData ?? []).map((p: Plan) => ({
+    id: p.id,
     name: p.name,
     displayName: p.name.charAt(0) + p.name.slice(1).toLowerCase(), // FREE -> Free
     monthlyPrice: p.priceMonthly,
@@ -182,11 +185,9 @@ export default function Billing() {
   const billing: string = (sub as any)?.billingCycle ?? "monthly";
   const balAmt = bal?.balance ?? 0;
   const planMeta = plans.find((p) => p.name === planName);
-  const planPrice = planMeta
-    ? billing === "yearly"
-      ? planMeta.yearlyPrice
-      : planMeta.monthlyPrice
-    : 0;
+  // priceInfo reflects what this account actually pays (respects their billing cycle)
+  const priceInfo =
+    planMeta && !isPayg ? computePlanPrice(planMeta, billing) : null;
   const allLimits: any[] = ((usage as any)?.limits ?? []).filter(
     (l: any) => l.limit > 0,
   );
@@ -255,14 +256,21 @@ export default function Billing() {
             </>
           ) : (
             <>
-              <p className="text-3xl font-bold text-content mt-2">
-                {planPrice === 0 ? "Free" : `$${planPrice}`}
-              </p>
-              <p className="text-xs text-content-secondary mt-0.5 capitalize">
-                {planPrice === 0
-                  ? "No cost"
-                  : `per ${billing === "yearly" ? "year" : "month"} · ${billing}`}
-              </p>
+              <div className="mt-2">
+                <div className="flex items-baseline gap-0.5">
+                  <span className="text-3xl font-bold text-content">
+                    {priceInfo?.display ?? "Free"}
+                  </span>
+                  {priceInfo && !priceInfo.isFree && (
+                    <span className="text-sm text-content-secondary">
+                      {priceInfo.periodLabel}
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-content-secondary mt-0.5">
+                  {priceInfo?.note ?? "No cost"}
+                </p>
+              </div>
               <button
                 className="mt-4 flex items-center gap-0.5 text-xs text-primary hover:underline"
                 onClick={() => {
@@ -471,25 +479,29 @@ export default function Billing() {
                     <p className="font-semibold text-content">
                       {plan.displayName}
                     </p>
-                    <div className="flex items-baseline gap-1 mt-1">
-                      {plan.isPayg ? (
-                        <span className="text-lg font-bold text-content">
-                          Pay per use
-                        </span>
-                      ) : (
-                        <>
-                          <span className="text-lg font-bold text-content">
-                            {plan.monthlyPrice === 0
-                              ? "Free"
-                              : `$${plan.monthlyPrice}`}
-                          </span>
-                          {plan.monthlyPrice > 0 && (
-                            <span className="text-xs text-content-secondary">
-                              /mo
-                            </span>
-                          )}
-                        </>
-                      )}
+                    <div className="flex flex-col gap-0.5 mt-1">
+                      {(() => {
+                        const cardPrice = planCardPrice(plan);
+                        return (
+                          <>
+                            <div className="flex items-baseline gap-1">
+                              <span className="text-lg font-bold text-content">
+                                {cardPrice.headline}
+                              </span>
+                              {!plan.isPayg && plan.monthlyPrice > 0 && (
+                                <span className="text-xs text-content-secondary">
+                                  /mo
+                                </span>
+                              )}
+                            </div>
+                            {cardPrice.sub && (
+                              <span className="text-[11px] text-success font-medium">
+                                {cardPrice.sub}
+                              </span>
+                            )}
+                          </>
+                        );
+                      })()}
                     </div>
                   </div>
                   <ul className="space-y-1.5 flex-1 mb-4">
@@ -604,6 +616,7 @@ export default function Billing() {
             onClose={() => setTopUpOpen(false)}
             accountId={accountId}
             currentBalance={balAmt}
+            customerEmail={customerEmail}
           />
           {upgradeTarget && (
             <PlanUpgradeDialog
@@ -612,6 +625,7 @@ export default function Billing() {
               onSuccess={handleUpgradeSuccess}
               plan={upgradeTarget}
               accountId={accountId}
+              customerEmail={customerEmail}
               currentPlan={planName}
             />
           )}

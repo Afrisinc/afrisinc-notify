@@ -70,8 +70,11 @@ export interface SignupPayload {
   planId?: string;
   billingCycle?: "monthly" | "annual";
 
-  // From Payment Step - required for paid plans
+  // From Payment Step — required for paid plans
+  // paymentMethodId: pm_xxx returned by stripe.confirmCardSetup()
+  // customerId: cus_xxx created by the anonymous setup-intent endpoint
   paymentMethodId?: string;
+  customerId?: string;
 }
 
 // Plan data structure for signup flow

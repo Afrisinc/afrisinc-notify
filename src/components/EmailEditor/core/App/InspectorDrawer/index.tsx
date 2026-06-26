@@ -33,6 +33,9 @@ export default function InspectorDrawer() {
       open={inspectorDrawerOpen}
       sx={{
         width: inspectorDrawerOpen ? INSPECTOR_DRAWER_WIDTH : 0,
+        "& .MuiDrawer-paper": {
+          backgroundColor: "background.default",
+        },
       }}
     >
       <Box

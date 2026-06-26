@@ -104,7 +104,7 @@ export function ConfirmDialog({
             {title}
           </DialogTitle>
           {description && (
-            <DialogDescription className="text-content-secondary dark:text-muted-foreground">
+            <DialogDescription className="text-content-secondary dark:text-foreground/70">
               {description}
             </DialogDescription>
           )}

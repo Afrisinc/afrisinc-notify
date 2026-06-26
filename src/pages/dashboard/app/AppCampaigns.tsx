@@ -105,13 +105,13 @@ const STATUS_CONFIG: Record<
 > = {
   draft: {
     icon: AlertCircle,
-    color: "text-muted-foreground",
-    bg: "bg-muted",
+    color: "text-content-secondary dark:text-foreground/70",
+    bg: "bg-muted/30 dark:bg-muted/20",
     label: "Draft",
   },
   scheduled: {
     icon: Clock,
-    color: "text-amber-600",
+    color: "text-amber-600 dark:text-amber-400",
     bg: "bg-amber-500/10",
     label: "Scheduled",
   },
@@ -123,7 +123,7 @@ const STATUS_CONFIG: Record<
   },
   completed: {
     icon: CheckCircle2,
-    color: "text-emerald-600",
+    color: "text-emerald-600 dark:text-emerald-400",
     bg: "bg-emerald-500/10",
     label: "Completed",
   },
@@ -135,8 +135,8 @@ const STATUS_CONFIG: Record<
   },
   cancelled: {
     icon: XCircle,
-    color: "text-muted-foreground",
-    bg: "bg-muted",
+    color: "text-content-secondary dark:text-foreground/70",
+    bg: "bg-muted/30 dark:bg-muted/20",
     label: "Cancelled",
   },
 };
@@ -616,7 +616,7 @@ export default function AppCampaigns() {
           Campaign Builder Wizard
       ═══════════════════════════════════════════════════════════════════ */}
       <Dialog open={showCreate} onOpenChange={setShowCreate}>
-        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Megaphone className="h-4 w-4 text-primary" />
@@ -1266,7 +1266,7 @@ export default function AppCampaigns() {
         open={!!showScheduleDialog}
         onOpenChange={() => setShowScheduleDialog(null)}
       >
-        <DialogContent className="sm:max-w-sm">
+        <DialogContent className="sm:max-w-sm max-h-[90vh] overflow-y-auto rounded-xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <CalendarClock className="h-4 w-4 text-primary" />
@@ -1308,7 +1308,7 @@ export default function AppCampaigns() {
 
       {/* ── Delete confirmation ────────────────────────────────────────────── */}
       <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto rounded-xl">
           <DialogHeader>
             <DialogTitle>Delete Campaign?</DialogTitle>
           </DialogHeader>

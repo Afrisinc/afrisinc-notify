@@ -12,6 +12,7 @@ export interface CreateOrganizationPayload {
   billingCycle: "monthly" | "annual";
   // Payment method (required for paid plans)
   paymentMethodId?: string;
+  customerId?: string; // Stripe cus_xxx from SetupIntent flow
 }
 
 export interface UpdateOrganizationPayload {

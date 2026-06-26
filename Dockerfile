@@ -13,11 +13,15 @@ RUN pnpm install --frozen-lockfile
 COPY . .
 
 ARG VITE_API_URL
+ARG VITE_STRIPE_PUBLISHABLE_KEY
 
 ENV VITE_API_URL=$VITE_API_URL
+ENV VITE_STRIPE_PUBLISHABLE_KEY=$VITE_STRIPE_PUBLISHABLE_KEY
 
-# Build the Vite app with API URL
-RUN VITE_API_URL=${VITE_API_URL} pnpm build
+# Build the Vite app with environment variables
+RUN VITE_API_URL=${VITE_API_URL} \
+    VITE_STRIPE_PUBLISHABLE_KEY=${VITE_STRIPE_PUBLISHABLE_KEY} \
+    pnpm build
 
 # ---------- Serve ----------
 FROM nginx:alpine

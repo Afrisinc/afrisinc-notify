@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { HexColorInput, HexColorPicker } from "react-colorful";
 
-import { Box, Stack, SxProps } from "@mui/material";
+import { Box, Stack, SxProps, useTheme } from "@mui/material";
 
 import Swatch from "./Swatch";
 
@@ -38,7 +38,7 @@ const DEFAULT_PRESET_COLORS = [
   "#000000",
 ];
 
-const SX: SxProps = {
+const getSX = (theme: any): SxProps => ({
   p: 1,
   ".react-colorful__pointer ": {
     width: 16,
@@ -46,14 +46,14 @@ const SX: SxProps = {
   },
   ".react-colorful__saturation": {
     mb: 1,
-    borderRadius: "4px",
+    borderRadius: theme.shape.borderRadius,
   },
   ".react-colorful__last-control": {
-    borderRadius: "4px",
+    borderRadius: theme.shape.borderRadius,
   },
   ".react-colorful__hue-pointer": {
     width: "4px",
-    borderRadius: "4px",
+    borderRadius: theme.shape.borderRadius,
     height: 24,
     cursor: "col-resize",
   },
@@ -63,17 +63,19 @@ const SX: SxProps = {
   input: {
     padding: 1,
     border: "1px solid",
-    borderColor: "grey.300",
-    borderRadius: "4px",
+    borderColor: theme.palette.divider,
+    borderRadius: theme.shape.borderRadius,
     width: "100%",
   },
-};
+});
 
 type Props = {
   value: string;
   onChange: (v: string) => void;
 };
 export default function Picker({ value, onChange }: Props) {
+  const theme = useTheme();
+  const SX = getSX(theme);
   const [internalValue, setInternalValue] = useState(value);
   const handleChange = (v: string) => {
     setInternalValue(v);

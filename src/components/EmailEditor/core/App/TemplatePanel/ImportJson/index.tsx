@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
-import { FileUploadOutlined } from "@mui/icons-material";
+import { Upload } from "lucide-react";
 import { IconButton, Tooltip } from "@mui/material";
 
 import ImportJsonDialog from "./ImportJsonDialog";
@@ -8,19 +8,14 @@ import ImportJsonDialog from "./ImportJsonDialog";
 export default function ImportJson() {
   const [open, setOpen] = useState(false);
 
-  let dialog = null;
-  if (open) {
-    dialog = <ImportJsonDialog onClose={() => setOpen(false)} />;
-  }
-
   return (
     <>
       <Tooltip title="Import JSON">
         <IconButton onClick={() => setOpen(true)}>
-          <FileUploadOutlined fontSize="small" />
+          <Upload size={20} />
         </IconButton>
       </Tooltip>
-      {dialog}
+      <ImportJsonDialog open={open} onClose={() => setOpen(false)} />
     </>
   );
 }

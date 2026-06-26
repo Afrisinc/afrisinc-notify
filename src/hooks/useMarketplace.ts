@@ -6,9 +6,11 @@ import {
   rateMarketplaceTemplateService,
   getTemplateRatingService,
   getMarketplaceCategoriesService,
+  initTemplatePurchaseService,
   type ListTemplatesParams,
   type InstallTemplatePayload,
   type RatingPayload,
+  type InitTemplatePurchasePayload,
 } from "@/services/marketplace";
 
 // ──────────────────────────────────────────
@@ -57,14 +59,10 @@ export function useInstallMarketplaceTemplate() {
       payload: InstallTemplatePayload;
     }) => installMarketplaceTemplateService(templateId, payload),
     onSuccess: (_data, { payload }) => {
-      // Invalidate app templates list when a marketplace template is installed
       queryClient.invalidateQueries({
         queryKey: ["appTemplates", payload.appId],
       });
-      // Also invalidate apps list to update template count
-      queryClient.invalidateQueries({
-        queryKey: ["apps"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["apps"] });
     },
   });
 }
@@ -85,11 +83,9 @@ export function useRateMarketplaceTemplate() {
       payload: RatingPayload;
     }) => rateMarketplaceTemplateService(templateId, payload),
     onSuccess: (_data, { templateId }) => {
-      // Invalidate template details to refresh rating
       queryClient.invalidateQueries({
         queryKey: ["marketplaceTemplate", templateId],
       });
-      // Also invalidate user's rating for this template
       queryClient.invalidateQueries({
         queryKey: ["templateRating", templateId],
       });
@@ -121,5 +117,16 @@ export function useMarketplaceCategories(options?: { enabled?: boolean }) {
     queryKey: ["marketplaceCategories"],
     queryFn: () => getMarketplaceCategoriesService(),
     enabled: options?.enabled ?? true,
+  });
+}
+
+// ──────────────────────────────────────────
+// INIT TEMPLATE PURCHASE (paid templates)
+// ──────────────────────────────────────────
+
+export function useInitTemplatePurchase(templateId: string, accountId: string) {
+  return useMutation({
+    mutationFn: (payload: InitTemplatePurchasePayload) =>
+      initTemplatePurchaseService(templateId, accountId, payload),
   });
 }

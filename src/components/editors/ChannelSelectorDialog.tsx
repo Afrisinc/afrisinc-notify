@@ -43,30 +43,30 @@ const CHANNELS: ChannelOption[] = [
     label: "SMS",
     description: "Text messages with character limits and Unicode support",
     icon: MessageSquare,
-    color: "text-emerald-600 dark:text-emerald-400",
-    bgColor: "bg-emerald-50 dark:bg-emerald-950/30",
+    color: "text-success dark:text-success",
+    bgColor: "bg-success/10 dark:bg-success/15",
     borderColor:
-      "border-emerald-200 hover:border-emerald-400 dark:border-emerald-800 dark:hover:border-emerald-500",
+      "border-success/30 hover:border-success/60 dark:border-success/40 dark:hover:border-success/70",
   },
   {
     id: "push",
     label: "Push Notification",
     description: "Browser and mobile push notifications with media support",
     icon: Bell,
-    color: "text-amber-600 dark:text-amber-400",
-    bgColor: "bg-amber-50 dark:bg-amber-950/30",
+    color: "text-warning dark:text-warning",
+    bgColor: "bg-warning/10 dark:bg-warning/15",
     borderColor:
-      "border-amber-200 hover:border-amber-400 dark:border-amber-800 dark:hover:border-amber-500",
+      "border-warning/30 hover:border-warning/60 dark:border-warning/40 dark:hover:border-warning/70",
   },
   {
     id: "in-app",
     label: "In-App",
     description: "Banners, modals, and toasts shown inside your application",
     icon: Monitor,
-    color: "text-violet-600 dark:text-violet-400",
-    bgColor: "bg-violet-50 dark:bg-violet-950/30",
+    color: "text-primary dark:text-primary",
+    bgColor: "bg-primary/10 dark:bg-primary/15",
     borderColor:
-      "border-violet-200 hover:border-violet-400 dark:border-violet-800 dark:hover:border-violet-500",
+      "border-primary/30 hover:border-primary/60 dark:border-primary/40 dark:hover:border-primary/70",
   },
   {
     id: "whatsapp",
@@ -74,10 +74,10 @@ const CHANNELS: ChannelOption[] = [
     description:
       "WhatsApp Business message templates with headers, body, and buttons",
     icon: MessageCircle,
-    color: "text-green-600 dark:text-green-400",
-    bgColor: "bg-green-50 dark:bg-green-950/30",
+    color: "text-success dark:text-success",
+    bgColor: "bg-success/10 dark:bg-success/15",
     borderColor:
-      "border-green-200 hover:border-green-400 dark:border-green-800 dark:hover:border-green-500",
+      "border-success/30 hover:border-success/60 dark:border-success/40 dark:hover:border-success/70",
     badge: "Meta API",
   },
 ];
@@ -98,10 +98,10 @@ export function ChannelSelectorDialog({
       <DialogContent className="max-w-2xl p-0 overflow-hidden rounded-2xl">
         <div className="px-8 pt-8 pb-2">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold tracking-tight text-foreground">
+            <DialogTitle className="text-2xl font-bold tracking-tight text-content dark:text-white">
               Choose a channel
             </DialogTitle>
-            <DialogDescription className="text-sm text-muted-foreground mt-1">
+            <DialogDescription className="text-sm text-content-secondary dark:text-foreground/70 mt-1">
               Select the delivery channel for your new notification template.
             </DialogDescription>
           </DialogHeader>
@@ -132,21 +132,21 @@ export function ChannelSelectorDialog({
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-foreground">
+                    <span className="text-sm font-semibold text-content dark:text-white">
                       {channel.label}
                     </span>
                     {channel.badge && (
-                      <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">
+                      <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-muted/30 dark:bg-muted/20 text-content-secondary dark:text-foreground/70 border border-border/40 dark:border-border/50">
                         {channel.badge}
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                  <p className="text-xs text-content-secondary dark:text-foreground/70 mt-0.5 leading-relaxed">
                     {channel.description}
                   </p>
                 </div>
 
-                <ArrowRight className="h-4 w-4 text-muted-foreground/40 group-hover:text-muted-foreground transition-colors flex-shrink-0" />
+                <ArrowRight className="h-4 w-4 text-content-secondary/40 dark:text-foreground/50 group-hover:text-content-secondary dark:group-hover:text-foreground/70 transition-colors flex-shrink-0" />
               </button>
             );
           })}

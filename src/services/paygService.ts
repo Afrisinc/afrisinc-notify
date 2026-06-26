@@ -52,11 +52,49 @@ export interface TransactionPage {
 
 const client = () => getApiClient();
 
+export interface TopUpInitResult {
+  clientSecret: string;
+  orderId: string;
+  paymentIntentId: string;
+}
+
+export interface MobilePayment {
+  id: string;
+  ref: string;
+  orderId: string;
+  amount: number;
+  currency: string;
+  phoneNumber: string;
+  type: "CASHIN" | "CASHOUT";
+  status: "PENDING" | "PROCESSING" | "SUCCESSFUL" | "FAILED";
+  fee: number;
+  provider: string | null;
+  createdAt: string;
+}
+
+export interface MobileTopUpResult {
+  payment: MobilePayment;
+  message: string;
+}
+
 export const paygService = {
   async getBalance(accountId: string): Promise<CreditBalance> {
     const res = await client().get("/api/payg/balance", {
       headers: { "x-account-id": accountId },
     });
+    return res.data.data;
+  },
+
+  async initTopUp(
+    accountId: string,
+    amount: number,
+    customerEmail: string,
+  ): Promise<TopUpInitResult> {
+    const res = await client().post(
+      "/api/payg/topup/init",
+      { amount, customerEmail },
+      { headers: { "x-account-id": accountId } },
+    );
     return res.data.data;
   },
 
@@ -92,6 +130,52 @@ export const paygService = {
 
   async getRates(): Promise<PaygRates> {
     const res = await client().get("/api/payg/rates");
+    return res.data.data;
+  },
+
+  // ─── Mobile Money ─────────────────────────────────────────────────────────────
+
+  async initMobileTopUp(
+    accountId: string,
+    amount: number,
+    phoneNumber: string,
+    customerName?: string,
+    options?: {
+      paymentType?: "payg_topup" | "subscription";
+      planId?: string;
+      billingCycle?: "monthly" | "yearly";
+    },
+  ): Promise<MobileTopUpResult> {
+    const res = await client().post(
+      "/api/payg/mobile/topup",
+      {
+        amount,
+        phoneNumber,
+        customerName,
+        ...options,
+      },
+      { headers: { "x-account-id": accountId } },
+    );
+    return res.data.data;
+  },
+
+  async getMobilePayment(
+    accountId: string,
+    paymentId: string,
+  ): Promise<MobilePayment> {
+    const res = await client().get(`/api/payg/mobile/${paymentId}`, {
+      headers: { "x-account-id": accountId },
+    });
+    return res.data.data;
+  },
+
+  async getMobilePaymentByRef(
+    accountId: string,
+    ref: string,
+  ): Promise<MobilePayment> {
+    const res = await client().get(`/api/payg/mobile/ref/${ref}`, {
+      headers: { "x-account-id": accountId },
+    });
     return res.data.data;
   },
 };
