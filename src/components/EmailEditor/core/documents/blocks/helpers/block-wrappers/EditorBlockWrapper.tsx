@@ -1,6 +1,6 @@
 import React, { CSSProperties, useState } from "react";
 
-import { Box } from "@mui/material";
+import { Box, useTheme } from "@mui/material";
 
 import { useCurrentBlockId } from "../../../editor/EditorBlock";
 import {
@@ -17,15 +17,17 @@ type TEditorBlockWrapperProps = {
 export default function EditorBlockWrapper({
   children,
 }: TEditorBlockWrapperProps) {
+  const theme = useTheme();
   const selectedBlockId = useSelectedBlockId();
   const [mouseInside, setMouseInside] = useState(false);
   const blockId = useCurrentBlockId();
 
+  const primaryColor = theme.palette.primary.main;
   let outline: CSSProperties["outline"];
   if (selectedBlockId === blockId) {
-    outline = "2px solid rgba(0,121,204, 1)";
+    outline = `2px solid ${primaryColor}`;
   } else if (mouseInside) {
-    outline = "2px solid rgba(0,121,204, 0.3)";
+    outline = `2px solid ${primaryColor}33`;
   }
 
   const renderMenu = () => {

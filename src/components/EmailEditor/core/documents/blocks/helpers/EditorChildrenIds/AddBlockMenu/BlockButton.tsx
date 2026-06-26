@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Box, Button, SxProps, Typography } from "@mui/material";
+import { Box, Button, SxProps, Typography, useTheme } from "@mui/material";
 
 type BlockMenuButtonProps = {
   label: string;
@@ -25,6 +25,13 @@ export default function BlockTypeButton({
   icon,
   onClick,
 }: BlockMenuButtonProps) {
+  const theme = useTheme();
+
+  const iconSx: SxProps = {
+    ...ICON_SX,
+    color: theme.palette.text.primary,
+  };
+
   return (
     <Button
       sx={BUTTON_SX}
@@ -33,8 +40,10 @@ export default function BlockTypeButton({
         onClick();
       }}
     >
-      <Box sx={ICON_SX}>{icon}</Box>
-      <Typography variant="body2">{label}</Typography>
+      <Box sx={iconSx}>{icon}</Box>
+      <Typography variant="body2" sx={{ color: theme.palette.text.primary }}>
+        {label}
+      </Typography>
     </Button>
   );
 }

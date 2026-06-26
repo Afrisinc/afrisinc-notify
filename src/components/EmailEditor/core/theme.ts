@@ -7,68 +7,157 @@ const BRAND_RED = "#E81212";
 const BRAND_YELLOW = "#F6DC9F";
 const BRAND_PURPLE = "#6C0E7C";
 const BRAND_BROWN = "#CC996C";
-const STANDARD_FONT_FAMILY =
-  '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"';
-const MONOSPACE_FONT_FAMILY =
-  'ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono", "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro", "Fira Mono", "Droid Sans Mono", "Courier New", monospace';
 
+// Notify Design System Colors (from design-system)
+const NOTIFY_PRIMARY = "#0293E4";
+const NOTIFY_SUCCESS = "hsl(152, 60%, 40%)";
+const NOTIFY_WARNING = "hsl(38, 92%, 50%)";
+const NOTIFY_DESTRUCTIVE = "hsl(0, 72%, 51%)";
+
+// Light mode (Notify Design System)
+const LIGHT_BG = "hsl(220, 20%, 97%)";
+const LIGHT_BG_CARD = "hsl(0, 0%, 100%)";
+const LIGHT_FG = "hsl(220, 20%, 10%)";
+const LIGHT_FG_SECONDARY = "hsl(220, 10%, 46%)";
+const LIGHT_BORDER = "hsl(220, 13%, 90%)";
+
+// Dark mode (Notify Design System)
+const DARK_BG = "hsl(224, 20%, 5%)";
+const DARK_BG_CARD = "hsl(224, 18%, 8%)";
+const DARK_FG = "hsl(210, 20%, 95%)";
+const DARK_FG_SECONDARY = "hsl(215, 15%, 55%)";
+const DARK_BORDER = "hsl(224, 14%, 14%)";
+
+const STANDARD_FONT_FAMILY =
+  '"Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"';
+const MONOSPACE_FONT_FAMILY =
+  '"JetBrains Mono", "Fira Code", ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono", "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro", "Droid Sans Mono", "Courier New", monospace';
+
+// Create base theme with light mode as default
 const BASE_THEME = createTheme({
   palette: {
+    mode: "light",
     background: {
-      default: "#f2f5f7",
+      default: LIGHT_BG,
+      paper: LIGHT_BG_CARD,
     },
     text: {
-      primary: "#1F1F21",
-      secondary: "#4F4F4F",
+      primary: LIGHT_FG,
+      secondary: LIGHT_FG_SECONDARY,
     },
+    divider: LIGHT_BORDER,
   },
   typography: {
     fontFamily: STANDARD_FONT_FAMILY,
   },
 });
 
-const THEME = createTheme(BASE_THEME, {
-  palette: {
-    brand: {
-      navy: BRAND_NAVY,
-      blue: BRAND_BLUE,
-      red: BRAND_RED,
-      green: BRAND_GREEN,
-      yellow: BRAND_YELLOW,
-      purple: BRAND_PURPLE,
-      brown: BRAND_BROWN,
-    },
-    success: {
-      main: BRAND_GREEN,
-      light: lighten(BRAND_GREEN, 0.15),
-      dark: darken(BRAND_GREEN, 0.15),
-    },
-    error: {
-      main: BRAND_RED,
-      light: lighten(BRAND_RED, 0.15),
-      dark: darken(BRAND_RED, 0.15),
-    },
-    cadet: {
-      100: "#F9FAFB",
-      200: "#F2F5F7",
-      300: "#DCE4EA",
-      400: "#A8BBCA",
-      500: "#6A8BA4",
-    },
-    highlight: {
-      100: lighten(BRAND_YELLOW, 0.8),
-      200: lighten(BRAND_YELLOW, 0.6),
-      300: lighten(BRAND_YELLOW, 0.4),
-      400: lighten(BRAND_YELLOW, 0.2),
-      500: BRAND_YELLOW,
-    },
-    info: {
-      main: BRAND_BLUE,
-    },
-    primary: {
-      main: BRAND_BLUE,
-    },
+const LIGHT_PALETTE = {
+  mode: "light" as const,
+  background: {
+    default: LIGHT_BG,
+    paper: LIGHT_BG_CARD,
   },
+  text: {
+    primary: LIGHT_FG,
+    secondary: LIGHT_FG_SECONDARY,
+  },
+  divider: LIGHT_BORDER,
+  brand: {
+    navy: BRAND_NAVY,
+    blue: BRAND_BLUE,
+    red: BRAND_RED,
+    green: BRAND_GREEN,
+    yellow: BRAND_YELLOW,
+    purple: BRAND_PURPLE,
+    brown: BRAND_BROWN,
+  },
+  success: {
+    main: BRAND_GREEN,
+    light: lighten(BRAND_GREEN, 0.15),
+    dark: darken(BRAND_GREEN, 0.15),
+  },
+  error: {
+    main: BRAND_RED,
+    light: lighten(BRAND_RED, 0.15),
+    dark: darken(BRAND_RED, 0.15),
+  },
+  cadet: {
+    100: "#F9FAFB",
+    200: "#F2F5F7",
+    300: "#DCE4EA",
+    400: "#A8BBCA",
+    500: "#6A8BA4",
+  },
+  highlight: {
+    100: lighten(BRAND_YELLOW, 0.8),
+    200: lighten(BRAND_YELLOW, 0.6),
+    300: lighten(BRAND_YELLOW, 0.4),
+    400: lighten(BRAND_YELLOW, 0.2),
+    500: BRAND_YELLOW,
+  },
+  info: {
+    main: BRAND_BLUE,
+  },
+  primary: {
+    main: NOTIFY_PRIMARY,
+  },
+};
+
+const DARK_PALETTE = {
+  mode: "dark" as const,
+  background: {
+    default: DARK_BG,
+    paper: DARK_BG_CARD,
+  },
+  text: {
+    primary: DARK_FG,
+    secondary: DARK_FG_SECONDARY,
+  },
+  divider: DARK_BORDER,
+  brand: {
+    navy: BRAND_NAVY,
+    blue: BRAND_BLUE,
+    red: BRAND_RED,
+    green: BRAND_GREEN,
+    yellow: BRAND_YELLOW,
+    purple: BRAND_PURPLE,
+    brown: BRAND_BROWN,
+  },
+  success: {
+    main: NOTIFY_SUCCESS,
+    light: lighten(NOTIFY_SUCCESS, 0.15),
+    dark: darken(NOTIFY_SUCCESS, 0.15),
+  },
+  error: {
+    main: NOTIFY_DESTRUCTIVE,
+    light: lighten(NOTIFY_DESTRUCTIVE, 0.15),
+    dark: darken(NOTIFY_DESTRUCTIVE, 0.15),
+  },
+  cadet: {
+    100: darken("#F9FAFB", 0.7),
+    200: darken("#F2F5F7", 0.65),
+    300: DARK_BORDER,
+    400: DARK_FG_SECONDARY,
+    500: DARK_FG,
+  },
+  highlight: {
+    100: lighten(BRAND_YELLOW, 0.4),
+    200: lighten(BRAND_YELLOW, 0.2),
+    300: BRAND_YELLOW,
+    400: darken(BRAND_YELLOW, 0.1),
+    500: darken(BRAND_YELLOW, 0.2),
+  },
+  info: {
+    main: NOTIFY_PRIMARY,
+  },
+  primary: {
+    main: NOTIFY_PRIMARY,
+  },
+};
+
+const THEME = createTheme(BASE_THEME, {
+  palette: LIGHT_PALETTE,
   components: {
     MuiCssBaseline: {
       styleOverrides: `
@@ -418,8 +507,9 @@ const THEME = createTheme(BASE_THEME, {
           lineHeight: 1.5,
           fontWeight: BASE_THEME.typography.fontWeightMedium,
           transition: "color 0.2s",
+          color: BASE_THEME.palette.text.secondary, // Inactive tab color
           "&.Mui-selected": {
-            color: BASE_THEME.palette.text.primary,
+            color: BASE_THEME.palette.text.primary, // Active tab color
           },
           "&:hover": {
             color: BASE_THEME.palette.text.primary,
@@ -517,4 +607,78 @@ const THEME = createTheme(BASE_THEME, {
   ],
 });
 
+// Dark mode theme (auto-applied when html.dark class is present)
+const DARK_THEME = createTheme(BASE_THEME, {
+  palette: DARK_PALETTE,
+  components: {
+    ...THEME.components,
+    MuiTabs: {
+      defaultProps: {
+        variant: "scrollable",
+      },
+      styleOverrides: {
+        indicator: {
+          height: 1,
+          backgroundColor: DARK_FG, // Use dark palette text color
+        },
+      },
+    },
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          textTransform: "none",
+          minWidth: BASE_THEME.spacing(2),
+          paddingLeft: BASE_THEME.spacing(1.5),
+          paddingRight: BASE_THEME.spacing(1.5),
+          fontSize: BASE_THEME.typography.pxToRem(14),
+          fontFamily: BASE_THEME.typography.fontFamily,
+          lineHeight: 1.5,
+          fontWeight: BASE_THEME.typography.fontWeightMedium,
+          transition: "color 0.2s",
+          color: DARK_FG_SECONDARY, // Inactive tab color
+          "&.Mui-selected": {
+            color: DARK_FG, // Active tab color
+          },
+          "&:hover": {
+            color: DARK_FG,
+          },
+        },
+      },
+    },
+    MuiToggleButtonGroup: {
+      styleOverrides: {
+        root: {
+          borderColor: DARK_BORDER,
+        },
+      },
+    },
+    MuiToggleButton: {
+      styleOverrides: {
+        root: {
+          paddingLeft: BASE_THEME.spacing(1.5),
+          paddingRight: BASE_THEME.spacing(1.5),
+          color: DARK_FG_SECONDARY, // Inactive button text color
+          borderColor: DARK_BORDER,
+          "&:hover": {
+            backgroundColor: `${DARK_BORDER}`,
+            borderColor: DARK_FG_SECONDARY,
+            color: DARK_FG_SECONDARY,
+          },
+          "&.Mui-selected": {
+            color: DARK_FG, // Active button text color
+            backgroundColor: `rgba(2, 147, 228, 0.12)`, // Light blue background
+            borderColor: NOTIFY_PRIMARY,
+            "&:hover": {
+              backgroundColor: `rgba(2, 147, 228, 0.2)`,
+            },
+          },
+        },
+      },
+    },
+  },
+  typography: THEME.typography, // Reuse typography
+  shadows: THEME.shadows, // Reuse shadows
+});
+
 export default THEME;
+export { DARK_THEME, LIGHT_PALETTE, DARK_PALETTE };

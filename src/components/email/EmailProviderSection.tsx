@@ -76,11 +76,17 @@ export function EmailProviderSection({ appId }: EmailProviderSectionProps) {
       case "gmail":
         return <GmailIcon className="h-5 w-5" />;
       case "custom_domain":
-        return <CustomDomainIcon className="h-5 w-5 text-blue-500" />;
+        return (
+          <CustomDomainIcon className="h-5 w-5 text-primary dark:text-primary" />
+        );
       case "notify":
-        return <NotifyIcon className="h-5 w-5 text-indigo-600" />;
+        return (
+          <NotifyIcon className="h-5 w-5 text-primary dark:text-primary" />
+        );
       default:
-        return <Mail className="h-5 w-5 text-content-secondary" />;
+        return (
+          <Mail className="h-5 w-5 text-content-secondary dark:text-foreground/60" />
+        );
     }
   };
 

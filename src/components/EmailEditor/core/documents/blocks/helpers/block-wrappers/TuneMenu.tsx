@@ -1,11 +1,6 @@
 import React from "react";
 
-import {
-  ArrowDownwardOutlined,
-  ArrowUpwardOutlined,
-  ContentCopyOutlined,
-  DeleteOutlined,
-} from "@mui/icons-material";
+import { ArrowDown, ArrowUp, Copy, Trash2 } from "lucide-react";
 import { IconButton, Paper, Stack, SxProps, Tooltip } from "@mui/material";
 
 import { TEditorBlock, TEditorConfiguration } from "../../../editor/core";
@@ -262,7 +257,7 @@ export default function TuneMenu({ blockId }: Props) {
             onClick={() => handleMoveClick("up")}
             sx={{ color: "text.primary" }}
           >
-            <ArrowUpwardOutlined fontSize="small" />
+            <ArrowUp size={20} />
           </IconButton>
         </Tooltip>
         <Tooltip title="Move down" placement="left-start">
@@ -270,7 +265,7 @@ export default function TuneMenu({ blockId }: Props) {
             onClick={() => handleMoveClick("down")}
             sx={{ color: "text.primary" }}
           >
-            <ArrowDownwardOutlined fontSize="small" />
+            <ArrowDown size={20} />
           </IconButton>
         </Tooltip>
         <Tooltip title="Duplicate" placement="left-start">
@@ -278,7 +273,7 @@ export default function TuneMenu({ blockId }: Props) {
             onClick={handleDuplicateClick}
             sx={{ color: "text.primary" }}
           >
-            <ContentCopyOutlined fontSize="small" />
+            <Copy size={20} />
           </IconButton>
         </Tooltip>
         <Tooltip title="Delete" placement="left-start">
@@ -286,7 +281,7 @@ export default function TuneMenu({ blockId }: Props) {
             onClick={handleDeleteClick}
             sx={{ color: "text.primary" }}
           >
-            <DeleteOutlined fontSize="small" />
+            <Trash2 size={20} />
           </IconButton>
         </Tooltip>
       </Stack>

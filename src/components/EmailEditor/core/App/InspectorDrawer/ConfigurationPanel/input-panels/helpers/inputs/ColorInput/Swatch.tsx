@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Box, Button, SxProps } from "@mui/material";
+import { Box, Button, SxProps, useTheme } from "@mui/material";
 
 type Props = {
   paletteColors: string[];
@@ -13,6 +13,7 @@ const TILE_BUTTON: SxProps = {
   height: 24,
 };
 export default function Swatch({ paletteColors, value, onChange }: Props) {
+  const theme = useTheme();
   const renderButton = (colorValue: string) => {
     return (
       <Button
@@ -22,12 +23,15 @@ export default function Swatch({ paletteColors, value, onChange }: Props) {
           ...TILE_BUTTON,
           backgroundColor: colorValue,
           border: "1px solid",
-          borderColor: value === colorValue ? "black" : "grey.200",
+          borderColor:
+            value === colorValue
+              ? theme.palette.text.primary
+              : theme.palette.divider,
           minWidth: 24,
           display: "inline-flex",
           "&:hover": {
             backgroundColor: colorValue,
-            borderColor: "grey.500",
+            borderColor: theme.palette.text.secondary,
           },
         }}
       />

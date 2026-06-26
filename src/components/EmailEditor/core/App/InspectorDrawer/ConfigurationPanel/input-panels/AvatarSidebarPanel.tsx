@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ZodError } from "zod";
 
-import { AspectRatioOutlined } from "@mui/icons-material";
+import { Maximize2 } from "lucide-react";
 import { ToggleButton } from "@mui/material";
 import {
   AvatarProps,
@@ -43,7 +43,7 @@ export default function AvatarSidebarPanel({
     <BaseSidebarPanel title="Avatar block">
       <SliderInput
         label="Size"
-        iconLabel={<AspectRatioOutlined sx={{ color: "text.secondary" }} />}
+        iconLabel={<Maximize2 size={16} style={{ color: "inherit" }} />}
         units="px"
         step={3}
         min={32}

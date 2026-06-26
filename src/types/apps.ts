@@ -182,14 +182,16 @@ export interface ApiKey {
   id: string;
   plainKey?: string; // Only returned on creation
   name: string;
-  type: "test" | "production";
+  type?: "test" | "production";
   createdAt: string;
   maskedKey?: string; // Partially masked key for display
+  revoked?: boolean;
+  lastUsedAt?: string;
 }
 
 export interface ApiKeysResponse {
   appId: string;
-  apiKeys: ApiKey[];
+  keys: ApiKey[];
   total: number;
 }
 

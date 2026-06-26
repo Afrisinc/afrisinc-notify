@@ -1,18 +1,19 @@
 import React, { useState } from "react";
 
-import { AddOutlined, CloseOutlined } from "@mui/icons-material";
-import { ButtonBase, InputLabel, Menu, Stack } from "@mui/material";
+import { Plus, X } from "lucide-react";
+import { ButtonBase, InputLabel, Menu, Stack, useTheme } from "@mui/material";
 
 import Picker from "./Picker";
 
-const BUTTON_SX = {
+// Moved to component to access theme
+const getButtonSx = (theme: any) => ({
   border: "1px solid",
-  borderColor: "cadet.400",
+  borderColor: theme.palette.divider,
   width: 32,
   height: 32,
   borderRadius: "4px",
-  bgcolor: "#FFFFFF",
-};
+  bgcolor: theme.palette.background.paper,
+});
 
 type Props =
   | {
@@ -33,6 +34,8 @@ export default function ColorInput({
   onChange,
   nullable,
 }: Props) {
+  const theme = useTheme();
+  const BUTTON_SX = getButtonSx(theme);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [value, setValue] = useState(defaultValue);
   const handleClickOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -53,7 +56,7 @@ export default function ColorInput({
           onChange(null);
         }}
       >
-        <CloseOutlined fontSize="small" sx={{ color: "grey.600" }} />
+        <X size={16} style={{ color: theme.palette.text.secondary }} />
       </ButtonBase>
     );
   };
@@ -69,7 +72,7 @@ export default function ColorInput({
     }
     return (
       <ButtonBase onClick={handleClickOpen} sx={{ ...BUTTON_SX }}>
-        <AddOutlined fontSize="small" />
+        <Plus size={16} />
       </ButtonBase>
     );
   };

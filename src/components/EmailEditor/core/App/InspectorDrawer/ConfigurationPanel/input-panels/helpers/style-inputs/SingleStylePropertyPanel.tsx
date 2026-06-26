@@ -1,6 +1,6 @@
 import React from "react";
 
-import { RoundedCornerOutlined } from "@mui/icons-material";
+import { Circle } from "lucide-react";
 
 import { TStyle } from "../../../../../../documents/blocks/helpers/TStyle";
 import { NullableColorInput } from "../inputs/ColorInput";
@@ -47,7 +47,7 @@ export default function SingleStylePropertyPanel({
     case "borderRadius":
       return (
         <SliderInput
-          iconLabel={<RoundedCornerOutlined />}
+          iconLabel={<Circle size={16} style={{ color: "inherit" }} />}
           units="px"
           step={4}
           marks

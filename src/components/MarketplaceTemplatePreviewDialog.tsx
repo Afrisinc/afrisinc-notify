@@ -115,12 +115,12 @@ export function MarketplaceTemplatePreviewDialog({
             {template.preview?.subject && (
               <div className="space-y-2">
                 <p
-                  className={`text-xs font-bold ${isDashboard ? "text-content-secondary dark:text-foreground/60" : "text-content-secondary"} uppercase tracking-wider`}
+                  className={`text-xs font-bold ${isDashboard ? "text-content-secondary dark:text-foreground/60" : "text-content-secondary dark:text-foreground/70"} uppercase tracking-wider`}
                 >
                   {isDashboard ? "Subject Line" : "Subject"}
                 </p>
                 <p
-                  className={`${isDashboard ? "text-base text-content dark:text-white font-semibold bg-card dark:bg-background/50 rounded-lg px-3 py-2" : "text-sm text-content font-medium"}`}
+                  className={`${isDashboard ? "text-base text-content dark:text-white font-semibold bg-card dark:bg-background/50 rounded-lg px-3 py-2" : "text-sm text-content dark:text-white font-medium"}`}
                 >
                   {template.preview.subject}
                 </p>
@@ -129,12 +129,12 @@ export function MarketplaceTemplatePreviewDialog({
             {template.preview?.content && (
               <div className="space-y-2">
                 <p
-                  className={`text-xs font-bold ${isDashboard ? "text-content-secondary dark:text-foreground/60" : "text-content-secondary"} uppercase tracking-wider`}
+                  className={`text-xs font-bold ${isDashboard ? "text-content-secondary dark:text-foreground/60" : "text-content-secondary dark:text-foreground/70"} uppercase tracking-wider`}
                 >
                   {isDashboard ? "Preview" : "Preview"}
                 </p>
                 <p
-                  className={`${isDashboard ? "text-sm text-content-secondary dark:text-foreground/75 leading-relaxed bg-card dark:bg-background/50 rounded-lg px-3 py-2 italic" : "text-sm text-content"}`}
+                  className={`${isDashboard ? "text-sm text-content-secondary dark:text-foreground/75 leading-relaxed bg-card dark:bg-background/50 rounded-lg px-3 py-2 italic" : "text-sm text-content dark:text-white"}`}
                 >
                   {isDashboard
                     ? `"${template.preview.content}"`

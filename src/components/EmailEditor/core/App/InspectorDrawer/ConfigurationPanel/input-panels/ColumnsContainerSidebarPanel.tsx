@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { ZodError } from "zod";
 
 import {
-  SpaceBarOutlined,
-  VerticalAlignBottomOutlined,
-  VerticalAlignCenterOutlined,
-  VerticalAlignTopOutlined,
-} from "@mui/icons-material";
+  Space,
+  AlignEndVertical,
+  AlignCenterVertical,
+  AlignStartVertical,
+} from "lucide-react";
 import { ToggleButton } from "@mui/material";
 
 import ColumnsContainerPropsSchema, {
@@ -61,7 +61,7 @@ export default function ColumnsContainerPanel({
       />
       <SliderInput
         label="Columns gap"
-        iconLabel={<SpaceBarOutlined sx={{ color: "text.secondary" }} />}
+        iconLabel={<Space size={16} style={{ color: "inherit" }} />}
         units="px"
         step={4}
         marks
@@ -80,13 +80,13 @@ export default function ColumnsContainerPanel({
         }}
       >
         <ToggleButton value="top">
-          <VerticalAlignTopOutlined fontSize="small" />
+          <AlignStartVertical size={16} />
         </ToggleButton>
         <ToggleButton value="middle">
-          <VerticalAlignCenterOutlined fontSize="small" />
+          <AlignCenterVertical size={16} />
         </ToggleButton>
         <ToggleButton value="bottom">
-          <VerticalAlignBottomOutlined fontSize="small" />
+          <AlignEndVertical size={16} />
         </ToggleButton>
       </RadioGroupInput>
 

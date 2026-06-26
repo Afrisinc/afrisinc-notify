@@ -1,11 +1,6 @@
 import React from "react";
 
-import {
-  CodeOutlined,
-  DataObjectOutlined,
-  EditOutlined,
-  PreviewOutlined,
-} from "@mui/icons-material";
+import { Code, Braces, Edit, Eye } from "lucide-react";
 import { Tab, Tabs, Tooltip } from "@mui/material";
 
 import {
@@ -34,7 +29,7 @@ export default function MainTabsGroup() {
         value="editor"
         label={
           <Tooltip title="Edit">
-            <EditOutlined fontSize="small" />
+            <Edit size={16} />
           </Tooltip>
         }
       />
@@ -42,7 +37,7 @@ export default function MainTabsGroup() {
         value="preview"
         label={
           <Tooltip title="Preview">
-            <PreviewOutlined fontSize="small" />
+            <Eye size={16} />
           </Tooltip>
         }
       />
@@ -50,7 +45,7 @@ export default function MainTabsGroup() {
         value="html"
         label={
           <Tooltip title="HTML output">
-            <CodeOutlined fontSize="small" />
+            <Code size={16} />
           </Tooltip>
         }
       />
@@ -58,7 +53,7 @@ export default function MainTabsGroup() {
         value="json"
         label={
           <Tooltip title="JSON output">
-            <DataObjectOutlined fontSize="small" />
+            <Braces size={16} />
           </Tooltip>
         }
       />

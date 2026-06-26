@@ -1,6 +1,6 @@
 import React from "react";
 
-import { MonitorOutlined, PhoneIphoneOutlined } from "@mui/icons-material";
+import { Monitor, Smartphone } from "lucide-react";
 import {
   Box,
   Stack,
@@ -34,6 +34,7 @@ export default function TemplatePanel() {
 
   let mainBoxSx: SxProps = {
     height: "100%",
+    backgroundColor: "background.default",
   };
   if (selectedScreenSize === "mobile") {
     mainBoxSx = {
@@ -85,7 +86,7 @@ export default function TemplatePanel() {
           height: 49,
           borderBottom: 1,
           borderColor: "divider",
-          backgroundColor: "white",
+          backgroundColor: "background.paper",
           position: "sticky",
           top: 0,
           zIndex: "appBar",
@@ -117,12 +118,12 @@ export default function TemplatePanel() {
             >
               <ToggleButton value="desktop">
                 <Tooltip title="Desktop view">
-                  <MonitorOutlined fontSize="small" />
+                  <Monitor size={16} />
                 </Tooltip>
               </ToggleButton>
               <ToggleButton value="mobile">
                 <Tooltip title="Mobile view">
-                  <PhoneIphoneOutlined fontSize="small" />
+                  <Smartphone size={16} />
                 </Tooltip>
               </ToggleButton>
             </ToggleButtonGroup>
@@ -132,7 +133,12 @@ export default function TemplatePanel() {
         <ToggleInspectorPanelButton />
       </Stack>
       <Box
-        sx={{ height: "calc(100vh - 49px)", overflow: "auto", minWidth: 370 }}
+        sx={{
+          height: "calc(100vh - 49px)",
+          overflow: "auto",
+          minWidth: 370,
+          backgroundColor: "background.default",
+        }}
       >
         {renderMainPanel()}
       </Box>

@@ -1,4 +1,5 @@
 import React from "react";
+import { useTheme } from "@mui/material";
 
 import { useCurrentBlockId } from "../../editor/EditorBlock";
 import {
@@ -38,6 +39,65 @@ export default function EmailLayoutEditor(props: EmailLayoutProps) {
   const childrenIds = props.childrenIds ?? [];
   const document = useDocument();
   const currentBlockId = useCurrentBlockId();
+  const theme = useTheme();
+
+  // Theme-aware defaults
+  const backdropDefault =
+    theme.palette.mode === "dark"
+      ? theme.palette.grey[900]
+      : theme.palette.grey[100];
+  const canvasDefault = theme.palette.background.paper;
+  const textDefault = theme.palette.text.primary;
+
+  // Helper functions to detect light/dark colors
+  const isLightColor = (color: string): boolean => {
+    const lightColors = [
+      "#FFFFFF",
+      "#ffffff",
+      "#FFF",
+      "#fff",
+      "#F5F5F5",
+      "#f5f5f5",
+      "#F2F5F7",
+      "#f2f5f7",
+    ];
+    return lightColors.includes(color);
+  };
+
+  const isDarkColor = (color: string): boolean => {
+    const darkColors = [
+      "#000000",
+      "#000",
+      "#262626",
+      "#242424",
+      "#1A1A1A",
+      "#1a1a1a",
+    ];
+    return darkColors.includes(color);
+  };
+
+  // Auto-swap colors in dark mode
+  const canvasColor =
+    theme.palette.mode === "dark" &&
+    props.canvasColor &&
+    isLightColor(props.canvasColor)
+      ? canvasDefault
+      : (props.canvasColor ?? canvasDefault);
+
+  const backdropColor =
+    theme.palette.mode === "dark" &&
+    props.backdropColor &&
+    isLightColor(props.backdropColor)
+      ? backdropDefault
+      : (props.backdropColor ?? backdropDefault);
+
+  // Swap dark text to light in dark mode, and light text to dark in light mode
+  const textColor =
+    theme.palette.mode === "dark" &&
+    props.textColor &&
+    (isLightColor(props.textColor) || isDarkColor(props.textColor))
+      ? textDefault
+      : (props.textColor ?? textDefault);
 
   return (
     <div
@@ -45,8 +105,8 @@ export default function EmailLayoutEditor(props: EmailLayoutProps) {
         setSelectedBlockId(null);
       }}
       style={{
-        backgroundColor: props.backdropColor ?? "#F5F5F5",
-        color: props.textColor ?? "#262626",
+        backgroundColor: backdropColor,
+        color: textColor,
         fontFamily: getFontFamily(props.fontFamily),
         fontSize: "16px",
         fontWeight: "400",
@@ -64,7 +124,7 @@ export default function EmailLayoutEditor(props: EmailLayoutProps) {
         style={{
           margin: "0 auto",
           maxWidth: "600px",
-          backgroundColor: props.canvasColor ?? "#FFFFFF",
+          backgroundColor: canvasColor,
           borderRadius: props.borderRadius ?? undefined,
           border: (() => {
             const v = props.borderColor;
