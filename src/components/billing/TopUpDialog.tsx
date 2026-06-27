@@ -31,6 +31,7 @@ import {
   useInitMobileTopUp,
   useMobilePaymentConfirmation,
 } from "@/hooks/usePayg";
+import { useExchangeRate } from "@/lib/exchangeRate";
 
 // ─── Amount helpers ────────────────────────────────────────────────────────────
 
@@ -198,6 +199,7 @@ interface MobileStepProps {
   balanceAfter: number;
   accountId: string;
   customerName: string;
+  exchangeRate: number;
   onBack: () => void;
   onSuccess: (paymentId: string, expectedBalance: number) => void;
 }
@@ -209,6 +211,7 @@ function MobileStep({
   balanceAfter,
   accountId,
   customerName,
+  exchangeRate,
   onBack,
   onSuccess,
 }: MobileStepProps) {
@@ -218,8 +221,8 @@ function MobileStep({
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState("");
 
-  // Convert USD to RWF (approximate rate)
-  const rwfAmount = Math.round(amount * 1466);
+  // Convert USD to RWF using live rate
+  const rwfAmount = Math.round(amount * exchangeRate);
 
   async function handlePay() {
     if (!phoneNumber.trim()) {
@@ -388,6 +391,8 @@ export function TopUpDialog({
     step === "pending" ? mobilePaymentId : null,
     expectedBalance,
   );
+
+  const { data: exchangeRate } = useExchangeRate();
 
   const amount = customAmount
     ? Number.parseFloat(customAmount) || 0
@@ -648,6 +653,7 @@ export function TopUpDialog({
             balanceAfter={balanceAfter}
             accountId={accountId}
             customerName={customerEmail.split("@")[0]}
+            exchangeRate={exchangeRate}
             onBack={() => setStep("method")}
             onSuccess={(paymentId, eb) => {
               setMobilePaymentId(paymentId);

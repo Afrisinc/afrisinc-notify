@@ -53,6 +53,7 @@ import {
   useInitMobileTopUp,
   useMobilePaymentConfirmation,
 } from "@/hooks/usePayg";
+import { useExchangeRate } from "@/lib/exchangeRate";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -213,6 +214,7 @@ interface MobileStepProps {
   templateName: string;
   amountUSD: number;
   accountId: string;
+  exchangeRate: number;
   onBack: () => void;
   onSuccess: (paymentId: string) => void;
 }
@@ -221,6 +223,7 @@ function MobileStep({
   templateName,
   amountUSD,
   accountId,
+  exchangeRate,
   onBack,
   onSuccess,
 }: MobileStepProps) {
@@ -230,8 +233,8 @@ function MobileStep({
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState("");
 
-  // Convert USD to RWF
-  const rwfAmount = Math.round(amountUSD * 1466);
+  // Convert USD to RWF using live rate
+  const rwfAmount = Math.round(amountUSD * exchangeRate);
 
   async function handlePay() {
     if (!phoneNumber.trim()) {
@@ -494,6 +497,8 @@ export function TemplatePurchaseDialog({
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
   const [mobilePaymentId, setMobilePaymentId] = useState<string | null>(null);
 
+  const { data: exchangeRate } = useExchangeRate();
+
   const templateName = template?.subject || template?.name || "Template";
   const price = template?.price ?? 0;
 
@@ -739,6 +744,7 @@ export function TemplatePurchaseDialog({
             templateName={templateName}
             amountUSD={price}
             accountId={accountId}
+            exchangeRate={exchangeRate}
             onBack={() => setStep("method")}
             onSuccess={handleMobileSuccess}
           />

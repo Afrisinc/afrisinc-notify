@@ -31,6 +31,7 @@ import {
   useInitMobileTopUp,
   useMobilePaymentConfirmation,
 } from "@/hooks/usePayg";
+import { useExchangeRate } from "@/lib/exchangeRate";
 
 // ── Constants ──────────────────────────────────────────────────────────────────
 
@@ -347,6 +348,7 @@ interface MobileStepProps {
   billingCycle: "monthly" | "annual";
   trialDays: number;
   isSubmitting: boolean;
+  exchangeRate: number;
   onBack: () => void;
   onSuccess: (paymentId: string) => void;
 }
@@ -358,6 +360,7 @@ function MobileStep({
   billingCycle,
   trialDays,
   isSubmitting,
+  exchangeRate,
   onBack,
   onSuccess,
 }: MobileStepProps) {
@@ -376,12 +379,12 @@ function MobileStep({
     billingCycle === "annual" ? "yearly" : "monthly",
   );
 
-  // Convert USD to RWF (approximate rate)
+  // Convert USD to RWF using live rate
   const usdAmount =
     billingCycle === "annual"
       ? selectedPlan.priceYearly * 12
       : selectedPlan.priceMonthly;
-  const rwfAmount = Math.round(usdAmount * 1466);
+  const rwfAmount = Math.round(usdAmount * exchangeRate);
 
   async function handlePay() {
     if (!phoneNumber.trim()) {
@@ -693,6 +696,7 @@ const CreateOrganizationForm = ({
   const [mobilePaymentId, setMobilePaymentId] = useState<string | null>(null);
 
   const { data: plansData, isLoading: plansLoading } = usePublicPlans();
+  const { data: exchangeRate } = useExchangeRate();
 
   const plans: PlanInfo[] = useMemo(() => {
     if (!plansData) return [];
@@ -903,13 +907,15 @@ const CreateOrganizationForm = ({
                   {selectedPlan.name} Plan
                 </p>
                 <p className="font-semibold text-foreground">
-                  {computePlanPrice(
-                    {
-                      monthlyPrice: selectedPlan.priceMonthly,
-                      yearlyPrice: selectedPlan.priceYearly,
-                    },
-                    billingCycle === "annual" ? "yearly" : "monthly",
-                  ).display}
+                  {
+                    computePlanPrice(
+                      {
+                        monthlyPrice: selectedPlan.priceMonthly,
+                        yearlyPrice: selectedPlan.priceYearly,
+                      },
+                      billingCycle === "annual" ? "yearly" : "monthly",
+                    ).display
+                  }
                 </p>
               </div>
             </div>
@@ -932,9 +938,7 @@ const CreateOrganizationForm = ({
                 <CreditCard className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="font-medium text-foreground">
-                  Credit/Debit Card
-                </p>
+                <p className="font-medium text-foreground">Credit/Debit Card</p>
                 <p className="text-xs text-muted-foreground">
                   Visa, Mastercard, American Express
                 </p>
@@ -1001,6 +1005,7 @@ const CreateOrganizationForm = ({
           billingCycle={billingCycle}
           trialDays={trialDays}
           isSubmitting={isSubmitting}
+          exchangeRate={exchangeRate}
           onBack={() => setStep("method")}
           onSuccess={handleMobileSuccess}
         />
