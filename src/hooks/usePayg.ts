@@ -290,14 +290,16 @@ export function useMobilePaymentConfirmation(
   const qc = useQueryClient();
   const [confirmed, setConfirmed] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [timedOut, setTimedOut] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (!accountId || !paymentId || expectedBalance === null) return;
+    if (!accountId || !paymentId) return;
 
     setConfirmed(false);
     setFailed(false);
+    setTimedOut(false);
 
     function stop() {
       if (intervalRef.current) clearInterval(intervalRef.current);
@@ -314,11 +316,13 @@ export function useMobilePaymentConfirmation(
         if (payment.status === "SUCCESSFUL") {
           stop();
           setConfirmed(true);
-          // Optimistically update balance
-          qc.setQueryData(["payg", "balance", accountId], (old: unknown) => {
-            if (!old || typeof old !== "object") return old;
-            return { ...(old as object), balance: expectedBalance };
-          });
+          // Optimistically update balance if provided
+          if (expectedBalance !== null) {
+            qc.setQueryData(["payg", "balance", accountId], (old: unknown) => {
+              if (!old || typeof old !== "object") return old;
+              return { ...(old as object), balance: expectedBalance };
+            });
+          }
           qc.invalidateQueries({ queryKey: ["payg", "balance", accountId] });
           qc.invalidateQueries({
             queryKey: ["payg", "transactions", accountId],
@@ -334,12 +338,12 @@ export function useMobilePaymentConfirmation(
 
     timeoutRef.current = setTimeout(() => {
       stop();
-      // Don't mark as failed on timeout, just stop polling
+      setTimedOut(true);
     }, 120_000); // 2 minute timeout for mobile money
 
     return stop;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountId, paymentId, expectedBalance]);
 
-  return { confirmed, failed };
+  return { confirmed, failed, timedOut };
 }

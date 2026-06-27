@@ -233,7 +233,7 @@ function MobileStep({
   const [error, setError] = useState("");
 
   // Convert USD to RWF (approximate rate)
-  const rwfAmount = Math.round(chargeAmount * 1300);
+  const rwfAmount = Math.round(chargeAmount * 1466);
 
   const displayMonthly =
     billing === "yearly" ? plan.yearlyPrice : plan.monthlyPrice;
