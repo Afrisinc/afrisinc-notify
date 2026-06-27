@@ -31,6 +31,7 @@ import {
   useInitMobileTopUp,
   useMobilePaymentConfirmation,
 } from "@/hooks/usePayg";
+import { useExchangeRate } from "@/lib/exchangeRate";
 
 // ─── Amount helpers ────────────────────────────────────────────────────────────
 
@@ -198,6 +199,7 @@ interface MobileStepProps {
   balanceAfter: number;
   accountId: string;
   customerName: string;
+  exchangeRate: number;
   onBack: () => void;
   onSuccess: (paymentId: string, expectedBalance: number) => void;
 }
@@ -209,6 +211,7 @@ function MobileStep({
   balanceAfter,
   accountId,
   customerName,
+  exchangeRate,
   onBack,
   onSuccess,
 }: MobileStepProps) {
@@ -218,8 +221,8 @@ function MobileStep({
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState("");
 
-  // Convert USD to RWF (approximate rate)
-  const rwfAmount = Math.round(amount * 1300);
+  // Convert USD to RWF using live rate
+  const rwfAmount = Math.round(amount * exchangeRate);
 
   async function handlePay() {
     if (!phoneNumber.trim()) {
@@ -379,12 +382,17 @@ export function TopUpDialog({
     step === "success" && paymentMethod === "card" ? expectedBalance : null,
   );
 
-  const { confirmed: mobileConfirmed, failed: mobileFailed } =
-    useMobilePaymentConfirmation(
-      accountId,
-      step === "pending" ? mobilePaymentId : null,
-      expectedBalance,
-    );
+  const {
+    confirmed: mobileConfirmed,
+    failed: mobileFailed,
+    timedOut: mobileTimedOut,
+  } = useMobilePaymentConfirmation(
+    accountId,
+    step === "pending" ? mobilePaymentId : null,
+    expectedBalance,
+  );
+
+  const { data: exchangeRate } = useExchangeRate();
 
   const amount = customAmount
     ? Number.parseFloat(customAmount) || 0
@@ -645,6 +653,7 @@ export function TopUpDialog({
             balanceAfter={balanceAfter}
             accountId={accountId}
             customerName={customerEmail.split("@")[0]}
+            exchangeRate={exchangeRate}
             onBack={() => setStep("method")}
             onSuccess={(paymentId, eb) => {
               setMobilePaymentId(paymentId);
@@ -665,6 +674,10 @@ export function TopUpDialog({
               ) : mobileFailed ? (
                 <div className="h-14 w-14 rounded-full bg-destructive/10 flex items-center justify-center">
                   <AlertCircle className="h-7 w-7 text-destructive" />
+                </div>
+              ) : mobileTimedOut ? (
+                <div className="h-14 w-14 rounded-full bg-warning/10 flex items-center justify-center">
+                  <AlertCircle className="h-7 w-7 text-warning" />
                 </div>
               ) : (
                 <div className="h-14 w-14 rounded-full bg-yellow-500/10 flex items-center justify-center">
@@ -690,6 +703,17 @@ export function TopUpDialog({
                     The payment was not completed. Please try again.
                   </p>
                 </>
+              ) : mobileTimedOut ? (
+                <>
+                  <p className="font-semibold text-lg text-warning">
+                    Payment Taking Too Long
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    We haven't received confirmation yet. Please check your
+                    phone for a pending prompt, or ensure you have sufficient
+                    balance and try again.
+                  </p>
+                </>
               ) : (
                 <>
                   <p className="font-semibold text-lg">Check your phone</p>
@@ -706,7 +730,7 @@ export function TopUpDialog({
               )}
             </div>
 
-            {(mobileConfirmed || mobileFailed) && (
+            {(mobileConfirmed || mobileFailed || mobileTimedOut) && (
               <Button className="w-full" onClick={handleClose}>
                 {mobileConfirmed ? "Done" : "Try Again"}
               </Button>
