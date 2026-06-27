@@ -234,9 +234,9 @@ function MobileStep({
   const [phoneNumber, setPhoneNumber] = useState("");
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState("");
-
+  
   const rwfAmount = Math.round(chargeAmount * exchangeRate);
-
+  
   const displayMonthly =
     billing === "yearly" ? plan.yearlyPrice : plan.monthlyPrice;
   const annualSavings = (plan.monthlyPrice - plan.yearlyPrice) * 12;
