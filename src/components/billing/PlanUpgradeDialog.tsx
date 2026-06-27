@@ -33,6 +33,7 @@ import {
   useInitMobileTopUp,
   useMobilePaymentConfirmation,
 } from "@/hooks/usePayg";
+import { useExchangeRate } from "@/lib/exchangeRate";
 
 export interface PlanOption {
   id: string;
@@ -213,6 +214,7 @@ interface MobileStepProps {
   chargeAmount: number;
   accountId: string;
   customerName: string;
+  exchangeRate: number;
   onBack: () => void;
   onSuccess: (paymentId: string, planName: string) => void;
 }
@@ -223,6 +225,7 @@ function MobileStep({
   chargeAmount,
   accountId,
   customerName,
+  exchangeRate,
   onBack,
   onSuccess,
 }: MobileStepProps) {
@@ -231,10 +234,9 @@ function MobileStep({
   const [phoneNumber, setPhoneNumber] = useState("");
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState("");
-
-  // Convert USD to RWF (approximate rate)
-  const rwfAmount = Math.round(chargeAmount * 1466);
-
+  
+  const rwfAmount = Math.round(chargeAmount * exchangeRate);
+  
   const displayMonthly =
     billing === "yearly" ? plan.yearlyPrice : plan.monthlyPrice;
   const annualSavings = (plan.monthlyPrice - plan.yearlyPrice) * 12;
@@ -460,6 +462,8 @@ export function PlanUpgradeDialog({
       step === "pending" ? mobilePaymentId : null,
       null, // No expected balance for subscriptions
     );
+
+  const { data: exchangeRate } = useExchangeRate();
 
   // Yearly: charge price_yearly * 12; Monthly: charge price_monthly
   const chargeAmount =
@@ -729,6 +733,7 @@ export function PlanUpgradeDialog({
             chargeAmount={chargeAmount}
             accountId={accountId}
             customerName={customerEmail.split("@")[0]}
+            exchangeRate={exchangeRate}
             onBack={() => setStep("method")}
             onSuccess={handleMobileSuccess}
           />
