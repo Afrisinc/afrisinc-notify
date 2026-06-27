@@ -579,7 +579,7 @@ function PendingStep({
   onSuccess,
   onFailed,
 }: PendingStepProps) {
-  const { confirmed, failed } = useMobilePaymentConfirmation(
+  const { confirmed, failed, timedOut } = useMobilePaymentConfirmation(
     accountId,
     paymentId,
     null,
@@ -600,6 +600,10 @@ function PendingStep({
         ) : failed ? (
           <div className="h-14 w-14 rounded-full bg-destructive/10 flex items-center justify-center">
             <AlertCircle className="h-7 w-7 text-destructive" />
+          </div>
+        ) : timedOut ? (
+          <div className="h-14 w-14 rounded-full bg-warning/10 flex items-center justify-center">
+            <AlertCircle className="h-7 w-7 text-warning" />
           </div>
         ) : (
           <div className="h-14 w-14 rounded-full bg-yellow-500/10 flex items-center justify-center">
@@ -625,6 +629,17 @@ function PendingStep({
               The payment was not completed. Please try again.
             </p>
           </>
+        ) : timedOut ? (
+          <>
+            <p className="font-semibold text-lg text-warning">
+              Payment Taking Too Long
+            </p>
+            <p className="text-sm text-muted-foreground mt-1">
+              We haven't received confirmation yet. Please check your phone for
+              a pending prompt, or ensure you have sufficient balance and try
+              again.
+            </p>
+          </>
         ) : (
           <>
             <p className="font-semibold text-lg">Check your phone</p>
@@ -645,6 +660,12 @@ function PendingStep({
         <p className="font-medium">{orgName}</p>
         <p>{selectedPlan.name} Plan</p>
       </div>
+
+      {(failed || timedOut) && (
+        <Button variant="outline" onClick={onFailed} className="w-full">
+          Try Again
+        </Button>
+      )}
     </div>
   );
 }
