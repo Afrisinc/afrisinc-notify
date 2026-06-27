@@ -1,5 +1,15 @@
 import { useState, useMemo, useEffect } from "react";
-import { Building2, Loader2, Shield, Lock } from "lucide-react";
+import {
+  Building2,
+  Loader2,
+  Shield,
+  Lock,
+  CreditCard,
+  Smartphone,
+  AlertCircle,
+  CheckCircle,
+  ArrowLeft,
+} from "lucide-react";
 import {
   Elements,
   CardElement,
@@ -10,12 +20,17 @@ import { stripePromise } from "@/lib/stripe";
 import { StripeCardInput } from "@/components/payment/StripeCardInput";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePublicPlans } from "@/hooks/useSubscription";
 import { subscriptionService } from "@/services/subscriptionService";
 import { computePlanPrice } from "@/lib/pricing";
 import type { PlanInfo } from "@/components/auth/signup/schemas";
 import { PlanCards } from "@/components/pricing/PlanCards";
+import {
+  useInitMobileTopUp,
+  useMobilePaymentConfirmation,
+} from "@/hooks/usePayg";
 
 // ── Constants ──────────────────────────────────────────────────────────────────
 
@@ -71,6 +86,8 @@ const generatePlanFeatures = (
 };
 
 // ── Types ──────────────────────────────────────────────────────────────────────
+
+type PaymentMethod = "card" | "mobile";
 
 interface CreateOrganizationFormProps {
   accountId: string;
@@ -321,6 +338,317 @@ function PaidCardStep({
   );
 }
 
+// ── Mobile Money Step ─────────────────────────────────────────────────────────
+
+interface MobileStepProps {
+  accountId: string;
+  orgName: string;
+  selectedPlan: PlanInfo;
+  billingCycle: "monthly" | "annual";
+  trialDays: number;
+  isSubmitting: boolean;
+  onBack: () => void;
+  onSuccess: (paymentId: string) => void;
+}
+
+function MobileStep({
+  accountId,
+  orgName,
+  selectedPlan,
+  billingCycle,
+  trialDays,
+  isSubmitting,
+  onBack,
+  onSuccess,
+}: MobileStepProps) {
+  const { mutateAsync: initMobileTopUp } = useInitMobileTopUp(accountId);
+
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [processing, setProcessing] = useState(false);
+  const [error, setError] = useState("");
+
+  // Compute correct price for summary
+  const priceInfo = computePlanPrice(
+    {
+      monthlyPrice: selectedPlan.priceMonthly,
+      yearlyPrice: selectedPlan.priceYearly,
+    },
+    billingCycle === "annual" ? "yearly" : "monthly",
+  );
+
+  // Convert USD to RWF (approximate rate)
+  const usdAmount =
+    billingCycle === "annual"
+      ? selectedPlan.priceYearly * 12
+      : selectedPlan.priceMonthly;
+  const rwfAmount = Math.round(usdAmount * 1300);
+
+  async function handlePay() {
+    if (!phoneNumber.trim()) {
+      setError("Phone number is required");
+      return;
+    }
+
+    // Validate Rwandan phone number (9 digits starting with 7)
+    const cleanPhone = phoneNumber.replace(/\D/g, "");
+    if (cleanPhone.length !== 9 || !cleanPhone.startsWith("7")) {
+      setError("Enter a valid 9-digit number starting with 7");
+      return;
+    }
+
+    setProcessing(true);
+    setError("");
+
+    try {
+      const result = await initMobileTopUp({
+        amount: rwfAmount,
+        phoneNumber: `250${cleanPhone}`,
+        customerName: orgName,
+        paymentType: "subscription",
+        planId: selectedPlan.id,
+        billingCycle: billingCycle === "annual" ? "yearly" : "monthly",
+      });
+
+      onSuccess(result.payment.id);
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Failed to initiate payment";
+      setError(msg);
+    } finally {
+      setProcessing(false);
+    }
+  }
+
+  const loading = processing || isSubmitting;
+
+  return (
+    <>
+      {/* Summary card */}
+      <div className="rounded-xl border border-border bg-card p-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm text-muted-foreground">Organization</p>
+            <p className="font-semibold text-foreground">{orgName}</p>
+          </div>
+          <div className="text-right">
+            <p className="text-sm text-muted-foreground">
+              {selectedPlan.name} Plan
+            </p>
+            <p className="font-semibold text-foreground">
+              {priceInfo.display}
+              <span className="text-sm font-normal text-muted-foreground">
+                {priceInfo.periodLabel}
+              </span>
+              {trialDays > 0 && (
+                <span className="ml-1 text-sm font-normal text-success">
+                  (Free for {trialDays} days)
+                </span>
+              )}
+            </p>
+            {priceInfo.note && priceInfo.cycle === "yearly" && (
+              <p className="text-[11px] text-success">{priceInfo.note}</p>
+            )}
+          </div>
+        </div>
+        {/* RWF amount */}
+        <div className="mt-3 pt-3 border-t border-border flex justify-between text-sm">
+          <span className="text-muted-foreground">Amount (RWF)</span>
+          <span className="font-semibold">
+            {rwfAmount.toLocaleString()} RWF
+          </span>
+        </div>
+      </div>
+
+      {/* Phone number input */}
+      <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Smartphone className="h-4 w-4 text-yellow-600" />
+            <span className="text-sm font-medium text-foreground">
+              Mobile Money
+            </span>
+          </div>
+          <span className="text-xs text-muted-foreground">
+            MTN MoMo or Airtel Money
+          </span>
+        </div>
+
+        <div>
+          <Label htmlFor="phone" className="text-sm font-medium">
+            Phone Number
+          </Label>
+          <div className="mt-1.5 flex">
+            <div className="flex items-center gap-1.5 px-3 border border-r-0 border-input rounded-l-md bg-muted/50 text-sm text-muted-foreground">
+              <span className="text-base">🇷🇼</span>
+              <span>+250</span>
+            </div>
+            <Input
+              id="phone"
+              type="tel"
+              placeholder="78 123 4567"
+              className="rounded-l-none"
+              value={phoneNumber}
+              onChange={(e) => {
+                const value = e.target.value.replace(/\D/g, "");
+                setPhoneNumber(value);
+                setError("");
+              }}
+              disabled={loading}
+              maxLength={9}
+            />
+          </div>
+        </div>
+
+        {error && (
+          <div className="flex items-center gap-2 text-sm text-destructive bg-destructive/10 px-3 py-2 rounded-md">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            {error}
+          </div>
+        )}
+
+        {/* Trial notice */}
+        {trialDays > 0 && (
+          <div className="pt-3 border-t border-border">
+            <div className="flex items-start gap-3 text-sm">
+              <div className="h-8 w-8 rounded-lg bg-success/10 flex items-center justify-center shrink-0">
+                <Shield className="h-4 w-4 text-success" />
+              </div>
+              <div>
+                <p className="font-medium text-foreground">
+                  You won't be charged today
+                </p>
+                <p className="text-muted-foreground text-xs mt-0.5">
+                  Your {trialDays}-day free trial starts now. You'll be charged{" "}
+                  {rwfAmount.toLocaleString()} RWF after the trial ends. Cancel
+                  anytime.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Actions */}
+      <div className="flex gap-3 pt-2">
+        <Button
+          type="button"
+          variant="outline"
+          className="flex-1"
+          onClick={onBack}
+          disabled={loading}
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" /> Back
+        </Button>
+        <Button
+          type="button"
+          className="flex-1"
+          onClick={handlePay}
+          disabled={loading || !phoneNumber.trim()}
+        >
+          {loading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Initiating...
+            </>
+          ) : trialDays > 0 ? (
+            `Start ${trialDays}-day trial`
+          ) : (
+            `Pay ${rwfAmount.toLocaleString()} RWF`
+          )}
+        </Button>
+      </div>
+    </>
+  );
+}
+
+// ── Pending Step (Mobile Payment Confirmation) ───────────────────────────────
+
+interface PendingStepProps {
+  accountId: string;
+  paymentId: string;
+  orgName: string;
+  selectedPlan: PlanInfo;
+  onSuccess: () => void;
+  onFailed: () => void;
+}
+
+function PendingStep({
+  accountId,
+  paymentId,
+  orgName,
+  selectedPlan,
+  onSuccess,
+  onFailed,
+}: PendingStepProps) {
+  const { confirmed, failed } = useMobilePaymentConfirmation(
+    accountId,
+    paymentId,
+    null,
+  );
+
+  useEffect(() => {
+    if (confirmed) onSuccess();
+    if (failed) onFailed();
+  }, [confirmed, failed, onSuccess, onFailed]);
+
+  return (
+    <div className="space-y-5 text-center py-6">
+      <div className="flex justify-center">
+        {confirmed ? (
+          <div className="h-14 w-14 rounded-full bg-success/10 flex items-center justify-center">
+            <CheckCircle className="h-7 w-7 text-success" />
+          </div>
+        ) : failed ? (
+          <div className="h-14 w-14 rounded-full bg-destructive/10 flex items-center justify-center">
+            <AlertCircle className="h-7 w-7 text-destructive" />
+          </div>
+        ) : (
+          <div className="h-14 w-14 rounded-full bg-yellow-500/10 flex items-center justify-center">
+            <Loader2 className="h-7 w-7 text-yellow-600 animate-spin" />
+          </div>
+        )}
+      </div>
+
+      <div>
+        {confirmed ? (
+          <>
+            <p className="font-semibold text-lg">Payment Successful!</p>
+            <p className="text-sm text-muted-foreground mt-1">
+              Creating your organization...
+            </p>
+          </>
+        ) : failed ? (
+          <>
+            <p className="font-semibold text-lg text-destructive">
+              Payment Failed
+            </p>
+            <p className="text-sm text-muted-foreground mt-1">
+              The payment was not completed. Please try again.
+            </p>
+          </>
+        ) : (
+          <>
+            <p className="font-semibold text-lg">Check your phone</p>
+            <p className="text-sm text-muted-foreground mt-1">
+              A payment prompt has been sent to your phone. Please enter your
+              PIN to confirm the payment.
+            </p>
+            <div className="mt-3 flex justify-center">
+              <div className="h-1.5 w-24 rounded-full bg-muted overflow-hidden">
+                <div className="h-full bg-yellow-500 rounded-full animate-pulse w-full" />
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+
+      <div className="text-sm text-muted-foreground">
+        <p className="font-medium">{orgName}</p>
+        <p>{selectedPlan.name} Plan</p>
+      </div>
+    </div>
+  );
+}
+
 // ── Main form ─────────────────────────────────────────────────────────────────
 
 const CreateOrganizationForm = ({
@@ -331,13 +659,17 @@ const CreateOrganizationForm = ({
   onCancel,
   isSubmitting,
 }: CreateOrganizationFormProps) => {
-  const [step, setStep] = useState<1 | 2>(1);
+  const [step, setStep] = useState<
+    "plan" | "method" | "card" | "mobile" | "pending"
+  >("plan");
   const [orgName, setOrgName] = useState("");
   const [orgNameError, setOrgNameError] = useState("");
   const [selectedPlan, setSelectedPlan] = useState<PlanInfo | null>(null);
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">(
     "monthly",
   );
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
+  const [mobilePaymentId, setMobilePaymentId] = useState<string | null>(null);
 
   const { data: plansData, isLoading: plansLoading } = usePublicPlans();
 
@@ -366,7 +698,7 @@ const CreateOrganizationForm = ({
     }
     if (!selectedPlan) return;
     setOrgNameError("");
-    setStep(2);
+    setStep("method");
   };
 
   const handleFreeSubmit = () => {
@@ -384,12 +716,32 @@ const CreateOrganizationForm = ({
     });
   };
 
+  const handleMobileSuccess = (paymentId: string) => {
+    setMobilePaymentId(paymentId);
+    setStep("pending");
+  };
+
+  const handleMobilePaymentConfirmed = () => {
+    // Mobile payment confirmed - submit the form
+    onSubmit({
+      name: orgName.trim(),
+      planId: selectedPlan!.id,
+      billingCycle,
+    });
+  };
+
+  const handleMobilePaymentFailed = () => {
+    // Go back to mobile step to retry
+    setMobilePaymentId(null);
+    setStep("mobile");
+  };
+
   const canProceedStep1 = orgName.trim() && selectedPlan;
 
   return (
     <div className="space-y-5">
       {/* ── Step 1: name + plan ──────────────────────────────────────────────── */}
-      {step === 1 && (
+      {step === "plan" && (
         <>
           {/* Organization Name */}
           <div className="space-y-2">
@@ -515,8 +867,94 @@ const CreateOrganizationForm = ({
         </>
       )}
 
-      {/* ── Step 2: payment (paid plans only) ───────────────────────────────── */}
-      {step === 2 && isPaidPlan && selectedPlan && (
+      {/* ── Step 2: Payment Method Selection ─────────────────────────────────── */}
+      {step === "method" && isPaidPlan && selectedPlan && (
+        <div className="space-y-4">
+          {/* Summary */}
+          <div className="rounded-xl border border-border bg-card p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Organization</p>
+                <p className="font-semibold text-foreground">{orgName}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-muted-foreground">
+                  {selectedPlan.name} Plan
+                </p>
+                <p className="font-semibold text-foreground">
+                  {computePlanPrice(
+                    {
+                      monthlyPrice: selectedPlan.priceMonthly,
+                      yearlyPrice: selectedPlan.priceYearly,
+                    },
+                    billingCycle === "annual" ? "yearly" : "monthly",
+                  ).display}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Payment method buttons */}
+          <div className="space-y-2">
+            <button
+              onClick={() => {
+                setPaymentMethod("card");
+                setStep("card");
+              }}
+              className={`w-full flex items-center gap-3 p-4 rounded-lg border transition-colors text-left ${
+                paymentMethod === "card"
+                  ? "border-primary bg-primary/5"
+                  : "border-border hover:bg-muted/40"
+              }`}
+            >
+              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                <CreditCard className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="font-medium text-foreground">
+                  Credit/Debit Card
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Visa, Mastercard, American Express
+                </p>
+              </div>
+            </button>
+
+            <button
+              onClick={() => {
+                setPaymentMethod("mobile");
+                setStep("mobile");
+              }}
+              className={`w-full flex items-center gap-3 p-4 rounded-lg border transition-colors text-left ${
+                paymentMethod === "mobile"
+                  ? "border-primary bg-primary/5"
+                  : "border-border hover:bg-muted/40"
+              }`}
+            >
+              <div className="h-10 w-10 rounded-full bg-yellow-500/10 flex items-center justify-center shrink-0">
+                <Smartphone className="h-5 w-5 text-yellow-600" />
+              </div>
+              <div>
+                <p className="font-medium text-foreground">Mobile Money</p>
+                <p className="text-xs text-muted-foreground">
+                  MTN MoMo, Airtel Money
+                </p>
+              </div>
+            </button>
+          </div>
+
+          <Button
+            variant="outline"
+            onClick={() => setStep("plan")}
+            className="gap-1.5"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" /> Back
+          </Button>
+        </div>
+      )}
+
+      {/* ── Step 3a: Card Payment ─────────────────────────────────────────────── */}
+      {step === "card" && isPaidPlan && selectedPlan && (
         <Elements stripe={stripePromise}>
           <PaidCardStep
             accountId={accountId}
@@ -527,10 +965,36 @@ const CreateOrganizationForm = ({
             billingCycle={billingCycle}
             trialDays={trialDays}
             isSubmitting={isSubmitting}
-            onBack={() => setStep(1)}
+            onBack={() => setStep("method")}
             onSubmit={handlePaidSubmit}
           />
         </Elements>
+      )}
+
+      {/* ── Step 3b: Mobile Money ─────────────────────────────────────────────── */}
+      {step === "mobile" && isPaidPlan && selectedPlan && (
+        <MobileStep
+          accountId={accountId}
+          orgName={orgName}
+          selectedPlan={selectedPlan}
+          billingCycle={billingCycle}
+          trialDays={trialDays}
+          isSubmitting={isSubmitting}
+          onBack={() => setStep("method")}
+          onSuccess={handleMobileSuccess}
+        />
+      )}
+
+      {/* ── Step 4: Pending (Mobile Payment Confirmation) ─────────────────────── */}
+      {step === "pending" && selectedPlan && mobilePaymentId && (
+        <PendingStep
+          accountId={accountId}
+          paymentId={mobilePaymentId}
+          orgName={orgName}
+          selectedPlan={selectedPlan}
+          onSuccess={handleMobilePaymentConfirmed}
+          onFailed={handleMobilePaymentFailed}
+        />
       )}
     </div>
   );
