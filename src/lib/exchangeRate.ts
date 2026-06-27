@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-const FALLBACK_RATE = 1450; // Fallback if API fails
+const FALLBACK_RATE = 1450;
 
 export async function fetchUsdToRwfRate(): Promise<number> {
   try {
