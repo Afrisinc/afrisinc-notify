@@ -231,7 +231,7 @@ function MobileStep({
   const [error, setError] = useState("");
 
   // Convert USD to RWF
-  const rwfAmount = Math.round(amountUSD * 1300);
+  const rwfAmount = Math.round(amountUSD * 1466);
 
   async function handlePay() {
     if (!phoneNumber.trim()) {

@@ -219,7 +219,7 @@ function MobileStep({
   const [error, setError] = useState("");
 
   // Convert USD to RWF (approximate rate)
-  const rwfAmount = Math.round(amount * 1300);
+  const rwfAmount = Math.round(amount * 1466);
 
   async function handlePay() {
     if (!phoneNumber.trim()) {

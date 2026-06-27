@@ -381,7 +381,7 @@ function MobileStep({
     billingCycle === "annual"
       ? selectedPlan.priceYearly * 12
       : selectedPlan.priceMonthly;
-  const rwfAmount = Math.round(usdAmount * 1300);
+  const rwfAmount = Math.round(usdAmount * 1466);
 
   async function handlePay() {
     if (!phoneNumber.trim()) {
