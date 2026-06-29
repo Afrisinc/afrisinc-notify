@@ -913,12 +913,12 @@ export default function AppCampaigns() {
                             className={cn(
                               "w-full flex items-center gap-3 p-3 rounded-lg border text-left transition-colors",
                               selected
-                                ? "border-primary bg-primary/5"
-                                : "border-border hover:border-primary/40 hover:bg-muted/40",
+                                ? "border-primary bg-primary/5 text-foreground"
+                                : "border-border text-foreground hover:border-primary/40 hover:bg-muted/40",
                             )}
                           >
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium truncate">
+                              <p className="text-sm font-medium truncate text-foreground">
                                 {t.template?.code || "Unnamed"}
                               </p>
                               <p className="text-[11px] text-muted-foreground">
