@@ -161,9 +161,9 @@ export default function AppContacts() {
         row.push(cur);
         cur = "";
       } else if ((ch === "\n" || ch === "\r") && !inQuotes) {
-        // handle CRLF or LF
+        // handle CRLF: skip \r if followed by \n
         if (ch === "\r" && text[i + 1] === "\n") {
-          // skip, will be handled by \n
+          i++; // skip \r, let \n handle the newline
         }
         row.push(cur);
         cur = "";
@@ -191,6 +191,17 @@ export default function AppContacts() {
       return;
     }
 
+    // Validate file type
+    const fileName = file.name.toLowerCase();
+    const isExcelFile = fileName.endsWith(".xlsx") || fileName.endsWith(".xls");
+    if (isExcelFile) {
+      setImportError(
+        "Excel files (.xlsx, .xls) are not yet supported. Please save your Excel file as CSV format and upload again.",
+      );
+      setImportStep("select");
+      return;
+    }
+
     setImportStep("progress");
     setImportError(null);
 
@@ -199,39 +210,80 @@ export default function AppContacts() {
       const rows = parseCsv(text);
       if (rows.length < 1) throw new Error("CSV file is empty");
 
-      const header = rows[0].map((h) => h.toLowerCase());
+      // Normalize headers - remove spaces, underscores, convert to lowercase
+      const rawHeader = rows[0];
+      const header = rawHeader.map((h) =>
+        h.toLowerCase().replace(/[\s_-]/g, ""),
+      );
+
+      // Find column indices with flexible matching
+      const findColumn = (patterns: string[]) =>
+        header.findIndex((h) => patterns.some((p) => h.includes(p)));
+
       const idx = {
-        firstName: header.indexOf("firstname"),
-        lastName: header.indexOf("lastname"),
-        email: header.indexOf("email"),
-        phone: header.indexOf("phone"),
-        tags: header.indexOf("tags"),
+        firstName: findColumn(["firstname", "first", "fname", "givenname"]),
+        lastName: findColumn([
+          "lastname",
+          "last",
+          "lname",
+          "surname",
+          "family",
+        ]),
+        email: findColumn(["email", "mail", "emailaddress"]),
+        phone: findColumn(["phone", "mobile", "tel", "cell", "phonenumber"]),
+        tags: findColumn(["tags", "tag", "labels", "label", "groups", "group"]),
       };
+
+      // Check if we have at least email or phone column
+      if (idx.email === -1 && idx.phone === -1) {
+        throw new Error(
+          `Could not find email or phone column. Found columns: ${rawHeader.join(", ")}. Expected a column containing "email" or "phone".`,
+        );
+      }
 
       const dataRows = rows.slice(1);
 
+      if (dataRows.length === 0) {
+        throw new Error("CSV has headers but no data rows");
+      }
+
       const contactsPayload: LocalContact[] = dataRows
         .map((r) => {
-          const email = (r[idx.email] || "").trim();
-          if (!email) return null;
-          const tagsRaw = r[idx.tags] || "";
+          const email = idx.email >= 0 ? (r[idx.email] || "").trim() : "";
+          const phone = idx.phone >= 0 ? (r[idx.phone] || "").trim() : "";
+
+          // Must have at least email or phone
+          const hasValidEmail = email && email.includes("@");
+          const hasValidPhone = phone && phone.length >= 9;
+
+          if (!hasValidEmail && !hasValidPhone) return null;
+
+          const tagsRaw = idx.tags >= 0 ? r[idx.tags] || "" : "";
           const tags = tagsRaw
             .split(",")
             .map((t) => t.trim())
             .filter(Boolean);
 
           return {
-            email,
-            firstName: r[idx.firstName] || "" || undefined,
-            lastName: r[idx.lastName] || "" || undefined,
-            phone: r[idx.phone] || "" || undefined,
+            email: hasValidEmail ? email : undefined,
+            firstName:
+              idx.firstName >= 0
+                ? r[idx.firstName]?.trim() || undefined
+                : undefined,
+            lastName:
+              idx.lastName >= 0
+                ? r[idx.lastName]?.trim() || undefined
+                : undefined,
+            phone: hasValidPhone ? phone : undefined,
             tags,
           } as LocalContact;
         })
         .filter((c): c is LocalContact => c !== null);
 
       if (contactsPayload.length === 0)
-        throw new Error("No valid contacts found in CSV");
+        throw new Error(
+          "No valid contacts found. Each row must have a valid email address or phone number (9+ digits).",
+        );
 
       setParsedContacts(contactsPayload);
       setImportStep("preview");
@@ -628,43 +680,59 @@ export default function AppContacts() {
               </TabsList>
               <TabsContent value="csv" className="space-y-3 mt-4">
                 <p className="text-xs text-muted-foreground">
-                  Upload a CSV file with columns: firstName, lastName, email,
-                  phone, tags
+                  Upload a CSV or Excel file with columns: firstName, lastName,
+                  email, phone, tags
                 </p>
+
+                {importError && (
+                  <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>{importError}</AlertDescription>
+                  </Alert>
+                )}
+
+                {/* Hidden file input - placed outside drop area to avoid event conflicts */}
+                <input
+                  id="csv-input"
+                  type="file"
+                  accept=".csv,.xlsx,.xls,.txt,text/csv,text/plain,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                  className="sr-only"
+                  ref={csvInputRef}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      handleFileUpload(file);
+                    }
+                    // Reset input so same file can be selected again
+                    e.target.value = "";
+                  }}
+                />
 
                 <div
                   id="csv-drop-area"
-                  onClick={() => document.getElementById("csv-input")?.click()}
-                  onDragOver={(e) => e.preventDefault()}
-                  onDrop={async (e) => {
+                  onClick={() => csvInputRef.current?.click()}
+                  onDragOver={(e) => {
                     e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                     const file = e.dataTransfer?.files?.[0];
-                    if (file) await handleFileUpload(file);
+                    if (file) handleFileUpload(file);
                   }}
                   className="border-2 border-dashed border-border rounded-lg p-8 text-center cursor-pointer hover:border-primary/50 transition-colors"
                 >
                   <FileUp className="h-8 w-8 text-muted-foreground/40 mx-auto mb-2" />
                   <p className="text-sm text-muted-foreground">
-                    Drop CSV here or click to upload
+                    Drop CSV or Excel file here or click to upload
                   </p>
-                  <input
-                    id="csv-input"
-                    type="file"
-                    accept=".csv,text/csv"
-                    className="hidden"
-                    ref={csvInputRef}
-                    onChange={async (e) => {
-                      const file = e.target.files?.[0];
-                      if (file) await handleFileUpload(file);
-                      e.currentTarget.value = "";
-                    }}
-                  />
                 </div>
                 <Button
                   className="w-full"
-                  onClick={() => document.getElementById("csv-input")?.click()}
+                  onClick={() => csvInputRef.current?.click()}
                 >
-                  Import CSV
+                  Import File
                 </Button>
               </TabsContent>
               <TabsContent value="paste" className="space-y-3 mt-4">
@@ -765,32 +833,53 @@ export default function AppContacts() {
                   Found {parsedContacts.length} valid contacts to import.
                 </AlertDescription>
               </Alert>
-              <div className="max-h-[50vh] overflow-auto rounded-md border min-w-0">
+              <div className="max-h-[50vh] overflow-auto rounded-md border border-border bg-card min-w-0">
                 <Table className="whitespace-nowrap">
                   <TableHeader>
-                    <TableRow>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Phone</TableHead>
-                      <TableHead>Tags</TableHead>
+                    <TableRow className="border-border hover:bg-muted/50">
+                      <TableHead className="text-muted-foreground">
+                        Email
+                      </TableHead>
+                      <TableHead className="text-muted-foreground">
+                        Name
+                      </TableHead>
+                      <TableHead className="text-muted-foreground">
+                        Phone
+                      </TableHead>
+                      <TableHead className="text-muted-foreground">
+                        Tags
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {parsedContacts.slice(0, 100).map((c, i) => (
-                      <TableRow key={i}>
+                      <TableRow
+                        key={i}
+                        className="border-border hover:bg-muted/50"
+                      >
                         <TableCell
-                          className="max-w-[200px] truncate"
+                          className="max-w-[200px] truncate text-foreground"
                           title={c.email}
                         >
-                          {c.email}
+                          {c.email || (
+                            <span className="text-muted-foreground">—</span>
+                          )}
                         </TableCell>
                         <TableCell
-                          className="max-w-[150px] truncate"
+                          className="max-w-[150px] truncate text-foreground"
                           title={`${c.firstName || ""} ${c.lastName || ""}`.trim()}
                         >
-                          {c.firstName} {c.lastName}
+                          {c.firstName || c.lastName ? (
+                            `${c.firstName || ""} ${c.lastName || ""}`.trim()
+                          ) : (
+                            <span className="text-muted-foreground">—</span>
+                          )}
                         </TableCell>
-                        <TableCell>{c.phone}</TableCell>
+                        <TableCell className="text-foreground">
+                          {c.phone || (
+                            <span className="text-muted-foreground">—</span>
+                          )}
+                        </TableCell>
                         <TableCell
                           className="max-w-[200px] truncate w-full"
                           title={c.tags?.join(", ")}
@@ -801,20 +890,20 @@ export default function AppContacts() {
                                 <Badge
                                   key={`${i}-${t}`}
                                   variant="outline"
-                                  className="text-[10px]"
+                                  className="text-[10px] text-foreground"
                                 >
                                   {t}
                                 </Badge>
                               ))}
                             </div>
                           ) : (
-                            "—"
+                            <span className="text-muted-foreground">—</span>
                           )}
                         </TableCell>
                       </TableRow>
                     ))}
                     {parsedContacts.length > 100 && (
-                      <TableRow>
+                      <TableRow className="border-border">
                         <TableCell
                           colSpan={4}
                           className="text-center text-muted-foreground p-4"
