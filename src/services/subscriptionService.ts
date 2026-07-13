@@ -261,8 +261,8 @@ export const subscriptionService = {
   },
 
   /**
-   * Initiate a Stripe Payment Intent for a plan upgrade.
-   * Returns clientSecret for Stripe.js to confirm on the client.
+   * Initiate a card payment for plan upgrade via ITEC PesaPal (africnc-pay).
+   * Returns checkout URL and PCODE for payment tracking.
    */
   async initSubscriptionPayment(
     planId: string,
@@ -270,11 +270,12 @@ export const subscriptionService = {
     accountId: string,
     customerEmail: string,
   ): Promise<{
-    clientSecret: string;
-    paymentIntentId: string;
+    checkoutUrl: string;
+    pcode: string;
     orderId: string;
-    amountCents: number;
+    amountUSD: number;
     planName: string;
+    validUntil: string;
   }> {
     const response = await getClient().post(
       "/api/subscriptions/payment/init",
