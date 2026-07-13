@@ -4,21 +4,16 @@
  * Shown when a user clicks "Install" on a paid marketplace template.
  * Flow:
  *   1. Confirm step — shows price + app selector
- *   2. Card step    — Stripe CardElement (inside <Elements>)
- *   3. Success step — template installed
+ *   2. Method step  — choose payment method (card or mobile)
+ *   3. Card/Mobile step — PesaPal card redirect or mobile money
+ *   4. Success step — template installed
  *
  * After payment.succeeded, afrisinc-pay fires the internal webhook which
  * calls marketplaceService.installTemplate(templateId, appId, ...).
  */
 import { useState, useEffect } from "react";
-import {
-  CardElement,
-  Elements,
-  useStripe,
-  useElements,
-} from "@stripe/react-stripe-js";
-import { stripePromise } from "@/lib/stripe";
-import { StripeCardInput } from "@/components/payment/StripeCardInput";
+import { CardPaymentStep } from "@/components/payment/CardPaymentStep";
+import { PaymentMethodSelector } from "@/components/payment/PaymentMethodSelector";
 import {
   Dialog,
   DialogContent,
@@ -44,9 +39,7 @@ import {
   Sparkles,
   AlertCircle,
   Package,
-  CreditCard,
   Smartphone,
-  Shield,
 } from "lucide-react";
 import { useInitTemplatePurchase } from "@/hooks/useMarketplace";
 import {
@@ -82,131 +75,6 @@ export interface TemplatePurchaseDialogProps {
 
 type Step = "confirm" | "method" | "card" | "mobile" | "pending" | "success";
 type PaymentMethod = "card" | "mobile";
-
-// ─── Card step (inside <Elements>) ────────────────────────────────────────────
-
-interface CardStepProps {
-  templateId: string;
-  appId: string;
-  amountUSD: number;
-  accountId: string;
-  customerEmail: string;
-  onBack: () => void;
-  onSuccess: () => void;
-}
-
-function CardStep({
-  templateId,
-  appId,
-  amountUSD,
-  accountId,
-  customerEmail,
-  onBack,
-  onSuccess,
-}: CardStepProps) {
-  const stripe = useStripe();
-  const elements = useElements();
-  const { mutateAsync: initPayment } = useInitTemplatePurchase(
-    templateId,
-    accountId,
-  );
-
-  const [processing, setProcessing] = useState(false);
-  const [error, setError] = useState("");
-
-  async function handlePay() {
-    if (!stripe || !elements) return;
-    const cardElement = elements.getElement(CardElement);
-    if (!cardElement) return;
-
-    setProcessing(true);
-    setError("");
-
-    try {
-      const { clientSecret } = await initPayment({ appId, customerEmail });
-
-      const { error: stripeError, paymentIntent } =
-        await stripe.confirmCardPayment(clientSecret, {
-          payment_method: {
-            card: cardElement,
-            billing_details: { email: customerEmail },
-          },
-        });
-
-      if (stripeError) {
-        setError(stripeError.message ?? "Payment failed. Please try again.");
-        return;
-      }
-
-      if (paymentIntent?.status === "succeeded") {
-        onSuccess();
-      } else {
-        setError("Payment was not completed. Please try again.");
-      }
-    } catch (e: unknown) {
-      setError(
-        e instanceof Error ? e.message : "Payment failed. Please try again.",
-      );
-    } finally {
-      setProcessing(false);
-    }
-  }
-
-  return (
-    <div className="space-y-4">
-      {/* Order summary */}
-      <div className="rounded-lg border border-border/60 divide-y divide-border/40 overflow-hidden text-sm">
-        <div className="flex justify-between px-3 py-2 bg-muted/30 dark:bg-muted/20">
-          <span className="text-content-secondary dark:text-foreground/70">
-            Template purchase
-          </span>
-          <span className="font-semibold text-content dark:text-foreground">
-            ${amountUSD.toFixed(2)}
-          </span>
-        </div>
-        <div className="flex justify-between px-3 py-2.5 bg-primary/5 dark:bg-primary/10">
-          <span className="font-semibold text-content dark:text-foreground">
-            Charged today (one-time)
-          </span>
-          <span className="font-bold text-primary">
-            ${amountUSD.toFixed(2)}
-          </span>
-        </div>
-      </div>
-
-      <StripeCardInput
-        error={error}
-        onChange={() => setError("")}
-        disabled={processing}
-      />
-
-      <div className="flex gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onBack}
-          disabled={processing}
-          className="gap-1.5"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" /> Back
-        </Button>
-        <Button
-          className="flex-1"
-          disabled={!stripe || processing}
-          onClick={handlePay}
-        >
-          {processing ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin mr-2" /> Processing…
-            </>
-          ) : (
-            `Pay $${amountUSD.toFixed(2)}`
-          )}
-        </Button>
-      </div>
-    </div>
-  );
-}
 
 // ─── Mobile step ───────────────────────────────────────────────────────────────
 
@@ -494,10 +362,13 @@ export function TemplatePurchaseDialog({
 }: TemplatePurchaseDialogProps) {
   const [step, setStep] = useState<Step>("confirm");
   const [selectedAppId, setSelectedAppId] = useState(apps[0]?.id ?? "");
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
   const [mobilePaymentId, setMobilePaymentId] = useState<string | null>(null);
 
   const { data: exchangeRate } = useExchangeRate();
+  const templatePurchaseMutation = useInitTemplatePurchase(
+    template?.id ?? "",
+    accountId,
+  );
 
   const templateName = template?.subject || template?.name || "Template";
   const price = template?.price ?? 0;
@@ -643,99 +514,48 @@ export function TemplatePurchaseDialog({
 
         {/* ── Step 2: Payment Method Selection ─────────────────────────────── */}
         {step === "method" && template && (
-          <div className="space-y-4">
-            {/* Summary */}
-            <div className="rounded-lg border border-border/60 divide-y divide-border/40 overflow-hidden text-sm">
-              <div className="flex justify-between px-3 py-2 bg-muted/30 dark:bg-muted/20">
-                <span className="text-content-secondary dark:text-foreground/70">
-                  Template
-                </span>
-                <span className="font-semibold text-content dark:text-foreground">
-                  {templateName}
-                </span>
-              </div>
-              <div className="flex justify-between px-3 py-2.5 bg-primary/5 dark:bg-primary/10">
-                <span className="font-semibold text-content dark:text-foreground">
-                  Total
-                </span>
-                <span className="font-bold text-primary">
-                  ${price.toFixed(2)}
-                </span>
-              </div>
-            </div>
-
-            {/* Payment method buttons */}
-            <div className="space-y-2">
-              <button
-                onClick={() => {
-                  setPaymentMethod("card");
-                  setStep("card");
-                }}
-                className={`w-full flex items-center gap-3 p-4 rounded-lg border transition-colors text-left ${
-                  paymentMethod === "card"
-                    ? "border-primary bg-primary/5"
-                    : "border-border hover:bg-muted/40"
-                }`}
-              >
-                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                  <CreditCard className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="font-medium text-foreground">
-                    Credit/Debit Card
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Visa, Mastercard, American Express
-                  </p>
-                </div>
-              </button>
-
-              <button
-                onClick={() => {
-                  setPaymentMethod("mobile");
-                  setStep("mobile");
-                }}
-                className={`w-full flex items-center gap-3 p-4 rounded-lg border transition-colors text-left ${
-                  paymentMethod === "mobile"
-                    ? "border-primary bg-primary/5"
-                    : "border-border hover:bg-muted/40"
-                }`}
-              >
-                <div className="h-10 w-10 rounded-full bg-yellow-500/10 flex items-center justify-center shrink-0">
-                  <Smartphone className="h-5 w-5 text-yellow-600" />
-                </div>
-                <div>
-                  <p className="font-medium text-foreground">Mobile Money</p>
-                  <p className="text-xs text-muted-foreground">
-                    MTN MoMo, Airtel Money
-                  </p>
-                </div>
-              </button>
-            </div>
-
-            <Button
-              variant="outline"
-              onClick={() => setStep("confirm")}
-              className="gap-1.5"
-            >
-              <ArrowLeft className="h-3.5 w-3.5" /> Back
-            </Button>
-          </div>
+          <PaymentMethodSelector
+            chargeAmount={price}
+            onSelectCard={() => setStep("card")}
+            onSelectMobile={() => setStep("mobile")}
+            onBack={() => setStep("confirm")}
+            summaryItems={[
+              { label: "Template", value: templateName },
+              {
+                label: "Total",
+                value: price,
+                highlight: true,
+                color: "primary" as const,
+              },
+            ]}
+          />
         )}
 
-        {/* ── Step 3a: Card (Stripe Elements) ─────────────────────────────── */}
+        {/* ── Step 3a: Card (PesaPal Redirect) ──────────────────────────────── */}
         {step === "card" && template && (
-          <Elements stripe={stripePromise}>
-            <CardStep
-              templateId={template.id}
-              appId={selectedAppId}
-              amountUSD={price}
-              accountId={accountId}
-              customerEmail={customerEmail}
-              onBack={() => setStep("method")}
-              onSuccess={handleSuccess}
-            />
-          </Elements>
+          <CardPaymentStep
+            chargeAmount={price}
+            accountId={accountId}
+            customerEmail={customerEmail}
+            onInitPayment={async (email) => {
+              return await templatePurchaseMutation.mutateAsync({
+                appId: selectedAppId,
+                customerEmail: email,
+              });
+            }}
+            onSuccess={handleSuccess}
+            onBack={() => setStep("method")}
+            storageKeyPrefix="template_purchase_pcode"
+            summaryItems={[
+              { label: "Template", value: templateName },
+              {
+                label: "One-time charge",
+                value: price,
+                highlight: true,
+                color: "primary" as const,
+              },
+            ]}
+          />
         )}
 
         {/* ── Step 3b: Mobile Money ───────────────────────────────────────── */}

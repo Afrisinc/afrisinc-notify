@@ -1,13 +1,5 @@
 import { useState } from "react";
 import {
-  Elements,
-  CardElement,
-  useStripe,
-  useElements,
-} from "@stripe/react-stripe-js";
-import { stripePromise } from "@/lib/stripe";
-import { StripeCardInput } from "@/components/payment/StripeCardInput";
-import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -68,7 +60,7 @@ type Step =
   | "success"
   | "activating";
 
-// ─── Card Step (inside <Elements>) ────────────────────────────────────────────
+// ─── Card Step (PesaPal Redirect) ────────────────────────────────────────────
 
 interface CardStepProps {
   plan: PlanOption;
@@ -89,51 +81,40 @@ function CardStep({
   onBack,
   onSuccess,
 }: CardStepProps) {
-  const stripe = useStripe();
-  const elements = useElements();
   const { mutateAsync: initPayment } = useInitSubscriptionPayment(accountId);
 
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState("");
 
   async function handlePay() {
-    if (!stripe || !elements) return;
-    const cardElement = elements.getElement(CardElement);
-    if (!cardElement) return;
-
     setProcessing(true);
     setError("");
 
     try {
-      const { clientSecret } = await initPayment({
+      // Get checkout URL from africnc-pay (ITEC PesaPal)
+      const { checkoutUrl, pcode } = await initPayment({
         planId: plan.id,
         billingCycle: billing,
         customerEmail,
       });
 
-      const { error: stripeError, paymentIntent } =
-        await stripe.confirmCardPayment(clientSecret, {
-          payment_method: {
-            card: cardElement,
-            billing_details: { email: customerEmail },
-          },
-        });
+      // Store PCODE for optional fallback polling
+      localStorage.setItem(`payment_pcode_${accountId}`, pcode);
 
-      if (stripeError) {
-        setError(stripeError.message ?? "Payment failed. Please try again.");
-        return;
-      }
+      // Redirect to PesaPal checkout
+      window.location.href = checkoutUrl;
 
-      if (paymentIntent?.status === "succeeded") {
-        onSuccess(plan.name);
-      } else {
-        setError("Payment was not completed. Please try again.");
-      }
+      // After redirect, customer completes payment on PesaPal
+      // → PesaPal confirms to africnc-pay
+      // → africnc-pay sends webhook (card.payment_succeeded)
+      // → Subscription activates automatically via webhook
+      onSuccess(plan.name);
     } catch (e: unknown) {
       const msg =
-        e instanceof Error ? e.message : "Payment failed. Please try again.";
+        e instanceof Error
+          ? e.message
+          : "Payment initiation failed. Please try again.";
       setError(msg);
-    } finally {
       setProcessing(false);
     }
   }
@@ -172,11 +153,23 @@ function CardStep({
         </div>
       </div>
 
-      <StripeCardInput
-        error={error}
-        onChange={() => setError("")}
-        disabled={processing}
-      />
+      {/* Info: PesaPal redirect */}
+      <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-md p-3 text-sm">
+        <p className="text-blue-900 dark:text-blue-300 font-medium">
+          You'll be redirected to PesaPal
+        </p>
+        <p className="text-blue-800 dark:text-blue-400 text-xs mt-1">
+          Securely complete your card payment with Visa, Mastercard, or American
+          Express.
+        </p>
+      </div>
+
+      {error && (
+        <div className="flex items-center gap-2 text-sm text-destructive bg-destructive/10 px-3 py-2 rounded-md">
+          <AlertCircle className="h-4 w-4 shrink-0" />
+          {error}
+        </div>
+      )}
 
       <div className="flex gap-2">
         <Button
@@ -188,11 +181,7 @@ function CardStep({
         >
           <ArrowLeft className="h-3.5 w-3.5" /> Back
         </Button>
-        <Button
-          className="flex-1"
-          disabled={!stripe || processing}
-          onClick={handlePay}
-        >
+        <Button className="flex-1" disabled={processing} onClick={handlePay}>
           {processing ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin mr-2" /> Processing…
@@ -710,19 +699,17 @@ export function PlanUpgradeDialog({
           </div>
         )}
 
-        {/* ── Step 3a: Card ────────────────────────────────────────────────── */}
+        {/* ── Step 3a: Card (PesaPal Redirect) ──────────────────────────────── */}
         {step === "card" && (
-          <Elements stripe={stripePromise}>
-            <CardStep
-              plan={plan}
-              billing={billing}
-              chargeAmount={chargeAmount}
-              accountId={accountId}
-              customerEmail={customerEmail}
-              onBack={() => setStep("method")}
-              onSuccess={handleCardSuccess}
-            />
-          </Elements>
+          <CardStep
+            plan={plan}
+            billing={billing}
+            chargeAmount={chargeAmount}
+            accountId={accountId}
+            customerEmail={customerEmail}
+            onBack={() => setStep("method")}
+            onSuccess={handleCardSuccess}
+          />
         )}
 
         {/* ── Step 3b: Mobile Money ────────────────────────────────────────── */}

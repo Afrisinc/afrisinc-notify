@@ -264,10 +264,10 @@ export interface InitTemplatePurchasePayload {
 }
 
 export interface InitTemplatePurchaseResponse {
-  clientSecret: string;
-  paymentIntentId: string;
+  checkoutUrl: string;
+  pcode: string;
   orderId: string;
-  amountCents: number;
+  amountUSD: number;
   templateName: string;
 }
 
