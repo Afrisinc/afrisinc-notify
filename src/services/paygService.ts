@@ -102,7 +102,7 @@ export const paygService = {
   ): Promise<TopUpInitResult> {
     const res = await client().post(
       "/api/payg/topup/init",
-      { amount, customerEmail },
+      { amount, customerEmail, currency: "USD" },
       { headers: { "x-account-id": accountId } },
     );
     return res.data.data;

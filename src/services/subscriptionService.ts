@@ -279,7 +279,7 @@ export const subscriptionService = {
   }> {
     const response = await getClient().post(
       "/api/subscriptions/payment/init",
-      { planId, billingCycle, customerEmail },
+      { planId, billingCycle, customerEmail, currency: "USD" },
       { headers: { "x-account-id": accountId } },
     );
     return response.data.data;

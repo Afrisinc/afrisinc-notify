@@ -278,7 +278,7 @@ export const initTemplatePurchaseService = async (
 ): Promise<InitTemplatePurchaseResponse> => {
   const { data } = await getApiClient().post<any>(
     `/api/marketplace/templates/${templateId}/payment/init`,
-    payload,
+    { ...payload, currency: "USD" },
     { headers: { "x-account-id": accountId } },
   );
   return data.data as InitTemplatePurchaseResponse;
