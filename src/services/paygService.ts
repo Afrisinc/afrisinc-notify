@@ -53,9 +53,19 @@ export interface TransactionPage {
 const client = () => getApiClient();
 
 export interface TopUpInitResult {
-  clientSecret: string;
+  id: string;
+  ref: string;
   orderId: string;
-  paymentIntentId: string;
+  amount: number;
+  currency: string;
+  email: string;
+  type: "CARD";
+  status: "PENDING" | "PROCESSING" | "SUCCESSFUL" | "FAILED";
+  pcode: string;
+  checkoutUrl: string;
+  validUntil: string;
+  provider: string;
+  createdAt: string;
 }
 
 export interface MobilePayment {
