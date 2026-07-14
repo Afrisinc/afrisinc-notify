@@ -430,7 +430,7 @@ const CreateOrganizationForm = ({
                 yearlyPrice: selectedPlan.priceYearly,
               },
               billingCycle === "annual" ? "yearly" : "monthly",
-            ).billed / 100
+            ).billed
           }
           onSelectCard={() => setStep("card")}
           onSelectMobile={() => setStep("mobile")}
@@ -463,7 +463,7 @@ const CreateOrganizationForm = ({
                 yearlyPrice: selectedPlan.priceYearly,
               },
               billingCycle === "annual" ? "yearly" : "monthly",
-            ).billed / 100
+            ).billed
           }
           accountId={accountId}
           customerEmail={email}
@@ -517,7 +517,7 @@ const CreateOrganizationForm = ({
                 yearlyPrice: selectedPlan.priceYearly,
               },
               billingCycle === "annual" ? "yearly" : "monthly",
-            ).billed / 100
+            ).billed
           }
           accountId={accountId}
           customerName={orgName}
