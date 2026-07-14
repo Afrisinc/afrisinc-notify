@@ -261,11 +261,15 @@ const CreateOrganizationForm = ({
   };
 
   const handleCardPaymentSuccess = () => {
-    // Card payment initiated - form will be submitted via webhook
+    // Card payment initiated - retrieve pcode from localStorage for proof of payment
+    const pcode = localStorage.getItem(
+      `subscription_payment_pcode_${accountId}`,
+    );
     onSubmit({
       name: orgName.trim(),
       planId: selectedPlan!.id,
       billingCycle,
+      paymentMethodId: pcode || undefined,
     });
   };
 
