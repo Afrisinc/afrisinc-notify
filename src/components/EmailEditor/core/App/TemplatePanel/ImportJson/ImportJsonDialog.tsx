@@ -54,7 +54,7 @@ export default function ImportJsonDialog({
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto rounded-xl">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-content dark:text-white">
+          <DialogTitle className="text-xl font-bold text-foreground">
             Import JSON
           </DialogTitle>
           <DialogDescription className="text-sm text-content-secondary dark:text-foreground/70">
@@ -88,7 +88,7 @@ export default function ImportJsonDialog({
               onChange={handleChange}
               placeholder="Paste your EmailBuilder.js JSON here..."
               rows={10}
-              className="w-full rounded-xl border border-border/40 dark:border-border/50 bg-card dark:bg-slate-800 text-content dark:text-white placeholder:text-content-secondary dark:placeholder:text-foreground/50 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/50 transition-all resize-none font-mono text-sm"
+              className="w-full rounded-xl border border-border/40 dark:border-border/50 bg-card dark:bg-slate-800 text-foreground placeholder:text-content-secondary dark:placeholder:text-foreground/50 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/50 transition-all resize-none font-mono text-sm"
             />
           </div>
 

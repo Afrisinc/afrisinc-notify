@@ -207,7 +207,7 @@ export function PublishTemplateDialog({
             <div className="flex items-start gap-4">
               <div className="w-1.5 h-10 bg-gradient-to-b from-primary via-primary to-primary/50 rounded-full mt-0.5 flex-shrink-0" />
               <div className="space-y-2 flex-1 min-w-0">
-                <DialogTitle className="text-2xl font-bold text-content dark:text-white leading-tight">
+                <DialogTitle className="text-2xl font-bold text-foreground leading-tight">
                   Publish to Marketplace
                 </DialogTitle>
                 <DialogDescription className="text-sm text-content-secondary dark:text-foreground/70 leading-relaxed">
@@ -233,7 +233,7 @@ export function PublishTemplateDialog({
             <div className="bg-primary/5 dark:bg-primary/10 border border-primary/20 dark:border-primary/40 rounded-2xl p-6 space-y-5">
               <div className="flex items-center gap-3">
                 <CheckCircle2 className="h-5 w-5 text-primary dark:text-primary/90 flex-shrink-0" />
-                <p className="text-xs font-bold text-content dark:text-white uppercase tracking-widest">
+                <p className="text-xs font-bold text-foreground uppercase tracking-widest">
                   Before You Publish
                 </p>
               </div>
@@ -257,7 +257,7 @@ export function PublishTemplateDialog({
                       {req.done ? "✓" : "○"}
                     </div>
                     <span
-                      className={`text-sm leading-tight ${req.done ? "text-content dark:text-white font-medium" : "text-content-secondary dark:text-foreground/70"}`}
+                      className={`text-sm leading-tight ${req.done ? "text-foreground font-medium" : "text-content-secondary dark:text-foreground/70"}`}
                     >
                       {req.name}
                     </span>
@@ -300,7 +300,7 @@ export function PublishTemplateDialog({
                 <p className="text-xs font-semibold text-content-secondary dark:text-foreground/70 mb-2">
                   TITLE
                 </p>
-                <p className="text-sm font-bold text-content dark:text-white line-clamp-2">
+                <p className="text-sm font-bold text-foreground line-clamp-2">
                   {formData.title || "Template Name"}
                 </p>
               </div>
@@ -416,7 +416,7 @@ export function PublishTemplateDialog({
                     className={`px-4 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
                       formData.category === cat
                         ? "bg-primary text-white shadow-primary/30 ring-1 ring-primary"
-                        : "bg-card dark:bg-slate-800 border border-border/40 dark:border-border/50 text-content dark:text-white hover:border-primary/50 dark:hover:border-primary/50"
+                        : "bg-card dark:bg-slate-800 border border-border/40 dark:border-border/50 text-foreground hover:border-primary/50 dark:hover:border-primary/50"
                     }`}
                   >
                     {cat}
@@ -442,7 +442,7 @@ export function PublishTemplateDialog({
                   className={`px-4 py-3 rounded-xl text-xs font-semibold transition-all duration-200 border-2 ${
                     formData.pricing === "free"
                       ? "bg-green-500/15 border-green-500/40 text-green-700 dark:text-green-300 dark:bg-green-500/20 dark:border-green-500/50"
-                      : "bg-card dark:bg-slate-800 border-border/40 dark:border-border/50 text-content dark:text-white hover:border-green-500/50 dark:hover:border-green-500/50"
+                      : "bg-card dark:bg-slate-800 border-border/40 dark:border-border/50 text-foreground hover:border-green-500/50 dark:hover:border-green-500/50"
                   }`}
                 >
                   <div className="font-bold">Give it Away</div>
@@ -460,7 +460,7 @@ export function PublishTemplateDialog({
                   className={`px-4 py-3 rounded-xl text-xs font-semibold transition-all duration-200 border-2 ${
                     formData.pricing === "paid"
                       ? "bg-primary/15 border-primary/40 text-primary dark:text-primary dark:bg-primary/20 dark:border-primary/50"
-                      : "bg-card dark:bg-slate-800 border-border/40 dark:border-border/50 text-content dark:text-white hover:border-primary/50 dark:hover:border-primary/50"
+                      : "bg-card dark:bg-slate-800 border-border/40 dark:border-border/50 text-foreground hover:border-primary/50 dark:hover:border-primary/50"
                   }`}
                 >
                   <div className="font-bold">Premium</div>
@@ -569,7 +569,7 @@ export function PublishTemplateDialog({
                       <ImageIcon className="h-6 w-6 text-primary dark:text-primary/90" />
                     </div>
                     <div className="space-y-1">
-                      <p className="text-sm font-semibold text-content dark:text-white">
+                      <p className="text-sm font-semibold text-foreground">
                         Upload preview image
                       </p>
                       <p className="text-xs text-content-secondary dark:text-foreground/70">

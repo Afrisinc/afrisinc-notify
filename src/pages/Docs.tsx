@@ -138,7 +138,7 @@ const Docs = () => {
               <div className="inline-flex items-center gap-2 text-xs font-medium text-primary bg-primary/10 border border-primary/20 rounded-full px-3 py-1 mb-1">
                 <Code2 className="h-3 w-3" /> Developer Documentation
               </div>
-              <h1 className="text-2xl font-bold dark:text-white">
+              <h1 className="text-2xl font-bold text-foreground">
                 Notify API Docs
               </h1>
             </div>
@@ -159,7 +159,7 @@ const Docs = () => {
           <div className="flex-1 max-w-3xl space-y-12">
             {/* Intro */}
             <section id="intro" className="scroll-mt-24 space-y-4">
-              <h2 className="text-xl font-bold dark:text-white">
+              <h2 className="text-xl font-bold text-foreground">
                 Introduction
               </h2>
               <p className="text-sm text-foreground/70 dark:text-foreground/80">
@@ -171,7 +171,7 @@ const Docs = () => {
 
             {/* Auth */}
             <section id="auth" className="scroll-mt-24 space-y-4">
-              <h2 className="text-xl font-bold dark:text-white">
+              <h2 className="text-xl font-bold text-foreground">
                 Authentication
               </h2>
               <p className="text-sm text-foreground/70 dark:text-foreground/80">
@@ -190,7 +190,7 @@ const Docs = () => {
 
             {/* Send */}
             <section id="send" className="scroll-mt-24 space-y-4">
-              <h2 className="text-xl font-bold dark:text-white">
+              <h2 className="text-xl font-bold text-foreground">
                 Send a Notification
               </h2>
               <p className="text-sm text-foreground/70 dark:text-foreground/80">
@@ -204,7 +204,7 @@ const Docs = () => {
                 language="curl"
                 code={`curl -X POST https://api.notify.dev/v1/send \\\n  -H "Authorization: Bearer ntfr_sk_live_abc123" \\\n  -H "Content-Type: application/json" \\\n  -d '{\n    "channel": "email",\n    "to": "user@example.com",\n    "template_id": "tpl_welcome",\n    "data": {\n      "name": "Jane",\n      "company": "Acme"\n    }\n  }'`}
               />
-              <h3 className="text-sm font-semibold mt-4 dark:text-white">
+              <h3 className="text-sm font-semibold mt-4 text-foreground">
                 Response
               </h3>
               <CodeBlock
@@ -215,7 +215,7 @@ const Docs = () => {
 
             {/* Templates */}
             <section id="templates" className="scroll-mt-24 space-y-4">
-              <h2 className="text-xl font-bold dark:text-white">
+              <h2 className="text-xl font-bold text-foreground">
                 Using Templates
               </h2>
               <p className="text-sm text-foreground/70 dark:text-foreground/80">
@@ -233,7 +233,7 @@ const Docs = () => {
 
             {/* Channels */}
             <section id="channels" className="scroll-mt-24 space-y-4">
-              <h2 className="text-xl font-bold dark:text-white">Channels</h2>
+              <h2 className="text-xl font-bold text-foreground">Channels</h2>
               <div className="grid gap-4 sm:grid-cols-3">
                 {[
                   {
@@ -253,7 +253,7 @@ const Docs = () => {
                     key={ch}
                     className="bg-card border border-border rounded-xl p-4"
                   >
-                    <h3 className="font-semibold text-sm mb-1 text-foreground dark:text-white">
+                    <h3 className="font-semibold text-sm mb-1 text-foreground">
                       {ch}
                     </h3>
                     <p className="text-xs text-foreground/70 dark:text-foreground/80">
@@ -266,7 +266,7 @@ const Docs = () => {
 
             {/* API Explorer */}
             <section id="api-explorer" className="scroll-mt-24 space-y-4">
-              <h2 className="text-xl font-bold dark:text-white">
+              <h2 className="text-xl font-bold text-foreground">
                 API Explorer
               </h2>
               <p className="text-sm text-foreground/70 dark:text-foreground/80">
@@ -278,7 +278,7 @@ const Docs = () => {
 
             {/* Rate Limits */}
             <section id="rate-limits" className="scroll-mt-24 space-y-4">
-              <h2 className="text-xl font-bold dark:text-white">Rate Limits</h2>
+              <h2 className="text-xl font-bold text-foreground">Rate Limits</h2>
               <div className="bg-card border border-border rounded-xl overflow-hidden">
                 <table className="w-full text-sm">
                   <thead>
@@ -294,35 +294,29 @@ const Docs = () => {
                   </thead>
                   <tbody>
                     <tr className="border-b border-border/50">
-                      <td className="px-4 py-3 text-foreground dark:text-white">
-                        Free
-                      </td>
-                      <td className="px-4 py-3 font-mono text-xs text-foreground dark:text-white">
+                      <td className="px-4 py-3 text-foreground">Free</td>
+                      <td className="px-4 py-3 font-mono text-xs text-foreground">
                         60
                       </td>
-                      <td className="px-4 py-3 font-mono text-xs text-foreground dark:text-white">
+                      <td className="px-4 py-3 font-mono text-xs text-foreground">
                         1,000
                       </td>
                     </tr>
                     <tr className="border-b border-border/50">
-                      <td className="px-4 py-3 text-foreground dark:text-white">
-                        Pro
-                      </td>
-                      <td className="px-4 py-3 font-mono text-xs text-foreground dark:text-white">
+                      <td className="px-4 py-3 text-foreground">Pro</td>
+                      <td className="px-4 py-3 font-mono text-xs text-foreground">
                         600
                       </td>
-                      <td className="px-4 py-3 font-mono text-xs text-foreground dark:text-white">
+                      <td className="px-4 py-3 font-mono text-xs text-foreground">
                         50,000
                       </td>
                     </tr>
                     <tr>
-                      <td className="px-4 py-3 text-foreground dark:text-white">
-                        Enterprise
-                      </td>
-                      <td className="px-4 py-3 font-mono text-xs text-foreground dark:text-white">
+                      <td className="px-4 py-3 text-foreground">Enterprise</td>
+                      <td className="px-4 py-3 font-mono text-xs text-foreground">
                         Unlimited
                       </td>
-                      <td className="px-4 py-3 font-mono text-xs text-foreground dark:text-white">
+                      <td className="px-4 py-3 font-mono text-xs text-foreground">
                         Custom
                       </td>
                     </tr>

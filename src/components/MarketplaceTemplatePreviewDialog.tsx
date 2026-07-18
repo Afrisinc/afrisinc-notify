@@ -45,7 +45,7 @@ export function MarketplaceTemplatePreviewDialog({
               />
               <div className="space-y-1.5 flex-1">
                 <DialogTitle
-                  className={`${isDashboard ? "text-2xl" : "text-2xl"} font-bold text-content dark:text-white`}
+                  className={`${isDashboard ? "text-2xl" : "text-2xl"} font-bold text-foreground`}
                 >
                   {template.subject || template.name}
                 </DialogTitle>
@@ -120,7 +120,7 @@ export function MarketplaceTemplatePreviewDialog({
                   {isDashboard ? "Subject Line" : "Subject"}
                 </p>
                 <p
-                  className={`${isDashboard ? "text-base text-content dark:text-white font-semibold bg-card dark:bg-background/50 rounded-lg px-3 py-2" : "text-sm text-content dark:text-white font-medium"}`}
+                  className={`${isDashboard ? "text-base text-foreground font-semibold bg-card dark:bg-background/50 rounded-lg px-3 py-2" : "text-sm text-foreground font-medium"}`}
                 >
                   {template.preview.subject}
                 </p>
@@ -134,7 +134,7 @@ export function MarketplaceTemplatePreviewDialog({
                   {isDashboard ? "Preview" : "Preview"}
                 </p>
                 <p
-                  className={`${isDashboard ? "text-sm text-content-secondary dark:text-foreground/75 leading-relaxed bg-card dark:bg-background/50 rounded-lg px-3 py-2 italic" : "text-sm text-content dark:text-white"}`}
+                  className={`${isDashboard ? "text-sm text-content-secondary dark:text-foreground/75 leading-relaxed bg-card dark:bg-background/50 rounded-lg px-3 py-2 italic" : "text-sm text-foreground"}`}
                 >
                   {isDashboard
                     ? `"${template.preview.content}"`
@@ -154,7 +154,7 @@ export function MarketplaceTemplatePreviewDialog({
                 >
                   <div className="flex items-center justify-center gap-2">
                     <Star className="h-5 w-5 fill-warning text-warning" />
-                    <span className="font-bold text-lg text-content dark:text-white">
+                    <span className="font-bold text-lg text-foreground">
                       {(template.rating ?? 0).toFixed(1)}
                     </span>
                   </div>
@@ -169,7 +169,7 @@ export function MarketplaceTemplatePreviewDialog({
                 >
                   <div className="flex items-center justify-center gap-2">
                     <Download className="h-5 w-5 text-primary" />
-                    <span className="font-bold text-lg text-content dark:text-white">
+                    <span className="font-bold text-lg text-foreground">
                       {((template.downloads ?? 0) / 1000).toFixed(1)}k
                     </span>
                   </div>
@@ -184,7 +184,7 @@ export function MarketplaceTemplatePreviewDialog({
                 >
                   <div className="flex items-center justify-center gap-2">
                     <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
-                    <span className="font-bold text-lg text-content dark:text-white">
+                    <span className="font-bold text-lg text-foreground">
                       {((template.installs ?? 0) / 1000).toFixed(1)}k
                     </span>
                   </div>
@@ -240,7 +240,7 @@ export function MarketplaceTemplatePreviewDialog({
                     className="h-12 w-12 rounded-full border-2 border-primary/20"
                   />
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-content dark:text-white">
+                    <p className="text-sm font-semibold text-foreground">
                       {template.creator.name}
                     </p>
                     {template.creator.verified && (

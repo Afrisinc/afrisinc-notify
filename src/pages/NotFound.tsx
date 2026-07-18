@@ -16,7 +16,7 @@ const NotFound = () => {
     <div className="flex min-h-screen items-center justify-center bg-gradient-hero relative">
       <BackgroundDecorator />
       <div className="text-center relative z-10">
-        <h1 className="mb-4 text-4xl font-bold dark:text-white">404</h1>
+        <h1 className="mb-4 text-4xl font-bold text-foreground">404</h1>
         <p className="mb-4 text-xl text-foreground/75 dark:text-foreground/80">
           Oops! Page not found
         </p>
