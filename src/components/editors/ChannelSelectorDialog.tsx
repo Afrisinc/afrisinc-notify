@@ -98,7 +98,7 @@ export function ChannelSelectorDialog({
       <DialogContent className="max-w-2xl p-0 overflow-hidden rounded-2xl">
         <div className="px-8 pt-8 pb-2">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold tracking-tight text-content dark:text-white">
+            <DialogTitle className="text-2xl font-bold tracking-tight text-foreground">
               Choose a channel
             </DialogTitle>
             <DialogDescription className="text-sm text-content-secondary dark:text-foreground/70 mt-1">
@@ -132,7 +132,7 @@ export function ChannelSelectorDialog({
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-content dark:text-white">
+                    <span className="text-sm font-semibold text-foreground">
                       {channel.label}
                     </span>
                     {channel.badge && (

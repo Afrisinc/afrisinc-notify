@@ -14,7 +14,7 @@ export function PricingToggle({
   return (
     <div className="flex items-center justify-center gap-3">
       <span
-        className={`text-sm font-medium ${value === "monthly" ? "text-foreground dark:text-white" : "text-muted-foreground dark:text-foreground/60"}`}
+        className={`text-sm font-medium ${value === "monthly" ? "text-foreground" : "text-muted-foreground"}`}
       >
         Monthly
       </span>
@@ -33,7 +33,7 @@ export function PricingToggle({
         />
       </button>
       <span
-        className={`text-sm font-medium ${value === "annual" ? "text-foreground dark:text-white" : "text-muted-foreground dark:text-foreground/60"}`}
+        className={`text-sm font-medium ${value === "annual" ? "text-foreground" : "text-muted-foreground"}`}
       >
         Annual
       </span>

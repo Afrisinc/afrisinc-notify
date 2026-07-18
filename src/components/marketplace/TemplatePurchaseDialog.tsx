@@ -402,7 +402,7 @@ export function TemplatePurchaseDialog({
           <div className="flex items-start gap-3">
             <div className="w-1 h-8 bg-gradient-to-b from-primary to-primary/50 rounded-full mt-0.5" />
             <div className="flex-1">
-              <DialogTitle className="text-xl font-bold text-content dark:text-white">
+              <DialogTitle className="text-xl font-bold text-foreground">
                 {step === "confirm" && `Purchase "${templateName}"`}
                 {step === "method" && "Choose Payment Method"}
                 {step === "card" && "Card Payment"}

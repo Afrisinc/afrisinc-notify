@@ -7,11 +7,13 @@ type Line = Token[];
 
 const SNIPPETS: Record<Lang, Line[]> = {
   node: [
+    [{ t: "cm", v: "// npm install @afrisinc/notify-sdk" }],
+    [],
     [
       { t: "kw", v: "import" },
       { t: "pl", v: " { Notify } " },
       { t: "kw", v: "from" },
-      { t: "str", v: " 'notify-sdk'" },
+      { t: "str", v: " '@afrisinc/notify-sdk'" },
       { t: "pl", v: ";" },
     ],
     [],
@@ -57,9 +59,11 @@ const SNIPPETS: Record<Lang, Line[]> = {
     [{ t: "pl", v: "});" }],
   ],
   python: [
+    [{ t: "cm", v: "# pip install afrisinc-notify-sdk" }],
+    [],
     [
       { t: "kw", v: "from" },
-      { t: "pl", v: " notify " },
+      { t: "pl", v: " afrisinc_notify " },
       { t: "kw", v: "import" },
       { t: "pl", v: " Notify" },
     ],
@@ -98,7 +102,7 @@ const SNIPPETS: Record<Lang, Line[]> = {
       { t: "pl", v: " -X POST \\" },
     ],
     [
-      { t: "pl", v: "  https://api.notify.io/v1/" },
+      { t: "pl", v: "  https://notify-api.afrisinc.com/api/notify/" },
       { t: "fn", v: "send" },
       { t: "pl", v: " \\" },
     ],

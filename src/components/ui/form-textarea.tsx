@@ -58,7 +58,7 @@ const FormTextarea = React.forwardRef<HTMLTextAreaElement, FormTextareaProps>(
             value={value}
             className={cn(
               // Base styling
-              "w-full rounded-xl border border-border/40 dark:border-border/50 bg-card dark:bg-slate-800 text-content dark:text-white placeholder:text-content-secondary dark:placeholder:text-foreground/50",
+              "w-full rounded-xl border border-border/40 dark:border-border/50 bg-card dark:bg-slate-800 text-foreground placeholder:text-content-secondary dark:placeholder:text-foreground/50",
               // Padding
               "px-4 py-3",
               // Focus state

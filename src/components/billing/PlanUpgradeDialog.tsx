@@ -512,7 +512,7 @@ export function PlanUpgradeDialog({
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto rounded-xl">
         <DialogHeader>
-          <DialogTitle className="text-content dark:text-white">
+          <DialogTitle className="text-foreground">
             {step === "confirm" && `Upgrade to ${plan.displayName}`}
             {step === "method" && "Choose Payment Method"}
             {step === "card" && "Card Payment"}

@@ -280,7 +280,7 @@ export default function Marketplace() {
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
               <Sparkles className="h-5 w-5 text-primary" />
-              <h1 className="text-3xl font-bold text-content dark:text-white">
+              <h1 className="text-3xl font-bold text-foreground">
                 Marketplace
               </h1>
             </div>
@@ -544,7 +544,7 @@ export default function Marketplace() {
               <div className="flex items-start gap-3">
                 <div className="w-1 h-8 bg-gradient-to-b from-primary via-primary to-primary/50 rounded-full mt-0.5" />
                 <div className="space-y-1 flex-1">
-                  <DialogTitle className="text-xl font-bold text-content dark:text-white">
+                  <DialogTitle className="text-xl font-bold text-foreground">
                     Install {installTemplate?.subject}
                   </DialogTitle>
                   <DialogDescription className="text-xs text-content-secondary dark:text-foreground/70">
@@ -565,7 +565,7 @@ export default function Marketplace() {
               >
                 <Alert className="bg-primary/8 dark:bg-primary/15 border-primary/30 dark:border-primary/40 rounded-xl">
                   <TrendingUp className="h-5 w-5 text-primary dark:text-primary/90" />
-                  <AlertDescription className="text-content dark:text-white font-medium">
+                  <AlertDescription className="text-foreground font-medium">
                     Premium template •{" "}
                     <span className="font-bold text-primary dark:text-primary/90 text-lg">
                       ${installTemplate.price}
@@ -582,7 +582,7 @@ export default function Marketplace() {
               >
                 <Alert className="bg-green-500/8 dark:bg-green-500/15 border-green-500/30 dark:border-green-500/40 rounded-xl">
                   <Sparkles className="h-5 w-5 text-green-600 dark:text-green-400" />
-                  <AlertDescription className="text-content dark:text-white font-medium">
+                  <AlertDescription className="text-foreground font-medium">
                     Free template • Ready to install immediately
                   </AlertDescription>
                 </Alert>

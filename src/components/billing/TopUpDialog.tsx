@@ -106,7 +106,7 @@ export function TopUpDialog({
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto rounded-xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-content dark:text-white">
+          <DialogTitle className="flex items-center gap-2 text-foreground">
             <Zap className="h-4 w-4 text-primary" />
             {step === "amount" && "Top Up Credits"}
             {step === "method" && "Choose Payment Method"}
@@ -151,7 +151,7 @@ export function TopUpDialog({
                       : "border-border hover:bg-muted/40"
                   }`}
                 >
-                  <p className="font-semibold text-sm text-content dark:text-white">
+                  <p className="font-semibold text-sm text-foreground">
                     ${value}
                   </p>
                   {bonus > 0 && (

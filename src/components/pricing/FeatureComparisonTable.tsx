@@ -156,11 +156,7 @@ function CellValue({ value }: { value: boolean | string }) {
       <X className="h-4 w-4 text-muted-foreground/60 dark:text-muted-foreground/50 mx-auto" />
     );
   }
-  return (
-    <span className="font-semibold text-sm text-foreground dark:text-white">
-      {value}
-    </span>
-  );
+  return <span className="font-semibold text-sm text-foreground">{value}</span>;
 }
 
 export function FeatureComparisonTable({
@@ -201,9 +197,7 @@ export function FeatureComparisonTable({
                 i % 2 === 0 ? "" : "bg-muted/10"
               }`}
             >
-              <td className="px-4 py-3 text-foreground dark:text-white">
-                {f.name}
-              </td>
+              <td className="px-4 py-3 text-foreground">{f.name}</td>
               <td className="px-4 py-3 text-center">
                 <CellValue value={f.free} />
               </td>

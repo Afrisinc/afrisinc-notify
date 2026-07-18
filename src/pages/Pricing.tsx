@@ -7,7 +7,6 @@ import {
   Bell,
   Smartphone,
   MessageCircle,
-  type LucideIcon,
 } from "lucide-react";
 import BackgroundDecorator from "@/components/auth/BackgroundDecorator";
 import { PricingToggle } from "@/components/pricing/PricingToggle";
@@ -15,15 +14,6 @@ import { FeatureComparisonTable } from "@/components/pricing/FeatureComparisonTa
 import { PricingFAQ } from "@/components/pricing/PricingFAQ";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePublicPlans } from "@/hooks/useSubscription";
-
-// Icon mapping for PAYG rates
-const channelIcons: Record<string, LucideIcon> = {
-  email: Mail,
-  sms: MessageSquare,
-  push: Bell,
-  inApp: Smartphone,
-  whatsapp: MessageCircle,
-};
 
 // CTA mapping based on plan name
 const planCtas: Record<string, string> = {
@@ -207,7 +197,7 @@ const Pricing = () => {
       <BackgroundDecorator />
       <div className="container max-w-5xl relative z-10">
         <div className="text-center mb-10">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4 dark:text-white">
+          <h1 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">
             Simple, transparent pricing
           </h1>
           <p className="text-foreground/80 text-lg mb-6">
@@ -272,11 +262,11 @@ const Pricing = () => {
                       {tier.badge}
                     </div>
                   )}
-                  <h3 className="font-semibold text-lg dark:text-white mt-1">
+                  <h3 className="font-semibold text-lg text-foreground mt-1">
                     {tier.name}
                   </h3>
                   <div className="mt-2 mb-1">
-                    <span className="text-3xl font-bold dark:text-white">
+                    <span className="text-3xl font-bold text-foreground">
                       {price}
                     </span>
                     {price !== "Custom" && (
@@ -300,7 +290,7 @@ const Pricing = () => {
                     {tier.features.map((f) => (
                       <li
                         key={f}
-                        className="flex items-start gap-2 text-sm dark:text-white"
+                        className="flex items-start gap-2 text-sm text-foreground"
                       >
                         <Check className="h-4 w-4 text-success shrink-0 mt-0.5" />
                         {f}

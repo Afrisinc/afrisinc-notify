@@ -61,7 +61,7 @@ const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
             disabled={disabled}
             className={cn(
               // Base styling
-              "h-11 w-full rounded-xl border border-border/40 dark:border-border/50 bg-card dark:bg-slate-800 text-content dark:text-white placeholder:text-content-secondary dark:placeholder:text-foreground/50",
+              "h-11 w-full rounded-xl border border-border/40 dark:border-border/50 bg-card dark:bg-slate-800 text-foreground placeholder:text-content-secondary dark:placeholder:text-foreground/50",
               // Padding based on icon position
               icon && iconPosition === "left" ? "pl-12 pr-4" : "px-4",
               icon && iconPosition === "right" ? "pr-12" : "",

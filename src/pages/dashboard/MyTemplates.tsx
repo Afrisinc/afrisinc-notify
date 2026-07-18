@@ -248,7 +248,7 @@ export default function MyTemplates() {
         transition={{ duration: 0.4 }}
         className="space-y-3"
       >
-        <h1 className="text-3xl md:text-4xl font-black text-content dark:text-white tracking-tight">
+        <h1 className="text-3xl md:text-4xl font-black text-foreground tracking-tight">
           My Templates
         </h1>
         <p className="text-base text-content-secondary dark:text-foreground/70 max-w-2xl leading-relaxed">
@@ -331,7 +331,7 @@ export default function MyTemplates() {
                 <Sparkles className="h-10 w-10 text-primary dark:text-primary/90" />
               </div>
               <div className="space-y-3 max-w-md mx-auto">
-                <h3 className="text-2xl font-bold text-content dark:text-white leading-tight">
+                <h3 className="text-2xl font-bold text-foreground leading-tight">
                   {templates.length === 0
                     ? "No templates yet"
                     : "No results found"}
@@ -404,13 +404,13 @@ export default function MyTemplates() {
                 <span className="text-xs font-bold text-content-secondary dark:text-foreground/60 uppercase tracking-wider">
                   Page
                 </span>
-                <span className="text-base font-bold text-content dark:text-white">
+                <span className="text-base font-bold text-foreground">
                   {page}
                 </span>
                 <span className="text-xs font-bold text-content-secondary dark:text-foreground/60">
                   of
                 </span>
-                <span className="text-base font-bold text-content dark:text-white">
+                <span className="text-base font-bold text-foreground">
                   {totalPages}
                 </span>
               </div>
