@@ -21,6 +21,7 @@ import { paygService } from "@/services/paygService";
 // ─── Amount helpers ────────────────────────────────────────────────────────────
 
 const PRESET_AMOUNTS = [
+  { value: 0.5, bonus: 0 },
   { value: 5, bonus: 0 },
   { value: 10, bonus: 0 },
   { value: 25, bonus: 0 },
@@ -90,7 +91,7 @@ export function TopUpDialog({
   const bonusAmt = Number.parseFloat(((amount * bonusPct) / 100).toFixed(2));
   const totalCredits = amount + bonusAmt;
   const balanceAfter = currentBalance + totalCredits;
-  const isAmountValid = amount >= 5;
+  const isAmountValid = amount >= 0.5;
 
   const handleClose = useCallback(() => {
     setStep("amount");
@@ -165,7 +166,7 @@ export function TopUpDialog({
 
             <div>
               <label className="text-xs text-content-secondary dark:text-foreground/70 mb-1.5 block">
-                Custom amount (min $5)
+                Custom amount (min $0.5)
               </label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-content-secondary dark:text-foreground/70 text-sm">
