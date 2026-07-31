@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { paymentService } from "@/services/paymentService";
 import type { PaymentInitPayload, BillingCycle } from "@/types/payment";
 
@@ -98,7 +98,7 @@ export function useMobilePayment(accountId?: string) {
     ...mutation,
     initMobilePayment: async (
       params: MobilePaymentParams,
-    ): Promise<{ payment: { id: string }; message: string }> => {
+    ): Promise<{ paymentRef: string; message: string }> => {
       let payload: PaymentInitPayload;
 
       if (params.type === "payg_topup") {
@@ -139,11 +139,29 @@ export function useMobilePayment(accountId?: string) {
       }
 
       return {
-        payment: { id: result.transaction.id },
+        paymentRef: result.paymentRef,
         message: result.message,
       };
     },
   };
+}
+
+export function usePaymentStatus(
+  accountId: string | undefined,
+  paymentRef: string | null,
+) {
+  return useQuery({
+    queryKey: ["payment", "status", paymentRef],
+    queryFn: () => paymentService.getPaymentStatus(accountId!, paymentRef!),
+    enabled: !!accountId && !!paymentRef,
+    refetchInterval: (query) => {
+      const data = query.state.data;
+      if (data?.status === "SUCCESSFUL" || data?.status === "FAILED") {
+        return false;
+      }
+      return 3000;
+    },
+  });
 }
 
 export type { PaymentInitPayload, PaymentInitResponse } from "@/types/payment";

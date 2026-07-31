@@ -32,20 +32,18 @@ interface MobilePaymentStepProps {
 
   /**
    * Function to call to initiate mobile payment
-   * Should return { payment: { id: string } }
    */
   onInitPayment: (
     phone: string,
     name: string,
   ) => Promise<{
-    payment: { id: string };
+    paymentRef: string;
   }>;
 
   /**
    * Callback when payment is initiated
-   * Receives: (paymentId: string) => void
    */
-  onSuccess: (paymentId: string) => void;
+  onSuccess: (paymentRef: string) => void;
 
   /**
    * Back button callback
@@ -108,7 +106,7 @@ export function MobilePaymentStep({
         `250${cleanPhone}`, // Prepend country code
         customerName,
       );
-      onSuccess(result.payment.id);
+      onSuccess(result.paymentRef);
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Failed to initiate payment";
       setError(msg);

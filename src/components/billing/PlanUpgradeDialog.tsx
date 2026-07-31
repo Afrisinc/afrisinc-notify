@@ -245,7 +245,7 @@ function MobileStep({
         customerName,
       });
 
-      onSuccess(result.payment.id, plan.name);
+      onSuccess(result.paymentRef, plan.name);
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Failed to initiate payment";
       setError(msg);
@@ -426,7 +426,7 @@ export function PlanUpgradeDialog({
   const [billing, setBilling] = useState<"monthly" | "yearly">("monthly");
   const [error, setError] = useState("");
   const [activatingPlan, setActivatingPlan] = useState<string | null>(null);
-  const [mobilePaymentId, setMobilePaymentId] = useState<string | null>(null);
+  const [mobilePaymentRef, setMobilePaymentId] = useState<string | null>(null);
 
   const { mutateAsync: upgrade, isPending } = useUpgradePlan(accountId);
   const { confirmed, timedOut } = useSubscriptionConfirmation(
@@ -437,7 +437,7 @@ export function PlanUpgradeDialog({
   const { confirmed: mobileConfirmed, failed: mobileFailed } =
     useMobilePaymentConfirmation(
       accountId,
-      step === "pending" ? mobilePaymentId : null,
+      step === "pending" ? mobilePaymentRef : null,
       null, // No expected balance for subscriptions
     );
 
