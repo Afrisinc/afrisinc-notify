@@ -302,7 +302,7 @@ export function TopUpDialog({
             onInitPayment={(phone, name) =>
               initMobilePayment({
                 type: "payg_topup",
-                amount: Math.round(amount * exchangeRate),
+                amount,
                 phoneNumber: phone,
                 customerName: name,
               })
