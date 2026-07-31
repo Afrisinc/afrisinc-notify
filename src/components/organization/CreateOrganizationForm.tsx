@@ -6,17 +6,12 @@ import { PaymentMethodSelector } from "@/components/payment/PaymentMethodSelecto
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  usePublicPlans,
-  useInitSubscriptionPayment,
-} from "@/hooks/useSubscription";
+import { usePublicPlans } from "@/hooks/useSubscription";
 import { computePlanPrice } from "@/lib/pricing";
 import type { PlanInfo } from "@/components/auth/signup/schemas";
 import { PlanCards } from "@/components/pricing/PlanCards";
-import {
-  useInitMobileTopUp,
-  useMobilePaymentConfirmation,
-} from "@/hooks/usePayg";
+import { useMobilePaymentConfirmation } from "@/hooks/usePayg";
+import { useCardPayment, useMobilePayment } from "@/hooks/usePayment";
 import { useExchangeRate } from "@/lib/exchangeRate";
 
 // ── Constants ──────────────────────────────────────────────────────────────────
@@ -224,8 +219,8 @@ const CreateOrganizationForm = ({
 
   const { data: plansData, isLoading: plansLoading } = usePublicPlans();
   const { data: exchangeRate } = useExchangeRate();
-  const subscriptionPaymentMutation = useInitSubscriptionPayment();
-  const { mutateAsync: initMobileTopUp } = useInitMobileTopUp(accountId);
+  const { initCardPayment } = useCardPayment(accountId);
+  const { initMobilePayment } = useMobilePayment(accountId);
 
   const plans: PlanInfo[] = useMemo(() => {
     if (!plansData) return [];
@@ -471,12 +466,12 @@ const CreateOrganizationForm = ({
           }
           accountId={accountId}
           customerEmail={email}
-          onInitPayment={async (customerEmail) =>
-            subscriptionPaymentMutation.mutateAsync({
-              accountId,
+          onInitPayment={(customerEmail) =>
+            initCardPayment({
+              type: "subscription",
               planId: selectedPlan.id,
               billingCycle: billingCycle === "annual" ? "yearly" : "monthly",
-              customerEmail,
+              email: customerEmail,
             })
           }
           onSuccess={handleCardPaymentSuccess}
@@ -526,20 +521,15 @@ const CreateOrganizationForm = ({
           accountId={accountId}
           customerName={orgName}
           exchangeRate={exchangeRate}
-          onInitPayment={async (phone, name) => {
-            const usdAmount =
-              billingCycle === "annual"
-                ? selectedPlan.priceYearly * 12
-                : selectedPlan.priceMonthly;
-            return await initMobileTopUp({
-              amount: Math.round(usdAmount * exchangeRate),
-              phoneNumber: phone,
-              customerName: name,
-              paymentType: "subscription",
+          onInitPayment={(phone, name) =>
+            initMobilePayment({
+              type: "subscription",
               planId: selectedPlan.id,
               billingCycle: billingCycle === "annual" ? "yearly" : "monthly",
-            });
-          }}
+              phoneNumber: phone,
+              customerName: name,
+            })
+          }
           onSuccess={handleMobileSuccess}
           onBack={() => setStep("method")}
           summaryItems={[

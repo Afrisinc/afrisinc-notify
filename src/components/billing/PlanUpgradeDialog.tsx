@@ -20,11 +20,10 @@ import {
 } from "lucide-react";
 import {
   useUpgradePlan,
-  useInitSubscriptionPayment,
   useSubscriptionConfirmation,
-  useInitMobileTopUp,
   useMobilePaymentConfirmation,
 } from "@/hooks/usePayg";
+import { useCardPayment, useMobilePayment } from "@/hooks/usePayment";
 import { useExchangeRate } from "@/lib/exchangeRate";
 
 export interface PlanOption {
@@ -81,7 +80,7 @@ function CardStep({
   onBack,
   onSuccess,
 }: CardStepProps) {
-  const { mutateAsync: initPayment } = useInitSubscriptionPayment(accountId);
+  const { initCardPayment } = useCardPayment(accountId);
 
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState("");
@@ -91,23 +90,15 @@ function CardStep({
     setError("");
 
     try {
-      // Get checkout URL from africnc-pay (ITEC PesaPal)
-      const { checkoutUrl, pcode } = await initPayment({
+      const { checkoutUrl, pcode } = await initCardPayment({
+        type: "subscription",
         planId: plan.id,
         billingCycle: billing,
-        customerEmail,
+        email: customerEmail,
       });
 
-      // Store PCODE for optional fallback polling
       localStorage.setItem(`payment_pcode_${accountId}`, pcode);
-
-      // Redirect to PesaPal checkout
       window.location.href = checkoutUrl;
-
-      // After redirect, customer completes payment on PesaPal
-      // → PesaPal confirms to africnc-pay
-      // → africnc-pay sends webhook (card.payment_succeeded)
-      // → Subscription activates automatically via webhook
       onSuccess(plan.name);
     } catch (e: unknown) {
       const msg =
@@ -218,7 +209,7 @@ function MobileStep({
   onBack,
   onSuccess,
 }: MobileStepProps) {
-  const { mutateAsync: initMobileTopUp } = useInitMobileTopUp(accountId);
+  const { initMobilePayment } = useMobilePayment(accountId);
 
   const [phoneNumber, setPhoneNumber] = useState("");
   const [processing, setProcessing] = useState(false);
@@ -236,7 +227,6 @@ function MobileStep({
       return;
     }
 
-    // Validate Rwandan phone number (9 digits starting with 7)
     const cleanPhone = phoneNumber.replace(/\D/g, "");
     if (cleanPhone.length !== 9 || !cleanPhone.startsWith("7")) {
       setError("Enter a valid 9-digit number starting with 7");
@@ -247,13 +237,12 @@ function MobileStep({
     setError("");
 
     try {
-      const result = await initMobileTopUp({
-        amount: rwfAmount,
-        phoneNumber: `250${cleanPhone}`,
-        customerName,
-        paymentType: "subscription",
+      const result = await initMobilePayment({
+        type: "subscription",
         planId: plan.id,
         billingCycle: billing,
+        phoneNumber: `250${cleanPhone}`,
+        customerName,
       });
 
       onSuccess(result.payment.id, plan.name);
@@ -465,9 +454,13 @@ export function PlanUpgradeDialog({
     try {
       await upgrade({ plan: plan.name, billingCycle: "monthly" });
       setStep("success");
-    } catch (e: any) {
+    } catch (e: unknown) {
+      const err = e as {
+        response?: { data?: { message?: string } };
+        message?: string;
+      };
       setError(
-        e?.response?.data?.message ?? e?.message ?? "Something went wrong.",
+        err?.response?.data?.message ?? err?.message ?? "Something went wrong.",
       );
     }
   }

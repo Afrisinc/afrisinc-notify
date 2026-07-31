@@ -3,31 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import { paygService } from "@/services/paygService";
 import { subscriptionService } from "@/services/subscriptionService";
 
-export function useInitSubscriptionPayment(accountId?: string) {
-  return useMutation({
-    mutationFn: ({
-      planId,
-      billingCycle,
-      customerEmail,
-    }: {
-      planId: string;
-      billingCycle: "monthly" | "yearly";
-      customerEmail: string;
-    }) =>
-      subscriptionService.initSubscriptionPayment(
-        planId,
-        billingCycle,
-        accountId!,
-        customerEmail,
-      ),
-  });
-}
-
-/**
- * Polls GET /api/subscriptions/current every 3s until the plan name matches
- * expectedPlan (set after Stripe confirms), then stops.
- * Same pattern as useBalanceConfirmation for PAYG.
- */
 const SUB_POLL_INTERVAL_MS = 3_000;
 const SUB_TIMEOUT_MS = 60_000;
 
@@ -102,18 +77,6 @@ export function usePaygRates() {
     queryKey: ["payg", "rates"],
     queryFn: paygService.getRates,
     staleTime: 60 * 60 * 1000,
-  });
-}
-
-export function useInitTopUp(accountId?: string) {
-  return useMutation({
-    mutationFn: ({
-      amount,
-      customerEmail,
-    }: {
-      amount: number;
-      customerEmail: string;
-    }) => paygService.initTopUp(accountId!, amount, customerEmail),
   });
 }
 
@@ -231,37 +194,6 @@ export function useUpgradePlan(accountId?: string) {
 }
 
 // ─── Mobile Money Hooks ─────────────────────────────────────────────────────────
-
-export function useInitMobileTopUp(accountId?: string) {
-  return useMutation({
-    mutationFn: ({
-      amount,
-      phoneNumber,
-      customerName,
-      paymentType,
-      planId,
-      billingCycle,
-    }: {
-      amount: number;
-      phoneNumber: string;
-      customerName?: string;
-      paymentType?: "payg_topup" | "subscription";
-      planId?: string;
-      billingCycle?: "monthly" | "yearly";
-    }) =>
-      paygService.initMobileTopUp(
-        accountId!,
-        amount,
-        phoneNumber,
-        customerName,
-        {
-          paymentType,
-          planId,
-          billingCycle,
-        },
-      ),
-  });
-}
 
 export function useMobilePayment(
   accountId: string | undefined,

@@ -365,8 +365,7 @@ const Docs = () => {
                 Error Responses
               </h3>
               <p className="text-sm text-foreground/70 dark:text-foreground/80">
-                Failed requests return a non-2xx status with a JSON error
-                body:
+                Failed requests return a non-2xx status with a JSON error body:
               </p>
               <div className="bg-card border border-border rounded-xl overflow-x-auto">
                 <table className="w-full text-sm min-w-[420px]">
@@ -439,8 +438,8 @@ const Docs = () => {
                 SDK Libraries
               </h2>
               <p className="text-sm text-foreground/70 dark:text-foreground/80">
-                Official client libraries wrap the REST API so you don't have
-                to construct requests by hand. Both support all channels,
+                Official client libraries wrap the REST API so you don't have to
+                construct requests by hand. Both support all channels,
                 templates, and variable substitution.
               </p>
               <div className="grid gap-4 sm:grid-cols-2">
@@ -473,7 +472,7 @@ const Docs = () => {
                   {
                     label: "Python",
                     language: "python",
-                    code: `from afrisinc_notify import Notify\n\nnotify = Notify("nf_live_••••••••••••")\n\nnotify.send(\n  to="user@example.com",\n  channel="email",\n  template="welcome-v2",\n  payload={ "name": "Alice" }\n)`
+                    code: `from afrisinc_notify import Notify\n\nnotify = Notify("nf_live_••••••••••••")\n\nnotify.send(\n  to="user@example.com",\n  channel="email",\n  template="welcome-v2",\n  payload={ "name": "Alice" }\n)`,
                   },
                 ]}
               />
@@ -507,13 +506,13 @@ const Docs = () => {
                 <code className="text-primary bg-primary/10 px-1.5 py-0.5 rounded text-xs">
                   {"{{variable}}"}
                 </code>{" "}
-                placeholder inside a template body is replaced with the
-                matching key from the{" "}
+                placeholder inside a template body is replaced with the matching
+                key from the{" "}
                 <code className="text-primary bg-primary/10 px-1.5 py-0.5 rounded text-xs">
                   data
                 </code>{" "}
-                object at send time. Missing keys render as an empty string,
-                so validate your payload before sending.
+                object at send time. Missing keys render as an empty string, so
+                validate your payload before sending.
               </p>
               <CodeBlock
                 language="json"
@@ -617,8 +616,8 @@ const Docs = () => {
                 Response Headers
               </h3>
               <p className="text-sm text-foreground/70 dark:text-foreground/80">
-                Every response includes your current usage so you can back
-                off before hitting the limit:
+                Every response includes your current usage so you can back off
+                before hitting the limit:
               </p>
               <CodeBlock
                 language="http"
@@ -634,8 +633,8 @@ const Docs = () => {
                   Retry-After
                 </code>{" "}
                 header (in seconds). Wait for that duration before retrying —
-                retrying immediately in a loop will keep failing and can
-                extend your cooldown.
+                retrying immediately in a loop will keep failing and can extend
+                your cooldown.
               </p>
               <CodeBlock
                 language="json"

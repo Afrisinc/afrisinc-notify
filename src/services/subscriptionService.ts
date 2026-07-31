@@ -261,31 +261,6 @@ export const subscriptionService = {
   },
 
   /**
-   * Initiate a card payment for plan upgrade via ITEC PesaPal (africnc-pay).
-   * Returns checkout URL and PCODE for payment tracking.
-   */
-  async initSubscriptionPayment(
-    planId: string,
-    billingCycle: "monthly" | "yearly",
-    accountId: string,
-    customerEmail: string,
-  ): Promise<{
-    checkoutUrl: string;
-    pcode: string;
-    orderId: string;
-    amountUSD: number;
-    planName: string;
-    validUntil: string;
-  }> {
-    const response = await getClient().post(
-      "/api/subscriptions/payment/init",
-      { planId, billingCycle, customerEmail, currency: "USD" },
-      { headers: { "x-account-id": accountId } },
-    );
-    return response.data.data;
-  },
-
-  /**
    * Upgrade to a new plan.
    * Resolves plan name → UUID via GET /subscriptions/plans, then calls
    * PUT /subscriptions/plan with the planId the backend already expects.

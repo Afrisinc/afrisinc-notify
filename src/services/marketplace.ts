@@ -253,33 +253,3 @@ export const getMarketplaceCategoriesService = async () => {
   const { data } = await getApiClient().get<any>(`/api/marketplace/categories`);
   return data.data as { categories: MarketplaceCategory[] };
 };
-
-// ──────────────────────────────────────────
-// INIT TEMPLATE PURCHASE (paid templates)
-// ──────────────────────────────────────────
-
-export interface InitTemplatePurchasePayload {
-  appId: string;
-  customerEmail: string;
-}
-
-export interface InitTemplatePurchaseResponse {
-  checkoutUrl: string;
-  pcode: string;
-  orderId: string;
-  amountUSD: number;
-  templateName: string;
-}
-
-export const initTemplatePurchaseService = async (
-  templateId: string,
-  accountId: string,
-  payload: InitTemplatePurchasePayload,
-): Promise<InitTemplatePurchaseResponse> => {
-  const { data } = await getApiClient().post<any>(
-    `/api/marketplace/templates/${templateId}/payment/init`,
-    { ...payload, currency: "USD" },
-    { headers: { "x-account-id": accountId } },
-  );
-  return data.data as InitTemplatePurchaseResponse;
-};

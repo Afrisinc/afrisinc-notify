@@ -52,22 +52,6 @@ export interface TransactionPage {
 
 const client = () => getApiClient();
 
-export interface TopUpInitResult {
-  id: string;
-  ref: string;
-  orderId: string;
-  amount: number;
-  currency: string;
-  email: string;
-  type: "CARD";
-  status: "PENDING" | "PROCESSING" | "SUCCESSFUL" | "FAILED";
-  pcode: string;
-  checkoutUrl: string;
-  validUntil: string;
-  provider: string;
-  createdAt: string;
-}
-
 export interface MobilePayment {
   id: string;
   ref: string;
@@ -82,29 +66,11 @@ export interface MobilePayment {
   createdAt: string;
 }
 
-export interface MobileTopUpResult {
-  payment: MobilePayment;
-  message: string;
-}
-
 export const paygService = {
   async getBalance(accountId: string): Promise<CreditBalance> {
     const res = await client().get("/api/payg/balance", {
       headers: { "x-account-id": accountId },
     });
-    return res.data.data;
-  },
-
-  async initTopUp(
-    accountId: string,
-    amount: number,
-    customerEmail: string,
-  ): Promise<TopUpInitResult> {
-    const res = await client().post(
-      "/api/payg/topup/init",
-      { amount, customerEmail, currency: "USD" },
-      { headers: { "x-account-id": accountId } },
-    );
     return res.data.data;
   },
 
@@ -144,30 +110,6 @@ export const paygService = {
   },
 
   // ─── Mobile Money ─────────────────────────────────────────────────────────────
-
-  async initMobileTopUp(
-    accountId: string,
-    amount: number,
-    phoneNumber: string,
-    customerName?: string,
-    options?: {
-      paymentType?: "payg_topup" | "subscription";
-      planId?: string;
-      billingCycle?: "monthly" | "yearly";
-    },
-  ): Promise<MobileTopUpResult> {
-    const res = await client().post(
-      "/api/payg/mobile/topup",
-      {
-        amount,
-        phoneNumber,
-        customerName,
-        ...options,
-      },
-      { headers: { "x-account-id": accountId } },
-    );
-    return res.data.data;
-  },
 
   async getMobilePayment(
     accountId: string,
