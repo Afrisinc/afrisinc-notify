@@ -53,6 +53,7 @@ export function useCardPayment(accountId?: string) {
         payload = {
           type: "payg_topup",
           method: "card",
+          currency: "USD",
           amount: params.amount!,
           email: params.email,
           customerName: params.customerName,
@@ -61,6 +62,7 @@ export function useCardPayment(accountId?: string) {
         payload = {
           type: "subscription",
           method: "card",
+          currency: "USD",
           planId: params.planId!,
           billingCycle: params.billingCycle,
           email: params.email,
@@ -70,6 +72,7 @@ export function useCardPayment(accountId?: string) {
         payload = {
           type: "template_purchase",
           method: "card",
+          currency: "USD",
           templateId: params.templateId!,
           appId: params.appId!,
           email: params.email,
@@ -102,6 +105,7 @@ export function useMobilePayment(accountId?: string) {
         payload = {
           type: "payg_topup",
           method: "mobile",
+          currency: "USD",
           amount: params.amount!,
           phoneNumber: params.phoneNumber,
           customerName: params.customerName,
@@ -110,6 +114,7 @@ export function useMobilePayment(accountId?: string) {
         payload = {
           type: "subscription",
           method: "mobile",
+          currency: "USD",
           planId: params.planId!,
           billingCycle: params.billingCycle,
           phoneNumber: params.phoneNumber,
@@ -119,6 +124,7 @@ export function useMobilePayment(accountId?: string) {
         payload = {
           type: "template_purchase",
           method: "mobile",
+          currency: "USD",
           templateId: params.templateId!,
           appId: params.appId!,
           phoneNumber: params.phoneNumber,

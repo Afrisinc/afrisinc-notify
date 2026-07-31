@@ -6,6 +6,7 @@ export type PaymentStatus = "PENDING" | "PROCESSING" | "SUCCESSFUL" | "FAILED";
 interface BasePaymentPayload {
   type: PaymentType;
   method: PaymentMethod;
+  currency: "USD";
   customerName?: string;
 }
 
