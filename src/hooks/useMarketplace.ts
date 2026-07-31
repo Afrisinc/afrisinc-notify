@@ -6,11 +6,9 @@ import {
   rateMarketplaceTemplateService,
   getTemplateRatingService,
   getMarketplaceCategoriesService,
-  initTemplatePurchaseService,
   type ListTemplatesParams,
   type InstallTemplatePayload,
   type RatingPayload,
-  type InitTemplatePurchasePayload,
 } from "@/services/marketplace";
 
 // ──────────────────────────────────────────
@@ -117,16 +115,5 @@ export function useMarketplaceCategories(options?: { enabled?: boolean }) {
     queryKey: ["marketplaceCategories"],
     queryFn: () => getMarketplaceCategoriesService(),
     enabled: options?.enabled ?? true,
-  });
-}
-
-// ──────────────────────────────────────────
-// INIT TEMPLATE PURCHASE (paid templates)
-// ──────────────────────────────────────────
-
-export function useInitTemplatePurchase(templateId: string, accountId: string) {
-  return useMutation({
-    mutationFn: (payload: InitTemplatePurchasePayload) =>
-      initTemplatePurchaseService(templateId, accountId, payload),
   });
 }

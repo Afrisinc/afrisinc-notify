@@ -174,30 +174,3 @@ export function useActivateTrialSubscription() {
       ),
   });
 }
-
-/**
- * Mutation: Initiate subscription payment via PesaPal (africnc-pay).
- * Returns checkout URL and PCODE for redirect pattern.
- * After payment is confirmed, webhook activates the subscription.
- */
-export function useInitSubscriptionPayment() {
-  return useMutation({
-    mutationFn: ({
-      accountId,
-      planId,
-      billingCycle,
-      customerEmail,
-    }: {
-      accountId: string;
-      planId: string;
-      billingCycle: "monthly" | "yearly";
-      customerEmail: string;
-    }) =>
-      subscriptionService.initSubscriptionPayment(
-        planId,
-        billingCycle,
-        accountId,
-        customerEmail,
-      ),
-  });
-}

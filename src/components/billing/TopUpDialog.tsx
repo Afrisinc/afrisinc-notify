@@ -12,11 +12,10 @@ import { MobilePaymentStep } from "@/components/payment/MobilePaymentStep";
 import { PaymentMethodSelector } from "@/components/payment/PaymentMethodSelector";
 import {
   useBalanceConfirmation,
-  useInitMobileTopUp,
   useMobilePaymentConfirmation,
 } from "@/hooks/usePayg";
+import { useCardPayment, useMobilePayment } from "@/hooks/usePayment";
 import { useExchangeRate } from "@/lib/exchangeRate";
-import { paygService } from "@/services/paygService";
 
 // ─── Amount helpers ────────────────────────────────────────────────────────────
 
@@ -81,7 +80,8 @@ export function TopUpDialog({
     expectedBalance,
   );
 
-  const { mutateAsync: initMobileTopUp } = useInitMobileTopUp(accountId);
+  const { initCardPayment } = useCardPayment(accountId);
+  const { initMobilePayment } = useMobilePayment(accountId);
   const { data: exchangeRate } = useExchangeRate();
 
   const amount = customAmount
@@ -258,14 +258,13 @@ export function TopUpDialog({
             chargeAmount={amount}
             accountId={accountId}
             customerEmail={customerEmail}
-            onInitPayment={async (email) => {
-              const result = await paygService.initTopUp(
-                accountId,
+            onInitPayment={(email) =>
+              initCardPayment({
+                type: "payg_topup",
                 amount,
                 email,
-              );
-              return result;
-            }}
+              })
+            }
             onSuccess={() => {
               setExpectedBalance(balanceAfter);
               setStep("success");
@@ -300,14 +299,14 @@ export function TopUpDialog({
             accountId={accountId}
             customerName={customerEmail.split("@")[0]}
             exchangeRate={exchangeRate}
-            onInitPayment={async (phone, name) => {
-              const rwfAmount = Math.round(amount * exchangeRate);
-              return await initMobileTopUp({
-                amount: rwfAmount,
+            onInitPayment={(phone, name) =>
+              initMobilePayment({
+                type: "payg_topup",
+                amount: Math.round(amount * exchangeRate),
                 phoneNumber: phone,
                 customerName: name,
-              });
-            }}
+              })
+            }
             onSuccess={(paymentId) => {
               setMobilePaymentId(paymentId);
               setExpectedBalance(balanceAfter);

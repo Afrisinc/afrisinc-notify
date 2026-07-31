@@ -41,11 +41,8 @@ import {
   Package,
   Smartphone,
 } from "lucide-react";
-import { useInitTemplatePurchase } from "@/hooks/useMarketplace";
-import {
-  useInitMobileTopUp,
-  useMobilePaymentConfirmation,
-} from "@/hooks/usePayg";
+import { useMobilePaymentConfirmation } from "@/hooks/usePayg";
+import { useCardPayment, useMobilePayment } from "@/hooks/usePayment";
 import { useExchangeRate } from "@/lib/exchangeRate";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
@@ -80,6 +77,8 @@ type PaymentMethod = "card" | "mobile";
 
 interface MobileStepProps {
   templateName: string;
+  templateId: string;
+  appId: string;
   amountUSD: number;
   accountId: string;
   exchangeRate: number;
@@ -89,19 +88,20 @@ interface MobileStepProps {
 
 function MobileStep({
   templateName,
+  templateId,
+  appId,
   amountUSD,
   accountId,
   exchangeRate,
   onBack,
   onSuccess,
 }: MobileStepProps) {
-  const { mutateAsync: initMobileTopUp } = useInitMobileTopUp(accountId);
+  const { initMobilePayment } = useMobilePayment(accountId);
 
   const [phoneNumber, setPhoneNumber] = useState("");
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState("");
 
-  // Convert USD to RWF using live rate
   const rwfAmount = Math.round(amountUSD * exchangeRate);
 
   async function handlePay() {
@@ -120,11 +120,12 @@ function MobileStep({
     setError("");
 
     try {
-      const result = await initMobileTopUp({
-        amount: rwfAmount,
+      const result = await initMobilePayment({
+        type: "template_purchase",
+        templateId,
+        appId,
         phoneNumber: `250${cleanPhone}`,
         customerName: templateName,
-        paymentType: "payg_topup", // Template purchase uses PAYG credits
       });
 
       onSuccess(result.payment.id);
@@ -365,10 +366,7 @@ export function TemplatePurchaseDialog({
   const [mobilePaymentId, setMobilePaymentId] = useState<string | null>(null);
 
   const { data: exchangeRate } = useExchangeRate();
-  const templatePurchaseMutation = useInitTemplatePurchase(
-    template?.id ?? "",
-    accountId,
-  );
+  const { initCardPayment } = useCardPayment(accountId);
 
   const templateName = template?.subject || template?.name || "Template";
   const price = template?.price ?? 0;
@@ -537,12 +535,14 @@ export function TemplatePurchaseDialog({
             chargeAmount={price}
             accountId={accountId}
             customerEmail={customerEmail}
-            onInitPayment={async (email) => {
-              return await templatePurchaseMutation.mutateAsync({
+            onInitPayment={(email) =>
+              initCardPayment({
+                type: "template_purchase",
+                templateId: template.id,
                 appId: selectedAppId,
-                customerEmail: email,
-              });
-            }}
+                email,
+              })
+            }
             onSuccess={handleSuccess}
             onBack={() => setStep("method")}
             storageKeyPrefix="template_purchase_pcode"
@@ -562,6 +562,8 @@ export function TemplatePurchaseDialog({
         {step === "mobile" && template && (
           <MobileStep
             templateName={templateName}
+            templateId={template.id}
+            appId={selectedAppId}
             amountUSD={price}
             accountId={accountId}
             exchangeRate={exchangeRate}
