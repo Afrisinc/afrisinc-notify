@@ -193,7 +193,11 @@ export default function Billing() {
   );
 
   const balColor =
-    balAmt === 0 ? "text-danger" : balAmt < 5 ? "text-warning" : "text-content";
+    balAmt === 0
+      ? "text-destructive"
+      : balAmt < 5
+        ? "text-warning"
+        : "text-foreground";
   const balBorder =
     balAmt === 0
       ? "border-danger/30 bg-danger/5"
