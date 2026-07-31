@@ -63,7 +63,7 @@ export function TopUpDialog({
   const [selectedAmount, setSelectedAmount] = useState(25);
   const [customAmount, setCustomAmount] = useState("");
   const [expectedBalance, setExpectedBalance] = useState<number | null>(null);
-  const [mobilePaymentId, setMobilePaymentId] = useState<string | null>(null);
+  const [mobilePaymentRef, setMobilePaymentRef] = useState<string | null>(null);
 
   const { confirmed, timedOut } = useBalanceConfirmation(
     accountId,
@@ -76,7 +76,7 @@ export function TopUpDialog({
     timedOut: mobileTimedOut,
   } = useMobilePaymentConfirmation(
     accountId,
-    step === "pending" ? mobilePaymentId : null,
+    step === "pending" ? mobilePaymentRef : null,
     expectedBalance,
   );
 
@@ -99,7 +99,7 @@ export function TopUpDialog({
     setSelectedAmount(25);
     setCustomAmount("");
     setExpectedBalance(null);
-    setMobilePaymentId(null);
+    setMobilePaymentRef(null);
     onClose();
   }, [onClose]);
 
@@ -308,7 +308,7 @@ export function TopUpDialog({
               })
             }
             onSuccess={(paymentId) => {
-              setMobilePaymentId(paymentId);
+              setMobilePaymentRef(paymentId);
               setExpectedBalance(balanceAfter);
               setStep("pending");
             }}

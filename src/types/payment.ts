@@ -111,3 +111,9 @@ export function isMobilePaymentResponse(
 ): res is MobilePaymentInitResponse {
   return res.method === "mobile";
 }
+
+export interface PaymentStatusResponse {
+  transaction_id: string;
+  status: PaymentStatus;
+  amount: number;
+}

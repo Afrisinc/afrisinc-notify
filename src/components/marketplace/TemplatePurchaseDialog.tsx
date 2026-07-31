@@ -83,7 +83,7 @@ interface MobileStepProps {
   accountId: string;
   exchangeRate: number;
   onBack: () => void;
-  onSuccess: (paymentId: string) => void;
+  onSuccess: (paymentRef: string) => void;
 }
 
 function MobileStep({
@@ -128,7 +128,7 @@ function MobileStep({
         customerName: templateName,
       });
 
-      onSuccess(result.payment.id);
+      onSuccess(result.paymentRef);
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Failed to initiate payment";
       setError(msg);
@@ -247,7 +247,7 @@ function MobileStep({
 
 interface PendingStepProps {
   accountId: string;
-  paymentId: string;
+  paymentRef: string;
   templateName: string;
   onSuccess: () => void;
   onFailed: () => void;
@@ -255,14 +255,14 @@ interface PendingStepProps {
 
 function PendingStep({
   accountId,
-  paymentId,
+  paymentRef,
   templateName,
   onSuccess,
   onFailed,
 }: PendingStepProps) {
   const { confirmed, failed, timedOut } = useMobilePaymentConfirmation(
     accountId,
-    paymentId,
+    paymentRef,
     null,
   );
 
@@ -363,7 +363,7 @@ export function TemplatePurchaseDialog({
 }: TemplatePurchaseDialogProps) {
   const [step, setStep] = useState<Step>("confirm");
   const [selectedAppId, setSelectedAppId] = useState(apps[0]?.id ?? "");
-  const [mobilePaymentId, setMobilePaymentId] = useState<string | null>(null);
+  const [mobilePaymentRef, setMobilePaymentRef] = useState<string | null>(null);
 
   const { data: exchangeRate } = useExchangeRate();
   const { initCardPayment } = useCardPayment(accountId);
@@ -374,7 +374,7 @@ export function TemplatePurchaseDialog({
   function handleClose() {
     setStep("confirm");
     setPaymentMethod("card");
-    setMobilePaymentId(null);
+    setMobilePaymentRef(null);
     onClose();
     if (step === "success") onSuccess?.();
   }
@@ -383,13 +383,13 @@ export function TemplatePurchaseDialog({
     setStep("success");
   }
 
-  function handleMobileSuccess(paymentId: string) {
-    setMobilePaymentId(paymentId);
+  function handleMobileSuccess(paymentRef: string) {
+    setMobilePaymentRef(paymentRef);
     setStep("pending");
   }
 
   function handleMobilePaymentFailed() {
-    setMobilePaymentId(null);
+    setMobilePaymentRef(null);
     setStep("mobile");
   }
 
@@ -573,10 +573,10 @@ export function TemplatePurchaseDialog({
         )}
 
         {/* ── Step 4: Pending (Mobile Payment Confirmation) ───────────────── */}
-        {step === "pending" && template && mobilePaymentId && (
+        {step === "pending" && template && mobilePaymentRef && (
           <PendingStep
             accountId={accountId}
-            paymentId={mobilePaymentId}
+            paymentRef={mobilePaymentRef}
             templateName={templateName}
             onSuccess={handleSuccess}
             onFailed={handleMobilePaymentFailed}

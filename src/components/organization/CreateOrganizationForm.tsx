@@ -90,7 +90,7 @@ interface CreateOrganizationFormProps {
 
 interface PendingStepProps {
   accountId: string;
-  paymentId: string;
+  paymentRef: string;
   orgName: string;
   selectedPlan: PlanInfo;
   onSuccess: () => void;
@@ -99,7 +99,7 @@ interface PendingStepProps {
 
 function PendingStep({
   accountId,
-  paymentId,
+  paymentRef,
   orgName,
   selectedPlan,
   onSuccess,
@@ -107,7 +107,7 @@ function PendingStep({
 }: PendingStepProps) {
   const { confirmed, failed, timedOut } = useMobilePaymentConfirmation(
     accountId,
-    paymentId,
+    paymentRef,
     null,
   );
 
@@ -215,7 +215,7 @@ const CreateOrganizationForm = ({
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">(
     "monthly",
   );
-  const [mobilePaymentId, setMobilePaymentId] = useState<string | null>(null);
+  const [mobilePaymentRef, setMobilePaymentRef] = useState<string | null>(null);
 
   const { data: plansData, isLoading: plansLoading } = usePublicPlans();
   const { data: exchangeRate } = useExchangeRate();
@@ -268,8 +268,8 @@ const CreateOrganizationForm = ({
     });
   };
 
-  const handleMobileSuccess = (paymentId: string) => {
-    setMobilePaymentId(paymentId);
+  const handleMobileSuccess = (paymentRef: string) => {
+    setMobilePaymentRef(paymentRef);
     setStep("pending");
   };
 
@@ -284,7 +284,7 @@ const CreateOrganizationForm = ({
 
   const handleMobilePaymentFailed = () => {
     // Go back to mobile step to retry
-    setMobilePaymentId(null);
+    setMobilePaymentRef(null);
     setStep("mobile");
   };
 
@@ -560,10 +560,10 @@ const CreateOrganizationForm = ({
       )}
 
       {/* ── Step 4: Pending (Mobile Payment Confirmation) ─────────────────────── */}
-      {step === "pending" && selectedPlan && mobilePaymentId && (
+      {step === "pending" && selectedPlan && mobilePaymentRef && (
         <PendingStep
           accountId={accountId}
-          paymentId={mobilePaymentId}
+          paymentRef={mobilePaymentRef}
           orgName={orgName}
           selectedPlan={selectedPlan}
           onSuccess={handleMobilePaymentConfirmed}
