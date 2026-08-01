@@ -323,7 +323,9 @@ function PendingStep({
           </>
         ) : (
           <>
-            <p className="font-semibold text-lg">Check your phone</p>
+            <p className="font-semibold text-lg text-foreground">
+              Check your phone
+            </p>
             <p className="text-sm text-muted-foreground mt-1">
               A payment prompt has been sent to your phone. Please enter your
               PIN to confirm the payment.
