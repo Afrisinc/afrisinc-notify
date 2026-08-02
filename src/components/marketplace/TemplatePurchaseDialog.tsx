@@ -377,7 +377,6 @@ export function TemplatePurchaseDialog({
 
   function handleClose() {
     setStep("confirm");
-    setPaymentMethod("card");
     setMobilePaymentRef(null);
     onClose();
     if (step === "success") onSuccess?.();
