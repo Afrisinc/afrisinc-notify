@@ -741,7 +741,9 @@ export function PlanUpgradeDialog({
             <div>
               {mobileConfirmed ? (
                 <>
-                  <p className="font-semibold text-lg">Payment Successful!</p>
+                  <p className="font-semibold text-lg text-foreground">
+                    Payment Successful!
+                  </p>
                   <p className="text-sm text-muted-foreground mt-1">
                     Your {plan.displayName} plan is now being activated.
                   </p>

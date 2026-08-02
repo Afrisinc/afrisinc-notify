@@ -351,7 +351,9 @@ export function TopUpDialog({
             <div>
               {mobileConfirmed ? (
                 <>
-                  <p className="font-semibold text-lg">Payment Successful!</p>
+                  <p className="font-semibold text-lg text-foreground">
+                    Payment Successful!
+                  </p>
                   <p className="text-sm text-muted-foreground mt-1">
                     ${totalCredits.toFixed(2)} has been added to your balance.
                   </p>

@@ -296,7 +296,9 @@ function PendingStep({
       <div>
         {confirmed ? (
           <>
-            <p className="font-semibold text-lg">Payment Successful!</p>
+            <p className="font-semibold text-lg text-foreground">
+              Payment Successful!
+            </p>
             <p className="text-sm text-muted-foreground mt-1">
               Installing template...
             </p>
