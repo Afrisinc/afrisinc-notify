@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQueries } from "@tanstack/react-query";
 import {
   ChannelSelectorDialog,
   type TemplateChannel,
@@ -11,7 +12,11 @@ import {
 } from "@/hooks/useUserTemplatePublishing";
 import { useCurrentAccountId } from "@/hooks/useAuth";
 import { useOrg } from "@/contexts/OrgContext";
-import { useDeleteTemplate, useDuplicateTemplate } from "@/hooks/useTemplates";
+import {
+  useDeleteTemplate,
+  useDuplicateTemplate,
+} from "@/hooks/useTemplates";
+import { useApps, useCreateAppTemplate } from "@/hooks/useApps";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -23,11 +28,27 @@ import {
   PublishTemplateDialog,
   type PublishTemplateData,
 } from "@/components/PublishTemplateDialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Plus, AlertCircle, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { getErrorMessage } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { SearchInput } from "@/components/ui/search-input";
+import { getAppTemplatesService } from "@/services/apps";
 
 type VisibilityFilter = "all" | "published" | "private";
 
@@ -44,6 +65,8 @@ export default function MyTemplates() {
   const [unpublishDialog, setUnpublishDialog] = useState<string | null>(null);
   const [deleteDialog, setDeleteDialog] = useState<string | null>(null);
   const [duplicateDialog, setDuplicateDialog] = useState<string | null>(null);
+  const [installDialog, setInstallDialog] = useState<string | null>(null);
+  const [installAppId, setInstallAppId] = useState("");
   const [page, setPage] = useState(1);
   const [channelSelectorOpen, setChannelSelectorOpen] = useState(false);
 
@@ -72,6 +95,31 @@ export default function MyTemplates() {
   const unpublishMutation = useUnpublishTemplate();
   const deleteMutation = useDeleteTemplate();
   const duplicateMutation = useDuplicateTemplate();
+  const installMutation = useCreateAppTemplate();
+
+  const { data: appsResponse } = useApps({ enabled: !!currentOrg?.id });
+  const apps = appsResponse?.apps || [];
+
+  const appTemplateQueries = useQueries({
+    queries: apps.map((app) => ({
+      queryKey: ["appTemplates", app.id, currentOrg?.id, installDialog],
+      queryFn: () => getAppTemplatesService(app.id, currentOrg?.id || ""),
+      enabled: !!installDialog && !!currentOrg?.id,
+    })),
+  });
+
+  const availableApps = useMemo(() => {
+    if (!installDialog) {
+      return apps;
+    }
+
+    return apps.filter((app, index) => {
+      const installedTemplates = appTemplateQueries[index]?.data?.templates || [];
+      return !installedTemplates.some(
+        (installed) => installed.template?.id === installDialog,
+      );
+    });
+  }, [apps, appTemplateQueries, installDialog]);
 
   const templates = templatesResponse?.data || [];
   const meta = templatesResponse?.meta;
@@ -232,6 +280,74 @@ export default function MyTemplates() {
     }
   };
 
+  const handleInstall = async (templateId: string) => {
+    if (!installAppId) {
+      toast({
+        title: "Select an app",
+        description: "Choose the app where you want to install this template.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const template = templates.find((item) => item.id === templateId);
+    if (!template) {
+      toast({
+        title: "Error",
+        description: "Template not found",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const toChannel = (channel: string) => {
+      const normalized = channel.toUpperCase();
+      if (
+        normalized === "EMAIL" ||
+        normalized === "SMS" ||
+        normalized === "PUSH" ||
+        normalized === "IN_APP" ||
+        normalized === "WHATSAPP"
+      ) {
+        return normalized;
+      }
+      return "EMAIL";
+    };
+
+    try {
+      await installMutation.mutateAsync({
+        appId: installAppId,
+        payload: {
+          template_id: template.id,
+          channel: toChannel(template.channel),
+          code: template.code || template.slug || template.id,
+          subject: template.subject,
+          content:
+            template.content?.email?.html || template.description || "",
+          description: template.description,
+          language: template.language || "en",
+          design_json: template.designJson,
+          editor_type: template.editorType,
+          customizations: {},
+        },
+      });
+
+      toast({
+        title: "Success",
+        description: "Template installed successfully",
+      });
+
+      setInstallDialog(null);
+      setInstallAppId("");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: getErrorMessage(error, "Failed to install template"),
+        variant: "destructive",
+      });
+    }
+  };
+
   function getEditPath(template: { id: string; channel?: string }) {
     const ch = (template.channel || "EMAIL").toUpperCase();
     if (ch === "EMAIL") return `/dashboard/templates/${template.id}`;
@@ -374,6 +490,10 @@ export default function MyTemplates() {
                   onEdit={() => navigate(getEditPath(template))}
                   onView={() => navigate(getEditPath(template))}
                   onDuplicate={() => setDuplicateDialog(template.id)}
+                  onInstall={() => {
+                    setInstallDialog(template.id);
+                    setInstallAppId("");
+                  }}
                   onDelete={() => setDeleteDialog(template.id)}
                   onPublish={() => setPublishDialogId(template.id)}
                   onUnpublish={() => setUnpublishDialog(template.id)}
@@ -486,6 +606,78 @@ export default function MyTemplates() {
         onConfirm={() => duplicateDialog && handleDuplicate(duplicateDialog)}
         onCancel={() => setDuplicateDialog(null)}
       />
+
+      {/* Install Dialog */}
+      <Dialog
+        open={!!installDialog}
+        onOpenChange={(open) => {
+          if (!open) {
+            setInstallDialog(null);
+            setInstallAppId("");
+          }
+        }}
+      >
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Install Template</DialogTitle>
+            <DialogDescription>
+              Choose an app that does not already have this template installed.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Select App</Label>
+              {apps.length === 0 ? (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    Create an app first, then you can install templates into it.
+                  </AlertDescription>
+                </Alert>
+              ) : availableApps.length === 0 ? (
+                <Alert>
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    This template is already installed in every app.
+                  </AlertDescription>
+                </Alert>
+              ) : (
+                <Select value={installAppId} onValueChange={setInstallAppId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose an app" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availableApps.map((app) => (
+                      <SelectItem key={app.id} value={app.id}>
+                        {app.name} ({app.environment})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setInstallDialog(null);
+                  setInstallAppId("");
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={() => installDialog && handleInstall(installDialog)}
+                disabled={installMutation.isPending || availableApps.length === 0}
+              >
+                {installMutation.isPending ? "Installing..." : "Install"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Delete Dialog */}
       <ConfirmDialog

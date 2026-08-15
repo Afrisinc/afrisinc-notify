@@ -42,6 +42,7 @@ interface MyTemplateCardProps {
   onEdit: () => void;
   onView: () => void;
   onDuplicate: () => void;
+  onInstall: () => void;
   onDelete: () => void;
   onPublish: () => void;
   onUnpublish: () => void;
@@ -61,6 +62,7 @@ export function MyTemplateCard({
   onEdit,
   onView,
   onDuplicate,
+  onInstall,
   onDelete,
   onPublish,
   onUnpublish,
@@ -212,6 +214,14 @@ export function MyTemplateCard({
               variant="secondary"
             >
               <Edit className="h-3.5 w-3.5" /> Edit
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={onInstall}
+              className="flex-1 h-8 text-xs gap-1.5 rounded-lg"
+            >
+              <Download className="h-3.5 w-3.5" /> Install
             </Button>
             <Button
               size="sm"

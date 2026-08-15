@@ -3,6 +3,7 @@ import type {
   CreateAppPayload,
   CreateAppTemplatePayload,
   AppTemplateResponse,
+  DuplicateAppTemplateResponse,
   AppTemplatesResponse,
   AppOverview,
   OrganizationAppsDetailsResponse,
@@ -168,6 +169,21 @@ export const updateAppTemplateService = async (
     payload,
   );
   return data.data as AppTemplateResponse;
+};
+
+/**
+ * Duplicate app template
+ * POST /api/organizations/:orgId/apps/:appId/templates/:templateId/duplicate
+ */
+export const duplicateAppTemplateService = async (
+  appId: string,
+  templateId: string,
+  orgId: string,
+) => {
+  const { data } = await getApiClient().post<any>(
+    `/api/organizations/${orgId}/apps/${appId}/templates/${templateId}/duplicate`,
+  );
+  return data.data as DuplicateAppTemplateResponse;
 };
 
 /**
