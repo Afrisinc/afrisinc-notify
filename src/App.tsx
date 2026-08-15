@@ -240,6 +240,10 @@ const App = () => {
                             element={<AppSendNotification />}
                           />
                           <Route path="templates" element={<AppTemplates />} />
+                          <Route
+                            path="templates/:templateId/duplicate"
+                            element={<AppTemplates />}
+                          />
                           <Route path="contacts" element={<AppContacts />} />
                           <Route path="campaigns" element={<AppCampaigns />} />
                           <Route

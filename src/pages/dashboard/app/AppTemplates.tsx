@@ -1,14 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   ChannelSelectorDialog,
   type TemplateChannel,
 } from "@/components/editors/ChannelSelectorDialog";
 import { appTemplates } from "@/data/mockData";
-import { useAppTemplates, useDeleteAppTemplate } from "@/hooks/useApps";
-import { useDuplicateTemplate } from "@/hooks/useTemplates";
+import { useAppTemplates, useDeleteAppTemplate, useDuplicateAppTemplate } from "@/hooks/useApps";
 import { useSendNotification } from "@/hooks/useNotifications";
-import { useOrg } from "@/contexts/OrgContext";
 import { extractVariableNames } from "@/lib/templateUtils";
 import { getErrorMessage } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
@@ -99,13 +97,12 @@ const sendNotificationSchema = z.object({
 type SendNotificationFormData = z.infer<typeof sendNotificationSchema>;
 
 export default function AppTemplates() {
-  const { appId } = useParams();
+  const { appId, templateId } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { currentOrg } = useOrg();
   const { copy, isCopied } = useCopyToClipboard();
   const deleteTemplateMutation = useDeleteAppTemplate();
-  const duplicateMutation = useDuplicateTemplate();
+  const duplicateMutation = useDuplicateAppTemplate();
   const sendNotificationMutation = useSendNotification();
 
   // Fetch templates from app endpoint
@@ -133,6 +130,12 @@ export default function AppTemplates() {
   } | null>(null);
   const [channelSelectorOpen, setChannelSelectorOpen] = useState(false);
   const [duplicateConfirm, setDuplicateConfirm] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (templateId) {
+      setDuplicateConfirm(templateId);
+    }
+  }, [templateId]);
 
   const handleCreateTemplate = (channel: TemplateChannel) => {
     setChannelSelectorOpen(false);
@@ -211,8 +214,10 @@ export default function AppTemplates() {
 
   const handleDuplicate = async (templateId: string) => {
     try {
-      const orgId = currentOrg?.id ?? "";
-      const result = await duplicateMutation.mutateAsync({ orgId, templateId });
+      const result = await duplicateMutation.mutateAsync({
+        appId: appId || "",
+        templateId,
+      });
 
       toast({
         title: "Success",
@@ -223,13 +228,7 @@ export default function AppTemplates() {
 
       // Navigate to the duplicated template using the regular template editor
       if (result?.id) {
-        const channel = result.channel?.toLowerCase() || "email";
-        const channelNormalized = channel === "in_app" ? "in-app" : channel;
-        if (channelNormalized === "email") {
-          navigate(`/dashboard/templates/${result.id}`);
-        } else {
-          navigate(`/dashboard/templates/${channelNormalized}/${result.id}`);
-        }
+        navigate(`/dashboard/apps/${appId}/templates`);
       }
     } catch (error) {
       toast({
@@ -536,7 +535,12 @@ export default function AppTemplates() {
       {/* Duplicate Confirmation Dialog */}
       <AlertDialog
         open={!!duplicateConfirm}
-        onOpenChange={(open) => !open && setDuplicateConfirm(null)}
+        onOpenChange={(open) => {
+          if (!open) {
+            setDuplicateConfirm(null);
+            navigate(`/dashboard/apps/${appId}/templates`);
+          }
+        }}
       >
         <AlertDialogContent>
           <AlertDialogTitle>Duplicate Template</AlertDialogTitle>

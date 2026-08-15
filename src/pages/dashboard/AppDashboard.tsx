@@ -216,6 +216,12 @@ export default function AppDashboard() {
                             variant="ghost"
                             size="icon"
                             className="h-7 w-7"
+                            onClick={() =>
+                              navigate(
+                                `/dashboard/apps/${app.id}/templates/${tpl.id}/duplicate`,
+                              )
+                            }
+                            title="Duplicate template"
                           >
                             <Copy className="h-3 w-3" />
                           </Button>
