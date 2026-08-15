@@ -10,6 +10,7 @@ import {
   getAppTemplatesService,
   getAppTemplateService,
   updateAppTemplateService,
+  duplicateAppTemplateService,
   deleteAppTemplateService,
   getAppNotificationsService,
   createApiKeyService,
@@ -21,6 +22,7 @@ import {
 import type {
   CreateAppPayload,
   CreateAppTemplatePayload,
+  DuplicateAppTemplateResponse,
   CreateApiKeyPayload,
 } from "@/types/apps";
 import { useUser } from "@/contexts/UserContext";
@@ -309,6 +311,41 @@ export function useUpdateAppTemplate() {
     },
     onSuccess: (_data, { appId, templateId }) => {
       // Invalidate both specific template and templates list
+      queryClient.invalidateQueries({
+        queryKey: ["appTemplate", appId, templateId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["appTemplates", appId],
+      });
+    },
+  });
+}
+
+/**
+ * Duplicate app template
+ */
+export function useDuplicateAppTemplate() {
+  const { currentOrg } = useOrg();
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    DuplicateAppTemplateResponse,
+    Error,
+    { appId: string; templateId: string }
+  >({
+    mutationFn: ({
+      appId,
+      templateId,
+    }: {
+      appId: string;
+      templateId: string;
+    }) => {
+      if (!currentOrg?.id) {
+        throw new Error("Organization must be selected to duplicate template");
+      }
+      return duplicateAppTemplateService(appId, templateId, currentOrg.id);
+    },
+    onSuccess: (_data, { appId, templateId }) => {
       queryClient.invalidateQueries({
         queryKey: ["appTemplate", appId, templateId],
       });

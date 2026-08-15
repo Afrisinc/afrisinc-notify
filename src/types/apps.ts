@@ -20,6 +20,7 @@ export interface CreateAppPayload {
 // ──────────────────────────────────────────
 
 export interface CreateAppTemplatePayload {
+  template_id?: string;
   channel: "EMAIL" | "SMS" | "PUSH" | "IN_APP" | "WHATSAPP";
   code: string;
   content: string;
@@ -28,15 +29,16 @@ export interface CreateAppTemplatePayload {
   is_public?: boolean;
   language?: string;
   visibility?: "private" | "public";
-  design_json?: any;
+  design_json?: Record<string, unknown>;
   editor_type?: string;
+  customizations?: Record<string, unknown>;
 }
 
 export interface AppTemplateResponse {
   installationId: string;
   appId: string;
   status: "active" | "inactive" | "archived";
-  customizations: Record<string, any>;
+  customizations: Record<string, unknown>;
   installationDate: string;
   updatedAt?: string;
   template: {
@@ -54,6 +56,15 @@ export interface AppTemplateResponse {
     createdAt: string;
     updatedAt: string;
   };
+}
+
+export interface DuplicateAppTemplateResponse {
+  id: string;
+  code: string;
+  channel: string;
+  active: boolean;
+  installationId: string;
+  appId: string;
 }
 
 export interface AppTemplatesResponse {
@@ -121,7 +132,7 @@ export interface NotificationProviderLog {
   provider: string;
   status: "SENT" | "FAILED" | "PENDING" | "BOUNCED";
   channel?: string;
-  response?: Record<string, any> | string | null;
+  response?: Record<string, unknown> | string | null;
   createdAt: string;
 }
 
