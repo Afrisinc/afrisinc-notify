@@ -231,6 +231,7 @@ function OrgDomainDetails({
   inboundEnabled,
   mxVerified,
   domainVerified,
+  cloudflareConnected,
   senders,
 }: {
   orgId: string;
@@ -238,6 +239,7 @@ function OrgDomainDetails({
   inboundEnabled: boolean;
   mxVerified: boolean;
   domainVerified: boolean;
+  cloudflareConnected: boolean;
   senders: any[];
 }) {
   const { toast } = useToast();
@@ -248,6 +250,49 @@ function OrgDomainDetails({
     inboundEnabled ? domainId : null,
   );
   const enableInboundMutation = useEnableOrgInboundDomain(orgId);
+  // Records were written automatically via Cloudflare - keep them collapsed
+  // by default so this doesn't read as "you need to do this manually" when
+  // there's nothing left to do. Manual-DNS domains show them open, as before.
+  const [showRecords, setShowRecords] = useState(!cloudflareConnected);
+
+  const handleEnableInbound = async (isRecheck: boolean) => {
+    try {
+      const result = await enableInboundMutation.mutateAsync(domainId);
+      if (result.cloudflareConfigured) {
+        toast({
+          title: isRecheck
+            ? "Re-checking MX record"
+            : "Inbound receiving enabled",
+          description:
+            "The MX record was added automatically via Cloudflare - we'll re-check verification in the background.",
+        });
+        // Same propagation-lag reasoning as the sending-domain records -
+        // Cloudflare confirming the write doesn't mean it's resolvable
+        // everywhere yet, so re-check a couple of times automatically.
+        [8000, 20000].forEach((delay) => {
+          setTimeout(() => enableInboundMutation.mutate(domainId), delay);
+        });
+      } else if (result.domain.mxVerified) {
+        toast({
+          title: "MX record verified",
+          description: "Inbound receiving is now active.",
+        });
+      } else {
+        toast({
+          title: isRecheck ? "Still pending" : "Inbound receiving enabled",
+          description: isRecheck
+            ? "The MX record isn't resolving yet. Make sure it's added at your DNS provider and try again in a few minutes."
+            : "Add the MX record shown below at your DNS provider, then re-check.",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: getErrorMessage(error),
+        variant: "destructive",
+      });
+    }
+  };
 
   if (recordsQuery.isLoading) return <Skeleton className="h-24 w-full" />;
   const records = recordsQuery.data;
@@ -261,33 +306,63 @@ function OrgDomainDetails({
 
   return (
     <div className="space-y-4 pt-4">
-      <div className="space-y-2">
-        {entries.map((entry) => (
-          <div
-            key={entry.label}
-            className="border border-border/60 rounded-lg p-3 space-y-1 bg-surface/30"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">{entry.label}</span>
-              <Badge variant={entry.verified ? "default" : "secondary"}>
-                {entry.verified ? "Verified" : "Pending"}
-              </Badge>
+      {cloudflareConnected && !domainVerified && (
+        <div className="flex items-start gap-2 rounded-lg border border-primary/30 bg-primary/5 p-3 text-sm">
+          <Cloud className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+          <p>
+            These DNS records were added automatically via Cloudflare - there's
+            nothing for you to do. We're re-checking verification in the
+            background; it usually finishes within a minute.
+          </p>
+        </div>
+      )}
+
+      {cloudflareConnected && domainVerified && (
+        <div className="flex items-center gap-2 rounded-lg border border-primary/30 bg-primary/5 p-3 text-sm">
+          <Cloud className="h-4 w-4 text-primary shrink-0" />
+          <p>DNS was configured and verified automatically via Cloudflare.</p>
+        </div>
+      )}
+
+      {cloudflareConnected ? (
+        <button
+          type="button"
+          onClick={() => setShowRecords((v) => !v)}
+          className="text-xs text-content-secondary hover:text-content underline"
+        >
+          {showRecords ? "Hide" : "View"} the DNS records Cloudflare added
+        </button>
+      ) : null}
+
+      {showRecords && (
+        <div className="space-y-2">
+          {entries.map((entry) => (
+            <div
+              key={entry.label}
+              className="border border-border/60 rounded-lg p-3 space-y-1 bg-surface/30"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">{entry.label}</span>
+                <Badge variant={entry.verified ? "default" : "secondary"}>
+                  {entry.verified ? "Verified" : "Pending"}
+                </Badge>
+              </div>
+              <div className="flex items-center gap-1">
+                <p className="text-xs text-content-secondary truncate">
+                  Name: {entry.name}
+                </p>
+                <CopyButton value={entry.name} label="record name" />
+              </div>
+              <div className="flex items-start gap-1">
+                <p className="text-xs font-mono text-content break-all flex-1">
+                  {entry.value}
+                </p>
+                <CopyButton value={entry.value} label="record value" />
+              </div>
             </div>
-            <div className="flex items-center gap-1">
-              <p className="text-xs text-content-secondary truncate">
-                Name: {entry.name}
-              </p>
-              <CopyButton value={entry.name} label="record name" />
-            </div>
-            <div className="flex items-start gap-1">
-              <p className="text-xs font-mono text-content break-all flex-1">
-                {entry.value}
-              </p>
-              <CopyButton value={entry.value} label="record value" />
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       <Button
         size="sm"
@@ -328,21 +403,7 @@ function OrgDomainDetails({
         {!inboundEnabled ? (
           <Button
             size="sm"
-            onClick={async () => {
-              try {
-                await enableInboundMutation.mutateAsync(domainId);
-                toast({
-                  title: "Inbound receiving enabled",
-                  description: "Add the MX record shown below.",
-                });
-              } catch (error) {
-                toast({
-                  title: "Error",
-                  description: getErrorMessage(error),
-                  variant: "destructive",
-                });
-              }
-            }}
+            onClick={() => handleEnableInbound(false)}
             disabled={enableInboundMutation.isPending}
           >
             {enableInboundMutation.isPending ? (
@@ -366,6 +427,20 @@ function OrgDomainDetails({
                 <CopyButton value={mxQuery.data.host} label="MX record" />
               )}
             </div>
+            {!mxVerified && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="mt-2"
+                onClick={() => handleEnableInbound(true)}
+                disabled={enableInboundMutation.isPending}
+              >
+                {enableInboundMutation.isPending ? (
+                  <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                ) : null}
+                Re-check MX record
+              </Button>
+            )}
           </div>
         )}
       </div>
@@ -397,6 +472,7 @@ export function OrgDomainsManager() {
   const domainsQuery = useOrgDomains(orgId);
   const addMutation = useAddOrgDomain(orgId);
   const deleteMutation = useDeleteOrgDomain(orgId);
+  const verifyMutation = useVerifyOrgDomain(orgId);
   const { data: cloudflareSettings } = useOrgCloudflareSettings(orgId);
   const hasOrgCloudflareDefault = !!cloudflareSettings?.connected;
 
@@ -416,12 +492,11 @@ export function OrgDomainsManager() {
       setShowAdd(false);
 
       if (result.cloudflare?.success) {
+        setExpandedId(result.domain.id);
         toast({
           title: "Connected to Cloudflare",
           description: [
-            result.domain.status === "verified"
-              ? "DNS records were added and verified automatically."
-              : "DNS records were added via Cloudflare - verification is still finishing up.",
+            "DNS records were added via Cloudflare - we'll automatically re-check verification in the background.",
             result.usedOrgDefault
               ? "Used your organization's default Cloudflare token."
               : "",
@@ -429,7 +504,17 @@ export function OrgDomainsManager() {
             .filter(Boolean)
             .join(" "),
         });
+
+        // Cloudflare confirming the write doesn't mean it's resolvable
+        // everywhere yet, so re-check a couple of times instead of making
+        // the user click "Re-check sending DNS" themselves. The manual
+        // button is still there as a fallback if propagation takes longer.
+        const domainId = result.domain.id;
+        [8000, 20000].forEach((delay) => {
+          setTimeout(() => verifyMutation.mutate(domainId), delay);
+        });
       } else if (result.cloudflare && !result.cloudflare.success) {
+        setExpandedId(result.domain.id);
         toast({
           title: "Domain added, but Cloudflare setup failed",
           description:
@@ -438,9 +523,11 @@ export function OrgDomainsManager() {
           variant: "destructive",
         });
       } else {
+        setExpandedId(result.domain.id);
         toast({
           title: "Domain added",
-          description: "Add the generated DNS records to verify it.",
+          description:
+            "Add the generated DNS records shown below to verify it.",
         });
       }
     } catch (error) {
@@ -572,6 +659,11 @@ export function OrgDomainsManager() {
                   >
                     {domain.status}
                   </Badge>
+                  {domain.cloudflareConnected && (
+                    <Badge variant="outline" className="gap-1">
+                      <Cloud className="h-3 w-3" /> Cloudflare
+                    </Badge>
+                  )}
                   {domain.inboundEnabled && (
                     <Badge variant={domain.mxVerified ? "default" : "outline"}>
                       <Inbox className="h-3 w-3 mr-1" /> Inbound
@@ -611,6 +703,7 @@ export function OrgDomainsManager() {
                     inboundEnabled={domain.inboundEnabled}
                     mxVerified={domain.mxVerified}
                     domainVerified={domain.status === "verified"}
+                    cloudflareConnected={domain.cloudflareConnected}
                     senders={domain.senders}
                   />
                 </div>

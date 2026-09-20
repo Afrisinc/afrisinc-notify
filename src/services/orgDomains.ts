@@ -155,7 +155,7 @@ export const enableOrgInboundDomainService = async (
     `/api/organizations/${orgId}/domains/${domainId}/inbound/enable`,
     {},
   );
-  return data.data as OrgEmailDomain;
+  return data.data as { domain: OrgEmailDomain; cloudflareConfigured: boolean };
 };
 
 export const addOrgSenderService = async (
