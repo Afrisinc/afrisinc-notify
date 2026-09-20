@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
 import { ArrowLeft, Loader2, Paperclip, Send } from "lucide-react";
@@ -26,8 +26,13 @@ const InboxThread = () => {
     threadId,
   );
 
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ block: "end" });
+  }, [thread?.messages.length]);
+
   const handleSend = () => {
-    if (!reply.trim()) return;
+    if (!reply.trim() || sending) return;
     sendReply(
       { body: reply, cc: parseEmailList(cc) },
       {
@@ -76,7 +81,7 @@ const InboxThread = () => {
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div className="min-w-0">
-          <h1 className="font-semibold truncate">
+          <h1 className="font-semibold truncate text-content">
             {thread.subject || "(no subject)"}
           </h1>
           <p className="text-xs text-content-secondary truncate">
@@ -92,7 +97,7 @@ const InboxThread = () => {
             className={`max-w-[85%] rounded-2xl px-4 py-3 ${
               message.direction === "outbound"
                 ? "bg-primary text-primary-foreground ml-auto"
-                : "bg-muted mr-auto"
+                : "bg-muted text-content mr-auto"
             }`}
           >
             <div className="flex items-center justify-between gap-3 mb-1">
@@ -131,6 +136,7 @@ const InboxThread = () => {
             )}
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
 
       <div className="border-t border-border pt-3 space-y-2">
@@ -153,7 +159,13 @@ const InboxThread = () => {
           <Textarea
             value={reply}
             onChange={(e) => setReply(e.target.value)}
-            placeholder={`Reply to ${thread.contactEmail}...`}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+              }
+            }}
+            placeholder={`Reply to ${thread.contactEmail}... (Enter to send, Shift+Enter for a new line)`}
             className="min-h-[60px] resize-none"
           />
           <Button onClick={handleSend} disabled={sending || !reply.trim()}>

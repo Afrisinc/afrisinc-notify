@@ -167,8 +167,8 @@
 /* Base styles */
 body {
   font-family: var(--font-body);
-  background-color: var(--background);
-  color: var(--text-color);
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
   font-size: var(--text-base);
   line-height: var(--leading-normal);
 }
@@ -201,7 +201,7 @@ body {
 
 .btn-primary {
   background: var(--primary-500);
-  color: var(--white);
+  color: #fff;
 }
 
 .btn-primary:hover {

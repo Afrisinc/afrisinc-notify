@@ -14,7 +14,7 @@ export function useOrgThreads(
   return useQuery({
     queryKey: ["orgThreads", orgId, params],
     queryFn: () => listOrgThreadsService(orgId!, params),
-    enabled: !!orgId,
+    refetchInterval: 20000,
   });
 }
 
@@ -26,6 +26,7 @@ export function useOrgThread(
     queryKey: ["orgThread", orgId, threadId],
     queryFn: () => getOrgThreadService(orgId!, threadId!),
     enabled: !!orgId && !!threadId,
+    refetchInterval: 8000,
   });
 }
 
