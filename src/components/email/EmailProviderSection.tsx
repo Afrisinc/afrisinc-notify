@@ -33,6 +33,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Mail, Trash2, Shield, Lock } from "lucide-react";
 import { GmailSection } from "./GmailSection";
 import { EmailDomainSection } from "./EmailDomainSection";
+import { EmailDomainsManager } from "./EmailDomainsManager";
 import { GmailIcon, NotifyIcon, CustomDomainIcon } from "./BrandIcons";
 
 interface EmailProviderSectionProps {
@@ -337,6 +338,7 @@ export function EmailProviderSection({ appId }: EmailProviderSectionProps) {
           <TabsContent value="custom" className="mt-6">
             <div className="space-y-4">
               <EmailDomainSection appId={appId} />
+              <EmailDomainsManager appId={appId} />
             </div>
           </TabsContent>
         </Tabs>

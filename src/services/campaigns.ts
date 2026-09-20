@@ -34,12 +34,7 @@ export interface Campaign {
   recipientTags?: string[];
   recipientSegment?: string;
   status:
-    | "draft"
-    | "scheduled"
-    | "sending"
-    | "completed"
-    | "failed"
-    | "cancelled";
+    "draft" | "scheduled" | "sending" | "completed" | "failed" | "cancelled";
   sentCount: number;
   deliveredCount: number;
   failedCount: number;

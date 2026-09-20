@@ -41,10 +41,7 @@ import { cn } from "@/lib/utils";
 
 type NotificationType = "toast" | "banner" | "modal";
 type ToastPosition =
-  | "top-right"
-  | "top-center"
-  | "bottom-right"
-  | "bottom-center";
+  "top-right" | "top-center" | "bottom-right" | "bottom-center";
 
 const schema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),

@@ -13,7 +13,10 @@ const DashboardLayout = () => {
       <SidebarProvider>
         <div className="min-h-screen flex w-full">
           <DashboardSidebar />
-          <div className="flex-1 flex flex-col">
+          {/* will-change-transform makes this the containing block for any `fixed` descendant
+              (e.g. the inbox compose FAB), so it's positioned relative to the content pane
+              instead of the full viewport - correctly excluding the sidebar regardless of its width. */}
+          <div className="flex-1 flex flex-col will-change-transform">
             <header className="h-14 flex items-center border-b border-border px-4 gap-4 bg-dashboard backdrop-blur-sm sticky top-0 z-40">
               <SidebarTrigger />
               <div className="flex-1" />

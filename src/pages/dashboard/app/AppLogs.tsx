@@ -42,12 +42,7 @@ import type { AppNotificationsSummary } from "@/types/apps";
 // ── Helpers ──────────────────────────────────────────────────
 
 type NotifStatus =
-  | "SENT"
-  | "FAILED"
-  | "PENDING"
-  | "BOUNCED"
-  | "QUEUED"
-  | "DELIVERED";
+  "SENT" | "FAILED" | "PENDING" | "BOUNCED" | "QUEUED" | "DELIVERED";
 
 const STATUS_CONFIG: Record<
   NotifStatus,

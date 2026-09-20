@@ -97,8 +97,7 @@ export interface MobilePaymentInitResponse extends BasePaymentResponse {
 }
 
 export type PaymentInitResponse =
-  | CardPaymentInitResponse
-  | MobilePaymentInitResponse;
+  CardPaymentInitResponse | MobilePaymentInitResponse;
 
 export function isCardPaymentResponse(
   res: PaymentInitResponse,

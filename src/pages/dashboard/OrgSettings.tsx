@@ -11,6 +11,7 @@ import {
   useUpdateOrganization,
   useDeleteOrganization,
 } from "@/hooks/useOrganization";
+import { OrgCloudflareSettings } from "@/components/organization/OrgCloudflareSettings";
 import { useToast } from "@/hooks/use-toast";
 import {
   AlertDialog,
@@ -185,7 +186,7 @@ export default function OrgSettings() {
   };
 
   return (
-    <div className="space-y-6 max-w-2xl">
+    <div className="space-y-6 w-full">
       <div>
         <h1 className="text-2xl font-semibold text-content">
           Organization Settings
@@ -195,131 +196,156 @@ export default function OrgSettings() {
         </p>
       </div>
 
-      <Card className="border-border/60">
-        <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
-            <Building2 className="h-4 w-4 text-primary" /> General Information
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label className="text-xs font-medium mb-1 block">
-              Organization Name
-            </Label>
-            <Input
-              value={formData.name}
-              onChange={(e) => handleInputChange("name", e.target.value)}
-              placeholder="Your organization name"
-            />
-          </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        <Card className="border-border/60 lg:col-span-2">
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <Building2 className="h-4 w-4 text-primary" /> General Information
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <Label className="text-xs font-medium mb-1 block">
+                  Organization Name
+                </Label>
+                <Input
+                  value={formData.name}
+                  onChange={(e) => handleInputChange("name", e.target.value)}
+                  placeholder="Your organization name"
+                />
+              </div>
 
-          <div>
-            <Label className="text-xs font-medium mb-1 block">Legal Name</Label>
-            <Input
-              value={formData.legal_name}
-              onChange={(e) => handleInputChange("legal_name", e.target.value)}
-              placeholder="Legal organization name"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label className="text-xs font-medium mb-1 block">Email</Label>
-              <Input
-                type="email"
-                value={formData.org_email}
-                onChange={(e) => handleInputChange("org_email", e.target.value)}
-                placeholder="org@example.com"
-              />
+              <div>
+                <Label className="text-xs font-medium mb-1 block">
+                  Legal Name
+                </Label>
+                <Input
+                  value={formData.legal_name}
+                  onChange={(e) =>
+                    handleInputChange("legal_name", e.target.value)
+                  }
+                  placeholder="Legal organization name"
+                />
+              </div>
             </div>
-            <div>
-              <Label className="text-xs font-medium mb-1 block">Phone</Label>
-              <Input
-                value={formData.org_phone}
-                onChange={(e) => handleInputChange("org_phone", e.target.value)}
-                placeholder="+1234567890"
-              />
-            </div>
-          </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label className="text-xs font-medium mb-1 block">Country</Label>
-              <Input
-                value={formData.country}
-                onChange={(e) => handleInputChange("country", e.target.value)}
-                placeholder="US"
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <Label className="text-xs font-medium mb-1 block">Email</Label>
+                <Input
+                  type="email"
+                  value={formData.org_email}
+                  onChange={(e) =>
+                    handleInputChange("org_email", e.target.value)
+                  }
+                  placeholder="org@example.com"
+                />
+              </div>
+              <div>
+                <Label className="text-xs font-medium mb-1 block">Phone</Label>
+                <Input
+                  value={formData.org_phone}
+                  onChange={(e) =>
+                    handleInputChange("org_phone", e.target.value)
+                  }
+                  placeholder="+1234567890"
+                />
+              </div>
             </div>
-            <div>
-              <Label className="text-xs font-medium mb-1 block">Location</Label>
-              <Input
-                value={formData.location}
-                onChange={(e) => handleInputChange("location", e.target.value)}
-                placeholder="San Francisco, CA"
-              />
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <Label className="text-xs font-medium mb-1 block">
+                  Country
+                </Label>
+                <Input
+                  value={formData.country}
+                  onChange={(e) => handleInputChange("country", e.target.value)}
+                  placeholder="US"
+                />
+              </div>
+              <div>
+                <Label className="text-xs font-medium mb-1 block">
+                  Location
+                </Label>
+                <Input
+                  value={formData.location}
+                  onChange={(e) =>
+                    handleInputChange("location", e.target.value)
+                  }
+                  placeholder="San Francisco, CA"
+                />
+              </div>
             </div>
-          </div>
 
-          <Button
-            onClick={handleSaveChanges}
-            disabled={updateMutation.isPending || !hasChanges}
-            className="mt-4"
-          >
-            {updateMutation.isPending ? "Saving..." : "Save Changes"}
-          </Button>
-        </CardContent>
-      </Card>
-
-      <Card className="border-destructive/30">
-        <CardHeader>
-          <CardTitle className="text-base text-destructive flex items-center gap-2">
-            <Trash2 className="h-4 w-4" /> Danger Zone
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-content-secondary mb-4">
-            Deleting your organization will permanently remove all apps,
-            templates, and data. This action cannot be undone.
-          </p>
-          <AlertDialog
-            open={showDeleteDialog}
-            onOpenChange={setShowDeleteDialog}
-          >
             <Button
-              variant="destructive"
-              onClick={() => setShowDeleteDialog(true)}
+              onClick={handleSaveChanges}
+              disabled={updateMutation.isPending || !hasChanges}
+              className="mt-4"
             >
-              Delete Organization
+              {updateMutation.isPending ? "Saving..." : "Save Changes"}
             </Button>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Delete Organization</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Are you sure you want to delete "{currentOrg.name}"? This
-                  action is permanent and will delete all apps, templates, and
-                  data associated with this organization.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <div className="bg-destructive/10 p-3 rounded text-sm text-destructive my-4">
-                ⚠️ This action cannot be undone.
-              </div>
-              <div className="flex gap-2 justify-end">
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={handleDeleteOrganization}
-                  className="bg-destructive hover:bg-destructive/90"
-                  disabled={deleteMutation.isPending}
+          </CardContent>
+        </Card>
+
+        <div className="flex flex-col gap-6">
+          <OrgCloudflareSettings
+            orgId={currentOrg.id}
+            isOwner={currentOrg.userRole === "OWNER"}
+          />
+
+          <Card className="border-destructive/30">
+            <CardHeader>
+              <CardTitle className="text-base text-destructive flex items-center gap-2">
+                <Trash2 className="h-4 w-4" /> Danger Zone
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-content-secondary mb-4">
+                Deleting your organization will permanently remove all apps,
+                templates, and data. This action cannot be undone.
+              </p>
+              <AlertDialog
+                open={showDeleteDialog}
+                onOpenChange={setShowDeleteDialog}
+              >
+                <Button
+                  variant="destructive"
+                  onClick={() => setShowDeleteDialog(true)}
                 >
-                  {deleteMutation.isPending
-                    ? "Deleting..."
-                    : "Delete Organization"}
-                </AlertDialogAction>
-              </div>
-            </AlertDialogContent>
-          </AlertDialog>
-        </CardContent>
-      </Card>
+                  Delete Organization
+                </Button>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete Organization</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to delete "{currentOrg.name}"? This
+                      action is permanent and will delete all apps, templates,
+                      and data associated with this organization.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <div className="bg-destructive/10 p-3 rounded text-sm text-destructive my-4">
+                    ⚠️ This action cannot be undone.
+                  </div>
+                  <div className="flex gap-2 justify-end">
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleDeleteOrganization}
+                      className="bg-destructive hover:bg-destructive/90"
+                      disabled={deleteMutation.isPending}
+                    >
+                      {deleteMutation.isPending
+                        ? "Deleting..."
+                        : "Delete Organization"}
+                    </AlertDialogAction>
+                  </div>
+                </AlertDialogContent>
+              </AlertDialog>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }

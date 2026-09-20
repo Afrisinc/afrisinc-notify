@@ -12,10 +12,7 @@ import {
 } from "@/hooks/useUserTemplatePublishing";
 import { useCurrentAccountId } from "@/hooks/useAuth";
 import { useOrg } from "@/contexts/OrgContext";
-import {
-  useDeleteTemplate,
-  useDuplicateTemplate,
-} from "@/hooks/useTemplates";
+import { useDeleteTemplate, useDuplicateTemplate } from "@/hooks/useTemplates";
 import { useApps, useCreateAppTemplate } from "@/hooks/useApps";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -114,7 +111,8 @@ export default function MyTemplates() {
     }
 
     return apps.filter((app, index) => {
-      const installedTemplates = appTemplateQueries[index]?.data?.templates || [];
+      const installedTemplates =
+        appTemplateQueries[index]?.data?.templates || [];
       return !installedTemplates.some(
         (installed) => installed.template?.id === installDialog,
       );
@@ -322,8 +320,7 @@ export default function MyTemplates() {
           channel: toChannel(template.channel),
           code: template.code || template.slug || template.id,
           subject: template.subject,
-          content:
-            template.content?.email?.html || template.description || "",
+          content: template.content?.email?.html || template.description || "",
           description: template.description,
           language: template.language || "en",
           design_json: template.designJson,
@@ -670,7 +667,9 @@ export default function MyTemplates() {
               </Button>
               <Button
                 onClick={() => installDialog && handleInstall(installDialog)}
-                disabled={installMutation.isPending || availableApps.length === 0}
+                disabled={
+                  installMutation.isPending || availableApps.length === 0
+                }
               >
                 {installMutation.isPending ? "Installing..." : "Install"}
               </Button>

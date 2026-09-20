@@ -206,8 +206,7 @@ export function useEmailEditor({
 
         const content = template.content as Record<string, unknown> | undefined;
         const emailContent = content?.email as
-          | Record<string, unknown>
-          | undefined;
+          Record<string, unknown> | undefined;
 
         setSubject(String(emailContent?.subject || template.subject || ""));
 

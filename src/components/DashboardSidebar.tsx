@@ -8,6 +8,8 @@ import {
   LogOut,
   CreditCard,
   Mail,
+  Inbox,
+  Globe,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { NavLink } from "@/components/NavLink";
@@ -33,6 +35,7 @@ import Logo from "./Logo";
 const mainNav = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Apps", url: "/dashboard/apps", icon: Boxes },
+  { title: "Inbox", url: "/dashboard/inbox", icon: Inbox },
   { title: "Templates", url: "/dashboard/templates", icon: FileText },
   { title: "Marketplace", url: "/dashboard/marketplace", icon: Store },
 ];
@@ -47,6 +50,7 @@ export function DashboardSidebar() {
 
   const orgNav = [
     { title: "Billing", url: "/dashboard/billing", icon: CreditCard },
+    { title: "Domains", url: "/dashboard/organization/domains", icon: Globe },
     {
       title: currentOrg?.name === "Personal" ? "My Invites" : "Members",
       url: "/dashboard/organization/members",

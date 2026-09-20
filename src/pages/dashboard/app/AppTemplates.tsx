@@ -5,7 +5,11 @@ import {
   type TemplateChannel,
 } from "@/components/editors/ChannelSelectorDialog";
 import { appTemplates } from "@/data/mockData";
-import { useAppTemplates, useDeleteAppTemplate, useDuplicateAppTemplate } from "@/hooks/useApps";
+import {
+  useAppTemplates,
+  useDeleteAppTemplate,
+  useDuplicateAppTemplate,
+} from "@/hooks/useApps";
 import { useSendNotification } from "@/hooks/useNotifications";
 import { extractVariableNames } from "@/lib/templateUtils";
 import { getErrorMessage } from "@/lib/utils";

@@ -67,9 +67,7 @@ export default function AppsList() {
         name: newName.trim(),
         orgId: currentOrg.id,
         environment: newEnv.toLowerCase() as
-          | "development"
-          | "staging"
-          | "production",
+          "development" | "staging" | "production",
         description: newDesc.trim() || undefined,
       },
       {

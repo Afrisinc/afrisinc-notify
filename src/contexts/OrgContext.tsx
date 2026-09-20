@@ -16,6 +16,7 @@ export interface Organization {
   plan?: string;
   createdAt?: string;
   apps?: any[];
+  userRole?: "OWNER" | "ADMIN" | "MEMBER";
 }
 
 interface OrgContextType {

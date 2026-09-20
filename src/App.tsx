@@ -3,18 +3,21 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProjectProvider } from "@/contexts/ProjectContext";
 import { AppProvider } from "@/contexts/AppContext";
 import { UserProvider } from "@/contexts/UserContext";
 import { OrgProvider } from "@/contexts/OrgContext";
+import { RecipientAuthProvider } from "@/contexts/RecipientAuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import MailProtectedRoute from "@/components/MailProtectedRoute";
 import { getThemeFromCookie } from "@/lib/theme";
 
 import PublicLayout from "./layouts/PublicLayout";
 import DashboardLayout from "./layouts/DashboardLayout";
 import AppDashboardLayout from "./layouts/AppDashboardLayout";
+import MailLayout from "./layouts/MailLayout";
 
 import Landing from "./pages/Landing";
 import Pricing from "./pages/Pricing";
@@ -45,7 +48,19 @@ import UserTemplateEditor from "./pages/dashboard/UserTemplateEditor";
 import Marketplace from "./pages/dashboard/Marketplace";
 import OrgMembers from "./pages/dashboard/OrgMembers";
 import OrgSettings from "./pages/dashboard/OrgSettings";
+import OrgDomains from "./pages/dashboard/OrgDomains";
 import Billing from "./pages/dashboard/Billing";
+import Inbox from "./pages/dashboard/Inbox";
+import InboxThread from "./pages/dashboard/InboxThread";
+
+// Recipient mail portal pages
+import MailLogin from "./pages/mail/MailLogin";
+import MailRequestAccess from "./pages/mail/MailRequestAccess";
+import MailSetPassword from "./pages/mail/MailSetPassword";
+import MailForgotPassword from "./pages/mail/MailForgotPassword";
+import MailResetPassword from "./pages/mail/MailResetPassword";
+import MailInbox from "./pages/mail/MailInbox";
+import MailThread from "./pages/mail/MailThread";
 
 // App sub-pages
 import AppOverview from "./pages/dashboard/app/AppOverview";
@@ -65,6 +80,14 @@ import EditorPageLegacy from "./pages/editor/legacy";
 
 // Channel Editors (SMS, Push, In-App, WhatsApp)
 import ChannelEditorPage from "./pages/editor/ChannelEditorPage";
+
+// The recipient mail portal is a fully separate identity from AuthProvider -
+// its provider tree is a sibling, not nested inside the business-user auth tree.
+const RecipientAuthOutlet = () => (
+  <RecipientAuthProvider>
+    <Outlet />
+  </RecipientAuthProvider>
+);
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -257,14 +280,55 @@ const App = () => {
 
                         <Route path="marketplace" element={<Marketplace />} />
                         <Route path="billing" element={<Billing />} />
+                        <Route path="inbox" element={<Inbox />} />
+                        <Route
+                          path="inbox/:threadId"
+                          element={<InboxThread />}
+                        />
                         <Route
                           path="organization/members"
                           element={<OrgMembers />}
                         />
                         <Route
+                          path="organization/domains"
+                          element={<OrgDomains />}
+                        />
+                        <Route
                           path="organization/settings"
                           element={<OrgSettings />}
                         />
+                      </Route>
+
+                      {/* ── Recipient Mail Portal (separate identity from AuthProvider) ── */}
+                      <Route element={<RecipientAuthOutlet />}>
+                        <Route path="/mail/login" element={<MailLogin />} />
+                        <Route
+                          path="/mail/request-access"
+                          element={<MailRequestAccess />}
+                        />
+                        <Route
+                          path="/mail/set-password"
+                          element={<MailSetPassword />}
+                        />
+                        <Route
+                          path="/mail/forgot-password"
+                          element={<MailForgotPassword />}
+                        />
+                        <Route
+                          path="/mail/reset-password"
+                          element={<MailResetPassword />}
+                        />
+                        <Route
+                          path="/mail"
+                          element={
+                            <MailProtectedRoute>
+                              <MailLayout />
+                            </MailProtectedRoute>
+                          }
+                        >
+                          <Route index element={<MailInbox />} />
+                          <Route path=":threadId" element={<MailThread />} />
+                        </Route>
                       </Route>
 
                       <Route path="*" element={<NotFound />} />

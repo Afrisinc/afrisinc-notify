@@ -144,12 +144,7 @@ export interface AppNotification {
   channel: "EMAIL" | "SMS" | "PUSH" | "IN_APP" | "WHATSAPP";
   status: "SENT" | "FAILED" | "PENDING" | "BOUNCED" | "QUEUED";
   deliveryState?:
-    | "SENT"
-    | "DELIVERED"
-    | "FAILED"
-    | "PENDING"
-    | "BOUNCED"
-    | "QUEUED";
+    "SENT" | "DELIVERED" | "FAILED" | "PENDING" | "BOUNCED" | "QUEUED";
   source?: string;
   provider?: string;
   templateCode?: string;

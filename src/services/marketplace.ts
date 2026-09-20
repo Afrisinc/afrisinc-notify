@@ -26,14 +26,7 @@ export interface MarketplaceTemplate {
   name?: string;
   description: string;
   channel:
-    | "EMAIL"
-    | "SMS"
-    | "PUSH"
-    | "IN_APP"
-    | "email"
-    | "sms"
-    | "push"
-    | "in-app";
+    "EMAIL" | "SMS" | "PUSH" | "IN_APP" | "email" | "sms" | "push" | "in-app";
   category?:
     | "MARKETING"
     | "TRANSACTIONAL"

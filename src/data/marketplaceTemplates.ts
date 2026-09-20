@@ -7,11 +7,7 @@ export interface MarketplaceTemplate {
   subject?: string;
   description: string;
   category:
-    | "authentication"
-    | "transactional"
-    | "marketing"
-    | "alerts"
-    | "ecommerce";
+    "authentication" | "transactional" | "marketing" | "alerts" | "ecommerce";
   channel: "email" | "sms" | "push" | "in-app";
   price: number; // 0 for free
   rating: number; // 0-5

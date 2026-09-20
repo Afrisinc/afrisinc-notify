@@ -4,10 +4,7 @@
 
 export type Channel = "email" | "sms" | "push" | "in-app";
 export type Category =
-  | "authentication"
-  | "transactional"
-  | "marketing"
-  | "alerts";
+  "authentication" | "transactional" | "marketing" | "alerts";
 
 export interface Template {
   id: string;
